@@ -85,36 +85,45 @@ libsimage@SUFFIX@inc_HEADERS = \
 # **************************************************************************
 # Additional Make rules not supported by Automake
 
-# Rule for linking up a .DLL on MSWindows with MSVC++.
-simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll: $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_DEPENDENCIES)
-	@rm -f simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; \
+# Rule for linking MSVC++ LIB file.
+simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_DEPENDENCIES)
+	@basename=simage@SIMAGE_MAJOR_VERSION@@SUFFIX@; \
+	rm -f $$basename.dll $$basename.lib; \
 	if @BUILD_WITH_MSVC@; then \
-	  $(CC) $(LDFLAGS) @DLLFLAGS@ \
-	    /out:simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll \
+	  $(CC) $(LDFLAGS) @LIBFLAGS@ \
 	    `echo $(libsimage@SUFFIX@_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
 	    $(libsimage@SUFFIX@_la_LIBADD) $(LIBS); \
 	else \
-	  rm -f simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; \
-	  touch simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; \
+	  touch $$basename.lib $$basename.dll; \
 	fi
 
-## This hook will be run at the end of a ``make install''.
-install-exec-hook: simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll
-	if test -s simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; then \
-	  $(INSTALL_DATA) simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll $(DESTDIR)$(bindir)/simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; \
-	  $(INSTALL_DATA) simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib $(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib; \
-	  if test -s simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.pdb; then \
-	    $(INSTALL_DATA) simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.pdb $(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.pdb; \
+# **************************************************************************
+# hooks for the automake infrastructure...
+
+all-local: simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
+
+install-exec-local:
+	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
+	if test -s "$$basename.dll"; then \
+	  $(mkinstalldirs) "$(DESTDIR)$(bindir)"; \
+	  $(INSTALL_PROGRAM) "$$basename.dll" "$(DESTDIR)$(bindir)/$$basename.dll"; \
+	fi
+
+install-data-local:
+	@basename=simage@SIMAGE_MAJOR_VERSION@@SUFFIX@; \
+	if test -s "$$basename.lib"; then \
+	  $(mkinstalldirs) "$(DESTDIR)$(libdir)"; \
+	  $(INSTALL_DATA) "$$basename.lib" "$(DESTDIR)$(libdir)/$$basename.lib"; \
+	fi
+
+uninstall-local:
+	@basename=simage@SIMAGE_MAJOR_VERSION@@SUFFIX@; \
+	for file in
+	  "$(DESTDIR)$(bindir)/$$basename.dll" \
+	  "$(DESTDIR)$(libdir)/$$basename.lib"; do \
+	  if test -f $$file; then \
+	    echo rm -f $$file && rm -f $$file; \
 	  fi \
-	fi
-
-## should have been uninstall-hook, but that doesn't work
-uninstall: uninstall-am
-	@file="$(DESTDIR)$(bindir)"/simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; \
-	test -f $$file && rm -f $$file && echo rm -f $$file; \
-	for ext in lib pdb; do \
-	  file="$(DESTDIR)$(libdir)"/simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.$$ext; \
-	  test -f $$file && rm -f $$file && echo rm -f $$file; \
 	done
 
 # EOF **********************************************************************

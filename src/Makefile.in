@@ -74,10 +74,10 @@ BUILD_WITH_MSVC = @BUILD_WITH_MSVC@
 CC = @CC@
 CONFIG = @CONFIG@
 DEPDIR = @DEPDIR@
-DLLFLAGS = @DLLFLAGS@
 DLLTOOL = @DLLTOOL@
 DSUFFIX = @DSUFFIX@
 LDFLAGS = @LDFLAGS@
+LIBFLAGS = @LIBFLAGS@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 LT_AGE = @LT_AGE@
@@ -89,12 +89,15 @@ OBJDUMP = @OBJDUMP@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 SIMAGE_DEBUG_BUILD = @SIMAGE_DEBUG_BUILD@
+SIMAGE_EXTRA_CFLAGS = @SIMAGE_EXTRA_CFLAGS@
 SIMAGE_EXTRA_CPPFLAGS = @SIMAGE_EXTRA_CPPFLAGS@
 SIMAGE_EXTRA_LDFLAGS = @SIMAGE_EXTRA_LDFLAGS@
 SIMAGE_EXTRA_LIBS = @SIMAGE_EXTRA_LIBS@
 SIMAGE_MAJOR_VERSION = @SIMAGE_MAJOR_VERSION@
 SIMAGE_MICRO_VERSION = @SIMAGE_MICRO_VERSION@
 SIMAGE_MINOR_VERSION = @SIMAGE_MINOR_VERSION@
+SIMAGE_SHARED = @SIMAGE_SHARED@
+SIMAGE_STATIC = @SIMAGE_STATIC@
 SIMAGE_VERSION = @SIMAGE_VERSION@
 SUFFIX = @SUFFIX@
 VERSION = @VERSION@
@@ -1094,12 +1097,12 @@ install-libsimage@SUFFIX@incHEADERS: $(libsimage@SUFFIX@inc_HEADERS)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(libsimage@SUFFIX@incdir)
 	@list='$(libsimage@SUFFIX@inc_HEADERS)'; for p in $$list; do \
-	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  f="`echo $$p | sed -e 's|^.*/||'`"; \
 	  if cmp -s $$d$$p $(DESTDIR)$(libsimage@SUFFIX@incdir)/$$f; then :; else \
 	    echo " $(INSTALL_HEADER) $$d$$p $(DESTDIR)$(libsimage@SUFFIX@incdir)/$$f"; \
 	    $(INSTALL_HEADER) $$d$$p $(DESTDIR)$(libsimage@SUFFIX@incdir)/$$f; \
-	  fi; \
+	  fi \
 	done
 
 uninstall-libsimage@SUFFIX@incHEADERS:
@@ -1196,21 +1199,19 @@ check-am: all-am
 check: check-am
 installcheck-am:
 installcheck: installcheck-am
-install-exec-am: install-libLTLIBRARIES
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
+install-exec-am: install-libLTLIBRARIES install-exec-local
 install-exec: install-exec-am
 
-install-data-am: install-libsimage@SUFFIX@incHEADERS
+install-data-am: install-libsimage@SUFFIX@incHEADERS install-data-local
 install-data: install-data-am
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 install: install-am
 uninstall-am: uninstall-libLTLIBRARIES \
-		uninstall-libsimage@SUFFIX@incHEADERS
+		uninstall-libsimage@SUFFIX@incHEADERS uninstall-local
 uninstall: uninstall-am
-all-am: Makefile $(LTLIBRARIES) $(HEADERS)
+all-am: Makefile $(LTLIBRARIES) $(HEADERS) all-local
 all-redirect: all-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
@@ -1254,52 +1255,64 @@ mostlyclean: mostlyclean-am
 mostlyclean-am: mostlyclean-compile mostlyclean-generic \
 	mostlyclean-libLTLIBRARIES mostlyclean-libtool
 
-.PHONY: all all-am all-redirect check check-am clean clean-generic \
-	clean-libLTLIBRARIES clean-libtool distclean distclean-compile \
-	distclean-depend distclean-generic distclean-libLTLIBRARIES \
-	distclean-libtool distclean-tags distdir dvi dvi-am info \
-	info-am install install-am install-data install-data-am \
-	install-exec install-exec-am install-libLTLIBRARIES \
+.PHONY: all all-am all-local all-redirect check check-am clean \
+	clean-generic clean-libLTLIBRARIES clean-libtool distclean \
+	distclean-compile distclean-depend distclean-generic \
+	distclean-libLTLIBRARIES distclean-libtool distclean-tags \
+	distdir dvi dvi-am info info-am install install-am install-data \
+	install-data-am install-data-local install-exec install-exec-am \
+	install-exec-local install-libLTLIBRARIES \
 	install-libsimage@SUFFIX@incHEADERS install-strip installcheck \
 	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic maintainer-clean-libLTLIBRARIES \
 	mostlyclean mostlyclean-compile mostlyclean-generic \
 	mostlyclean-libLTLIBRARIES mostlyclean-libtool tags uninstall \
 	uninstall-am uninstall-libLTLIBRARIES \
-	uninstall-libsimage@SUFFIX@incHEADERS
+	uninstall-libsimage@SUFFIX@incHEADERS uninstall-local
 
 
 # **************************************************************************
 # Additional Make rules not supported by Automake
 
-# Rule for linking up a .DLL on MSWindows with MSVC++.
-simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll: $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_DEPENDENCIES)
-	@rm -f simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; \
+# Rule for linking MSVC++ LIB file.
+simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_DEPENDENCIES)
+	@basename=simage@SIMAGE_MAJOR_VERSION@@SUFFIX@; \
+	rm -f $$basename.dll $$basename.lib; \
 	if @BUILD_WITH_MSVC@; then \
-	  $(CC) $(LDFLAGS) @DLLFLAGS@ \
-	    /out:simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll \
+	  $(CC) $(LDFLAGS) @LIBFLAGS@ \
 	    `echo $(libsimage@SUFFIX@_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
 	    $(libsimage@SUFFIX@_la_LIBADD) $(LIBS); \
 	else \
-	  rm -f simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; \
-	  touch simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; \
+	  touch $$basename.lib $$basename.dll; \
 	fi
 
-install-exec-hook: simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll
-	if test -s simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; then \
-	  $(INSTALL_DATA) simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll $(DESTDIR)$(bindir)/simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; \
-	  $(INSTALL_DATA) simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib $(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib; \
-	  if test -s simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.pdb; then \
-	    $(INSTALL_DATA) simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.pdb $(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.pdb; \
+# **************************************************************************
+# hooks for the automake infrastructure...
+
+all-local: simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
+
+install-exec-local:
+	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
+	if test -s "$$basename.dll"; then \
+	  $(mkinstalldirs) "$(DESTDIR)$(bindir)"; \
+	  $(INSTALL_PROGRAM) "$$basename.dll" "$(DESTDIR)$(bindir)/$$basename.dll"; \
+	fi
+
+install-data-local:
+	@basename=simage@SIMAGE_MAJOR_VERSION@@SUFFIX@; \
+	if test -s "$$basename.lib"; then \
+	  $(mkinstalldirs) "$(DESTDIR)$(libdir)"; \
+	  $(INSTALL_DATA) "$$basename.lib" "$(DESTDIR)$(libdir)/$$basename.lib"; \
+	fi
+
+uninstall-local:
+	@basename=simage@SIMAGE_MAJOR_VERSION@@SUFFIX@; \
+	for file in
+	  "$(DESTDIR)$(bindir)/$$basename.dll" \
+	  "$(DESTDIR)$(libdir)/$$basename.lib"; do \
+	  if test -f $$file; then \
+	    echo rm -f $$file && rm -f $$file; \
 	  fi \
-	fi
-
-uninstall: uninstall-am
-	@file="$(DESTDIR)$(bindir)"/simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; \
-	test -f $$file && rm -f $$file && echo rm -f $$file; \
-	for ext in lib pdb; do \
-	  file="$(DESTDIR)$(libdir)"/simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.$$ext; \
-	  test -f $$file && rm -f $$file && echo rm -f $$file; \
 	done
 
 # EOF **********************************************************************
