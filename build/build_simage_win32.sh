@@ -14,6 +14,12 @@
 # - make sure you've done cvs login to cvs.coin3d.org
 # - set the environment variables described below
 
+# ToDo:
+#
+# - Copy all license-related docs for all dependant libs 
+#   to the installation dir
+#
+
 # Beginning of environment variables the user should set
 
 # SIMAGE_SDK is the name of the directory where you want this script to
@@ -29,6 +35,38 @@ export SIMAGE_CONFIGURE=/cygdrive/c/temp/simage/configure
 export SIMAGE_INSTALL=/cygdrive/c/temp/simage/install
 
 # end of the environment variables the user should set
+
+
+if ! test -d $SIMAGE_CHECKOUT; then
+  echo "[SIMAGE]      Creating directory $SIMAGE_CHECKOUT"
+  mkdir $SIMAGE_CHECKOUT
+fi
+
+if ! test -d $SIMAGE_CHECKOUT; then
+  echo "[SIMAGE]      Couldn\'t create directory $SIMAGE_CHECKOUT. Aborting."
+  exit
+fi
+
+if ! test -d $SIMAGE_CONFIGURE; then
+  echo "[SIMAGE]      Creating directory $SIMAGE_CONFIGURE"
+  mkdir $SIMAGE_CONFIGURE
+fi
+
+if ! test -d $SIMAGE_CONFIGURE; then
+  echo "[SIMAGE]      Couldn\'t create directory $SIMAGE_CONFIGURE. Aborting."
+  exit
+fi
+
+if ! test -d $SIMAGE_INSTALL; then
+  echo "[SIMAGE]      Creating directory $SIMAGE_INSTALL"
+  mkdir $SIMAGE_INSTALL
+fi
+
+if ! test -d $SIMAGE_INSTALL; then
+  echo "[SIMAGE]      Couldn\'t create directory $SIMAGE_INSTALL. Aborting."
+  exit
+fi
+
 
 # Verify SDKs
 
@@ -59,29 +97,29 @@ if ! test -d $SIMAGE_SDK/libjpeg; then
   cd $SIMAGE_SDK/libjpeg/temp
   tar xf $SIMAGE_SDK/jpegsrc.v6b.tar
 
-  for SIMAGE_PREFIX in md mdd mt mtd; do
-    mkdir $SIMAGE_SDK/libjpeg/$SIMAGE_PREFIX
-    cp $SIMAGE_SDK/libjpeg/temp/jpeg-6b/* $SIMAGE_SDK/libjpeg/$SIMAGE_PREFIX
-    mkdir $SIMAGE_SDK/libjpeg/$SIMAGE_PREFIX/include
-    mkdir $SIMAGE_SDK/libjpeg/$SIMAGE_PREFIX/lib
+  for SIMAGE_CRT in md mdd mt mtd; do
+    mkdir $SIMAGE_SDK/libjpeg/$SIMAGE_CRT
+    cp $SIMAGE_SDK/libjpeg/temp/jpeg-6b/* $SIMAGE_SDK/libjpeg/$SIMAGE_CRT
+    mkdir $SIMAGE_SDK/libjpeg/$SIMAGE_CRT/include
+    mkdir $SIMAGE_SDK/libjpeg/$SIMAGE_CRT/lib
   done
 
   rm -R $SIMAGE_SDK/libjpeg/temp
   
   echo "[SIMAGE]         Modifying libjpeg configuration and make files"
-  for SIMAGE_PREFIX in md mdd mt mtd; do
-    cp $SIMAGE_SDK/libjpeg/$SIMAGE_PREFIX/jconfig.vc $SIMAGE_SDK/libjpeg/$SIMAGE_PREFIX/jconfig.h
-    cp $SIMAGE_SDK/libjpeg/$SIMAGE_PREFIX/*.h $SIMAGE_SDK/libjpeg/$SIMAGE_PREFIX/include
-    export SIMAGE_UPPERPREFIX=`echo $SIMAGE_PREFIX | tr [:lower:] [:upper:]` 
-    cat $SIMAGE_SDK/libjpeg/$SIMAGE_PREFIX/makefile.vc | sed -e "s/CFLAGS= /CFLAGS= -$SIMAGE_UPPERPREFIX /g" | sed -e 's/RM= del/RM= rm -f/g' > $SIMAGE_SDK/libjpeg/$SIMAGE_PREFIX/makefile.vc_$SIMAGE_PREFIX
+  for SIMAGE_CRT in md mdd mt mtd; do
+    cp $SIMAGE_SDK/libjpeg/$SIMAGE_CRT/jconfig.vc $SIMAGE_SDK/libjpeg/$SIMAGE_CRT/jconfig.h
+    cp $SIMAGE_SDK/libjpeg/$SIMAGE_CRT/*.h $SIMAGE_SDK/libjpeg/$SIMAGE_CRT/include
+    SIMAGE_UPPERPREFIX=`echo $SIMAGE_CRT | tr [:lower:] [:upper:]` 
+    cat $SIMAGE_SDK/libjpeg/$SIMAGE_CRT/makefile.vc | sed -e "s/CFLAGS= /CFLAGS= -$SIMAGE_UPPERPREFIX /g" | sed -e 's/RM= del/RM= rm -f/g' > $SIMAGE_SDK/libjpeg/$SIMAGE_CRT/makefile.vc_$SIMAGE_CRT
   done
 fi
 
 if ! test -e $SIMAGE_SDK/libjpeg/mt/lib/jpeg.lib; then
   echo "[SIMAGE]         Making libjpeg"
-  for SIMAGE_PREFIX in md mdd mt mtd; do
-    cd $SIMAGE_SDK/libjpeg/$SIMAGE_PREFIX
-    nmake -f makefile.vc_$SIMAGE_PREFIX
+  for SIMAGE_CRT in md mdd mt mtd; do
+    cd $SIMAGE_SDK/libjpeg/$SIMAGE_CRT
+    nmake -f makefile.vc_$SIMAGE_CRT
     cp libjpeg.lib lib/jpeg.lib
   done
 fi
@@ -113,28 +151,28 @@ if ! test -d $SIMAGE_SDK/zlib; then
   cd $SIMAGE_SDK/zlib/temp
   tar xf $SIMAGE_SDK/zlib-1.1.4.tar
 
-  for SIMAGE_PREFIX in md mdd mt mtd; do
-    mkdir $SIMAGE_SDK/zlib/$SIMAGE_PREFIX
-    cp -R $SIMAGE_SDK/zlib/temp/zlib-1.1.4/* $SIMAGE_SDK/zlib/$SIMAGE_PREFIX
-    mkdir $SIMAGE_SDK/zlib/$SIMAGE_PREFIX/include
-    mkdir $SIMAGE_SDK/zlib/$SIMAGE_PREFIX/lib
+  for SIMAGE_CRT in md mdd mt mtd; do
+    mkdir $SIMAGE_SDK/zlib/$SIMAGE_CRT
+    cp -R $SIMAGE_SDK/zlib/temp/zlib-1.1.4/* $SIMAGE_SDK/zlib/$SIMAGE_CRT
+    mkdir $SIMAGE_SDK/zlib/$SIMAGE_CRT/include
+    mkdir $SIMAGE_SDK/zlib/$SIMAGE_CRT/lib
   done
 
   rm -R $SIMAGE_SDK/zlib/temp
   
   echo "[SIMAGE]         Modifying zlib configuration and make files"
-  for SIMAGE_PREFIX in md mdd mt mtd; do
-    cp $SIMAGE_SDK/zlib/$SIMAGE_PREFIX/*.h $SIMAGE_SDK/zlib/$SIMAGE_PREFIX/include
-    export SIMAGE_UPPERPREFIX=`echo $SIMAGE_PREFIX | tr [:lower:] [:upper:]` 
-    cat $SIMAGE_SDK/zlib/$SIMAGE_PREFIX/msdos/Makefile.w32 | sed -e "s/CFLAGS=/CFLAGS= -$SIMAGE_UPPERPREFIX /g" > $SIMAGE_SDK/zlib/$SIMAGE_PREFIX/makefile.vc_$SIMAGE_PREFIX
+  for SIMAGE_CRT in md mdd mt mtd; do
+    cp $SIMAGE_SDK/zlib/$SIMAGE_CRT/*.h $SIMAGE_SDK/zlib/$SIMAGE_CRT/include
+    SIMAGE_UPPERPREFIX=`echo $SIMAGE_CRT | tr [:lower:] [:upper:]` 
+    cat $SIMAGE_SDK/zlib/$SIMAGE_CRT/msdos/Makefile.w32 | sed -e "s/CFLAGS=/CFLAGS= -$SIMAGE_UPPERPREFIX /g" > $SIMAGE_SDK/zlib/$SIMAGE_CRT/makefile.vc_$SIMAGE_CRT
   done
 fi
 
 if ! test -e $SIMAGE_SDK/zlib/mt/lib/zlib.lib; then
   echo "[SIMAGE]         Making zlib"
-  for SIMAGE_PREFIX in md mdd mt mtd; do
-    cd $SIMAGE_SDK/zlib/$SIMAGE_PREFIX
-    nmake -f makefile.vc_$SIMAGE_PREFIX
+  for SIMAGE_CRT in md mdd mt mtd; do
+    cd $SIMAGE_SDK/zlib/$SIMAGE_CRT
+    nmake -f makefile.vc_$SIMAGE_CRT
     cp zlib.lib lib/zlib.lib
   done
 fi
@@ -167,28 +205,28 @@ if ! test -d $SIMAGE_SDK/libpng; then
   cd $SIMAGE_SDK/libpng/temp
   tar xf $SIMAGE_SDK/libpng-1.2.5.tar
 
-  for SIMAGE_PREFIX in md mdd mt mtd; do
-    mkdir $SIMAGE_SDK/libpng/$SIMAGE_PREFIX
-    cp -R $SIMAGE_SDK/libpng/temp/libpng-1.2.5/* $SIMAGE_SDK/libpng/$SIMAGE_PREFIX
-    mkdir $SIMAGE_SDK/libpng/$SIMAGE_PREFIX/include
-    mkdir $SIMAGE_SDK/libpng/$SIMAGE_PREFIX/lib
+  for SIMAGE_CRT in md mdd mt mtd; do
+    mkdir $SIMAGE_SDK/libpng/$SIMAGE_CRT
+    cp -R $SIMAGE_SDK/libpng/temp/libpng-1.2.5/* $SIMAGE_SDK/libpng/$SIMAGE_CRT
+    mkdir $SIMAGE_SDK/libpng/$SIMAGE_CRT/include
+    mkdir $SIMAGE_SDK/libpng/$SIMAGE_CRT/lib
   done
 
   rm -R $SIMAGE_SDK/libpng/temp
   
   echo "[SIMAGE]         Modifying libpng configuration and make files"
-  for SIMAGE_PREFIX in md mdd mt mtd; do
-    cp $SIMAGE_SDK/libpng/$SIMAGE_PREFIX/*.h $SIMAGE_SDK/libpng/$SIMAGE_PREFIX/include
-    export SIMAGE_UPPERPREFIX=`echo $SIMAGE_PREFIX | tr [:lower:] [:upper:]` 
-    cat $SIMAGE_SDK/libpng/$SIMAGE_PREFIX/scripts/makefile.vcwin32 | sed -e "s/CFLAGS= /CFLAGS= -$SIMAGE_UPPERPREFIX /g" | sed -e "s/-I\\.\\.\\\\zlib/-I\\.\\.\\\\\\.\\.\\\\zlib\\\\$SIMAGE_PREFIX/g" > $SIMAGE_SDK/libpng/$SIMAGE_PREFIX/makefile.vc_$SIMAGE_PREFIX
+  for SIMAGE_CRT in md mdd mt mtd; do
+    cp $SIMAGE_SDK/libpng/$SIMAGE_CRT/*.h $SIMAGE_SDK/libpng/$SIMAGE_CRT/include
+    SIMAGE_UPPERPREFIX=`echo $SIMAGE_CRT | tr [:lower:] [:upper:]` 
+    cat $SIMAGE_SDK/libpng/$SIMAGE_CRT/scripts/makefile.vcwin32 | sed -e "s/CFLAGS= /CFLAGS= -$SIMAGE_UPPERPREFIX /g" | sed -e "s/-I\\.\\.\\\\zlib/-I\\.\\.\\\\\\.\\.\\\\zlib\\\\$SIMAGE_CRT/g" > $SIMAGE_SDK/libpng/$SIMAGE_CRT/makefile.vc_$SIMAGE_CRT
   done
 fi
 
 if ! test -e $SIMAGE_SDK/libpng/mt/lib/png.lib; then
   echo "[SIMAGE]         Making libpng"
-  for SIMAGE_PREFIX in md mdd mt mtd; do
-    cd $SIMAGE_SDK/libpng/$SIMAGE_PREFIX
-    nmake -f makefile.vc_$SIMAGE_PREFIX
+  for SIMAGE_CRT in md mdd mt mtd; do
+    cd $SIMAGE_SDK/libpng/$SIMAGE_CRT
+    nmake -f makefile.vc_$SIMAGE_CRT
     cp libpng.lib lib/png.lib
   done
 fi
@@ -221,31 +259,31 @@ if ! test -d $SIMAGE_SDK/libtiff; then
   cd $SIMAGE_SDK/libtiff/temp
   tar xf $SIMAGE_SDK/tiff-v3.5.7.tar
 
-  for SIMAGE_PREFIX in md mdd mt mtd; do
-    mkdir $SIMAGE_SDK/libtiff/$SIMAGE_PREFIX
-    cp -R $SIMAGE_SDK/libtiff/temp/tiff-v3.5.7./libtiff/* $SIMAGE_SDK/libtiff/$SIMAGE_PREFIX
+  for SIMAGE_CRT in md mdd mt mtd; do
+    mkdir $SIMAGE_SDK/libtiff/$SIMAGE_CRT
+    cp -R $SIMAGE_SDK/libtiff/temp/tiff-v3.5.7./libtiff/* $SIMAGE_SDK/libtiff/$SIMAGE_CRT
     cp $SIMAGE_SDK/libtiff/temp/tiff-v3.5.7/VERSION $SIMAGE_SDK/libtiff
     cp $SIMAGE_SDK/libtiff/temp/tiff-v3.5.7/RELEASE-DATE $SIMAGE_SDK/libtiff
     cp -R $SIMAGE_SDK/libtiff/temp/tiff-v3.5.7/dist $SIMAGE_SDK/libtiff
-    mkdir $SIMAGE_SDK/libtiff/$SIMAGE_PREFIX/include
-    mkdir $SIMAGE_SDK/libtiff/$SIMAGE_PREFIX/lib
+    mkdir $SIMAGE_SDK/libtiff/$SIMAGE_CRT/include
+    mkdir $SIMAGE_SDK/libtiff/$SIMAGE_CRT/lib
   done
 
   rm -R $SIMAGE_SDK/libtiff/temp
   
   echo "[SIMAGE]         Modifying libtiff configuration and make files"
-  for SIMAGE_PREFIX in md mdd mt mtd; do
-    cp $SIMAGE_SDK/libtiff/$SIMAGE_PREFIX/*.h $SIMAGE_SDK/libtiff/$SIMAGE_PREFIX/include
-    export SIMAGE_UPPERPREFIX=`echo $SIMAGE_PREFIX | tr [:lower:] [:upper:]` 
-    cat $SIMAGE_SDK/libtiff/$SIMAGE_PREFIX/makefile.vc | sed -e "s/CFLAGS  = /CFLAGS  = -$SIMAGE_UPPERPREFIX /g" > $SIMAGE_SDK/libtiff/$SIMAGE_PREFIX/makefile.vc_$SIMAGE_PREFIX
+  for SIMAGE_CRT in md mdd mt mtd; do
+    cp $SIMAGE_SDK/libtiff/$SIMAGE_CRT/*.h $SIMAGE_SDK/libtiff/$SIMAGE_CRT/include
+    SIMAGE_UPPERPREFIX=`echo $SIMAGE_CRT | tr [:lower:] [:upper:]` 
+    cat $SIMAGE_SDK/libtiff/$SIMAGE_CRT/makefile.vc | sed -e "s/CFLAGS  = /CFLAGS  = -$SIMAGE_UPPERPREFIX /g" > $SIMAGE_SDK/libtiff/$SIMAGE_CRT/makefile.vc_$SIMAGE_CRT
   done
 fi
 
 if ! test -e $SIMAGE_SDK/libtiff/mt/lib/tiff.lib; then
   echo "[SIMAGE]         Making libtiff"
-  for SIMAGE_PREFIX in md mdd mt mtd; do
-    cd $SIMAGE_SDK/libtiff/$SIMAGE_PREFIX
-    nmake -f makefile.vc_$SIMAGE_PREFIX
+  for SIMAGE_CRT in md mdd mt mtd; do
+    cd $SIMAGE_SDK/libtiff/$SIMAGE_CRT
+    nmake -f makefile.vc_$SIMAGE_CRT
     cp libtiff.lib lib/tiff.lib
   done
 fi
@@ -278,10 +316,10 @@ if ! test -d $SIMAGE_SDK/libogg; then
   cd $SIMAGE_SDK/libogg/temp
   tar xf $SIMAGE_SDK/libogg-1.0.tar
 
-  for SIMAGE_PREFIX in md mdd mt mtd; do
-    mkdir $SIMAGE_SDK/libogg/$SIMAGE_PREFIX
-    mkdir $SIMAGE_SDK/libogg/$SIMAGE_PREFIX/lib
-    cp -R $SIMAGE_SDK/libogg/temp/libogg-1.0/* $SIMAGE_SDK/libogg/$SIMAGE_PREFIX
+  for SIMAGE_CRT in md mdd mt mtd; do
+    mkdir $SIMAGE_SDK/libogg/$SIMAGE_CRT
+    mkdir $SIMAGE_SDK/libogg/$SIMAGE_CRT/lib
+    cp -R $SIMAGE_SDK/libogg/temp/libogg-1.0/* $SIMAGE_SDK/libogg/$SIMAGE_CRT
   done
 
   rm -R $SIMAGE_SDK/libogg/temp
@@ -298,19 +336,19 @@ if ! test -d $SIMAGE_SDK/libogg; then
 
 fi
 
-if ! test -e $SIMAGE_SDK/libogg/mt/lib/ogg.lib; then
+if ! test -e $SIMAGE_SDK/libogg/mt/win32/ogg.lib; then
   echo "[SIMAGE]         Making libogg"
-  for SIMAGE_PREFIX in md mdd mt mtd; do
-    cd $SIMAGE_SDK/libogg/$SIMAGE_PREFIX/win32
+  for SIMAGE_CRT in md mdd mt mtd; do
+    cd $SIMAGE_SDK/libogg/$SIMAGE_CRT/win32
     SIMAGE_OLDINCLUDE=$INCLUDE
-    export INCLUDE=$INCLUDE\;$SIMAGE_SDK/libogg/$SIMAGE_PREFIX/include
-    cmd /C msdev ogg_static_$SIMAGE_PREFIX.dsp /useenv /make "ogg_static - Win32 Simage" /rebuild
-    cp ogg.lib $SIMAGE_SDK/libogg/$SIMAGE_PREFIX/lib
+    SIMAGE_TEMP1=`cygpath -w $SIMAGE_SDK/libogg/$SIMAGE_CRT/include`
+    INCLUDE=$INCLUDE\;$SIMAGE_TEMP1
+    cmd /C msdev ogg_static_$SIMAGE_CRT.dsp /useenv /make "ogg_static - Win32 Simage" /rebuild
     INCLUDE=$SIMAGE_OLDINCLUDE
   done
 fi
 
-if ! test -e $SIMAGE_SDK/libogg/mt/lib/ogg.lib; then
+if ! test -e $SIMAGE_SDK/libogg/mt/win32/ogg.lib; then
   echo "[SIMAGE]         Failed to make libogg. Aborting."
   exit;
 fi
@@ -322,95 +360,182 @@ echo "[SIMAGE]      ogg verified OK"
 
 echo "[SIMAGE]      Verifying libvorbis..."
 
-*****
-
-if ! test -e $SIMAGE_SDK/libogg-1.0.tar; then
-  if ! test -e $SIMAGE_SDK/libogg-1.0.tar.gz; then
-    echo "[SIMAGE]         Downloading libogg"
-    wget --directory-prefix=$SIMAGE_SDK http://www.xiph.org/ogg/vorbis/download/libogg-1.0.tar.gz
+if ! test -e $SIMAGE_SDK/libvorbis-1.0.tar; then
+  if ! test -e $SIMAGE_SDK/libvorbis-1.0.tar.gz; then
+    echo "[SIMAGE]         Downloading libvorbis"
+    wget --directory-prefix=$SIMAGE_SDK http://www.xiph.org/ogg/vorbis/download/libvorbis-1.0.tar.gz
   fi
-  echo "[SIMAGE]         gunzip'ing libogg"
-  gunzip $SIMAGE_SDK/libogg-1.0.tar.gz
+  echo "[SIMAGE]         gunzip'ing libvorbis"
+  gunzip $SIMAGE_SDK/libvorbis-1.0.tar.gz
 fi
 
-if ! test -d $SIMAGE_SDK/libogg; then
-  echo "[SIMAGE]         Extracting libogg"
-  mkdir $SIMAGE_SDK/libogg
-  mkdir $SIMAGE_SDK/libogg/temp
-  cd $SIMAGE_SDK/libogg/temp
-  tar xf $SIMAGE_SDK/libogg-1.0.tar
+if ! test -d $SIMAGE_SDK/libvorbis; then
+  echo "[SIMAGE]         Extracting libvorbis"
+  mkdir $SIMAGE_SDK/libvorbis
+  mkdir $SIMAGE_SDK/libvorbis/temp
+  cd $SIMAGE_SDK/libvorbis/temp
+  tar xf $SIMAGE_SDK/libvorbis-1.0.tar
 
-  for SIMAGE_PREFIX in md mdd mt mtd; do
-    mkdir $SIMAGE_SDK/libogg/$SIMAGE_PREFIX
-    mkdir $SIMAGE_SDK/libogg/$SIMAGE_PREFIX/lib
-    cp -R $SIMAGE_SDK/libogg/temp/libogg-1.0/* $SIMAGE_SDK/libogg/$SIMAGE_PREFIX
+  for SIMAGE_CRT in md mdd mt mtd; do
+    mkdir $SIMAGE_SDK/libvorbis/$SIMAGE_CRT
+    mkdir $SIMAGE_SDK/libvorbis/$SIMAGE_CRT/lib
+    cp -R $SIMAGE_SDK/libvorbis/temp/libvorbis-1.0/* $SIMAGE_SDK/libvorbis/$SIMAGE_CRT
   done
 
-  rm -R $SIMAGE_SDK/libogg/temp
+  # rm -R $SIMAGE_SDK/libvorbis/temp
   
-  echo "[SIMAGE]         Modifying libogg configuration and make files"
+  echo "[SIMAGE]         Modifying libvorbis configuration and make files"
   # unix2dos conversion (\n -> \r\n)
   echo -e "s/\$/\r/;\np;" >unix2dos.sed
 
-  cat $SIMAGE_SDK/libogg/md/win32/ogg_static.dsp | sed -e "s/\/MT/\/MD/g" | sed -e "s/ADD LIB32 \/nologo\$/ADD LIB32 \/nologo \/out:ogg.lib/g" | sed -e "s/ogg_static \- Win32 Release/ogg_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libogg/md/win32/ogg_static_md.dsp
-  cat $SIMAGE_SDK/libogg/mdd/win32/ogg_static.dsp | sed -e "s/Static_Debug\\\\ogg_static_d\.lib/ogg\.lib/g" | sed -e "s/ogg_static - Win32 Debug/ogg_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libogg/mdd/win32/ogg_static_mdd.dsp
+  cat $SIMAGE_SDK/libvorbis/md/win32/vorbis_static.dsp | sed -e "s/\/MT/\/MD/g" | sed -e "s/ADD LIB32 \/nologo\$/ADD LIB32 \/nologo \/out:vorbis.lib/g" | sed -e "s/vorbis_static \- Win32 Release/vorbis_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libvorbis/md/win32/vorbis_static_md.dsp
+  cat $SIMAGE_SDK/libvorbis/mdd/win32/vorbis_static.dsp | sed -e "s/Vorbis_Static_Debug\\\\vorbis_static_d\.lib/vorbis\.lib/g" | sed -e "s/vorbis_static - Win32 Debug/vorbis_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libvorbis/mdd/win32/vorbis_static_mdd.dsp
 
-  cat $SIMAGE_SDK/libogg/mt/win32/ogg_static.dsp | sed -e "s/ADD LIB32 \/nologo\$/ADD LIB32 \/nologo \/out:ogg.lib/g" | sed -e "s/ogg_static - Win32 Release/ogg_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libogg/mt/win32/ogg_static_mt.dsp
-  cat $SIMAGE_SDK/libogg/mtd/win32/ogg_static.dsp | sed -e "s/\/MDd/MTD/g" | sed -e "s/Static_Debug\\\\ogg_static_d\.lib/ogg.lib/g" | sed -e "s/ogg_static - Win32 Debug/ogg_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libogg/mtd/win32/ogg_static_mtd.dsp
+  cat $SIMAGE_SDK/libvorbis/mt/win32/vorbis_static.dsp | sed -e "s/ADD LIB32 \/nologo\$/ADD LIB32 \/nologo \/out:vorbis.lib/g" | sed -e "s/vorbis_static - Win32 Release/vorbis_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libvorbis/mt/win32/vorbis_static_mt.dsp
+  cat $SIMAGE_SDK/libvorbis/mtd/win32/vorbis_static.dsp | sed -e "s/\/MDd/MTD/g" | sed -e "s/Vorbis_Static_Debug\\\\vorbis_static_d\.lib/vorbis.lib/g" | sed -e "s/vorbis_static - Win32 Debug/vorbis_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libvorbis/mtd/win32/vorbis_static_mtd.dsp
 
 fi
 
-if ! test -e $SIMAGE_SDK/libogg/mt/lib/ogg.lib; then
-  echo "[SIMAGE]         Making libogg"
-  for SIMAGE_PREFIX in md mdd mt mtd; do
-    cd $SIMAGE_SDK/libogg/$SIMAGE_PREFIX/win32
+if ! test -e $SIMAGE_SDK/libvorbis/mt/win32/vorbis.lib; then
+  echo "[SIMAGE]         Making libvorbis"
+  for SIMAGE_CRT in md mdd mt mtd; do
+    cd $SIMAGE_SDK/libvorbis/$SIMAGE_CRT/win32
     SIMAGE_OLDINCLUDE=$INCLUDE
-    export INCLUDE=$INCLUDE\;$SIMAGE_SDK/libogg/$SIMAGE_PREFIX/include
-    cmd /C msdev ogg_static_$SIMAGE_PREFIX.dsp /useenv /make "ogg_static - Win32 Simage" /rebuild
-    cp ogg.lib $SIMAGE_SDK/libogg/$SIMAGE_PREFIX/lib
+    SIMAGE_TEMP1=`cygpath -w $SIMAGE_SDK/libogg/$SIMAGE_CRT/include`
+    SIMAGE_TEMP2=`cygpath -w $SIMAGE_SDK/libvorbis/$SIMAGE_CRT/include`
+    INCLUDE=$INCLUDE\;$SIMAGE_TEMP1\;$SIMAGE_TEMP2
+    cmd /C echo %INCLUDE%
+    cmd /C msdev vorbis_static_$SIMAGE_CRT.dsp /useenv /make "vorbis_static - Win32 Simage" /rebuild
     INCLUDE=$SIMAGE_OLDINCLUDE
   done
 fi
 
-if ! test -e $SIMAGE_SDK/libogg/mt/lib/ogg.lib; then
-  echo "[SIMAGE]         Failed to make libogg. Aborting."
+if ! test -e $SIMAGE_SDK/libvorbis/mt/win32/vorbis.lib; then
+  echo "[SIMAGE]         Failed to make libvorbis. Aborting."
   exit;
 fi
 
-echo "[SIMAGE]      ogg verified OK"
+echo "[SIMAGE]      libvorbis verified OK"
+
+############# vorbisfile
+# http://www.xiph.org/ogg/vorbis/
+
+echo "[SIMAGE]      Verifying libvorbisfile..."
+
+# libvorbisfile is part of libvorbis
+
+if ! test -e $SIMAGE_SDK/libvorbis/mt/win32/vorbisfile_static_mt.dsp; then
+  echo "[SIMAGE]         Modifying libvorbisfile configuration and make files"
+  # unix2dos conversion (\n -> \r\n)
+  echo -e "s/\$/\r/;\np;" >unix2dos.sed
+
+  cat $SIMAGE_SDK/libvorbis/md/win32/vorbisfile_static.dsp | sed -e "s/\/MT/\/MD/g" | sed -e "s/ADD LIB32 \/nologo\$/ADD LIB32 \/nologo \/out:vorbisfile.lib/g" | sed -e "s/vorbisfile_static \- Win32 Release/vorbisfile_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libvorbis/md/win32/vorbisfile_static_md.dsp
+  cat $SIMAGE_SDK/libvorbis/mdd/win32/vorbisfile_static.dsp | sed -e "s/VorbisFile_Static_Debug\\\\vorbisfile_static_d\.lib/vorbisfile\.lib/g" | sed -e "s/vorbisfile_static - Win32 Debug/vorbisfile_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libvorbis/mdd/win32/vorbisfile_static_mdd.dsp
+
+  cat $SIMAGE_SDK/libvorbis/mt/win32/vorbisfile_static.dsp | sed -e "s/ADD LIB32 \/nologo\$/ADD LIB32 \/nologo \/out:vorbisfile.lib/g" | sed -e "s/vorbisfile_static - Win32 Release/vorbisfile_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libvorbis/mt/win32/vorbisfile_static_mt.dsp
+  cat $SIMAGE_SDK/libvorbis/mtd/win32/vorbisfile_static.dsp | sed -e "s/\/MDd/MTD/g" | sed -e "s/VorbisFile_Static_Debug\\\\vorbisfile_static_d\.lib/vorbisfile.lib/g" | sed -e "s/vorbisfile_static - Win32 Debug/vorbisfile_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libvorbis/mtd/win32/vorbisfile_static_mtd.dsp
+
+fi
+
+if ! test -e $SIMAGE_SDK/libvorbis/mt/win32/vorbisfile.lib; then
+  echo "[SIMAGE]         Making libvorbisfile"
+  for SIMAGE_CRT in md mdd mt mtd; do
+    cd $SIMAGE_SDK/libvorbis/$SIMAGE_CRT/win32
+    SIMAGE_OLDINCLUDE=$INCLUDE
+    SIMAGE_TEMP1=`cygpath -w $SIMAGE_SDK/libogg/$SIMAGE_CRT/include`
+    SIMAGE_TEMP2=`cygpath -w $SIMAGE_SDK/libvorbis/$SIMAGE_CRT/include`
+    INCLUDE=$INCLUDE\;$SIMAGE_TEMP1\;$SIMAGE_TEMP2
+    cmd /C echo %INCLUDE%
+    cmd /C msdev vorbisfile_static_$SIMAGE_CRT.dsp /useenv /make "vorbisfile_static - Win32 Simage" /rebuild
+    INCLUDE=$SIMAGE_OLDINCLUDE
+  done
+fi
+
+if ! test -e $SIMAGE_SDK/libvorbis/mt/win32/vorbisfile.lib; then
+  echo "[SIMAGE]         Failed to make libvorbisfile. Aborting."
+  exit;
+fi
+
+echo "[SIMAGE]      libvorbisfile verified OK"
+
+
+########### oggvorbis = ogg + vorbis + vorbisfile
+
+if ! test -d $SIMAGE_SDK/oggvorbis; then
+  echo "[SIMAGE]      Creating and populating oggvorbis directory structure"
+  mkdir $SIMAGE_SDK/oggvorbis
+  for SIMAGE_CRT in md mdd mt mtd; do
+    mkdir $SIMAGE_SDK/oggvorbis/$SIMAGE_CRT
+    mkdir $SIMAGE_SDK/oggvorbis/$SIMAGE_CRT/include
+    mkdir $SIMAGE_SDK/oggvorbis/$SIMAGE_CRT/lib
+    cp -R $SIMAGE_SDK/libogg/$SIMAGE_CRT/include/ogg $SIMAGE_SDK/oggvorbis/$SIMAGE_CRT/include
+    cp -R $SIMAGE_SDK/libvorbis/$SIMAGE_CRT/include/vorbis $SIMAGE_SDK/oggvorbis/$SIMAGE_CRT/include
+    cp -R $SIMAGE_SDK/libogg/$SIMAGE_CRT/win32/ogg.lib $SIMAGE_SDK/oggvorbis/$SIMAGE_CRT/lib
+    cp -R $SIMAGE_SDK/libvorbis/$SIMAGE_CRT/win32/vorbis.lib $SIMAGE_SDK/oggvorbis/$SIMAGE_CRT/lib
+    cp -R $SIMAGE_SDK/libvorbis/$SIMAGE_CRT/win32/vorbisfile.lib $SIMAGE_SDK/oggvorbis/$SIMAGE_CRT/lib
+  done
+fi
+
+echo "[SIMAGE]      oggvorbis verified OK"
+
+############# libsndfile
+# http://www.zip.com.au/~erikd/libsndfile/
+
+echo "[SIMAGE]      Verifying libsndfile..."
+
+if ! test -e $SIMAGE_SDK/libsndfile-1.0.5.tar; then
+  if ! test -e $SIMAGE_SDK/libsndfile-1.0.5.tar.gz; then
+    echo "[SIMAGE]         Downloading libsndfile"
+    wget --directory-prefix=$SIMAGE_SDK http://www.zip.com.au/~erikd/libsndfile/libsndfile-1.0.5.tar.gz
+  fi
+  echo "[SIMAGE]         gunzip'ing libsndfile"
+  gunzip $SIMAGE_SDK/libsndfile-1.0.5.tar.gz
+fi
+
+if ! test -d $SIMAGE_SDK/libsndfile; then
+  echo "[SIMAGE]         Extracting libsndfile"
+  mkdir $SIMAGE_SDK/libsndfile
+  mkdir $SIMAGE_SDK/libsndfile/temp
+  cd $SIMAGE_SDK/libsndfile/temp
+  tar xf $SIMAGE_SDK/libsndfile-1.0.5.tar
+
+  for SIMAGE_CRT in md mdd mt mtd; do
+    mkdir $SIMAGE_SDK/libsndfile/$SIMAGE_CRT
+    cp -R $SIMAGE_SDK/libsndfile/temp/libsndfile-1.0.5/* $SIMAGE_SDK/libsndfile/$SIMAGE_CRT
+  done
+
+  rm -R $SIMAGE_SDK/libsndfile/temp
+  
+  echo "[SIMAGE]         Modifying libsndfile configuration and make files"
+  for SIMAGE_CRT in md mdd mt mtd; do
+    cp $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/sndfile.h $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/src
+    SIMAGE_UPPERPREFIX=`echo $SIMAGE_CRT | tr [:lower:] [:upper:]` 
+    SIMAGE_TEMP1=`which cl | sed -e "s/\/bin\/cl$//g" | sed "s/ /\\\\\\ /g"`
+    SIMAGE_MSVCDIR=`cygpath -w "$SIMAGE_TEMP1"`
+    cat $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/Makefile.msvc | sed -e "s/MSVCDir=.*/MSVCDir=$SIMAGE_MSVCDIR/g" | sed -e "s/\/MD/\/$SIMAGE_UPPERPREFIX/g" > $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/Makefile.msvc_$SIMAGE_CRT
+  done
+fi
+
+if ! test -e $SIMAGE_SDK/libsndfile/mt/libsndfile.lib; then
+  echo "[SIMAGE]         Making libsndfile"
+  for SIMAGE_CRT in md mdd mt mtd; do
+    cd $SIMAGE_SDK/libsndfile/$SIMAGE_CRT
+    nmake -f Win32/Makefile.msvc_$SIMAGE_CRT
+  done
+fi
+
+if ! test -e $SIMAGE_SDK/libsndfile/mt/libsndfile.lib; then
+  echo "[SIMAGE]         Failed to make libsndfile. Aborting."
+  exit;
+fi
+
+cp $SIMAGE_SDK/libsndfile/mt/libsndfile.dll $SIMAGE_INSTALL/bin
+
+echo "[SIMAGE]      libsndfile verified OK"
+
 
 
 # cvs update simage
-
-if ! test -d $SIMAGE_CHECKOUT; then
-  echo "[SIMAGE]      Creating directory $SIMAGE_CHECKOUT"
-  mkdir $SIMAGE_CHECKOUT
-fi
-
-if ! test -d $SIMAGE_CHECKOUT; then
-  echo "[SIMAGE]      Couldn\'t create directory $SIMAGE_CHECKOUT. Aborting."
-  exit
-fi
-
-if ! test -d $SIMAGE_CONFIGURE; then
-  echo "[SIMAGE]      Creating directory $SIMAGE_CONFIGURE"
-  mkdir $SIMAGE_CONFIGURE
-fi
-
-if ! test -d $SIMAGE_CONFIGURE; then
-  echo "[SIMAGE]      Couldn\'t create directory $SIMAGE_CONFIGURE. Aborting."
-  exit
-fi
-
-if ! test -d $SIMAGE_INSTALL; then
-  echo "[SIMAGE]      Creating directory $SIMAGE_INSTALL"
-  mkdir $SIMAGE_INSTALL
-fi
-
-if ! test -d $SIMAGE_INSTALL; then
-  echo "[SIMAGE]      Couldn\'t create directory $SIMAGE_INSTALL. Aborting."
-  exit
-fi
 
 if ! test "X$1" = "Xnu"; then
 
@@ -432,41 +557,63 @@ if ! test "X$2" = "Xnr"; then
 
 echo "[SIMAGE]      Configuring simage"
 
-for SIMAGE_PREFIX in md mdd mt mtd; do
+for SIMAGE_SOUND in yes no; do
+
+  if test "X$SIMAGE_SOUND" = "Xyes"; then
+    SIMAGE_SOUND_DIRNAME="with_sound"
+    SIMAGE_SOUND_NAME="s_"
+  else
+    SIMAGE_SOUND_DIRNAME="without_sound"
+    SIMAGE_SOUND_NAME=""
+  fi
 
   if ! test -d $SIMAGE_CONFIGURE/simage; then
     echo "[SIMAGE]         Creating directory $SIMAGE_CONFIGURE/simage"
     mkdir $SIMAGE_CONFIGURE/simage
   fi
 
-  if ! test -d $SIMAGE_CONFIGURE/simage/$SIMAGE_PREFIX; then
-    echo "[SIMAGE]         Creating directory $SIMAGE_CONFIGURE/simage/$SIMAGE_PREFIX"
-    mkdir $SIMAGE_CONFIGURE/simage/$SIMAGE_PREFIX
+  if ! test -d $SIMAGE_CONFIGURE/simage/$SIMAGE_SOUND_DIRNAME; then
+    echo "[SIMAGE]         Creating directory $SIMAGE_CONFIGURE/simage/$SIMAGE_SOUND_DIRNAME"
+    mkdir $SIMAGE_CONFIGURE/simage/$SIMAGE_SOUND_DIRNAME
   fi
 
-  cd $SIMAGE_CONFIGURE/simage/$SIMAGE_PREFIX
+  for SIMAGE_CRT in md mdd mt mtd; do
 
-  if test -e "config.status"; then
-    echo "[SIMAGE]         Rechecking existing configuration in simage/$SIMAGE_PREFIX"
-    ./config.status --recheck && ./config.status
-  else
-    echo "[SIMAGE]         Configuring from scratch in simage/$SIMAGE_PREFIX"
-
-    SIMAGE_EXTRAFLAGS=""
-    if test "X$SIMAGE_PREFIX" = "Xmd"; then
-      SIMAGE_EXTRAFLAGS="--disable-debug --disable-symbols"
-    elif test "X$SIMAGE_PREFIX" = "Xmt"; then
-      SIMAGE_EXTRAFLAGS="--disable-debug --disable-symbols"
+    if ! test -d $SIMAGE_CONFIGURE/simage/$SIMAGE_SOUND_DIRNAME/$SIMAGE_CRT; then
+      echo "[SIMAGE]         Creating directory $SIMAGE_CONFIGURE/simage/$SIMAGE_SOUND_DIRNAME/$SIMAGE_CRT"
+      mkdir $SIMAGE_CONFIGURE/simage/$SIMAGE_SOUND_DIRNAME/$SIMAGE_CRT
     fi
 
-    $SIMAGE_CHECKOUT/simage/configure --with-jpeg=$SIMAGE_SDK/libjpeg/$SIMAGE_PREFIX --with-zlib=$SIMAGE_SDK/zlib/$SIMAGE_PREFIX --with-png=$SIMAGE_SDK/libpng/$SIMAGE_PREFIX --with-tiff=$SIMAGE_SDK/libtiff/$SIMAGE_PREFIX --with-pic --with-rgb --with-targa --with-avienc --enable-dependency-tracking --with-msvcrt=$SIMAGE_PREFIX --with-suffix=_$SIMAGE_PREFIX --with-alternate=$SIMAGE_PREFIX --prefix=$SIMAGE_INSTALL --enable-static $SIMAGE_EXTRAFLAGS
+    cd $SIMAGE_CONFIGURE/simage/$SIMAGE_SOUND_DIRNAME/$SIMAGE_CRT
+
+  if test -e "config.status"; then
+    echo "[SIMAGE]         Rechecking existing configuration in simage/$SIMAGE_SOUND_DIRNAME/$SIMAGE_CRT"
+    ./config.status --recheck && ./config.status
+  else
+    echo "[SIMAGE]         Configuring from scratch in simage/$SIMAGE_SOUND_DIRNAME/$SIMAGE_CRT"
+
+    SIMAGE_EXTRAFLAGS1=""
+    if test "X$SIMAGE_CRT" = "Xmd"; then
+      SIMAGE_EXTRAFLAGS1="--disable-debug --disable-symbols"
+    elif test "X$SIMAGE_CRT" = "Xmt"; then
+      SIMAGE_EXTRAFLAGS1="--disable-debug --disable-symbols"
+    fi
+
+    SIMAGE_EXTRAFLAGS2=""
+    if test "X$SIMAGE_SOUND" = "Xyes"; then
+      SIMAGE_EXTRAFLAGS2="--with-oggvorbis=$SIMAGE_SDK/oggvorbis/$SIMAGE_CRT/ --with-libsndfile=$SIMAGE_SDK/libsndfile/$SIMAGE_CRT"
+    fi
+
+    $SIMAGE_CHECKOUT/simage/configure --with-jpeg=$SIMAGE_SDK/libjpeg/$SIMAGE_CRT --with-zlib=$SIMAGE_SDK/zlib/$SIMAGE_CRT --with-png=$SIMAGE_SDK/libpng/$SIMAGE_CRT --with-tiff=$SIMAGE_SDK/libtiff/$SIMAGE_CRT --with-pic --with-rgb --with-targa --with-avienc --enable-dependency-tracking --with-msvcrt=$SIMAGE_CRT --with-suffix=_$SIMAGE_SOUND_NAME$SIMAGE_CRT --with-alternate=$SIMAGE_SOUND_NAME$SIMAGE_CRT --prefix=$SIMAGE_INSTALL --enable-static $SIMAGE_EXTRAFLAGS1 $SIMAGE_EXTRAFLAGS2
 
   fi
 
-  echo "[SIMAGE]         Making install in simage/$SIMAGE_PREFIX"
+  echo "[SIMAGE]         Making install in simage/$SIMAGE_CRT"
   make install
 
-done
+done # for SIMAGE_CRT
+
+done # for SIMAGE_SOUND
 
 fi # make simage
 
