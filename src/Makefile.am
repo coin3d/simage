@@ -1,11 +1,6 @@
-## Process this file with automake to generate Makefile.in. 19990822 mortene.
+# **************************************************************************
 
-lib_LTLIBRARIES = libsimage.la
-
-INCLUDES = -I$(top_srcdir)/include/ -I$(top_builddir)/include/
-
-## All source files used when building the libraries, including all
-## headers.
+INCLUDES = -I$(top_srcdir)/include -I$(top_builddir)/include
 
 if SIMAGE_JPEG_SUPPORT
 JPEGSOURCES = simage_jpeg.c simage_jpeg.h
@@ -31,97 +26,94 @@ else
 PNGSOURCES =
 endif
 
-if TGA_SUPPORT
+if SIMAGE_TGA_SUPPORT
 TGASOURCES = simage_tga.c simage_tga.h
 else
 TGASOURCES =
 endif
 
-if RGB_SUPPORT
+if SIMAGE_RGB_SUPPORT
 RGBSOURCES = simage_rgb.c simage_rgb.h
 else
 RGBSOURCES =
 endif
 
-if PIC_SUPPORT
+if SIMAGE_PIC_SUPPORT
 PICSOURCES = simage_pic.c simage_pic.h
 else
 PICSOURCES =
 endif
 
-libsimage_la_SOURCES = \
-	simage.c simage.h \
-	$(JPEGSOURCES) $(UNGIFSOURCES) $(PNGSOURCES) $(TIFFSOURCES) \
-	$(TGASOURCES) $(RGBSOURCES) $(PICSOURCES)
+DLLNAME = simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@
 
-# all the conditionally compiled source files must be added here...
-EXTRA_libsimage_la_SOURCES = \
-	simage_jpeg.c simage_jpeg.h \
-	simage_gif.c simage_gif.h \
-	simage_tiff.c simage_tiff.h \
-	simage_png.c simage_png.h \
-	simage_tga.c simage_tga.h \
-	simage_rgb.c simage_rgb.h \
-	simage_pic.c simage_pic.h
-
-## Installation information.
-
-libsimageincdir = $(includedir)
+lib_LTLIBRARIES = libsimage.la
 
 libsimage_la_LDFLAGS = \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
+libsimage_la_SOURCES = \
+	simage.c \
+	simage.h \
+	$(JPEGSOURCES) \
+	$(UNGIFSOURCES) \
+	$(PNGSOURCES) \
+	$(TIFFSOURCES) \
+	$(TGASOURCES) \
+	$(RGBSOURCES) \
+	$(PICSOURCES)
+
+# all the conditionally compiled source files must be added here...
+EXTRA_libsimage_la_SOURCES = \
+	simage_jpeg.h \
+	simage_jpeg.c \
+	simage_gif.h \
+	simage_gif.c \
+	simage_tiff.h \
+	simage_tiff.c \
+	simage_png.h \
+	simage_png.c \
+	simage_tga.h \
+	simage_tga.c \
+	simage_rgb.h \
+	simage_rgb.c \
+	simage_pic.h \
+	simage_pic.c
+
+libsimageincdir = $(includedir)
 libsimageinc_HEADERS = \
 	$(top_builddir)/include/simage.h
 
+# **************************************************************************
+# Additional Make rules not supported by Automake
 
-
-#### Additional "native" Make rules #########################################
-
-
-## Rule for linking up a .DLL on MSWindows with MSVC++.
-##
-## Short explanation of what the shell-code does: tests if the C
-## compiler is our MSVC++ wrapper script, and if so: properly link the
-## DLL. If not, just make an empty simage{version}.dll file so the
-## install-exec-hook knows when to _not_ install the .dll.
-
-simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDENCIES)
-	@rm -f simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll && \
-	 if test x"`$(CC) 2>/dev/null | egrep '^The Microsoft Visual C\+\+ wrapper'`" = x""; then \
-	   rm -f simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll; \
-	   touch simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll; \
-	 else \
-	   $(CC) @DLLFLAGS@ /out:simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll \
-	     `echo $(libsimage_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
-	     $(libsimage_la_LIBADD) $(LIBS); \
-	 fi
-
-
-## This hook will be run at the end of a ``make install''.
-##
-## The single action taken is to install the simage.dll and simage.lib
-## files (if they have been built properly).
-
-install-exec-hook: simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll
-	@if test -s simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll; then \
-	  echo "Installing simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll"; \
-	  for i in simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.lib; do \
-	    $(INSTALL_DATA) $$i $(DESTDIR)$(libdir)/$$i; \
-	  done; \
-	  if test -s simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.pdb; then \
-	    echo "Installing simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.pdb"; \
-	    cp simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.pdb $(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.pdb; \
-	  fi \
+# Rule for linking up a .DLL on MSWindows with MSVC++.
+$(DLLNAME).dll: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDENCIES)
+	@rm -f $(DLLNAME).dll; \
+	if @BUILD_WITH_MSVC@; then \
+	  $(CC) $(LDFLAGS) @DLLFLAGS@ /out:$(DLLNAME).dll \
+	    `echo $(libsimage_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
+	    $(libsimage_la_LIBADD) $(LIBS); \
+	else \
+	  rm -f $(DLLNAME).dll; \
+	  touch $(DLLNAME).dll; \
 	fi
 
-# should have been uninstall-hook, but that doesn't work
+## This hook will be run at the end of a ``make install''.
+install-exec-hook: $(DLLNAME).dll
+	@if test -s $(DLLNAME).dll; then \
+	  $(INSTALL_DATA) $(DLLNAME).dll $(DESTDIR)$(bindir)/$(DLLNAME).dll; \
+	  $(INSTALL_DATA) $(DLLNAME).lib $(DESTDIR)$(libdir)/$(DLLNAME).lib; \
+	  test -s $(DLLNAME).pdb && \
+	    $(INSTALL_DATA) $(DLLNAME).pdb $(DESTDIR)$(libdir)/$(DLLNAME).pdb; \
+	fi
+
+## should have been uninstall-hook, but that doesn't work
 uninstall: uninstall-am
-	@for e in dll lib pdb; do \
-	  file="$(DESTDIR)$(libdir)"/simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.$$e; \
-	  if test -f $$file; then \
-	    echo rm -f $$file; \
-	    rm -f $$file; \
-	  fi \
+	@file="$(DESTDIR)$(bindir)"/$(DLLNAME).dll; \
+	test -f $$file && rm -f $$file && echo rm -f $$file; \
+	for ext in lib pdb; do \
+	  file="$(DESTDIR)$(libdir)"/$(DLLNAME).$$ext; \
+	  test -f $$file && rm -f $$file && echo rm -f $$file; \
 	done
 
+# EOF **********************************************************************

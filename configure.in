@@ -2,6 +2,9 @@
 AC_INIT([src/simage.c])
 AC_CONFIG_AUX_DIR(cfg)
 
+# cygpath misbehaves with certain values in this variable
+CYGWIN=
+
 # **************************************************************************
 # Check the CVS repository setup
 
@@ -14,10 +17,16 @@ SIM_AC_CVS_CHANGES([
 ])
 
 # **************************************************************************
-# If the Microsoft Visual C++ cl.exe compiler is available, set us up for
-# compiling with it and to generate an MSWindows .dll file.
 
-SIM_AC_MSVC_SUPPORT
+AC_CANONICAL_SYSTEM
+
+SIM_AC_SETUP_MSVC_IFELSE([], [
+  case $host in
+  *-cygwin)
+    AC_MSG_ERROR([You need Microsoft Visual C++ to build simage on Cygwin])
+    ;;
+  esac
+])
 
 # **************************************************************************
 # Check to see if the compiler supports the ANSI standard, and
@@ -186,7 +195,6 @@ AC_SUBST(SIMAGE_MINOR_VERSION)
 AC_SUBST(SIMAGE_MICRO_VERSION)
 AC_SUBST(SIMAGE_VERSION)
 
-
 LT_CURRENT=$SIMAGE_MAJOR_VERSION
 LT_AGE=0
 LT_REVISION=`expr $SIMAGE_MINOR_VERSION \* 100 + $SIMAGE_MICRO_VERSION`
@@ -194,7 +202,6 @@ LT_REVISION=`expr $SIMAGE_MINOR_VERSION \* 100 + $SIMAGE_MICRO_VERSION`
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
-
 
 #  These are for include/simage.h.
 
@@ -205,12 +212,10 @@ AC_DEFINE_UNQUOTED([SIMAGE_MINOR_VERSION], [$SIMAGE_MINOR_VERSION],
 AC_DEFINE_UNQUOTED([SIMAGE_MICRO_VERSION], [$SIMAGE_MICRO_VERSION],
   [define this to the simage release version number])
 AC_DEFINE_UNQUOTED([SIMAGE_VERSION], ["$SIMAGE_VERSION"],
-  [define this to the full simage major.minor.micro version number])
+  [define this to the simage major.minor.micro version string])
 
 # **************************************************************************
 # Miscellaneous options and initializations.
-
-AC_CANONICAL_SYSTEM
 
 AM_INIT_AUTOMAKE(libsimage, $VERSION)
 
@@ -251,144 +256,160 @@ SIM_AC_CHECK_MATHLIB(SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_libm",
 # Check if UNGIF support is wanted (and if so, available).
 
 SIM_AC_HAVE_LIBUNGIF_IFELSE([
-  AC_DEFINE(HAVE_UNGIFLIB, 1, [Define to use ungif library])
+  AC_DEFINE(HAVE_UNGIFLIB, , [define to support the ungif library])
   SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libungif_cppflags"
   SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libungif_ldflags"
   SIMAGE_EXTRA_LIBS="$sim_ac_libungif_libs $SIMAGE_EXTRA_LIBS"
   CPPFLAGS="$CPPFLAGS $sim_ac_libungif_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_libungif_ldflags"
   LIBS="$sim_ac_libungif_libs $LIBS"
+  SIM_AC_CONFIGURATION_SETTING([GIF image format support], [Yes])
 ], [
-  AC_MSG_WARN(libungif will not be used)
+  SIM_AC_CONFIGURATION_SETTING([GIF image format support], [No])
 ])
 
-AM_CONDITIONAL(SIMAGE_UNGIF_SUPPORT, test x"$sim_ac_have_libungif" = xtrue)
+: ${sim_ac_have_libungif=false}
+AM_CONDITIONAL(SIMAGE_UNGIF_SUPPORT, $sim_ac_have_libungif)
 
 # **************************************************************************
 # Check if JPEG support is wanted (and if so, available).
 
-SIM_AC_CHECK_JPEGLIB([
-  AC_DEFINE(HAVE_JPEGLIB, 1, [Define to use jpeg library])
-  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_jpegdev_cppflags"
-  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_jpegdev_ldflags"
-  SIMAGE_EXTRA_LIBS="$sim_ac_jpegdev_libs $SIMAGE_EXTRA_LIBS"
+SIM_AC_HAVE_LIBJPEG_IFELSE([
+  AC_DEFINE(HAVE_JPEGLIB, , [define to support the jpeg library])
+  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libjpeg_cppflags"
+  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libjpeg_ldflags"
+  SIMAGE_EXTRA_LIBS="$sim_ac_libjpeg_libs $SIMAGE_EXTRA_LIBS"
+  CPPFLAGS="$CPPFLAGS $sim_ac_libjpeg_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_libjpeg_ldflags"
+  LIBS="$sim_ac_libjpeg_libs $LIBS"
+  SIM_AC_CONFIGURATION_SETTING([JPEG image format support], [Yes])
 ], [
-  AC_MSG_WARN(libjpeg development system not found)
+  SIM_AC_CONFIGURATION_SETTING([JPEG image format support], [No])
 ])
 
-AM_CONDITIONAL(SIMAGE_JPEG_SUPPORT, test x"$sim_ac_jpegdev_avail" = xyes)
+: ${sim_ac_have_libjpeg=false}
+AM_CONDITIONAL(SIMAGE_JPEG_SUPPORT, $sim_ac_have_libjpeg)
+
+# **************************************************************************
+
+SIM_AC_HAVE_LIBZLIB_IFELSE([
+  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libzlib_cppflags"
+  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libzlib_ldflags"
+  SIMAGE_EXTRA_LIBS="$sim_ac_libzlib_libs $SIMAGE_EXTRA_LIBS"
+  CPPFLAGS="$CPPFLAGS $sim_ac_libzlib_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_libzlib_ldflags"
+  LIBS="$sim_ac_libzlib_libs $LIBS"
+])
+  
+# **************************************************************************
+# Check if PNG support is wanted (and if so, available).
+
+SIM_AC_HAVE_LIBPNG_IFELSE([
+  AC_DEFINE(HAVE_PNGLIB, , [define for libpng support])
+  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libpng_cppflags"
+  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libpng_ldflags"
+  SIMAGE_EXTRA_LIBS="$sim_ac_libpng_libs $SIMAGE_EXTRA_LIBS"
+  CPPFLAGS="$CPPFLAGS $sim_ac_libpng_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_libpng_ldflags"
+  LIBS="$sim_ac_libpng_libs $LIBS"
+  SIM_AC_CONFIGURATION_SETTING([PNG image format support], [Yes])
+], [
+  SIM_AC_CONFIGURATION_SETTING([PNG image format support], [No])
+  if test x"$sim_ac_have_libzlib" = xfalse; then
+    SIM_AC_CONFIGURATION_WARNING(
+      [PNG image format support may be disabled because of missing libz])
+  fi
+])
+
+: ${sim_ac_have_libpng=false}
+AM_CONDITIONAL(SIMAGE_PNG_SUPPORT, $sim_ac_have_libpng)
 
 # **************************************************************************
 # Check if TIFF support is wanted (and if so, available).
 
-SIM_AC_CHECK_TIFFLIB([
-  AC_DEFINE(HAVE_TIFFLIB, 1, [Define to use tiff library])
-  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_tiffdev_cppflags"
-  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_tiffdev_ldflags"
-  SIMAGE_EXTRA_LIBS="$sim_ac_tiffdev_libs $SIMAGE_EXTRA_LIBS"
+SIM_AC_HAVE_LIBTIFF_IFELSE([
+  AC_DEFINE(HAVE_TIFFLIB, , [define to support the tiff library])
+  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libtiff_cppflags"
+  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libtiff_ldflags"
+  SIMAGE_EXTRA_LIBS="$sim_ac_libtiff_libs $SIMAGE_EXTRA_LIBS"
+  CPPFLAGS="$CPPFLAGS $sim_ac_libtiff_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_libtiff_ldflags"
+  LIBS="$sim_ac_libtiff_libs $LIBS"
+  SIM_AC_CONFIGURATION_SETTING([TIFF image format support], [Yes])
 ], [
-  AC_MSG_WARN(libtiff development system not found)
+  SIM_AC_CONFIGURATION_SETTING([TIFF image format support], [No])
 ])
 
-AM_CONDITIONAL(SIMAGE_TIFF_SUPPORT, test x"$sim_ac_tiffdev_avail" = xyes)
-
-
-# **************************************************************************
-# Check if PNG support is wanted (and if so, available).
-
-simage_ac_pnglib=no
-
-# Yep, we can actually check for a negative with_png here, as the
-# default is "yes" and the user therefore must explicitly specify
-# if he/she does _not_ want the PNG support.
-
-if test x"$with_png" != xno; then
-  SIM_AC_CHECK_ZLIB([
-    SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_zlib_cppflags"
-    SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_zlib_ldflags"
-    SIMAGE_EXTRA_LIBS="$sim_ac_zlib_libs $SIMAGE_EXTRA_LIBS"
-  ], [
-    AC_MSG_WARN(zlib development system not found)
-  ])
-  
-  if test x"$sim_ac_zlib_avail" = xyes; then
-    SIM_AC_CHECK_PNGLIB([
-      simage_ac_pnglib=yes
-      AC_DEFINE(HAVE_PNGLIB, 1, [Define to use png library])
-      SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_pngdev_cppflags"
-      SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_pngdev_ldflags"
-      SIMAGE_EXTRA_LIBS="$sim_ac_pngdev_libs $SIMAGE_EXTRA_LIBS"
-    ], [
-      AC_MSG_WARN(libpng development system not found)
-    ])
-  else
-    AC_MSG_WARN(can't use libpng without zlib)
-  fi
-fi
-
-AM_CONDITIONAL(SIMAGE_PNG_SUPPORT, test x"$simage_ac_pnglib" = xyes)
-
+: ${sim_ac_have_libtiff=false}
+AM_CONDITIONAL(SIMAGE_TIFF_SUPPORT, $sim_ac_have_libtiff)
 
 # **************************************************************************
 # Check if TARGA support is wanted.
 
 AC_ARG_WITH(
-  targa,
-  AC_HELP_STRING([--with-targa],
-                 [include support for Targa images [[default=yes]]]),
-	[case "${withval}" in
-		yes) want_tga=true ;;
-		no)  want_tga=false ;;
-		*)   AC_MSG_ERROR(bad value "${withval}" for --with-targa) ;;
-	esac],
-	[want_tga=true])
+  [targa],
+  [AC_HELP_STRING([--with-targa], [enable/disable support for Targa images])],
+  [case $withval in
+  yes | "") sim_ac_want_tga=true ;;
+  no)       sim_ac_want_tga=false ;;
+  *)        AC_MSG_ERROR([bad value "$withval" for --with-targa]) ;;
+  esac],
+  [sim_ac_want_tga=true])
 
-AM_CONDITIONAL(TGA_SUPPORT, $want_tga)
-if $want_tga; then
-  AC_DEFINE(SIMAGE_TGA_SUPPORT, 1, [Define to enable targa support])
+AM_CONDITIONAL(SIMAGE_TGA_SUPPORT, $sim_ac_want_tga)
+if $sim_ac_want_tga; then
+  AC_DEFINE(SIMAGE_TGA_SUPPORT, , [define to enable targa support])
+  SIM_AC_CONFIGURATION_SETTING([TGA image format support], [Yes])
+else
+  SIM_AC_CONFIGURATION_SETTING([TGA image format support], [No])
 fi
 
 # **************************************************************************
 # Check if RGB support is wanted.
 
 AC_ARG_WITH(
-  rgb,
-  AC_HELP_STRING([--with-rgb],
-                 [include support for SGI RGB images [[default=yes]]]),
-  [case "${withval}" in
-    yes) want_rgb=true ;;
-    no)  want_rgb=false ;;
-    *)   AC_MSG_ERROR(bad value "${withval}" for --with-rgb) ;;
+  [rgb],
+  [AC_HELP_STRING([--with-rgb], [enable/disable support for RGB images])],
+  [case $withval in
+  yes | "") sim_ac_want_rgb=true ;;
+  no)       sim_ac_want_rgb=false ;;
+  *)        AC_MSG_ERROR([bad value "$withval" for --with-rgb]) ;;
   esac],
-  [want_rgb=true])
+  [sim_ac_want_rgb=true])
 
-AM_CONDITIONAL(RGB_SUPPORT, $want_rgb)
-if $want_rgb; then
-  AC_DEFINE(SIMAGE_RGB_SUPPORT, 1, [Define to enable rgb support])
+AM_CONDITIONAL(SIMAGE_RGB_SUPPORT, $sim_ac_want_rgb)
+if $sim_ac_want_rgb; then
+  AC_DEFINE(SIMAGE_RGB_SUPPORT, , [Define to enable rgb support])
+  SIM_AC_CONFIGURATION_SETTING([RGB image format support], [Yes])
+else
+  SIM_AC_CONFIGURATION_SETTING([RGB image format support], [No])
 fi
 
 # **************************************************************************
 # Check if PIC support is wanted.
 
 AC_ARG_WITH(
-  pic,
-  AC_HELP_STRING([--with-pic], [include support for PIC images [[default=yes]]]),
-  [case "${withval}" in
-      yes) want_pic=true ;;
-      no)  want_pic=false ;;
-      *)   AC_MSG_ERROR(bad value "${withval}" for --with-pic) ;;
+  [pic],
+  [AC_HELP_STRING([--with-pic], [enable/disable support for PIC images])],
+  [case $withval in
+  yes | "") sim_ac_want_pic=true ;;
+  no)       sim_ac_want_pic=false ;;
+  *)        AC_MSG_ERROR([bad value "$withval" for --with-pic]) ;;
   esac],
-  [want_pic=true])
+  [sim_ac_want_pic=true])
 
-AM_CONDITIONAL(PIC_SUPPORT, $want_pic)
-if $want_pic; then
-  AC_DEFINE(SIMAGE_PIC_SUPPORT, 1, [Define to enable pic support])
+AM_CONDITIONAL(SIMAGE_PIC_SUPPORT, $sim_ac_want_pic)
+if $sim_ac_want_pic; then
+  AC_DEFINE(SIMAGE_PIC_SUPPORT, , [define to enable pic support])
+  SIM_AC_CONFIGURATION_SETTING([PIC image format support], [Yes])
+else
+  SIM_AC_CONFIGURATION_SETTING([PIC image format support], [No])
 fi
-
-SIM_EXPAND_DIR_VARS
 
 # **************************************************************************
 # Remove redundant options from environment variable option lists.
+
+SIM_EXPAND_DIR_VARS
 
 SIM_AC_UNIQIFY_LIST(CPPFLAGS, $CPPFLAGS)
 SIM_AC_UNIQIFY_LIST(LDFLAGS, $LDFLAGS)
@@ -397,6 +418,8 @@ SIM_AC_UNIQIFY_LIST(LIBS, $LIBS)
 SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_CPPFLAGS, -I$includedir $SIMAGE_EXTRA_CPPFLAGS)
 SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LDFLAGS, -L$libdir $SIMAGE_EXTRA_LDFLAGS)
 SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LIBS, $SIMAGE_EXTRA_LIBS)
+
+AC_SUBST(LDFLAGS)
 
 if $BUILD_WITH_MSVC; then
   CPPFLAGS="-DSIMAGE_MAKE_DLL $CPPFLAGS"
@@ -447,5 +470,11 @@ AC_OUTPUT([
 ], [
 	chmod a+x simage-config
 ])
+
+SIM_AC_CONFIGURATION_SUMMARY
+
+echo ""
+echo "Done.  Now run make install to build $PACKAGE $VERSION"
+echo ""
 
 # **************************************************************************
