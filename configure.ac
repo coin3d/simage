@@ -25,6 +25,7 @@ CYGWIN=
 
 AC_CANONICAL_TARGET
 
+SIM_AC_MSVC_DSP_ENABLE_OPTION
 SIM_AC_SETUP_MSVCPP_IFELSE
 
 if $BUILD_WITH_MSVC; then
@@ -732,6 +733,12 @@ fi
 
 AC_SUBST(COIN_COMPILER)
 AC_SUBST([ac_compiler_gnu])
+
+simage_build_dir=`pwd`
+simage_src_dir=`cd "$srcdir"; pwd`
+AC_SUBST([simage_src_dir])
+
+SIM_AC_MSVC_DSP_SETUP([SIMAGE], [simage], [simage], [-I$simage_build_dir/include -I$simage_src_dir/include])
 
 # **************************************************************************
 
