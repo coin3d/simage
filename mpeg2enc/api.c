@@ -34,7 +34,32 @@ SimpegWrite_end_encode(void * handle);
 int 
 mpeg2enc_movie_create(const char * filename, s_movie * movie, s_params * params)
 {
-  void * handle = SimpegWrite_begin_encode(filename, NULL, NULL, NULL, NULL);
+  void * handle;
+  const char * statfile;
+  void * cb0, *cb1, *cb2;
+  
+  statfile = NULL;
+  cb0 = NULL;
+  cb1 = NULL;
+  cb2 = NULL;
+
+  s_params_get(params, 
+               S_STRING_PARAM_TYPE, "statfile", &statfile, 0);
+
+  s_params_get(params, 
+               S_FUNCTION_PARAM_TYPE, "error callback", &cb0, 0);
+
+  s_params_get(params, 
+               S_FUNCTION_PARAM_TYPE, "warning callback", &cb1, 0);
+
+  s_params_get(params, 
+               S_FUNCTION_PARAM_TYPE, "progress callback", &cb2, 0);
+
+  handle = SimpegWrite_begin_encode(filename, 
+                                    statfile, 
+                                    (SimpegWrite_error_cb) cb0, 
+                                    (SimpegWrite_warning_cb) cb1, 
+                                    (SimpegWrite_progress_cb) cb2);
   if (handle == NULL) return 0;
   
   s_params_set(s_movie_params(movie), S_POINTER_PARAM_TYPE, "mpeg2enc handle", handle, 0);
