@@ -143,9 +143,13 @@ fi
 #
 #    A self-extracting executable SETUPEX.EXE with the InstallShield install
 #    should then be available under [simage_builddir]/build/simage/. Move
-#    this to <ftp://ftp.sim.no/pub/coin/simage-sdk-@SIMAGE_VERSION@.exe>.
+#    this to <ftp://ftp.sim.no/pub/coin/bin/simage-sdk-@SIMAGE_VERSION@.exe>.
 #
-#  * RPM package: (to be written)
+#  * RPM packages: follow the instructions at the top of the
+#    build/simage.spec.in file, make one package for each major platform
+#    version we have access to (RedHat v5, v6, v7, Mandrake?, SuSE, etc)
+#    for the architectures we want (i386, ...). Place packages under
+#    <ftp://ftp.sim.no/pub/coin/bin/[platform]/[arch]/>.
 #
 # **************************************************************************
 # Release history
@@ -369,13 +373,6 @@ fi
 SIM_EXPAND_DIR_VARS
 
 # **************************************************************************
-# XXX Kill these when they are _definitely_ not in use anymore.
-
-# For the build/simage.spec RPM specification file.
-#SIM_AC_ISO8601_DATE(simage_configure_date)
-#AC_SUBST(simage_configure_date)
-
-# **************************************************************************
 # Remove redundant options from environment variable option lists.
 
 SIM_AC_UNIQIFY_LIST(CPPFLAGS, $CPPFLAGS)
@@ -407,6 +404,10 @@ if $simage_build_with_msvc; then
 
 else
   SIMAGE_EXTRA_LIBS="-lsimage $SIMAGE_EXTRA_LIBS"
+
+  # For the build/simage.spec RPM specification file.
+  SIM_AC_ISO8601_DATE(simage_configure_date)
+  AC_SUBST(simage_configure_date)
 fi
 
 # **************************************************************************

@@ -33,7 +33,7 @@
 /* Define to enable targa support */
 #undef SIMAGE_TGA_SUPPORT
 
-/* define this to the full simage major.minor.release version number */
+/* define this to the full simage major.minor.micro version number */
 #undef SIMAGE_VERSION
 
 /* Version number of package */

@@ -1,8 +1,9 @@
 # Spec file for constructing installation package in RPM format.
+#
 # Quick instructions:
 #
 #   * run configure with the "--prefix" option set to the final
-#     installation directory (or leave out to default to /usr/local/)
+#     installation directory (typically "/usr")
 #
 #   * copy the top_builddir/build/simage.spec file to the
 #     /usr/src/redhat/SPECS directory (on RedHat Linux, may differ
@@ -64,17 +65,14 @@ make
 
 cd $RPM_BUILD_DIR/simage
 make install-strip
-# FIXME: for some unknown reason, the lib-file is not automatically
-# stripped, so we use this hack. 20000705 mortene.
-strip @libdir@/libsimage.so.0.0.0
 
 
 %files
 
 @bindir@/simage-config
 @includedir@/simage.h
-@libdir@/libsimage.so.0
-@libdir@/libsimage.so.0.0.0
+@libdir@/libsimage.so.@LT_CURRENT@
+@libdir@/libsimage.so.@LT_CURRENT@.@LT_AGE@.@LT_REVISION@
 @libdir@/libsimage.la
 @libdir@/libsimage.so
 @datadir@/aclocal/simage.m4

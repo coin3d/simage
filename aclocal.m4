@@ -1890,19 +1890,6 @@ infodir="`eval echo $infodir`"
 mandir="`eval echo $mandir`"
 ])
 
-# Usage:
-#  SIM_AC_ISO8601_DATE(variable)
-#
-# Description:
-#   This macro sets the given variable to a strings representing
-#   the current date in the ISO8601-compliant format YYYYMMDD.
-#
-# Author: Morten Eriksen, <mortene@sim.no>.
-
-AC_DEFUN(SIM_AC_ISO8601_DATE, [
-  eval "$1=\"`date +%Y%m%d`\""
-])
-
 # **************************************************************************
 # SIM_AC_UNIQIFY_LIST( VARIABLE, LIST )
 #
@@ -1933,4 +1920,17 @@ done
 $1=$sim_ac_uniqued_list
 ]) # SIM_AC_UNIQIFY_LIST
 
+
+# Usage:
+#  SIM_AC_ISO8601_DATE(variable)
+#
+# Description:
+#   This macro sets the given variable to a strings representing
+#   the current date in the ISO8601-compliant format YYYYMMDD.
+#
+# Author: Morten Eriksen, <mortene@sim.no>.
+
+AC_DEFUN(SIM_AC_ISO8601_DATE, [
+  eval "$1=\"`date +%Y%m%d`\""
+])
 

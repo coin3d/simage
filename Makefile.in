@@ -94,6 +94,8 @@ SIMAGE_VERSION = @SIMAGE_VERSION@
 VERSION = @VERSION@
 install_sh = @install_sh@
 simage_configure_date = @simage_configure_date@
+win_includedir = @win_includedir@
+win_libdir = @win_libdir@
 
 
 SUBDIRS = src
