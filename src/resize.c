@@ -415,6 +415,10 @@ zoom(Image * dst,               /* destination image structure */
   free(tmp);
 }
 
+// FIXME: methinks the type of the first argument should have been
+// ``const unsigned char *''. Can't change it now, though, as it'd
+// probably break ABI compatibility (?). Wait for simage2. 20010809 mortene.
+
 unsigned char *
 simage_resize(unsigned char * src, int width,
 	      int height, int num_comp,
