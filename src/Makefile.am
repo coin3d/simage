@@ -83,10 +83,9 @@ libsimage@SUFFIX@inc_HEADERS = \
 	$(top_builddir)/include/simage.h
 
 # **************************************************************************
-# Additional Make rules not supported by Automake
 
-# Rule for linking MSVC++ LIB file.
-simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_DEPENDENCIES)
+simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: Makefile \
+  $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_DEPENDENCIES)
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
 	rm -f "$$basename.dll" "$$basename.lib"; \
 	if @BUILD_WITH_MSVC@; then \
@@ -97,10 +96,9 @@ simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: $(libsimage@SUFFIX@_la_OBJECTS) $(libs
 	  touch "$$basename.dll" "$$basename.lib"; \
 	fi
 
-# **************************************************************************
-# hooks for the automake infrastructure...
-
 all-local: simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
+
+# **************************************************************************
 
 install-exec-local:
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
@@ -121,8 +119,8 @@ uninstall-local:
 	for file in \
 	  "$(DESTDIR)$(bindir)/$$basename.dll" \
 	  "$(DESTDIR)$(libdir)/$$basename.lib"; do \
-	  if test -f $$file; then \
-	    echo rm -f $$file && rm -f $$file; \
+	  if test -f "$$file"; then \
+	    echo rm -f "$$file" && rm -f "$$file"; \
 	  fi \
 	done
 
