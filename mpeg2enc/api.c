@@ -22,7 +22,8 @@ SimpegWrite_begin_encode(const char * output_filename,
                          const char * parameter_filename,
                          SimpegWrite_error_cb error_cb, 
                          SimpegWrite_warning_cb warning_cb,
-                         SimpegWrite_progress_cb progress_cb); 
+                         SimpegWrite_progress_cb progress_cb,
+                         int w, int h); 
 
 static int 
 SimpegWrite_encode_bitmap(void * handle, const unsigned char * rgb_buffer);
@@ -37,6 +38,9 @@ mpeg2enc_movie_create(const char * filename, s_movie * movie, s_params * params)
   void * handle;
   const char * statfile;
   void * cb0, *cb1, *cb2;
+  int w, h;
+
+  w = h = 0;
   
   statfile = NULL;
   cb0 = NULL;
@@ -55,11 +59,18 @@ mpeg2enc_movie_create(const char * filename, s_movie * movie, s_params * params)
   s_params_get(params, 
                S_FUNCTION_PARAM_TYPE, "progress callback", &cb2, 0);
 
+  s_params_get(params,
+               S_INTEGER_PARAM_TYPE, "width", &w, 0);
+
+  s_params_get(params,
+              S_INTEGER_PARAM_TYPE, "height", &h, 0);
+
   handle = SimpegWrite_begin_encode(filename, 
                                     statfile, 
                                     (SimpegWrite_error_cb) cb0, 
                                     (SimpegWrite_warning_cb) cb1, 
-                                    (SimpegWrite_progress_cb) cb2);
+                                    (SimpegWrite_progress_cb) cb2,
+                                    w, h);
   if (handle == NULL) return 0;
   
   s_params_set(s_movie_params(movie), S_POINTER_PARAM_TYPE, "mpeg2enc handle", handle, 0);
@@ -70,7 +81,8 @@ int
 mpeg2enc_movie_put(s_movie * movie, s_image * image, s_params * params)
 {
   void * handle;
-  if (s_get_params(so_movie_get_params(movie), S_POINTER_PARAM_TYPE, "mpeg2enc handle", &handle, 0)) {
+
+  if (s_params_get(s_movie_params(movie), S_POINTER_PARAM_TYPE, "mpeg2enc handle", &handle, 0)) {
     return SimpegWrite_encode_bitmap(handle, s_image_data(image));
   }
   return 0;
@@ -80,7 +92,7 @@ void
 mpeg2enc_movie_close(s_movie * movie)
 {
   void * handle;
-  if (s_get_params(so_movie_get_params(movie), S_POINTER_PARAM_TYPE, "mpeg2enc handle", &handle, 0)) {
+  if (s_params_get(s_movie_params(movie), S_POINTER_PARAM_TYPE, "mpeg2enc handle", &handle, 0)) {
     SimpegWrite_end_encode(handle);
   }
 }
@@ -89,7 +101,7 @@ mpeg2enc_movie_close(s_movie * movie)
 /* private prototypes */
 static void init(simpeg_encode_context * context);
 static void init_context_data(simpeg_encode_context * context);
-static void readparmfile(simpeg_encode_context * context, const char *fname);
+static void readparmfile(simpeg_encode_context * context, const char *fname, int w, int h);
 static void readquantmat(simpeg_encode_context * context);
 static void cleanup(simpeg_encode_context * context);
 
@@ -135,7 +147,7 @@ SimpegWrite_encode(const char *output_filename,
 
 
   /* read parameter file */
-  readparmfile(context, parameter_filename);
+  readparmfile(context, parameter_filename, 0, 0);
 
   /* read quantization matrices */
   readquantmat(context);
@@ -167,7 +179,8 @@ SimpegWrite_begin_encode(const char *output_filename,
                          const char *parameter_filename,
                          SimpegWrite_error_cb error_cb, 
                          SimpegWrite_warning_cb warning_cb,
-                         SimpegWrite_progress_cb progress_cb)
+                         SimpegWrite_progress_cb progress_cb,
+                         int w, int h)
 {
   int i;
   simpeg_encode_context * context;
@@ -201,7 +214,7 @@ SimpegWrite_begin_encode(const char *output_filename,
   context->bufbuf = NULL;
 
   /* read parameter file */
-  readparmfile(context, parameter_filename);
+  readparmfile(context, parameter_filename, w, h);
 
   /* read quantization matrices */
   readquantmat(context);
@@ -431,10 +444,9 @@ init(simpeg_encode_context * context)
   for (i=-384; i<640; i++)
     context->clp[i] = (i<0) ? 0 : ((i>255) ? 255 : i);
 
-  for (i=0; i < 3; i++)
-    {
+  for (i=0; i < 3; i++) {
     size = (i==0) ? context->width*context->height : context->chrom_width*context->chrom_height;
-
+    
     if (!(context->newrefframe[i] = (unsigned char *)malloc(size)))
       simpeg_encode_error(context, "malloc failed\n");
     if (!(context->oldrefframe[i] = (unsigned char *)malloc(size)))
@@ -479,8 +491,9 @@ void simpeg_encode_error(simpeg_encode_context * context, char *text)
   SimpegWrite_error(context, text);
 }
 
-static void readparmfile(simpeg_encode_context * context,
-                         const char *fname)
+static void 
+readparmfile(simpeg_encode_context * context,
+             const char *fname, int width, int height)
 {
   int i;
   int h, m, s, f;
@@ -488,117 +501,246 @@ static void readparmfile(simpeg_encode_context * context,
   char line[256];
   static double ratetab[8]=
     {24000.0/1001.0,24.0,25.0,30000.0/1001.0,30.0,50.0,60000.0/1001.0,60.0};
-
-  if (!(fd = fopen(fname,"r")))
-  {
-    sprintf(context->errortext,"Couldn't open parameter file %s",fname);
-    simpeg_encode_error(context, context->errortext);
-  }
-
-  fgets(context->id_string,254,fd);
-  fgets(line,254,fd); sscanf(line,"%s",context->tplorg);
-  fgets(line,254,fd); sscanf(line,"%s",context->tplref);
-  fgets(line,254,fd); sscanf(line,"%s",context->iqname);
-  fgets(line,254,fd); sscanf(line,"%s",context->niqname);
-  fgets(line,254,fd); sscanf(line,"%s",context->statname);
-  fgets(line,254,fd); sscanf(line,"%d",&context->inputtype);
-  fgets(line,254,fd); sscanf(line,"%d",&context->nframes);
-  fgets(line,254,fd); sscanf(line,"%d",&context->frame0);
-  fgets(line,254,fd); sscanf(line,"%d:%d:%d:%d",&h,&m,&s,&f);
-  fgets(line,254,fd); sscanf(line,"%d",&context->N);
-  fgets(line,254,fd); sscanf(line,"%d",&context->M);
-  fgets(line,254,fd); sscanf(line,"%d",&context->mpeg1);
-  fgets(line,254,fd); sscanf(line,"%d",&context->fieldpic);
-  fgets(line,254,fd); sscanf(line,"%d",&context->horizontal_size);
-  fgets(line,254,fd); sscanf(line,"%d",&context->vertical_size);
-  fgets(line,254,fd); sscanf(line,"%d",&context->aspectratio);
-  fgets(line,254,fd); sscanf(line,"%d",&context->frame_rate_code);
-  fgets(line,254,fd); sscanf(line,"%lf",&context->bit_rate);
-  fgets(line,254,fd); sscanf(line,"%d",&context->vbv_buffer_size);   
-  fgets(line,254,fd); sscanf(line,"%d",&context->low_delay);     
-  fgets(line,254,fd); sscanf(line,"%d",&context->constrparms);
-  fgets(line,254,fd); sscanf(line,"%d",&context->profile);
-  fgets(line,254,fd); sscanf(line,"%d",&context->level);
-  fgets(line,254,fd); sscanf(line,"%d",&context->prog_seq);
-  fgets(line,254,fd); sscanf(line,"%d",&context->chroma_format);
-  fgets(line,254,fd); sscanf(line,"%d",&context->video_format);
-  fgets(line,254,fd); sscanf(line,"%d",&context->color_primaries);
-  fgets(line,254,fd); sscanf(line,"%d",&context->transfer_characteristics);
-  fgets(line,254,fd); sscanf(line,"%d",&context->matrix_coefficients);
-  fgets(line,254,fd); sscanf(line,"%d",&context->display_horizontal_size);
-  fgets(line,254,fd); sscanf(line,"%d",&context->display_vertical_size);
-  fgets(line,254,fd); sscanf(line,"%d",&context->dc_prec);
-  fgets(line,254,fd); sscanf(line,"%d",&context->topfirst);
-  fgets(line,254,fd); sscanf(line,"%d %d %d",
-                             context->frame_pred_dct_tab,
-                             context->frame_pred_dct_tab+1,
-                             context->frame_pred_dct_tab+2);
   
-  fgets(line,254,fd); sscanf(line,"%d %d %d",
-                             context->conceal_tab,
-                             context->conceal_tab+1,
-                             context->conceal_tab+2);
-  
-  fgets(line,254,fd); sscanf(line,"%d %d %d",
-                             context->qscale_tab,
-                             context->qscale_tab+1,
-                             context->qscale_tab+2);
-
-  fgets(line,254,fd); sscanf(line,"%d %d %d",
-                             context->intravlc_tab,
-                             context->intravlc_tab+1,
-                             context->intravlc_tab+2);
-  fgets(line,254,fd); sscanf(line,"%d %d %d",
-                             context->altscan_tab,
-                             context->altscan_tab+1,
-                             context->altscan_tab+2);
-  
-  fgets(line,254,fd); sscanf(line,"%d",&context->repeatfirst);
-  fgets(line,254,fd); sscanf(line,"%d",&context->prog_frame);
-  /* intra slice interval refresh period */  
-  fgets(line,254,fd); sscanf(line,"%d",&context->P);
-  fgets(line,254,fd); sscanf(line,"%d",&context->r);
-  fgets(line,254,fd); sscanf(line,"%lf",&context->avg_act);
-  fgets(line,254,fd); sscanf(line,"%d",&context->Xi);
-  fgets(line,254,fd); sscanf(line,"%d",&context->Xp);
-  fgets(line,254,fd); sscanf(line,"%d",&context->Xb);
-  fgets(line,254,fd); sscanf(line,"%d",&context->d0i);
-  fgets(line,254,fd); sscanf(line,"%d",&context->d0p);
-  fgets(line,254,fd); sscanf(line,"%d",&context->d0b);
-
-  if (context->N<1)
-    simpeg_encode_error(context, "N must be positive");
-  if (context->M<1)
-    simpeg_encode_error(context,"M must be positive");
-  if (context->N%context->M != 0)
-    simpeg_encode_error(context,"N must be an integer multiple of M");
-
-  context->motion_data = (struct motion_data *)malloc(context->M*sizeof(struct motion_data));
-
-  if (!context->motion_data)
-    simpeg_encode_error(context, "malloc failed\n");
-  
-  for (i=0; i<context->M; i++)
-  {
-    fgets(line,254,fd);
-    sscanf(line,"%d %d %d %d",
-           &context->motion_data[i].forw_hor_f_code, 
-           &context->motion_data[i].forw_vert_f_code,
-           &context->motion_data[i].sxf, 
-           &context->motion_data[i].syf);
+  if (fname) {
+    if (!(fd = fopen(fname,"r")))
+      {
+        sprintf(context->errortext,"Couldn't open parameter file %s",fname);
+        simpeg_encode_error(context, context->errortext);
+      }
     
-    if (i!=0)
+    fgets(context->id_string,254,fd);
+    fgets(line,254,fd); sscanf(line,"%s",context->tplorg);
+    fgets(line,254,fd); sscanf(line,"%s",context->tplref);
+    fgets(line,254,fd); sscanf(line,"%s",context->iqname);
+    fgets(line,254,fd); sscanf(line,"%s",context->niqname);
+    fgets(line,254,fd); sscanf(line,"%s",context->statname);
+    fgets(line,254,fd); sscanf(line,"%d",&context->inputtype);
+    fgets(line,254,fd); sscanf(line,"%d",&context->nframes);
+    fgets(line,254,fd); sscanf(line,"%d",&context->frame0);
+    fgets(line,254,fd); sscanf(line,"%d:%d:%d:%d",&h,&m,&s,&f);
+    fgets(line,254,fd); sscanf(line,"%d",&context->N);
+    fgets(line,254,fd); sscanf(line,"%d",&context->M);
+    fgets(line,254,fd); sscanf(line,"%d",&context->mpeg1);
+    fgets(line,254,fd); sscanf(line,"%d",&context->fieldpic);
+    fgets(line,254,fd); sscanf(line,"%d",&context->horizontal_size);
+    fgets(line,254,fd); sscanf(line,"%d",&context->vertical_size);
+    if (width > 0 && height > 0) {
+      context->horizontal_size = width;
+      context->vertical_size = height;
+    }
+    fgets(line,254,fd); sscanf(line,"%d",&context->aspectratio);
+    fgets(line,254,fd); sscanf(line,"%d",&context->frame_rate_code);
+    fgets(line,254,fd); sscanf(line,"%lf",&context->bit_rate);
+    fgets(line,254,fd); sscanf(line,"%d",&context->vbv_buffer_size);   
+    fgets(line,254,fd); sscanf(line,"%d",&context->low_delay);     
+    fgets(line,254,fd); sscanf(line,"%d",&context->constrparms);
+    fgets(line,254,fd); sscanf(line,"%d",&context->profile);
+    fgets(line,254,fd); sscanf(line,"%d",&context->level);
+    fgets(line,254,fd); sscanf(line,"%d",&context->prog_seq);
+    fgets(line,254,fd); sscanf(line,"%d",&context->chroma_format);
+    fgets(line,254,fd); sscanf(line,"%d",&context->video_format);
+    fgets(line,254,fd); sscanf(line,"%d",&context->color_primaries);
+    fgets(line,254,fd); sscanf(line,"%d",&context->transfer_characteristics);
+    fgets(line,254,fd); sscanf(line,"%d",&context->matrix_coefficients);
+    fgets(line,254,fd); sscanf(line,"%d",&context->display_horizontal_size);
+    fgets(line,254,fd); sscanf(line,"%d",&context->display_vertical_size);
+    if (width > 0 && height < 0) {
+      context->display_horizontal_size = width;
+      context->display_vertical_size = height;
+    }
+
+    fgets(line,254,fd); sscanf(line,"%d",&context->dc_prec);
+    fgets(line,254,fd); sscanf(line,"%d",&context->topfirst);
+    fgets(line,254,fd); sscanf(line,"%d %d %d",
+                               context->frame_pred_dct_tab,
+                               context->frame_pred_dct_tab+1,
+                               context->frame_pred_dct_tab+2);
+    
+    fgets(line,254,fd); sscanf(line,"%d %d %d",
+                               context->conceal_tab,
+                               context->conceal_tab+1,
+                               context->conceal_tab+2);
+    
+    fgets(line,254,fd); sscanf(line,"%d %d %d",
+                               context->qscale_tab,
+                               context->qscale_tab+1,
+                               context->qscale_tab+2);
+    
+    fgets(line,254,fd); sscanf(line,"%d %d %d",
+                               context->intravlc_tab,
+                               context->intravlc_tab+1,
+                               context->intravlc_tab+2);
+    fgets(line,254,fd); sscanf(line,"%d %d %d",
+                               context->altscan_tab,
+                               context->altscan_tab+1,
+                               context->altscan_tab+2);
+    
+    fgets(line,254,fd); sscanf(line,"%d",&context->repeatfirst);
+    fgets(line,254,fd); sscanf(line,"%d",&context->prog_frame);
+    /* intra slice interval refresh period */  
+    fgets(line,254,fd); sscanf(line,"%d",&context->P);
+    fgets(line,254,fd); sscanf(line,"%d",&context->r);
+    fgets(line,254,fd); sscanf(line,"%lf",&context->avg_act);
+    fgets(line,254,fd); sscanf(line,"%d",&context->Xi);
+    fgets(line,254,fd); sscanf(line,"%d",&context->Xp);
+    fgets(line,254,fd); sscanf(line,"%d",&context->Xb);
+    fgets(line,254,fd); sscanf(line,"%d",&context->d0i);
+    fgets(line,254,fd); sscanf(line,"%d",&context->d0p);
+    fgets(line,254,fd); sscanf(line,"%d",&context->d0b);
+    
+    if (context->N<1)
+      simpeg_encode_error(context, "N must be positive");
+    if (context->M<1)
+      simpeg_encode_error(context,"M must be positive");
+    if (context->N%context->M != 0)
+      simpeg_encode_error(context,"N must be an integer multiple of M");
+
+    context->motion_data = (struct motion_data *)malloc(context->M*sizeof(struct motion_data));    
+    if (!context->motion_data)
+      simpeg_encode_error(context, "malloc failed\n");
+    
+    for (i=0; i<context->M; i++)
       {
         fgets(line,254,fd);
         sscanf(line,"%d %d %d %d",
-               &context->motion_data[i].back_hor_f_code, 
-               &context->motion_data[i].back_vert_f_code,
-               &context->motion_data[i].sxb, 
-               &context->motion_data[i].syb);
-    }
+               &context->motion_data[i].forw_hor_f_code, 
+               &context->motion_data[i].forw_vert_f_code,
+               &context->motion_data[i].sxf, 
+               &context->motion_data[i].syf);
+        
+        if (i!=0)
+          {
+            fgets(line,254,fd);
+            sscanf(line,"%d %d %d %d",
+                   &context->motion_data[i].back_hor_f_code, 
+                   &context->motion_data[i].back_vert_f_code,
+                   &context->motion_data[i].sxb, 
+                   &context->motion_data[i].syb);
+          }
+      }
+    
+    fclose(fd);
   }
-  
-  fclose(fd);
+  else { /* fill in some default values */
+    strcpy(context->id_string, "MPEG-2 sequence, created using simage (www.coin3d.org)");
+    strcpy(context->tplorg, "orgimage%d");
+    strcpy(context->tplref, "-");
+    strcpy(context->iqname, "-");
+    strcpy(context->niqname, "-");
+    strcpy(context->statname, "%");
+    context->inputtype = 3;
+    context->nframes = 10;
+    context->frame0 = 0;
+    h = m = s = f = 0; 
+
+    context->N = 6;
+    context->M = 3;
+
+    context->mpeg1 = 0;
+    context->fieldpic = 0;
+
+    context->horizontal_size = 704;
+    context->vertical_size = 480;
+
+    if (width > 0 && height > 0) {
+      context->horizontal_size = width;
+      context->vertical_size = height;
+    }
+
+    context->aspectratio = 2;
+    context->frame_rate_code = 5;
+    context->bit_rate = 5000000.0;
+    context->vbv_buffer_size = 112;
+    context->low_delay = 0;
+    context->constrparms = 0;
+    context->profile = 4;
+    context->level = 8;
+    context->prog_seq = 0;
+    context->chroma_format = 1;
+    context->video_format = 2;
+    context->color_primaries = 5;
+    context->transfer_characteristics = 5;
+    context->matrix_coefficients = 4;
+    context->display_horizontal_size = 704;
+    context->display_vertical_size = 480;
+
+    if (width > 0 && height < 0) {
+      context->display_horizontal_size = width;
+      context->display_vertical_size = height;
+    }
+
+    context->dc_prec = 0;
+    context->topfirst = 1;
+    context->frame_pred_dct_tab[0] = 0;
+    context->frame_pred_dct_tab[1] = 0;
+    context->frame_pred_dct_tab[2] = 0;
+    
+    context->conceal_tab[0] = 0;
+    context->conceal_tab[1] = 0;
+    context->conceal_tab[2] = 0;
+    
+    context->qscale_tab[0] = 1;
+    context->qscale_tab[1] = 1;
+    context->qscale_tab[2] = 1;
+    
+    context->intravlc_tab[0] = 1;
+    context->intravlc_tab[1] = 0;
+    context->intravlc_tab[2] = 0;
+
+    context->altscan_tab[0] = 0;
+    context->altscan_tab[1] = 0;
+    context->altscan_tab[2] = 0;
+    
+    context->repeatfirst = 0;
+    context->prog_frame = 0;
+
+    context->P = 0;
+    context->r = 0;
+    context->avg_act = 0;
+    context->Xi = 0;
+    context->Xp = 0;
+    context->Xb = 0;
+    context->d0i = 0;
+    context->d0p = 0;
+    context->d0b = 0;
+    
+    if (context->N<1)
+      simpeg_encode_error(context, "N must be positive");
+    if (context->M<1)
+      simpeg_encode_error(context,"M must be positive");
+    if (context->N%context->M != 0)
+      simpeg_encode_error(context,"N must be an integer multiple of M");
+
+    context->motion_data = (struct motion_data *)malloc(context->M*sizeof(struct motion_data));    
+    if (!context->motion_data)
+      simpeg_encode_error(context, "malloc failed\n");
+        
+    context->motion_data[0].forw_hor_f_code = 2;
+    context->motion_data[0].forw_vert_f_code = 2;
+    context->motion_data[0].sxf = 11;
+    context->motion_data[0].syf = 11;
+
+    context->motion_data[1].forw_hor_f_code = 1;
+    context->motion_data[1].forw_vert_f_code = 1;
+    context->motion_data[1].sxf = 3;
+    context->motion_data[1].syf = 3;
+    
+    context->motion_data[1].back_hor_f_code = 1; 
+    context->motion_data[1].back_vert_f_code = 1;
+    context->motion_data[1].sxb = 7; 
+    context->motion_data[1].syb = 7;
+
+    context->motion_data[2].forw_hor_f_code = 1;
+    context->motion_data[2].forw_vert_f_code = 1;
+    context->motion_data[2].sxf = 7;
+    context->motion_data[2].syf = 7;
+    
+    context->motion_data[2].back_hor_f_code = 1; 
+    context->motion_data[2].back_vert_f_code = 1;
+    context->motion_data[2].sxb = 3; 
+    context->motion_data[2].syb = 3;
+  }
 
   /* make flags boolean (x!=0 -> x=1) */
   context->mpeg1 = !!context->mpeg1;

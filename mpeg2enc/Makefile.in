@@ -133,7 +133,15 @@ libmpeg2enc_la_SOURCES = \
 	puthdr.c \
 	putmpg.c \
 	putpic.c \
-	putseq.c putseq.h
+	putseq.c putseq.h \
+	putvlc.c \
+	quantize.c \
+	ratectl.c \
+	readpic.c \
+	stats.c \
+	transfrm.c \
+	vlc.h \
+	writepic.c
 
 EXEEXT =
 OBJEXT = o
@@ -149,7 +157,9 @@ CPPFLAGS = @CPPFLAGS@
 libmpeg2enc_la_LDFLAGS = 
 libmpeg2enc_la_LIBADD = 
 am_libmpeg2enc_la_OBJECTS = api.lo conform.lo fdctref.lo idct.lo \
-motion.lo predict.lo putbits.lo puthdr.lo putmpg.lo putpic.lo putseq.lo
+motion.lo predict.lo putbits.lo puthdr.lo putmpg.lo putpic.lo putseq.lo \
+putvlc.lo quantize.lo ratectl.lo readpic.lo stats.lo transfrm.lo \
+writepic.lo
 libmpeg2enc_la_OBJECTS = $(am_libmpeg2enc_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -161,7 +171,10 @@ depcomp = $(SHELL) $(top_srcdir)/cfg/depcomp
 @AMDEP@DEP_FILES = $(DEPDIR)/api.Plo $(DEPDIR)/conform.Plo \
 @AMDEP@ $(DEPDIR)/fdctref.Plo $(DEPDIR)/idct.Plo $(DEPDIR)/motion.Plo \
 @AMDEP@ $(DEPDIR)/predict.Plo $(DEPDIR)/putbits.Plo $(DEPDIR)/puthdr.Plo \
-@AMDEP@ $(DEPDIR)/putmpg.Plo $(DEPDIR)/putpic.Plo $(DEPDIR)/putseq.Plo
+@AMDEP@ $(DEPDIR)/putmpg.Plo $(DEPDIR)/putpic.Plo $(DEPDIR)/putseq.Plo \
+@AMDEP@ $(DEPDIR)/putvlc.Plo $(DEPDIR)/quantize.Plo \
+@AMDEP@ $(DEPDIR)/ratectl.Plo $(DEPDIR)/readpic.Plo $(DEPDIR)/stats.Plo \
+@AMDEP@ $(DEPDIR)/transfrm.Plo $(DEPDIR)/writepic.Plo
 DIST_COMMON = Makefile.am Makefile.in
 
 SOURCES = $(libmpeg2enc_la_SOURCES)
@@ -245,6 +258,13 @@ distclean-tags:
 @AMDEP@@_am_include@ $(DEPDIR)/putmpg.Plo
 @AMDEP@@_am_include@ $(DEPDIR)/putpic.Plo
 @AMDEP@@_am_include@ $(DEPDIR)/putseq.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/putvlc.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/quantize.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/ratectl.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/readpic.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/stats.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/transfrm.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/writepic.Plo
 
 distclean-depend:
 	-rm -rf $(DEPDIR)
@@ -367,14 +387,6 @@ mostlyclean-am: mostlyclean-compile mostlyclean-generic \
 	mostlyclean-generic mostlyclean-libtool tags uninstall \
 	uninstall-am
 
-	putvlc.c \
-	quantize.c \
-	ratectl.c \
-	readpic.c \
-	stats.c \
-	transfrm.c \
-	vlc.h \
-	writepic.c
 
 # EOF **********************************************************************
 

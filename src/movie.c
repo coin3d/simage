@@ -72,6 +72,8 @@ s_movie_open(const char * filename)
 {
   struct simage_movie_importer * imp;
   s_movie * movie = (s_movie*) malloc(sizeof(s_movie));
+  movie->params = NULL;
+  movie->filename = NULL;
 
   add_internal_importers();
 
@@ -87,6 +89,10 @@ s_movie_open(const char * filename)
 
   movie->filename = (char*) malloc(strlen(filename)+1);
   strcpy(movie->filename, filename);
+  movie->open = imp->open;
+  movie->get = imp->get;
+  movie->close = imp->close;
+
   return movie;
 }
 
@@ -95,7 +101,9 @@ s_movie_create(const char * filename, s_params * params /* | NULL */)
 {
   struct simage_movie_exporter * exp;
   s_movie * movie = (s_movie*) malloc(sizeof(s_movie));
-
+  movie->params = NULL;
+  movie->filename = NULL;
+  
   add_internal_exporters();
 
   exp = exporters;
@@ -109,6 +117,9 @@ s_movie_create(const char * filename, s_params * params /* | NULL */)
   }
 
   movie->filename = (char*) malloc(strlen(filename)+1);
+  movie->create = exp->create;
+  movie->put = exp->put;
+  movie->close = exp->close;
   strcpy(movie->filename, filename);
   return movie;
 }
@@ -136,7 +147,7 @@ void
 s_movie_destroy(s_movie * movie)
 {
   if (movie->params) s_params_destroy(movie->params);
-  free((void*) movie->filename);
+  if (movie->filename) free((void*) movie->filename);
   free((void*) movie);
 }
 
@@ -155,6 +166,7 @@ s_movie_importer_add(s_movie_open_func * open,
                      s_movie_close_func * close)
 {
   struct simage_movie_importer * last, * imp = importers;
+  last = NULL;
   while (imp) {
     last = imp;
     imp = imp->next;
@@ -177,6 +189,7 @@ s_movie_exporter_add(s_movie_create_func * create,
                      s_movie_close_func * close)
 {
   struct simage_movie_exporter * last, * exp = exporters;
+  last = NULL;
   while (exp) {
     last = exp;
     exp = exp->next;

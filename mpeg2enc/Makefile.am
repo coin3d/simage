@@ -21,7 +21,7 @@ libmpeg2enc_la_SOURCES = \
 	puthdr.c \
 	putmpg.c \
 	putpic.c \
-	putseq.c putseq.h
+	putseq.c putseq.h \
 	putvlc.c \
 	quantize.c \
 	ratectl.c \
