@@ -13,40 +13,28 @@ wd=`echo "$0" | sed 's,/[^/]*$,,'`
 # wd=`cd "$wd"; pwd`
 prefix=`cd "$wd/.."; pwd`
 
-debug=false
+alternate=default
+
 for arg
 do
   case $arg in
-  --debug) debug=true ;;
+  --alternate=*) alternate=`echo $arg | cut -d= -f2-` ;;
   esac
 done
 
-case $debug in
-true)
-  if test -f $prefix/share/Coin/conf/simage-debug.cfg; then
-    . $prefix/share/Coin/conf/simage-debug.cfg
-  elif test -f $prefix/share/Coin/conf/simage.cfg; then
-    . $prefix/share/Coin/conf/simage.cfg
-  else
-    echo >&2 "$me: no simage config available"
-    exit 1
-  fi
-  ;;
-false)
-  if test -f $prefix/share/Coin/conf/simage.cfg; then
-    . $prefix/share/Coin/conf/simage.cfg
-  elif test -f $prefix/share/Coin/conf/simage-debug.cfg; then
-    . $prefix/share/Coin/conf/simage-debug.cfg
-  else
-    echo >&2 "$me: no simage config available"
-    exit 1
-  fi
-  ;;
-esac
+if test -f $prefix/share/Coin/conf/simage-$alternate.cfg; then
+  . $prefix/share/Coin/conf/simage-$alternate.cfg
+elif test -f $prefix/share/Coin/conf/simage-default.cfg; then
+  . $prefix/share/Coin/conf/simage-default.cfg
+else
+  echo >&2 "$me: no default simage config available"
+  exit 1
+fi
 
 usage="\
 Usage: $me [OPTIONS]
 Options:
+  --alternate=<string>
   --cppflags
   --ldflags
   --libs
@@ -59,7 +47,6 @@ do
   case $1 in
   --help | --usage) echo "$usage" ;;
   --version)        echo "$version" ;;
-  --debug)          debug=true ;;
   --cppflags)       echo "$cppflags" ;;
   --ldflags)        echo "$ldflags" ;;
   --libs)           echo "$libs" ;;
@@ -74,6 +61,7 @@ do
       $LIBS $libs
     ;;
   # ignore some options
+  --alternate=*) ;;
   *)
     echo >&2 "$me: Invalid option: \"$1\""
     echo >&2 "$usage"
