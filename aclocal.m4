@@ -1590,7 +1590,15 @@ if test x"$with_jpeg" != xno; then
   AC_CACHE_CHECK([whether the libjpeg development system is available],
     sim_cv_lib_jpegdev_avail,
     [AC_TRY_LINK([#include <stdio.h>
-                  #include <jpeglib.h>],
+/* libjpeg header file is missing the usual C++ wrapper. */
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include <jpeglib.h>
+#ifdef __cplusplus
+}
+#endif
+],
                  [(void)jpeg_read_header(0L, 0);],
                  [sim_cv_lib_jpegdev_avail=yes],
                  [sim_cv_lib_jpegdev_avail=no])])

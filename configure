@@ -3611,7 +3611,15 @@ else
 #line 3611 "configure"
 #include "confdefs.h"
 #include <stdio.h>
-                  #include <jpeglib.h>
+/* libjpeg header file is missing the usual C++ wrapper. */
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include <jpeglib.h>
+#ifdef __cplusplus
+}
+#endif
+
 int
 main ()
 {
@@ -3621,7 +3629,7 @@ main ()
 }
 _ACEOF
 rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo configure:3624: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:3632: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   sim_cv_lib_jpegdev_avail=yes
 else
   echo "configure: failed program was:" >&5
@@ -3630,7 +3638,7 @@ else
 fi
 rm -f conftest$ac_exeext conftest.$ac_ext
 fi
-echo "configure:3633: result: $sim_cv_lib_jpegdev_avail" >&5
+echo "configure:3641: result: $sim_cv_lib_jpegdev_avail" >&5
 echo "${ECHO_T}$sim_cv_lib_jpegdev_avail" >&6
 
   if test x"$sim_cv_lib_jpegdev_avail" = xyes; then
@@ -3688,7 +3696,7 @@ if test x"$with_tiff" != xno; then
   CPPFLAGS="$CPPFLAGS $sim_ac_tiffdev_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_tiffdev_ldflags"
 
-  echo "configure:3691: checking whether the libtiff development system is available" >&5
+  echo "configure:3699: checking whether the libtiff development system is available" >&5
 echo $ECHO_N "checking whether the libtiff development system is available... $ECHO_C" >&6
 if test "${sim_cv_tifflibs+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -3698,7 +3706,7 @@ else
        if test "x$sim_cv_tifflibs" = "xUNRESOLVED"; then
          LIBS="$sim_ac_tiff_libcheck $sim_ac_save_libs"
          cat >conftest.$ac_ext <<_ACEOF
-#line 3701 "configure"
+#line 3709 "configure"
 #include "confdefs.h"
 #include <tiffio.h>
 int
@@ -3710,7 +3718,7 @@ main ()
 }
 _ACEOF
 rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo configure:3713: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:3721: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   sim_cv_tifflibs="$sim_ac_tiff_libcheck"
 else
   echo "configure: failed program was:" >&5
@@ -3721,7 +3729,7 @@ rm -f conftest$ac_exeext conftest.$ac_ext
      done
 
 fi
-echo "configure:3724: result: $sim_cv_tifflibs" >&5
+echo "configure:3732: result: $sim_cv_tifflibs" >&5
 echo "${ECHO_T}$sim_cv_tifflibs" >&6
 
   if test ! x"$sim_cv_tifflibs" = "xUNRESOLVED"; then
@@ -3788,7 +3796,7 @@ if test x"$with_zlib" != xno; then
   CPPFLAGS="$CPPFLAGS $sim_ac_zlib_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_zlib_ldflags"
 
-  echo "configure:3791: checking whether the zlib development system is available" >&5
+  echo "configure:3799: checking whether the zlib development system is available" >&5
 echo $ECHO_N "checking whether the zlib development system is available... $ECHO_C" >&6
 if test "${sim_cv_zlib+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -3798,7 +3806,7 @@ else
        if test "x$sim_cv_zlib" = "xUNRESOLVED"; then
          LIBS="$sim_ac_zlib_libcheck $sim_ac_save_libs"
          cat >conftest.$ac_ext <<_ACEOF
-#line 3801 "configure"
+#line 3809 "configure"
 #include "confdefs.h"
 #include <zlib.h>
 int
@@ -3810,7 +3818,7 @@ main ()
 }
 _ACEOF
 rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo configure:3813: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:3821: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   sim_cv_zlib="$sim_ac_zlib_libcheck"
 else
   echo "configure: failed program was:" >&5
@@ -3821,7 +3829,7 @@ rm -f conftest$ac_exeext conftest.$ac_ext
      done
 
 fi
-echo "configure:3824: result: $sim_cv_zlib" >&5
+echo "configure:3832: result: $sim_cv_zlib" >&5
 echo "${ECHO_T}$sim_cv_zlib" >&6
 
   if test ! x"$sim_cv_zlib" = "xUNRESOLVED"; then
@@ -3870,13 +3878,13 @@ if test x"$with_png" != xno; then
   LDFLAGS="$LDFLAGS $sim_ac_pngdev_ldflags"
   LIBS="$sim_ac_pngdev_libs $LIBS"
 
-  echo "configure:3873: checking whether the libpng development system is available" >&5
+  echo "configure:3881: checking whether the libpng development system is available" >&5
 echo $ECHO_N "checking whether the libpng development system is available... $ECHO_C" >&6
 if test "${sim_cv_lib_pngdev_avail+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 3879 "configure"
+#line 3887 "configure"
 #include "confdefs.h"
 #include <png.h>
 int
@@ -3888,7 +3896,7 @@ main ()
 }
 _ACEOF
 rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo configure:3891: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:3899: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   sim_cv_lib_pngdev_avail=yes
 else
   echo "configure: failed program was:" >&5
@@ -3897,7 +3905,7 @@ else
 fi
 rm -f conftest$ac_exeext conftest.$ac_ext
 fi
-echo "configure:3900: result: $sim_cv_lib_pngdev_avail" >&5
+echo "configure:3908: result: $sim_cv_lib_pngdev_avail" >&5
 echo "${ECHO_T}$sim_cv_lib_pngdev_avail" >&6
 
   if test x"$sim_cv_lib_pngdev_avail" = x"yes"; then
