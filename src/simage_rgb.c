@@ -381,9 +381,9 @@ simage_rgb_load(const char *filename,
   return buffer;
 }
 
-//
-// avoid endian problems (little endian sucks, right? :)
-//
+/*
+ * avoid endian problems (little endian sucks, right? :)
+ */
 static int
 write_short(FILE * fp, unsigned short val)
 {
@@ -410,20 +410,20 @@ simage_rgb_save(const char *filename,
     return 0;
   }
 
-  write_short(fp, 0x01da); // imagic
-  write_short(fp, 0x0001); // raw (no rle yet)
+  write_short(fp, 0x01da); /* imagic */
+  write_short(fp, 0x0001); /* raw (no rle yet) */
 
   if (comp == 1)
-    write_short(fp, 0x0002); // 2 dimensions (heightmap)
+    write_short(fp, 0x0002); /* 2 dimensions (heightmap) */
   else
-    write_short(fp, 0x0003); // 3 dimensions
+    write_short(fp, 0x0003); /* 3 dimensions */
 
   write_short(fp, (unsigned short) width);
   write_short(fp, (unsigned short) height);
   write_short(fp, (unsigned short) comp);
 
   memset(buf, 0, 500);
-  buf[7] = 255; // set maximum pixel value to 255
+  buf[7] = 255; /* set maximum pixel value to 255 */
   strcpy((char *)buf+8, "http://www.coin3d.org");
   fwrite(buf, 1, 500, fp);
 
