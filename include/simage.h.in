@@ -400,9 +400,9 @@ extern "C" {
                                             s_stream_close_func * close);
 
   enum { 
-    S_SEEK_SET = 0,
-    S_SEEK_CUR = 1,
-    S_SEEK_END = 2
+    SIMAGE_SEEK_SET = 0,
+    SIMAGE_SEEK_CUR = 1,
+    SIMAGE_SEEK_END = 2
   };
 
 
