@@ -226,7 +226,9 @@ add_internal_savers(void)
 {
   static int first = 1;
   if (first) {
+#ifdef SIMAGE_QIMAGE_SUPPORT
     char * qtext = NULL;
+#endif
     first = 0;
 #ifdef HAVE_JPEGLIB
     add_saver(&jpeg_saver, 
