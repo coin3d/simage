@@ -13,7 +13,8 @@
 #define ERR_CG          2   // internal CG error
 #define ERR_WRITE       3   // error writing file
 #define ERR_UNSUPPORTED 4   // unsupported write format
-#define ERR_MEM         5   // out of memory
+#define ERR_BAD_DEPTH   5   // unsupported bit depth 
+#define ERR_MEM         6   // out of memory
 
 typedef struct {
   size_t width;
@@ -307,6 +308,10 @@ simage_quicktime_error(char * cstr, int buflen)
   case ERR_UNSUPPORTED:
     strncpy(cstr, "QuickTime saver: Unsupported file format", buflen);    
     break;
+  case ERR_BAD_DEPTH:
+    strncpy(cstr, "QuickTime saver: Only 24 and 32 bit images supported", 
+            buflen);    
+    break;
   case ERR_MEM:
     strncpy(cstr, "QuickTime loader/saver: Out of memory", buflen);    
     break;
@@ -368,8 +373,8 @@ simage_quicktime_load(const char * file, int * width,
   r.bottom = bi.height;
   r.right = bi.width;
 
-  NewGWorldFromPtr(&gw, k32ARGBPixelFormat, &r, NULL, 
-                   NULL, 0, bi.data, bi.bytesPerRow);
+  QTNewGWorldFromPtr(&gw, k32ARGBPixelFormat, &r, NULL, 
+                     NULL, 0, bi.data, bi.bytesPerRow);
   GraphicsImportSetGWorld(gi, gw, NULL);
   e = GraphicsImportDraw(gi);
   if (e != noErr) {
@@ -445,10 +450,23 @@ simage_quicktime_save(const char * filename, const unsigned char * px,
   unsigned char * newpx = malloc(width * height * numcomponents);
 
   v_flip(px, width, height, numcomponents, newpx);
-  rgba_to_argb((uint32_t *)newpx, width, height);
 
-  e = NewGWorldFromPtr(&gw, k32ARGBPixelFormat, &r, NULL,
-                       NULL, 0, newpx, width * numcomponents);
+  // Note: We have to use QuickTime's QTNewGWorldFromPtr() here,
+  // not Carbon's NewGWorldFromPtr(), since the latter does 
+  // not support 24 bit images. 
+
+  if (numcomponents == 4) {
+    rgba_to_argb((uint32_t *)newpx, width, height);
+    e = QTNewGWorldFromPtr(&gw, k32ARGBPixelFormat, &r, NULL,
+                           NULL, 0, newpx, width * numcomponents);
+  } else if (numcomponents == 3) {
+    e = QTNewGWorldFromPtr(&gw, k24RGBPixelFormat, &r, NULL,
+                         NULL, 0, newpx, width * numcomponents);
+  } else {
+    quicktimeerror = ERR_BAD_DEPTH;
+    return NULL;
+  }
+
   if (e != noErr) {
     quicktimeerror = ERR_CG;
     return NULL;
