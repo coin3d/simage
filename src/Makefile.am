@@ -2,8 +2,7 @@
 
 lib_LTLIBRARIES = libsimage.la
 
-INCLUDES = -I../include/
-
+INCLUDES = -I$(top_srcdir)/include/
 
 ## All source files used when building the libraries, including all
 ## headers.
@@ -59,4 +58,4 @@ libsimage_la_LDFLAGS = \
 	-release $(LT_RELEASE)
 
 libsimageinc_HEADERS = \
-	../include/simage.h
+	$(top_srcdir)/include/simage.h

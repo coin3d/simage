@@ -40,19 +40,23 @@ if test "$DIE" -eq 1; then
         exit 1
 fi
 
-echo "Running aclocal"
+echo "Running aclocal..."
 aclocal
 
-echo "Running autoheader"
+echo
+echo "Running autoheader..."
 autoheader
 
-echo "Running automake"
-case $CC in
-    *xlc | *xlc\ * | *lcc | *lcc\ *) am_opt=--include-deps;;
-esac
-automake --add-missing --gnu $am_opt
+echo
+echo "Running automake..."
+echo "(NB: if you're compiling with gcc, you might wish to"
+echo "run automake by hand without the --include-deps argument"
+echo "to get dependency tracking. 19990908 mortene.)"
+automake --include-deps
 
-echo "Running autoconf"
+echo
+echo "Running autoconf..."
 autoconf
 
+echo
 echo "Now type './configure' and 'make' to compile $PROJECT."

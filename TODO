@@ -5,12 +5,6 @@ Todo
 (format is: "* [author:conceived-date] item", listed in approx
 prioritized order)
 
-* [mortene:19990826] have the build process put generated
-  architecture specific files (object files etc) into their own
-  subdirectory, which should somehow be named in an
-  architecture-specific way. This will then make it possible to build
-  for multiple platforms within the same source-copy.
-
 * [mortene:19990822] write simage-specific information in the INSTALL
   and README files.
 
@@ -31,6 +25,15 @@ Done
 ====
 
 (format is: "* [author:conceived-date][implementer:finished-date] item")
+
+* [mortene:19990826][mortene:19990908] have the build process put
+  generated architecture specific files (object files etc) into their
+  own subdirectory, which should somehow be named in an
+  architecture-specific way. This will then make it possible to build
+  for multiple platforms within the same source-copy. SOLUTION: this
+  was not necessary to do, as autoconf handles the requested feature
+  automatically if you move to another directory before running the
+  configure script.
 
 * [mortene:19990826][mortene:19990905] make it user-selectable whether
   or not to include support for the various image file formats (with

@@ -1,8 +1,23 @@
 dnl  This can be any file in the package.
 AC_INIT(include/simage.h)
 
-dnl  Locate C compiler.
+dnl *******************************************************************
+dnl * Check to see if the compiler supports the ANSI standard, and
+dnl * automatically add the necessary options if the compiler defaults
+dnl * to K&R C. If no ANSI mode is available, terminate.
+dnl *******************************************************************
+
 AC_PROG_CC
+AM_PROG_CC_STDC
+
+if test "x$am_cv_prog_cc_stdc" = "xno"; then
+  AC_MSG_ERROR(you need an ANSI compatible C compiler to build simage!)
+fi
+
+
+dnl *******************************************************************
+dnl * Library version control.
+dnl *******************************************************************
 
 dnl  Making releases:
 dnl    SIMAGE_MICRO_VERSION += 1;
@@ -38,6 +53,11 @@ AC_SUBST(LT_AGE)
 
 VERSION=$SIMAGE_VERSION
 
+
+dnl *******************************************************************
+dnl * Miscellaneous options and initializations.
+dnl *******************************************************************
+
 AM_INIT_AUTOMAKE(libsimage, $VERSION)
 
 dnl  File to cram the configure tests into.
@@ -47,6 +67,9 @@ AM_CONFIG_HEADER(config.h)
 dnl  Default to not building a static library.
 dnl  Can be overridden by the user with --enable-static.
 AM_DISABLE_STATIC
+
+dnl  Turn off default maintainer make-rules -- use ./autogen.sh instead.
+AM_MAINTAINER_MODE
 
 dnl Initialize libtool
 AM_PROG_LIBTOOL
