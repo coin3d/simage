@@ -33,9 +33,11 @@ if test $# -eq 1; then
     echo "[SIMAGELIBS]      Creating directory $1"
     mkdir $1
   fi
-  SIMAGELIBS_DOWNLOAD=$1/download
-  SIMAGELIBS_BUILD=$1/build
-  SIMAGELIBS_DIST=$1/dist
+  # make sure it's an absolute path
+  ABSPATH=`cd $1; pwd`
+  SIMAGELIBS_DOWNLOAD=$ABSPATH/download
+  SIMAGELIBS_BUILD=$ABSPATH/build
+  SIMAGELIBS_DIST=$ABSPATH/dist
 fi
 
 if test "X$SIMAGELIBS_PARAMS_OK" = "Xno"; then
