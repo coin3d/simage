@@ -1,15 +1,15 @@
 /* config.h.in.  Generated automatically from configure.in by autoheader.  */
 
-/* Define to use jpeg library */
+/* define to support the jpeg library */
 #undef HAVE_JPEGLIB
 
-/* Define to use png library */
+/* define for libpng support */
 #undef HAVE_PNGLIB
 
-/* Define to use tiff library */
+/* define to support the tiff library */
 #undef HAVE_TIFFLIB
 
-/* Define to use ungif library */
+/* define to support the ungif library */
 #undef HAVE_UNGIFLIB
 
 /* Name of package */
@@ -24,16 +24,16 @@
 /* define this to the simage minor version number */
 #undef SIMAGE_MINOR_VERSION
 
-/* Define to enable pic support */
+/* define to enable pic support */
 #undef SIMAGE_PIC_SUPPORT
 
 /* Define to enable rgb support */
 #undef SIMAGE_RGB_SUPPORT
 
-/* Define to enable targa support */
+/* define to enable targa support */
 #undef SIMAGE_TGA_SUPPORT
 
-/* define this to the full simage major.minor.micro version number */
+/* define this to the simage major.minor.micro version string */
 #undef SIMAGE_VERSION
 
 /* Version number of package */

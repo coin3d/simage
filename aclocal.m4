@@ -131,32 +131,65 @@ fi
 # EOF **********************************************************************
 
 # **************************************************************************
-# Usage: SIM_AC_MSVC_SUPPORT
+# SIM_AC_SETUP_MSVC_IFELSE( IF-FOUND, IF-NOT-FOUND )
 #
-#   This macro takes no arguments, and just checks if The MS VC++ compiler can
-#   be used to compile the project.
+# This macro invokes IF-FOUND if the msvccc wrapper can be run, and
+# IF-NOT-FOUND if not.
 #
 # Authors:
-#   Morten Eriksen <mortene@sim.no>
-#   Lars J. Aas <larsa@sim.no>
+#   Morten Eriksen <mortene@coin3d.org>
+#   Lars J. Aas <larsa@coin3d.org>
 
-AC_DEFUN([SIM_AC_MSVC_SUPPORT], [
 # **************************************************************************
+
+AC_DEFUN([SIM_AC_SETUP_MSVC_IFELSE],
+[# **************************************************************************
 # If the Microsoft Visual C++ cl.exe compiler is available, set us up for
 # compiling with it and to generate an MSWindows .dll file.
 
-BUILD_WITH_MSVC=false
+: ${BUILD_WITH_MSVC=false}
 sim_ac_msvccc=`cd $srcdir; pwd`/cfg/m4/msvccc
-if test -z "$CC" && test -z "$CXX" && $sim_ac_msvccc >/dev/null 2>&1; then
+if test -z "$CC" -a -z "$CXX" && $sim_ac_msvccc >/dev/null 2>&1; then
+  m4_ifdef([$0_VISITED],
+    [AC_FATAL([Macro $0 invoked multiple times])])
+  m4_define([$0_VISITED], 1)
   CC=$sim_ac_msvccc
   CXX=$sim_ac_msvccc
-  LD=$sim_ac_msvccc
-  export CC CXX LD
+  export CC CXX
+  BUILD_WITH_MSVC=true
+fi
+AC_SUBST(BUILD_WITH_MSVC)
+if $BUILD_WITH_MSVC; then
+  :
+  $1
+else
+  :
+  $2
+fi
+]) # SIM_AC_SETUP_MSVC_IFELSE
+
+# **************************************************************************
+
+AC_DEFUN([SIM_AC_MSVC_SUPPORT],
+[# **************************************************************************
+# If the Microsoft Visual C++ cl.exe compiler is available, set us up for
+# compiling with it and to generate an MSWindows .dll file.
+
+: ${BUILD_WITH_MSVC=false}
+sim_ac_msvccc=`cd $srcdir; pwd`/cfg/m4/msvccc
+if test -z "$CC" -a -z "$CXX" && $sim_ac_msvccc >/dev/null 2>&1; then
+  m4_ifdef([$0_VISITED],
+    [AC_FATAL([Macro $0 invoked multiple times])])
+  m4_define([$0_VISITED], 1)
+  CC=$sim_ac_msvccc
+  CXX=$sim_ac_msvccc
+  export CC CXX
   BUILD_WITH_MSVC=true
 fi
 AC_SUBST(BUILD_WITH_MSVC)
 ]) # SIM_AC_MSVC_SUPPORT
 
+# EOF **********************************************************************
 
 
 # serial 1
@@ -251,7 +284,14 @@ esac
 # some checks are only needed if your package does certain things.
 # But this isn't really a big deal.
 
-# serial 4
+# serial 5
+
+# There are a few dirty hacks below to avoid letting `AC_PROG_CC' be
+# written in clear, in which case automake, when reading aclocal.m4,
+# will think it sees a *use*, and therefore will trigger all it's
+# C support machinery.  Also note that it means that autoscan, seeing
+# CC etc. in the Makefile, will ask for an AC_PROG_CC use...
+
 
 # We require 2.13 because we rely on SHELL being computed by configure.
 AC_PREREQ([2.13])
@@ -305,40 +345,42 @@ AC_REQUIRE([AC_PROG_AWK])dnl
 AC_REQUIRE([AC_PROG_MAKE_SET])dnl
 AC_REQUIRE([AM_DEP_TRACK])dnl
 AC_REQUIRE([AM_SET_DEPDIR])dnl
-AC_PROVIDE_IFELSE([AC_PROG_CC],
+AC_PROVIDE_IFELSE([AC_PROG_][CC],
                   [AM_DEPENDENCIES(CC)],
-                  [define([AC_PROG_CC],
-                          defn([AC_PROG_CC])[AM_DEPENDENCIES(CC)])])dnl
-AC_PROVIDE_IFELSE([AC_PROG_CXX],
+                  [define([AC_PROG_][CC],
+                          defn([AC_PROG_][CC])[AM_DEPENDENCIES(CC)])])dnl
+AC_PROVIDE_IFELSE([AC_PROG_][CXX],
                   [AM_DEPENDENCIES(CXX)],
-                  [define([AC_PROG_CXX],
-                          defn([AC_PROG_CXX])[AM_DEPENDENCIES(CXX)])])dnl
+                  [define([AC_PROG_][CXX],
+                          defn([AC_PROG_][CXX])[AM_DEPENDENCIES(CXX)])])dnl
 ])
 
 #
 # Check to make sure that the build environment is sane.
 #
 
-# serial 2
+# serial 3
 
+# AM_SANITY_CHECK
+# ---------------
 AC_DEFUN([AM_SANITY_CHECK],
 [AC_MSG_CHECKING([whether build environment is sane])
 # Just in case
 sleep 1
-echo timestamp > conftestfile
+echo timestamp > conftest.file
 # Do `set' in a subshell so we don't clobber the current shell's
 # arguments.  Must try -L first in case configure is actually a
 # symlink; some systems play weird games with the mod time of symlinks
 # (eg FreeBSD returns the mod time of the symlink's containing
 # directory).
 if (
-   set X `ls -Lt $srcdir/configure conftestfile 2> /dev/null`
+   set X `ls -Lt $srcdir/configure conftest.file 2> /dev/null`
    if test "$[*]" = "X"; then
       # -L didn't work.
-      set X `ls -t $srcdir/configure conftestfile`
+      set X `ls -t $srcdir/configure conftest.file`
    fi
-   if test "$[*]" != "X $srcdir/configure conftestfile" \
-      && test "$[*]" != "X conftestfile $srcdir/configure"; then
+   if test "$[*]" != "X $srcdir/configure conftest.file" \
+      && test "$[*]" != "X conftest.file $srcdir/configure"; then
 
       # If neither matched, then we have a broken ls.  This can happen
       # if, for instance, CONFIG_SHELL is bash and it inherits a
@@ -348,7 +390,7 @@ if (
 alias in your environment])
    fi
 
-   test "$[2]" = conftestfile
+   test "$[2]" = conftest.file
    )
 then
    # Ok.
@@ -407,7 +449,13 @@ else
 fi
 ])
 
-# serial 2
+# serial 3
+
+# There are a few dirty hacks below to avoid letting `AC_PROG_CC' be
+# written in clear, in which case automake, when reading aclocal.m4,
+# will think it sees a *use*, and therefore will trigger all it's
+# C support machinery.  Also note that it means that autoscan, seeing
+# CC etc. in the Makefile, will ask for an AC_PROG_CC use...
 
 # AM_DEPENDENCIES(NAME)
 # ---------------------
@@ -415,19 +463,19 @@ fi
 # NAME is "CC", "CXX" or "OBJC".
 # We try a few techniques and use that to set a single cache variable.
 AC_DEFUN([AM_DEPENDENCIES],
-[AC_REQUIRE([AM_SET_DEPDIR])
-AC_REQUIRE([AM_OUTPUT_DEPENDENCY_COMMANDS])
+[AC_REQUIRE([AM_SET_DEPDIR])dnl
+AC_REQUIRE([AM_OUTPUT_DEPENDENCY_COMMANDS])dnl
 ifelse([$1], CC,
-       [AC_REQUIRE([AC_PROG_CC])
-AC_REQUIRE([AC_PROG_CPP])
+       [AC_REQUIRE([AC_PROG_][CC])dnl
+AC_REQUIRE([AC_PROG_][CPP])
 depcc="$CC"
 depcpp="$CPP"],
-       [$1], CXX, [AC_REQUIRE([AC_PROG_CXX])
-AC_REQUIRE([AC_PROG_CXXCPP])
+       [$1], CXX, [AC_REQUIRE([AC_PROG_][CXX])dnl
+AC_REQUIRE([AC_PROG_][CXXCPP])
 depcc="$CXX"
 depcpp="$CXXCPP"],
        [$1], OBJC, [am_cv_OBJC_dependencies_compiler_type=gcc],
-       [AC_REQUIRE([AC_PROG_$1])
+       [AC_REQUIRE([AC_PROG_][$1])dnl
 depcc="$$1"
 depcpp=""])
 
@@ -473,11 +521,13 @@ $1DEPMODE="depmode=$am_cv_$1_dependencies_compiler_type"
 AC_SUBST([$1DEPMODE])
 ])
 
+
+# AM_SET_DEPDIR
+# -------------
 # Choose a directory name for dependency files.
 # This macro is AC_REQUIREd in AM_DEPENDENCIES
-
-AC_DEFUN([AM_SET_DEPDIR],[
-if test -d .deps || mkdir .deps 2> /dev/null || test -d .deps; then
+AC_DEFUN([AM_SET_DEPDIR],
+[if test -d .deps || mkdir .deps 2> /dev/null || test -d .deps; then
   DEPDIR=.deps
   # We redirect because .deps might already exist and be populated.
   # In this situation we don't want to see an error.
@@ -488,8 +538,11 @@ fi
 AC_SUBST(DEPDIR)
 ])
 
-AC_DEFUN([AM_DEP_TRACK],[
-AC_ARG_ENABLE(dependency-tracking,
+
+# AM_DEP_TRACK
+# ------------
+AC_DEFUN([AM_DEP_TRACK],
+[AC_ARG_ENABLE(dependency-tracking,
 [  --disable-dependency-tracking Speeds up one-time builds
   --enable-dependency-tracking  Do not reject slow dependency extractors])
 if test "x$enable_dependency_tracking" = xno; then
@@ -1222,147 +1275,104 @@ fi
 ]) # SIM_AC_MATHLIB_READY_IFELSE()
 
 
-# Usage:
-#  SIM_AC_CHECK_UNGIFLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+# **************************************************************************
+# SIM_AC_HAVE_LIBUNGIF_IFELSE( IF-FOUND, IF-NOT-FOUND )
 #
-#  Try to find the libungif development system. If it is found, these
-#  shell variables are set:
+# Variables:
+#   sim_ac_have_libungif
+#   sim_ac_libungif_cppflags
+#   sim_ac_libungif_ldflags
+#   sim_ac_libungif_libs
 #
-#    $sim_ac_ungifdev_cppflags (extra flags the compiler needs for ungif lib)
-#    $sim_ac_ungifdev_ldflags  (extra flags the linker needs for ungif lib)
-#    $sim_ac_ungifdev_libs     (link libraries the linker needs for ungif lib)
+# Authors:
+#   Lars J. Aas <larsa@coin3d.org>
+#   Morten Eriksen <mortene@coin3d.org>
 #
-#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-#  In addition, the variable $sim_ac_ungifdev_avail is set to "yes" if
-#  the ungif development system is found.
+# Todo:
+# - use AS_UNSET to unset internal variables to avoid polluting the environment
 #
-#
-# Author: Morten Eriksen, <mortene@sim.no>.
-
-AC_DEFUN([SIM_AC_CHECK_UNGIFLIB], [
-AC_ARG_WITH(
-  [ungif],
-  AC_HELP_STRING([--with-ungif=DIR],
-                 [include support for GIF images [default=yes]]),
-  [],
-  [with_ungif=yes])
-
-sim_ac_ungifdev_avail=no
-
-if test x"$with_ungif" != xno; then
-  if test x"$with_ungif" != xyes; then
-    sim_ac_ungifdev_cppflags="-I${with_ungif}/include"
-    sim_ac_ungifdev_ldflags="-L${with_ungif}/lib"
-  fi
-
-  sim_ac_ungifdev_libs=-lungif
-
-  sim_ac_save_cppflags=$CPPFLAGS
-  sim_ac_save_ldflags=$LDFLAGS
-  sim_ac_save_libs=$LIBS
-
-  CPPFLAGS="$CPPFLAGS $sim_ac_ungifdev_cppflags"
-  LDFLAGS="$LDFLAGS $sim_ac_ungifdev_ldflags"
-  LIBS="$sim_ac_ungifdev_libs $LIBS"
-
-  AC_CACHE_CHECK([whether the libungif development system is available],
-    sim_cv_lib_ungifdev_avail,
-    [AC_TRY_LINK([#include <gif_lib.h>],
-                 [(void)EGifOpenFileName(0L, 0);],
-                 [sim_cv_lib_ungifdev_avail=yes],
-                 [sim_cv_lib_ungifdev_avail=no])])
-
-  if test x"$sim_cv_lib_ungifdev_avail" = xyes; then
-    sim_ac_ungifdev_avail=yes
-    $1
-  else
-    CPPFLAGS=$sim_ac_save_cppflags
-    LDFLAGS=$sim_ac_save_ldflags
-    LIBS=$sim_ac_save_libs
-    $2
-  fi
-fi
-])
 
 # **************************************************************************
 
-AC_DEFUN([SIM_AC_TRY_LINK_LIBUNGIF_IFELSE], [
+AC_DEFUN([SIM_AC_HAVE_LIBUNGIF_IFELSE],
+[AC_REQUIRE([AC_PATH_X])
 : ${sim_ac_have_libungif=false}
-sim_ac_internal_libungif_save_libs=$LIBS
-LIBS="-lungif $LIBS"
-AC_TRY_LINK(
-  [#include <gif_lib.h>],
-  [(void)EGifOpenFileName(0L, 0);],
-  [sim_ac_have_libungif=true])
-LIBS=$sim_ac_internal_libungif_save_libs
-if $sim_ac_have_libungif; then
-  ifelse([$1], , :, [$1])
-else
-  ifelse([$2], , :, [$2])
-fi
-]) # SIM_AC_TRY_LINK_LIBUNGIF_IFELSE
-
-# **************************************************************************
-
-AC_DEFUN([SIM_AC_HAVE_LIBUNGIF_IFELSE], [
-: ${sim_ac_want_libungif=true}
-sim_ac_have_libungif=false
-sim_ac_libungif_extrapath=
-
+AC_MSG_CHECKING([for libungif])
 AC_ARG_WITH(
   [ungif],
-  AC_HELP_STRING([--with-ungif=PATH], [enable use of libungif]),
+  [AC_HELP_STRING([--with-ungif=PATH], [enable/disable libungif support])],
   [case $withval in
-  no)  sim_ac_want_libungif=false ;;
-  yes) sim_ac_want_libungif=true ;;
-  *)   sim_ac_want_libungif=true
-       sim_ac_libungif_extrapath=$withval ;;
-  esac])
-
-AC_MSG_CHECKING([use of libungif for gif support])
-
-if $sim_ac_want_libungif; then
-  sim_ac_libungif_save_cppflags=$CPPFLAGS
-  sim_ac_libungif_save_ldflags=$LDFLAGS
-  sim_ac_libungif_save_libs=$LIBS
-
-  sim_ac_libungif_cppflags=
-  sim_ac_libungif_ldflags=
-  sim_ac_libungif_libs="-lungif"
-  if test x"$sim_ac_libungif_extrapath" != x; then
-    sim_ac_libungif_cppflags=-I$sim_ac_libungif_extrapath/include
-    sim_ac_libungif_ldflags=-L$sim_ac_libungif_extrapath/lib
-    CPPFLAGS="-I$sim_ac_libungif_extrapath/include $CPPFLAGS"
-    LDFLAGS="-L$sim_ac_libungif_extrapath/lib $LDFLAGS"
+  yes | "") sim_ac_want_libungif=true ;;
+  no)       sim_ac_want_libungif=false ;;
+  *)        sim_ac_want_libungif=true
+            sim_ac_libungif_path=$withval ;;
+  esac],
+  [sim_ac_want_libungif=true])
+case $sim_ac_want_libungif in
+true)
+  $sim_ac_have_libungif && break
+  sim_ac_libungif_save_CPPFLAGS=$CPPFLAGS
+  sim_ac_libungif_save_LDFLAGS=$LDFLAGS
+  sim_ac_libungif_save_LIBS=$LIBS
+  sim_ac_libungif_debug=false
+  echo "$CPPFLAGS $CFLAGS $CXXFLAGS" | egrep -q -- "-g\\>" &&
+    sim_ac_libungif_debug=true
+  test -z "$sim_ac_libungif_path" -a x"$prefix" != xNONE &&
+    sim_ac_libungif_path=$prefix
+  sim_ac_libungif_name=ungif
+  if test -n "$sim_ac_libungif_path"; then
+    for sim_ac_libungif_candidate in \
+      `( ls $sim_ac_libungif_path/lib/ungif*.lib;
+         ls $sim_ac_libungif_path/lib/ungif*d.lib ) 2>/dev/null`
+    do
+      case $sim_ac_libungif_candidate in
+      *d.lib)
+        $sim_ac_libungif_debug &&
+          sim_ac_libungif_name=`basename $sim_ac_libungif_candidate .lib` ;;
+      *.lib)
+        sim_ac_libungif_name=`basename $sim_ac_libungif_candidate .lib` ;;
+      esac
+    done
+    sim_ac_libungif_cppflags="-I$sim_ac_libungif_path/include"
+    CPPFLAGS="$CPPFLAGS $sim_ac_libungif_cppflags"
+    sim_ac_libungif_ldflags="-L$sim_ac_libungif_path/lib"
+    LDFLAGS="$LDFLAGS $sim_ac_libungif_ldflags"
+    # unset sim_ac_libungif_candidate
+    # unset sim_ac_libungif_path
   fi
-
-#  Also search in --prefix=... path
-#  if test x"$prefix" != xNONE; then
-#    $prefix/include
-#    $prefix/lib
-#  fi
-
-  SIM_AC_TRY_LINK_LIBUNGIF_IFELSE([], [
-    # libungif sometimes needs libX11
-    SIM_AC_HAVE_LIBX11_IFELSE([
-      CPPFLAGS="$sim_ac_libungif_cppflags $sim_ac_libx11_cppflags $sim_ac_libungif_save_cppflags"
-      LDFLAGS="$sim_ac_libungif_ldflags $sim_ac_libx11_ldflags $sim_ac_libungif_save_ldflags"
-      LIBS="$sim_ac_libx11_libs $sim_ac_libungif_save_libs"
-      SIM_AC_TRY_LINK_LIBUNGIF_IFELSE([
-        sim_ac_libungif_cppflags="$sim_ac_libungif_cppflags $sim_ac_libx11_cppflags"
-        sim_ac_libungif_ldflags="$sim_ac_libungif_ldflags $sim_ac_libx11_ldflags"
-        sim_ac_libungif_libs="$sim_ac_libungif_libs $sim_ac_libx11_libs"
-      ])
-    ])
-  ])
-  CPPFLAGS=$sim_ac_libungif_save_cppflags
-  LDFLAGS=$sim_ac_libungif_save_ldflags
-  LIBS=$sim_ac_libungif_save_libs
-fi
+  sim_ac_libungif_libs="-l$sim_ac_libungif_name"
+  LIBS="$sim_ac_libungif_libs $LIBS"
+  AC_TRY_LINK(
+    [#include <gif_lib.h>],
+    [(void)EGifOpenFileName(0L, 0);],
+    [sim_ac_have_libungif=true])
+  # libungif has become dependent on Xlib :(
+  if test x"$sim_ac_have_libungif" = xfalse; then
+    sim_ac_libungif_cppflags="$sim_ac_libungif_cppflags -I$x_includes"
+    CPPFLAGS="$sim_ac_libungif_cppflags $sim_ac_libungif_save_CPPFLAGS"
+    sim_ac_libungif_ldflags="$sim_ac_libungif_ldflags -L$x_libraries"
+    LDFLAGS="$sim_ac_libungif_ldflags $sim_ac_libungif_save_LDFLAGS"
+    sim_ac_libungif_libs="-l$sim_ac_libungif_name -lX11"
+    LIBS="$sim_ac_libungif_libs $sim_ac_libungif_save_LIBS"
+    AC_TRY_LINK(
+      [#include <gif_lib.h>],
+      [(void)EGifOpenFileName(0L, 0);],
+      [sim_ac_have_libungif=true])
+  fi
+  CPPFLAGS=$sim_ac_libungif_save_CPPFLAGS
+  LDFLAGS=$sim_ac_libungif_save_LDFLAGS
+  LIBS=$sim_ac_libungif_save_LIBS
+  # unset sim_ac_libungif_debug
+  # unset sim_ac_libungif_name
+  # unset sim_ac_libungif_save_CPPFLAGS
+  # unset sim_ac_libungif_save_LDFLAGS
+  # unset sim_ac_libungif_save_LIBS
+  ;;
+esac
 
 if $sim_ac_want_libungif; then
   if $sim_ac_have_libungif; then
-    AC_MSG_RESULT([success])
+    AC_MSG_RESULT([success ($sim_ac_libungif_libs)])
     $1
   else
     AC_MSG_RESULT([failure])
@@ -1372,621 +1382,297 @@ else
   AC_MSG_RESULT([disabled])
   $2
 fi
-]) # SIM_AC_HAVE_LIBUNGIF_IFELSE
-
-
-# Usage:
-#  SIM_AC_CHECK_X11([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-#
-#  Try to find the X11 development system. If it is found, these
-#  shell variables are set:
-#
-#    $sim_ac_x11_cppflags (extra flags the compiler needs for X11)
-#    $sim_ac_x11_ldflags  (extra flags the linker needs for X11)
-#    $sim_ac_x11_libs     (link libraries the linker needs for X11)
-#
-#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-#  In addition, the variable $sim_ac_x11_avail is set to "yes" if
-#  the X11 development system is found.
-#
-#
-# Author: Morten Eriksen, <mortene@sim.no>.
-
-AC_DEFUN([SIM_AC_CHECK_X11], [
-AC_REQUIRE([AC_PATH_XTRA])
-
-sim_ac_x11_avail=no
-
-if test x"$no_x" != xyes; then
-  #  *** DEBUG ***
-  #  Keep this around, as it can be handy when testing on new systems.
-  # echo "X_CFLAGS: $X_CFLAGS"
-  # echo "X_PRE_LIBS: $X_PRE_LIBS"
-  # echo "X_LIBS: $X_LIBS"
-  # echo "X_EXTRA_LIBS: $X_EXTRA_LIBS"
-  # echo
-  # echo "CFLAGS: $CFLAGS"
-  # echo "CPPFLAGS: $CPPFLAGS"
-  # echo "CXXFLAGS: $CXXFLAGS"
-  # echo "LDFLAGS: $LDFLAGS"
-  # echo "LIBS: $LIBS"
-  # exit 0
-
-  sim_ac_x11_cppflags="$X_CFLAGS"
-  sim_ac_x11_ldflags="$X_LIBS"
-  sim_ac_x11_libs="$X_PRE_LIBS -lX11 $X_EXTRA_LIBS"
-
-  sim_ac_save_cppflags=$CPPFLAGS
-  sim_ac_save_ldflags=$LDFLAGS
-  sim_ac_save_libs=$LIBS
-
-  CPPFLAGS="$CPPFLAGS $sim_ac_x11_cppflags"
-  LDFLAGS="$LDFLAGS $sim_ac_x11_ldflags"
-  LIBS="$sim_ac_x11_libs $LIBS"
-
-  AC_CACHE_CHECK(
-    [whether we can link against X11],
-    sim_cv_lib_x11_avail,
-    [AC_TRY_LINK([#include <X11/Xlib.h>],
-                 [(void)XOpenDisplay(0L);],
-                 [sim_cv_lib_x11_avail=yes],
-                 [sim_cv_lib_x11_avail=no])])
-
-  if test x"$sim_cv_lib_x11_avail" = x"yes"; then
-    sim_ac_x11_avail=yes
-    $1
-  else
-    CPPFLAGS=$sim_ac_save_cppflags
-    LDFLAGS=$sim_ac_save_ldflags
-    LIBS=$sim_ac_save_libs
-    $2
-  fi
-fi
+# unset sim_ac_want_libungif
 ])
 
-# Usage:
-#  SIM_AC_CHECK_X11SHMEM([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-#
-#  Try to find the X11 shared memory extension. If it is found, this
-#  shell variable is set:
-#
-#    $sim_ac_x11shmem_libs   (link libraries the linker needs for X11 Shm)
-#
-#  The LIBS flag will also be modified accordingly. In addition, the
-#  variable $sim_ac_x11shmem_avail is set to "yes" if the X11 shared
-#  memory extension is found.
-#
-#
-# Author: Morten Eriksen, <mortene@sim.no>.
-#
-# TODO:
-#    * [mortene:20000122] make sure this work on MSWin (with
-#      Cygwin installation)
-#
+# EOF **********************************************************************
 
-AC_DEFUN([SIM_AC_CHECK_X11SHMEM], [
-
-sim_ac_x11shmem_avail=no
-sim_ac_x11shmem_libs="-lXext"
-sim_ac_save_libs=$LIBS
-LIBS="$sim_ac_x11shmem_libs $LIBS"
-
-AC_CACHE_CHECK(
-  [whether the X11 shared memory extension is available],
-  sim_cv_lib_x11shmem_avail,
-  [AC_TRY_LINK([#include <X11/Xlib.h>
-               #include <X11/extensions/XShm.h>],
-               [(void)XShmQueryVersion(0L, 0L, 0L, 0L);],
-               [sim_cv_lib_x11shmem_avail=yes],
-               [sim_cv_lib_x11shmem_avail=no])])
-
-if test x"$sim_cv_lib_x11shmem_avail" = xyes; then
-  sim_ac_x11shmem_avail=yes
-  $1
-else
-  LIBS=$sim_ac_save_libs
-  $2
-fi
-])
-
-# Usage:
-#  SIM_AC_CHECK_X11MU([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+# **************************************************************************
+# configuration_summary.m4
 #
-#  Try to find the X11 miscellaneous utilities extension. If it is
-#  found, this shell variable is set:
-#
-#    $sim_ac_x11mu_libs   (link libraries the linker needs for X11 MU)
-#
-#  The LIBS flag will also be modified accordingly. In addition, the
-#  variable $sim_ac_x11mu_avail is set to "yes" if the X11 miscellaneous
-#  utilities extension is found.
-#
-# Author: Morten Eriksen, <mortene@sim.no>.
-#
-# TODO:
-#    * [mortene:20000122] make sure this work on MSWin (with
-#      Cygwin installation)
-#
-
-AC_DEFUN([SIM_AC_CHECK_X11MU], [
-
-sim_ac_x11mu_avail=no
-sim_ac_x11mu_libs="-lXmu"
-sim_ac_save_libs=$LIBS
-LIBS="$sim_ac_x11mu_libs $LIBS"
-
-AC_CACHE_CHECK(
-  [whether the X11 miscellaneous utilities is available],
-  sim_cv_lib_x11mu_avail,
-  [AC_TRY_LINK([#include <X11/Xlib.h>
-                #include <X11/Xmu/Xmu.h>
-                #include <X11/Xmu/StdCmap.h>],
-               [(void)XmuAllStandardColormaps(0L);],
-               [sim_cv_lib_x11mu_avail=yes],
-               [sim_cv_lib_x11mu_avail=no])])
-
-if test x"$sim_cv_lib_x11mu_avail" = xyes; then
-  sim_ac_x11mu_avail=yes
-  $1
-else
-  LIBS=$sim_ac_save_libs
-  $2
-fi
-])
-
-# Usage:
-#  SIM_AC_CHECK_X11XID([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-#
-#  Try to find the X11 extension device library. Sets this
-#  shell variable:
-#
-#    $sim_ac_x11xid_libs   (link libraries the linker needs for X11 XID)
-#
-#  The LIBS flag will also be modified accordingly. In addition, the
-#  variable $sim_ac_x11xid_avail is set to "yes" if the X11 extension
-#  device library is found.
-#
-# Author: Morten Eriksen, <mortene@sim.no>.
-#
-# TODO:
-#    * [mortene:20000122] make sure this work on MSWin (with
-#      Cygwin installation)
-#
-
-AC_DEFUN([SIM_AC_CHECK_X11XID], [
-
-sim_ac_x11xid_avail=no
-sim_ac_x11xid_libs="-lXi"
-sim_ac_save_libs=$LIBS
-LIBS="$sim_ac_x11xid_libs $LIBS"
-
-AC_CACHE_CHECK(
-  [whether the X11 extension device library is available],
-  sim_cv_lib_x11xid_avail,
-  [AC_TRY_LINK([#include <X11/extensions/XInput.h>],
-               [(void)XOpenDevice(0L, 0);],
-               [sim_cv_lib_x11xid_avail=yes],
-               [sim_cv_lib_x11xid_avail=no])])
-
-if test x"$sim_cv_lib_x11xid_avail" = xyes; then
-  sim_ac_x11xid_avail=yes
-  $1
-else
-  LIBS=$sim_ac_save_libs
-  $2
-fi
-])
-
-# Usage:
-#  SIM_AC_CHECK_X_INTRINSIC([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-#
-#  Try to find the Xt intrinsic library. Sets this shell variable:
-#
-#    $sim_ac_xt_libs   (link library the linker needs for X Intrinsic)
-#
-#  The LIBS flag will also be modified accordingly. In addition, the
-#  variable $sim_ac_xt_avail is set to "yes" if the X11 Intrinsic
-#  library is found.
-#
-# Author: Morten Eriksen, <mortene@sim.no>.
-#
-
-AC_DEFUN([SIM_AC_CHECK_X_INTRINSIC], [
-
-sim_ac_xt_avail=no
-sim_ac_xt_libs="-lXt"
-sim_ac_save_libs=$LIBS
-LIBS="$sim_ac_xt_libs $LIBS"
-
-AC_CACHE_CHECK(
-  [whether the X11 Intrinsic library is available],
-  sim_cv_lib_xt_avail,
-  [AC_TRY_LINK([#include <X11/Intrinsic.h>],
-               [(void)XtVaCreateWidget("", 0L, 0L);],
-               [sim_cv_lib_xt_avail=yes],
-               [sim_cv_lib_xt_avail=no])])
-
-if test x"$sim_cv_lib_xt_avail" = xyes; then
-  sim_ac_xt_avail=yes
-  $1
-else
-  LIBS=$sim_ac_save_libs
-  $2
-fi
-])
-
-# Usage:
-#   SIM_AC_CHECK_LIBXPM( [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND] )
-#
-# Description:
-#   This macro checks for libXpm.
-#
-# Variables:
-#   $sim_ac_xpm_avail      yes | no
-#   $sim_ac_xpm_libs       [link-line libraries]
+# This file contains some utility macros for making it easy to have a short
+# summary of the important configuration settings printed at the end of the
+# configure run.
 #
 # Authors:
 #   Lars J. Aas <larsa@sim.no>
 #
 
-AC_DEFUN([SIM_AC_CHECK_LIBXPM], [
+# **************************************************************************
+# SIM_AC_CONFIGURATION_SETTING( DESCRIPTION, SETTING )
+#
+# This macro registers a configuration setting to be dumped by the
+# SIM_AC_CONFIGURATION_SUMMARY macro.
 
-sim_ac_xpm_avail=no
-sim_ac_xpm_libs="-lXpm"
-
-AC_CACHE_CHECK(
-  [whether libXpm is available],
-  sim_cv_lib_xpm_avail,
-  [sim_ac_save_libs=$LIBS
-  LIBS="$sim_ac_xpm_libs $LIBS"
-  AC_TRY_LINK([#include <X11/xpm.h>],
-              [(void)XpmLibraryVersion();],
-              [sim_cv_lib_xpm_avail=yes],
-              [sim_cv_lib_xpm_avail=no])
-  LIBS="$sim_ac_save_libs"])
-
-if test x"$sim_cv_lib_xpm_avail" = x"yes"; then
-  sim_ac_xpm_avail=yes
-  LIBS="$sim_ac_xpm_libs $LIBS"
-  $1
+AC_DEFUN([SIM_AC_CONFIGURATION_SETTING],
+[if test x${sim_ac_configuration_settings+set} != xset; then
+  sim_ac_configuration_settings="$1:$2"
 else
-  ifelse([$2], , :, [$2])
+  sim_ac_configuration_settings="$sim_ac_configuration_settings|$1:$2"
 fi
-])
+]) # SIM_AC_CONFIGURATION_SETTING
 
+# **************************************************************************
+# SIM_AC_CONFIGURATION_WARNING( WARNING )
+#
+# This macro registers a configuration warning to be dumped by the
+# SIM_AC_CONFIGURATION_SUMMARY macro.
 
-# Usage:
-#  SIM_AC_CHECK_X11_XP([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-#
-#  Try to find the Xp library for printing functionality. Sets this
-#  shell variable:
-#
-#    $sim_ac_xp_libs   (link library the linker needs for the Xp library)
-#
-#  The LIBS flag will also be modified accordingly. In addition, the
-#  variable $sim_ac_xp_avail is set to "yes" if the Xp library is found.
-#
-# Author: Morten Eriksen, <mortene@sim.no>.
-#
-
-AC_DEFUN([SIM_AC_CHECK_X11_XP], [
-sim_ac_xp_avail=no
-sim_ac_xp_libs="-lXp"
-sim_ac_save_libs=$LIBS
-LIBS="$sim_ac_xp_libs $LIBS"
-
-AC_CACHE_CHECK(
-  [whether the X11 printing library is available],
-  sim_cv_lib_xp_avail,
-  [AC_TRY_LINK([#include <X11/extensions/Print.h>],
-               [XpEndJob(0L);],
-               [sim_cv_lib_xp_avail=yes],
-               [sim_cv_lib_xp_avail=no])])
-
-if test x"$sim_cv_lib_xp_avail" = xyes; then
-  sim_ac_xp_avail=yes
-  $1
+AC_DEFUN([SIM_AC_CONFIGURATION_WARNING],
+[if test x${sim_ac_configuration_warnings+set} != xset; then
+  sim_ac_configuration_warnings="$1"
 else
-  LIBS=$sim_ac_save_libs
-  $2
+  sim_ac_configuration_warnings="$sim_ac_configuration_warnings|$1"
 fi
-])
+]) # SIM_AC_CONFIGURATION_WARNING
 
-# SIM_AC_CHECK_X11_ATHENA( [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND] )
+# **************************************************************************
+# SIM_AC_CONFIGURATION_SUMMARY
+#
+# This macro dumps the settings and warnings summary.
 
-AC_DEFUN([SIM_AC_CHECK_X11_ATHENA], [
-sim_ac_athena_avail=no
-sim_ac_athena_libs="-lXaw"
-sim_ac_save_libs=$LIBS
-LIBS="$sim_ac_athena_libs $LIBS"
+AC_DEFUN([SIM_AC_CONFIGURATION_SUMMARY],
+[sim_ac_settings=$sim_ac_configuration_settings
+sim_ac_num_settings=`echo "$sim_ac_settings" | tr -d -c "|" | wc -c`
+sim_ac_maxlength=0
+while test $sim_ac_num_settings -ge 0; do
+  sim_ac_description=`echo "$sim_ac_settings" | cut -d: -f1`
+  sim_ac_length=`echo "$sim_ac_description" | wc -c`
+  if test $sim_ac_length -gt $sim_ac_maxlength; then
+    sim_ac_maxlength=`expr $sim_ac_length + 0`
+  fi
+  sim_ac_settings=`echo $sim_ac_settings | cut -d"|" -f2-`
+  sim_ac_num_settings=`expr $sim_ac_num_settings - 1`
+done
 
-AC_CACHE_CHECK(
-  [whether the X11 Athena widgets library is available],
-  sim_cv_lib_athena_avail,
-  [AC_TRY_LINK([#include <X11/Xfuncproto.h>
-                #include <X11/Xaw/XawInit.h>],
-               [XawInitializeWidgetSet();],
-               [sim_cv_lib_athena_avail=yes],
-               [sim_cv_lib_athena_avail=no])])
+sim_ac_maxlength=`expr $sim_ac_maxlength + 3`
+sim_ac_padding=`echo "                                             " |
+  cut -c1-$sim_ac_maxlength`
 
-if test x"$sim_cv_lib_athena_avail" = xyes; then
-  sim_ac_athena_avail=yes
-  $1
-else
-  LIBS=$sim_ac_save_libs
-  $2
+sim_ac_num_settings=`echo "$sim_ac_configuration_settings" | tr -d -c "|" | wc -c`
+echo ""
+echo "$PACKAGE configuration settings:"
+while test $sim_ac_num_settings -ge 0; do
+  sim_ac_setting=`echo $sim_ac_configuration_settings | cut -d"|" -f1`
+  sim_ac_description=`echo "$sim_ac_setting" | cut -d: -f1`
+  sim_ac_status=`echo "$sim_ac_setting" | cut -d: -f2-`
+  # hopefully not too many terminals are too dumb for this
+  echo -e "$sim_ac_padding $sim_ac_status\r  $sim_ac_description:"
+  sim_ac_configuration_settings=`echo $sim_ac_configuration_settings | cut -d"|" -f2-`
+  sim_ac_num_settings=`expr $sim_ac_num_settings - 1`
+done
+
+if test x${sim_ac_configuration_warnings+set} = xset; then
+sim_ac_num_warnings=`echo "$sim_ac_configuration_warnings" | tr -d -c "|" | wc -c`
+echo ""
+echo "$PACKAGE configuration warnings:"
+while test $sim_ac_num_warnings -ge 0; do
+  sim_ac_warning=`echo "$sim_ac_configuration_warnings" | cut -d"|" -f1`
+  echo "  * $sim_ac_warning"
+  sim_ac_configuration_warnings=`echo $sim_ac_configuration_warnings | cut -d"|" -f2-`
+  sim_ac_num_warnings=`expr $sim_ac_num_warnings - 1`
+done
 fi
-])
-
-# SIM_AC_X11_READY( [ACTION-IF-TRUE], [ACTION-IF-FALSE] )
-
-AC_DEFUN([SIM_AC_CHECK_X11_READY],
-[AC_CACHE_CHECK(
-  [if X11 linkage is ready],
-  [sim_cv_x11_ready],
-  [AC_TRY_LINK(
-    [#include <X11/Xlib.h>],
-    [(void)XOpenDisplay(0L);],
-    [sim_cv_x11_ready=true],
-    [sim_cv_x11_ready=false])])
-if ${sim_cv_x11_ready}; then
-  ifelse([$1], , :, [$1])
-else
-  ifelse([$2], , :, [$2])
-fi
-]) # SIM_AC_X11_READY()
+]) # SIM_AC_CONFIGURATION_SUMMARY
 
 
 # **************************************************************************
-
-AC_DEFUN([SIM_AC_HAVE_LIBX11_IFELSE], [
-: ${sim_ac_have_libx11=false}
-AC_REQUIRE([AC_PATH_X])
-
-# prevent multiple runs
-$sim_ac_have_libx11 || {
-  if test x"$no_x" != xyes; then
-    sim_ac_libx11_cppflags=
-    sim_ac_libx11_ldflags=
-    test x"$x_includes" != x && sim_ac_libx11_cppflags="-I$x_includes"
-    test x"$x_libraries" != x && sim_ac_libx11_ldflags="-L$x_libraries"
-    sim_ac_libx11_libs="-lX11"
-
-    sim_ac_libx11_save_cppflags=$CPPFLAGS
-    sim_ac_libx11_save_ldflags=$LDFLAGS
-    sim_ac_libx11_save_libs=$LIBS
-
-    CPPFLAGS="$CPPFLAGS $sim_ac_libx11_cppflags"
-    LDFLAGS="$LDFLAGS $sim_ac_libx11_ldflags"
-    LIBS="$sim_ac_libx11_libs $LIBS"
-
-    AC_TRY_LINK(
-      [#include <X11/Xlib.h>],
-      [(void)XOpenDisplay(0L);],
-      [sim_ac_have_libx11=true])
-
-    CPPFLAGS=$sim_ac_libx11_save_cppflags
-    LDFLAGS=$sim_ac_libx11_save_ldflags
-    LIBS=$sim_ac_libx11_save_libs
-  fi
-}
-
-if $sim_ac_have_libx11; then
-  ifelse([$1], , :, [$1])
-else
-  ifelse([$2], , :, [$2])
-fi
-]) # SIM_AC_HAVE_LIBX11_IFELSE
-
-
-# Usage:
-#  SIM_AC_CHECK_JPEGLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+# SIM_AC_HAVE_LIBJPEG_IFELSE( IF-FOUND, IF-NOT-FOUND )
 #
-#  Try to find the JPEG development system. If it is found, these
-#  shell variables are set:
+# Variables:
+#   sim_ac_have_libjpeg
+#   sim_ac_libjpeg_cppflags
+#   sim_ac_libjpeg_ldflags
+#   sim_ac_libjpeg_libs
 #
-#    $sim_ac_jpegdev_cppflags (extra flags the compiler needs for jpeg lib)
-#    $sim_ac_jpegdev_ldflags  (extra flags the linker needs for jpeg lib)
-#    $sim_ac_jpegdev_libs     (link libraries the linker needs for jpeg lib)
+# Authors:
+#   Lars J. Aas <larsa@coin3d.org>
+#   Morten Eriksen <mortene@coin3d.org>
 #
-#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-#  In addition, the variable $sim_ac_jpegdev_avail is set to "yes" if
-#  the jpeg development system is found.
+# Todo:
+# - use AS_UNSET to unset internal variables to avoid polluting the environment
 #
-#
-# Author: Morten Eriksen, <mortene@sim.no>.
 
-AC_DEFUN([SIM_AC_CHECK_JPEGLIB], [
+# **************************************************************************
 
+AC_DEFUN([SIM_AC_HAVE_LIBJPEG_IFELSE],
+[: ${sim_ac_have_libjpeg=false}
+AC_MSG_CHECKING([for libjpeg])
 AC_ARG_WITH(
   [jpeg],
-  AC_HELP_STRING([--with-jpeg=DIR],
-                 [include support for JPEG images [[default=yes]]]),
-  [],
-  [with_jpeg=yes])
-
-sim_ac_jpegdev_avail=no
-
-if test x"$with_jpeg" != xno; then
-  if test x"$with_jpeg" != xyes; then
-    sim_ac_jpegdev_cppflags="-I${with_jpeg}/include"
-    sim_ac_jpegdev_ldflags="-L${with_jpeg}/lib"
+  [AC_HELP_STRING([--with-jpeg=PATH], [enable/disable libjpeg support])],
+  [case $withval in
+  yes | "") sim_ac_want_libjpeg=true ;;
+  no)       sim_ac_want_libjpeg=false ;;
+  *)        sim_ac_want_libjpeg=true
+            sim_ac_libjpeg_path=$withval ;;
+  esac],
+  [sim_ac_want_libjpeg=true])
+case $sim_ac_want_libjpeg in
+true)
+  $sim_ac_have_libjpeg && break
+  sim_ac_libjpeg_save_CPPFLAGS=$CPPFLAGS
+  sim_ac_libjpeg_save_LDFLAGS=$LDFLAGS
+  sim_ac_libjpeg_save_LIBS=$LIBS
+  sim_ac_libjpeg_debug=false
+  echo "$CPPFLAGS $CFLAGS $CXXFLAGS" | egrep -q -- "-g\\>" &&
+    sim_ac_libjpeg_debug=true
+  test -z "$sim_ac_libjpeg_path" -a x"$prefix" != xNONE &&
+    sim_ac_libjpeg_path=$prefix
+  sim_ac_libjpeg_name=jpeg
+  if test -n "$sim_ac_libjpeg_path"; then
+    for sim_ac_libjpeg_candidate in \
+      `( ls $sim_ac_libjpeg_path/lib/jpeg*.lib;
+         ls $sim_ac_libjpeg_path/lib/jpeg*d.lib ) 2>/dev/null`
+    do
+      case $sim_ac_libjpeg_candidate in
+      *d.lib)
+        $sim_ac_libjpeg_debug &&
+          sim_ac_libjpeg_name=`basename $sim_ac_libjpeg_candidate .lib` ;;
+      *.lib)
+        sim_ac_libjpeg_name=`basename $sim_ac_libjpeg_candidate .lib` ;;
+      esac
+    done
+    sim_ac_libjpeg_cppflags="-I$sim_ac_libjpeg_path/include"
+    CPPFLAGS="$CPPFLAGS $sim_ac_libjpeg_cppflags"
+    sim_ac_libjpeg_ldflags="-L$sim_ac_libjpeg_path/lib"
+    LDFLAGS="$LDFLAGS $sim_ac_libjpeg_ldflags"
+    # unset sim_ac_libjpeg_candidate
+    # unset sim_ac_libjpeg_path
   fi
-
-  sim_ac_jpegdev_libs=-ljpeg
-
-  sim_ac_save_cppflags=$CPPFLAGS
-  sim_ac_save_ldflags=$LDFLAGS
-  sim_ac_save_libs=$LIBS
-
-  CPPFLAGS="$CPPFLAGS $sim_ac_jpegdev_cppflags"
-  LDFLAGS="$LDFLAGS $sim_ac_jpegdev_ldflags"
-  LIBS="$sim_ac_jpegdev_libs $LIBS"
-
-  AC_CACHE_CHECK([whether the libjpeg development system is available],
-    sim_cv_lib_jpegdev_avail,
-    [AC_TRY_LINK([#include <stdio.h>
-/* libjpeg header file is missing the usual C++ wrapper. */
+  sim_ac_libjpeg_libs="-l$sim_ac_libjpeg_name"
+  LIBS="$sim_ac_libjpeg_libs $LIBS"
+  AC_TRY_LINK(
+    [#include <stdio.h>
 #ifdef __cplusplus
-extern "C" {
+extern "C" { // libjpeg header is missing the C++ wrapper
 #endif
 #include <jpeglib.h>
 #ifdef __cplusplus
 }
-#endif
-],
-                 [(void)jpeg_read_header(0L, 0);],
-                 [sim_cv_lib_jpegdev_avail=yes],
-                 [sim_cv_lib_jpegdev_avail=no])])
-
-  if test x"$sim_cv_lib_jpegdev_avail" = xyes; then
-    sim_ac_jpegdev_avail=yes
+#endif],
+  [(void)jpeg_read_header(0L, 0);],
+  [sim_ac_have_libjpeg=true])
+  CPPFLAGS=$sim_ac_libjpeg_save_CPPFLAGS
+  LDFLAGS=$sim_ac_libjpeg_save_LDFLAGS
+  LIBS=$sim_ac_libjpeg_save_LIBS
+  # unset sim_ac_libjpeg_debug
+  # unset sim_ac_libjpeg_name
+  # unset sim_ac_libjpeg_save_CPPFLAGS
+  # unset sim_ac_libjpeg_save_LDFLAGS
+  # unset sim_ac_libjpeg_save_LIBS
+  ;;
+esac
+if $sim_ac_want_libjpeg; then
+  if $sim_ac_have_libjpeg; then
+    AC_MSG_RESULT([success ($sim_ac_libjpeg_libs)])
     $1
   else
-    CPPFLAGS=$sim_ac_save_cppflags
-    LDFLAGS=$sim_ac_save_ldflags
-    LIBS=$sim_ac_save_libs
+    AC_MSG_RESULT([failure])
     $2
   fi
+else
+  AC_MSG_RESULT([disabled])
+  $2
 fi
+# unset sim_ac_want_libjpeg
 ])
 
+# EOF **********************************************************************
 
-# Usage:
-#  SIM_AC_CHECK_TIFFLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+# **************************************************************************
+# SIM_AC_HAVE_LIBZLIB_IFELSE( IF-FOUND, IF-NOT-FOUND )
 #
-# Description:
-#  Try to find the TIFF development system. If it is found, these
-#  shell variables are set:
+# Variables:
+#   sim_ac_have_libzlib
+#   sim_ac_zlib_cppflags
+#   sim_ac_zlib_ldflags
+#   sim_ac_zlib_libs
 #
-#    $sim_ac_tiffdev_cppflags (extra flags the compiler needs for tiff lib)
-#    $sim_ac_tiffdev_ldflags  (extra flags the linker needs for tiff lib)
-#    $sim_ac_tiffdev_libs     (link libraries the linker needs for tiff lib)
+# Authors:
+#   Lars J. Aas <larsa@coin3d.org>
+#   Morten Eriksen <mortene@coin3d.org>
 #
-#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-#  In addition, the variable $sim_ac_tiffdev_avail is set to "yes" if
-#  tiff development system is found.
+# Todo:
+# - use AS_UNSET to unset internal variables to avoid polluting the environment
 #
-# Author: Morten Eriksen, <mortene@sim.no>.
 
-AC_DEFUN([SIM_AC_CHECK_TIFFLIB], [
+# **************************************************************************
 
-AC_ARG_WITH(
-  [tiff],
-  AC_HELP_STRING([--with-tiff=DIR],
-                 [include support for TIFF images [[default=yes]]]),
-  [],
-  [with_tiff=yes])
-
-sim_ac_tiffdev_avail=no
-
-if test x"$with_tiff" != xno; then
-  if test x"$with_tiff" != xyes; then
-    sim_ac_tiffdev_cppflags="-I${with_tiff}/include"
-    sim_ac_tiffdev_ldflags="-L${with_tiff}/lib"
-  fi
-
-  sim_ac_save_cppflags=$CPPFLAGS
-  sim_ac_save_ldflags=$LDFLAGS
-  sim_ac_save_libs=$LIBS
-
-  CPPFLAGS="$CPPFLAGS $sim_ac_tiffdev_cppflags"
-  LDFLAGS="$LDFLAGS $sim_ac_tiffdev_ldflags"
-
-  AC_CACHE_CHECK([whether the libtiff development system is available],
-    sim_cv_tifflibs,
-    [sim_cv_tifflibs=UNRESOLVED
-     for sim_ac_tiff_libcheck in "-ltiff" "-ltiff -luser32"; do
-       if test "x$sim_cv_tifflibs" = "xUNRESOLVED"; then
-         LIBS="$sim_ac_tiff_libcheck $sim_ac_save_libs"
-         AC_TRY_LINK([#include <tiffio.h>],
-                     [(void)TIFFOpen(0L, 0L);],
-                     [sim_cv_tifflibs="$sim_ac_tiff_libcheck"])
-       fi
-     done
-    ]
-  )
-
-  if test ! x"$sim_cv_tifflibs" = "xUNRESOLVED"; then
-    sim_ac_tiffdev_avail=yes
-    sim_ac_tiffdev_libs="$sim_cv_tifflibs"
-    $1
-  else
-    CPPFLAGS=$sim_ac_save_cppflags
-    LDFLAGS=$sim_ac_save_ldflags
-    LIBS=$sim_ac_save_libs
-    $2
-  fi
-fi
-])
-
-
-# Usage:
-#  SIM_AC_CHECK_ZLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-#
-#  Try to find the ZLIB development system. If it is found, these
-#  shell variables are set:
-#
-#    $sim_ac_zlib_cppflags (extra flags the compiler needs for zlib)
-#    $sim_ac_zlib_ldflags  (extra flags the linker needs for zlib)
-#    $sim_ac_zlib_libs     (link libraries the linker needs for zlib)
-#
-#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-#  In addition, the variable $sim_ac_zlib_avail is set to "yes" if the
-#  zlib development system is found.
-#
-#
-# Author: Morten Eriksen, <mortene@sim.no>.
-
-AC_DEFUN([SIM_AC_CHECK_ZLIB], [
-
+AC_DEFUN([SIM_AC_HAVE_LIBZLIB_IFELSE],
+[: ${sim_ac_have_libzlib=false}
+AC_MSG_CHECKING([for zlib])
 AC_ARG_WITH(
   [zlib],
-  AC_HELP_STRING([--with-zlib=DIR],
-                 [zlib installation directory]),
-  [],
-  [with_zlib=yes])
-
-sim_ac_zlib_avail=no
-
-if test x"$with_zlib" != xno; then
-  if test x"$with_zlib" != xyes; then
-    sim_ac_zlib_cppflags="-I${with_zlib}/include"
-    sim_ac_zlib_ldflags="-L${with_zlib}/lib"
+  [AC_HELP_STRING([--with-zlib=PATH], [enable/disable zlib support])],
+  [case $withval in
+  yes | "") sim_ac_want_libzlib=true ;;
+  no)       sim_ac_want_libzlib=false ;;
+  *)        sim_ac_want_libzlib=true
+            sim_ac_libzlib_path=$withval ;;
+  esac],
+  [sim_ac_want_libzlib=true])
+case $sim_ac_want_libzlib in
+true)
+  $sim_ac_have_libzlib && break
+  sim_ac_libzlib_save_CPPFLAGS=$CPPFLAGS
+  sim_ac_libzlib_save_LDFLAGS=$LDFLAGS
+  sim_ac_libzlib_save_LIBS=$LIBS
+  sim_ac_libzlib_debug=false
+  echo "$CPPFLAGS $CFLAGS $CXXFLAGS" | egrep -q -- "-g\\>" &&
+    sim_ac_libzlib_debug=true
+  test -z "$sim_ac_libzlib_path" -a x"$prefix" != xNONE &&
+    sim_ac_libzlib_path=$prefix
+  sim_ac_libzlib_name=z
+  if test -n "$sim_ac_libzlib_path"; then
+    for sim_ac_libzlib_candidate in \
+      `( ls $sim_ac_libzlib_path/lib/zlib*.lib;
+         ls $sim_ac_libzlib_path/lib/zlib*d.lib ) 2>/dev/null`
+    do
+      case $sim_ac_libzlib_candidate in
+      *d.lib)
+        $sim_ac_libzlib_debug &&
+          sim_ac_libzlib_name=`basename $sim_ac_libzlib_candidate .lib` ;;
+      *.lib)
+        sim_ac_libzlib_name=`basename $sim_ac_libzlib_candidate .lib` ;;
+      esac
+    done
+    sim_ac_libzlib_cppflags="-I$sim_ac_libzlib_path/include"
+    CPPFLAGS="$CPPFLAGS $sim_ac_libzlib_cppflags"
+    sim_ac_libzlib_ldflags="-L$sim_ac_libzlib_path/lib"
+    LDFLAGS="$LDFLAGS $sim_ac_libzlib_ldflags"
+    # unset sim_ac_libzlib_candidate
+    # unset sim_ac_libzlib_path
   fi
-
-  sim_ac_save_cppflags=$CPPFLAGS
-  sim_ac_save_ldflags=$LDFLAGS
-  sim_ac_save_libs=$LIBS
-
-  CPPFLAGS="$CPPFLAGS $sim_ac_zlib_cppflags"
-  LDFLAGS="$LDFLAGS $sim_ac_zlib_ldflags"
-
-  AC_CACHE_CHECK([whether the zlib development system is available],
-    sim_cv_zlib,
-    [sim_cv_zlib=UNRESOLVED
-     for sim_ac_zlib_libcheck in "-lz" "-lzlib"; do
-       if test "x$sim_cv_zlib" = "xUNRESOLVED"; then
-         LIBS="$sim_ac_zlib_libcheck $sim_ac_save_libs"
-         AC_TRY_LINK([#include <zlib.h>],
-                     [(void)zlibVersion();],
-                     [sim_cv_zlib="$sim_ac_zlib_libcheck"])
-       fi
-     done
-    ]
-  )
-
-  if test ! x"$sim_cv_zlib" = "xUNRESOLVED"; then
-    sim_ac_zlib_avail=yes
-    sim_ac_zlib_libs="$sim_cv_zlib"
+  sim_ac_libzlib_libs="-l$sim_ac_libzlib_name"
+  LIBS="$sim_ac_libzlib_libs $LIBS"
+  AC_TRY_LINK(
+    [#include <zlib.h>],
+    [(void)zlibVersion();],
+    [sim_ac_have_libzlib=true])
+  sim_ac_libzlib_save_CPPFLAGS=$CPPFLAGS
+  sim_ac_libzlib_save_LDFLAGS=$LDFLAGS
+  sim_ac_libzlib_save_LIBS=$LIBS
+  # unset sim_ac_libzlib_debug
+  # unset sim_ac_libzlib_name
+  # unset sim_ac_libzlib_save_CPPFLAGS
+  # unset sim_ac_libzlib_save_LDFLAGS
+  # unset sim_ac_libzlib_save_LIBS
+  ;;
+esac
+if $sim_ac_want_libzlib; then
+  if $sim_ac_have_libzlib; then
+    AC_MSG_RESULT([success ($sim_ac_libzlib_libs)])
     $1
   else
-    CPPFLAGS=$sim_ac_save_cppflags
-    LDFLAGS=$sim_ac_save_ldflags
-    LIBS=$sim_ac_save_libs
+    AC_MSG_RESULT([failure])
     $2
   fi
+else
+  AC_MSG_RESULT([disabled])
+  $2
 fi
+# unset sim_ac_want_libzlib
 ])
 
 # Usage:
@@ -1997,88 +1683,120 @@ fi
 # Author: Morten Eriksen, <mortene@sim.no>.
 
 AC_DEFUN([SIM_AC_CHECK_ZLIB_READY], [
-AC_MSG_CHECKING(if we can use zlib without explicit linkage)
-sim_ac_zlib_ready=
-
-AC_TRY_LINK([#include <zlib.h>],
-            [(void)zlibVersion();],
-            sim_ac_zlib_ready=true,
-            sim_ac_zlib_ready=false)
-
+AC_MSG_CHECKING([if we can use zlib without explicit linkage])
+sim_ac_zlib_ready=false
+AC_TRY_LINK(
+  [#include <zlib.h>],
+  [(void)zlibVersion();],
+  [sim_ac_zlib_ready=true])
 if $sim_ac_zlib_ready; then
-  AC_MSG_RESULT(yes)
+  AC_MSG_RESULT([yes])
   $1
 else
-  AC_MSG_RESULT(no)
+  AC_MSG_RESULT([no])
   $2
 fi
+# unset sim_ac_zlib_ready
 ])
 
-# Usage:
-#   SIM_AC_CHECK_PNGLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-#
-# Description:
-#  Try to find the PNG development system. If it is found, these
-#  shell variables are set:
-#
-#    $sim_ac_pngdev_cppflags (extra flags the compiler needs for png lib)
-#    $sim_ac_pngdev_ldflags  (extra flags the linker needs for png lib)
-#    $sim_ac_pngdev_libs     (link libraries the linker needs for png lib)
-#
-#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-#  In addition, the variable $sim_ac_pngdev_avail is set to "yes" if the
-#  png development system is found.
-#
-# Author: Morten Eriksen, <mortene@sim.no>.
+# EOF **********************************************************************
 
-AC_DEFUN([SIM_AC_CHECK_PNGLIB], [
+# **************************************************************************
+# SIM_AC_HAVE_LIBPNG_IFELSE( IF-FOUND, IF-NOT-FOUND )
+#
+# Variables:
+#   sim_ac_have_libpng
+#   sim_ac_libpng_cppflags
+#   sim_ac_libpng_ldflags
+#   sim_ac_libpng_libs
+#
+# Authors:
+#   Lars J. Aas <larsa@coin3d.org>
+#   Morten Eriksen <mortene@coin3d.org>
+#
+# Todo:
+# - use AS_UNSET to unset internal variables to avoid polluting the environment
+#
 
+# **************************************************************************
+
+AC_DEFUN([SIM_AC_HAVE_LIBPNG_IFELSE],
+[: ${sim_ac_have_libpng=false}
+AC_MSG_CHECKING([for libpng])
 AC_ARG_WITH(
   [png],
-  AC_HELP_STRING([--with-png=DIR],
-                 [include support for PNG images [[default=yes]]]),
-  [],
-  [with_png=yes])
-
-sim_ac_pngdev_avail=no
-
-if test x"$with_png" != xno; then
-  if test x"$with_png" != xyes; then
-    sim_ac_pngdev_cppflags="-I${with_png}/include"
-    sim_ac_pngdev_ldflags="-L${with_png}/lib"
+  [AC_HELP_STRING([--with-png=PATH], [enable/disable libpng support])],
+  [case $withval in
+  yes | "") sim_ac_want_libpng=true ;;
+  no)       sim_ac_want_libpng=false ;;
+  *)        sim_ac_want_libpng=true
+            sim_ac_libpng_path=$withval ;;
+  esac],
+  [sim_ac_want_libpng=true])
+case $sim_ac_want_libpng in
+true)
+  $sim_ac_have_libpng && break
+  sim_ac_libpng_save_CPPFLAGS=$CPPFLAGS
+  sim_ac_libpng_save_LDFLAGS=$LDFLAGS
+  sim_ac_libpng_save_LIBS=$LIBS
+  sim_ac_libpng_debug=false
+  echo "$CPPFLAGS $CFLAGS $CXXFLAGS" | egrep -q -- "-g\\>" &&
+    sim_ac_libpng_debug=true
+  test -z "$sim_ac_libpng_path" -a x"$prefix" != xNONE &&
+    sim_ac_libpng_path=$prefix
+  sim_ac_libpng_name=png
+  if test -n "$sim_ac_libpng_path"; then
+    for sim_ac_libpng_candidate in \
+      `( ls $sim_ac_libpng_path/lib/png*.lib;
+         ls $sim_ac_libpng_path/lib/png*d.lib ) 2>/dev/null`
+    do
+      case $sim_ac_libpng_candidate in
+      *d.lib)
+        $sim_ac_libpng_debug &&
+          sim_ac_libpng_name=`basename $sim_ac_libpng_candidate .lib` ;;
+      *.lib)
+        sim_ac_libpng_name=`basename $sim_ac_libpng_candidate .lib` ;;
+      esac
+    done
+    sim_ac_libpng_cppflags="-I$sim_ac_libpng_path/include"
+    CPPFLAGS="$sim_ac_libpng_cppflags $CPPFLAGS"
+    sim_ac_libpng_ldflags="-L$sim_ac_libpng_path/lib"
+    LDFLAGS="$sim_ac_libpng_ldflags $LDFLAGS"
+    # unset sim_ac_libpng_candidate
+    # unset sim_ac_libpng_path
   fi
-
-  sim_ac_pngdev_libs=-lpng
-
-  sim_ac_save_cppflags=$CPPFLAGS
-  sim_ac_save_ldflags=$LDFLAGS
-  sim_ac_save_libs=$LIBS
-
-  CPPFLAGS="$CPPFLAGS $sim_ac_pngdev_cppflags"
-  LDFLAGS="$LDFLAGS $sim_ac_pngdev_ldflags"
-  LIBS="$sim_ac_pngdev_libs $LIBS"
-
-  AC_CACHE_CHECK(
-    [whether the libpng development system is available],
-    sim_cv_lib_pngdev_avail,
-    [AC_TRY_LINK([#include <png.h>],
-                 [(void)png_read_info(0L, 0L);],
-                 [sim_cv_lib_pngdev_avail=yes],
-                 [sim_cv_lib_pngdev_avail=no])])
-
-  if test x"$sim_cv_lib_pngdev_avail" = x"yes"; then
-    sim_ac_pngdev_avail=yes
+  sim_ac_libpng_libs="-l$sim_ac_libpng_name"
+  LIBS="$sim_ac_libpng_libs $LIBS"
+  AC_TRY_LINK(
+    [#include <png.h>],
+    [(void)png_read_info(0L, 0L);],
+    [sim_ac_have_libpng=true])
+  CPPFLAGS=$sim_ac_libpng_save_CPPFLAGS
+  LDFLAGS=$sim_ac_libpng_save_LDFLAGS
+  LIBS=$sim_ac_libpng_save_LIBS
+  # unset sim_ac_libpng_debug
+  # unset sim_ac_libpng_name
+  # unset sim_ac_libpng_save_CPPFLAGS
+  # unset sim_ac_libpng_save_LDFLAGS
+  # unset sim_ac_libpng_save_LIBS
+  ;;
+esac
+if $sim_ac_want_libpng; then
+  if $sim_ac_have_libpng; then
+    AC_MSG_RESULT([success ($sim_ac_libpng_libs)])
     $1
   else
-    CPPFLAGS=$sim_ac_save_cppflags
-    LDFLAGS=$sim_ac_save_ldflags
-    LIBS=$sim_ac_save_libs
+    AC_MSG_RESULT([failure])
     $2
   fi
+else
+  AC_MSG_RESULT([disabled])
+  $2
 fi
+# unset sim_ac_want_libpng
 ])
 
-
+# **************************************************************************
 # Usage:
 #  SIM_AC_CHECK_PNG_READY([ACTION-IF-READY[, ACTION-IF-NOT-READY]])
 #
@@ -2086,23 +1804,118 @@ fi
 #
 # Author: Morten Eriksen, <mortene@sim.no>.
 
-AC_DEFUN([SIM_AC_CHECK_PNG_READY], [
-AC_MSG_CHECKING(if we can use libpng without explicit linkage)
-sim_ac_png_ready=
-
-AC_TRY_LINK([#include <png.h>],
-            [(void)png_read_info(0L, 0L);],
-            sim_ac_png_ready=true,
-            sim_ac_png_ready=false)
-
+AC_DEFUN([SIM_AC_CHECK_PNG_READY],
+[AC_MSG_CHECKING([if we can use libpng without explicit linkage])
+AC_TRY_LINK(
+  [#include <png.h>],
+  [(void)png_read_info(0L, 0L);],
+  sim_ac_png_ready=true,
+  sim_ac_png_ready=false)
 if $sim_ac_png_ready; then
-  AC_MSG_RESULT(yes)
+  AC_MSG_RESULT([yes])
   $1
 else
-  AC_MSG_RESULT(no)
+  AC_MSG_RESULT([no])
   $2
 fi
 ])
+
+# EOF **********************************************************************
+
+# **************************************************************************
+# SIM_AC_HAVE_LIBTIFF_IFELSE( IF-FOUND, IF-NOT-FOUND )
+#
+# Variables:
+#   sim_ac_have_libtiff
+#   sim_ac_libtiff_cppflags
+#   sim_ac_libtiff_ldflags
+#   sim_ac_libtiff_libs
+#
+# Authors:
+#   Lars J. Aas <larsa@coin3d.org>
+#   Morten Eriksen <mortene@coin3d.org>
+#
+# Todo:
+# - use AS_UNSET to unset internal variables to avoid polluting the environment
+#
+
+AC_DEFUN([SIM_AC_HAVE_LIBTIFF_IFELSE],
+[: ${sim_ac_have_libtiff=false}
+AC_MSG_CHECKING([for libtiff])
+AC_ARG_WITH(
+  [tiff],
+  [AC_HELP_STRING([--with-tiff=PATH], [enable/disable libtiff support])],
+  [case $withval in
+  yes | "") sim_ac_want_libtiff=true ;;
+  no)       sim_ac_want_libtiff=false ;;
+  *)        sim_ac_want_libtiff=true
+            sim_ac_libtiff_path=$withval ;;
+  esac],
+  [sim_ac_want_libtiff=true])
+case $sim_ac_want_libtiff in
+true)
+  $sim_ac_have_libtiff && break
+  sim_ac_libtiff_save_CPPFLAGS=$CPPFLAGS
+  sim_ac_libtiff_save_LDFLAGS=$LDFLAGS
+  sim_ac_libtiff_save_LIBS=$LIBS
+  sim_ac_libtiff_debug=false
+  echo "$CPPFLAGS $CFLAGS $CXXFLAGS" | egrep -q -- "-g\\>" &&
+    sim_ac_libtiff_debug=true
+  test -z "$sim_ac_libtiff_path" -a x"$prefix" != xNONE &&
+    sim_ac_libtiff_path=$prefix
+  sim_ac_libtiff_name=tiff
+  if test -n "$sim_ac_libtiff_path"; then
+    for sim_ac_libtiff_candidate in \
+      `( ls $sim_ac_libtiff_path/lib/tiff*.lib;
+         ls $sim_ac_libtiff_path/lib/tiff*d.lib ) 2>/dev/null`
+    do
+      case $sim_ac_libtiff_candidate in
+      *d.lib)
+        $sim_ac_libtiff_debug &&
+          sim_ac_libtiff_name=`basename $sim_ac_libtiff_candidate .lib` ;;
+      *.lib)
+        sim_ac_libtiff_name=`basename $sim_ac_libtiff_candidate .lib` ;;
+      esac
+    done
+    sim_ac_libtiff_cppflags="-I$sim_ac_libtiff_path/include"
+    CPPFLAGS="$CPPFLAGS $sim_ac_libtiff_cppflags"
+    sim_ac_libtiff_ldflags="-L$sim_ac_libtiff_path/lib"
+    LDFLAGS="$LDFLAGS $sim_ac_libtiff_ldflags"
+    # unset sim_ac_libtiff_candidate
+    # unset sim_ac_libtiff_path
+  fi
+  sim_ac_libtiff_libs="-l$sim_ac_libtiff_name"
+  LIBS="$sim_ac_libtiff_libs $LIBS"
+  AC_TRY_LINK(
+    [#include <tiffio.h>],
+    [(void)TIFFOpen(0L, 0L);],
+    [sim_ac_have_libtiff=true])
+  CPPFLAGS=$sim_ac_libtiff_save_CPPFLAGS
+  LDFLAGS=$sim_ac_libtiff_save_LDFLAGS
+  LIBS=$sim_ac_libtiff_save_LIBS
+  # unset sim_ac_libtiff_debug
+  # unset sim_ac_libtiff_name
+  # unset sim_ac_libtiff_save_CPPFLAGS
+  # unset sim_ac_libtiff_save_LDFLAGS
+  # unset sim_ac_libtiff_save_LIBS
+  ;;
+esac
+if $sim_ac_want_libtiff; then
+  if $sim_ac_have_libtiff; then
+    AC_MSG_RESULT([success ($sim_ac_libtiff_libs)])
+    $1
+  else
+    AC_MSG_RESULT([failure])
+    $2
+  fi
+else
+  AC_MSG_RESULT([disabled])
+  $2
+fi
+# unset sim_ac_want_libtiff
+])
+
+# EOF **********************************************************************
 
 # Usage:
 #   SIM_EXPAND_DIR_VARS

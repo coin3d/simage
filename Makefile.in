@@ -70,13 +70,11 @@ AS = @AS@
 AWK = @AWK@
 BUILD_WITH_MSVC = @BUILD_WITH_MSVC@
 CC = @CC@
-CPP = @CPP@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
 DEPDIR = @DEPDIR@
 DLLFLAGS = @DLLFLAGS@
 DLLTOOL = @DLLTOOL@
 DSUFFIX = @DSUFFIX@
+LDFLAGS = @LDFLAGS@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 LT_AGE = @LT_AGE@
@@ -135,7 +133,7 @@ DIST_SUBDIRS =  $(SUBDIRS)
 all: all-redirect
 .SUFFIXES:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --foreign Makefile
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
@@ -315,7 +313,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	       END { for (i in files) print i; }'`; \
 	mkid -fID $$unique $(LISP)
 
-TAGS: tags-recursive $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
+TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
@@ -330,8 +328,8 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
 	  done | \
 	  $(AWK) '    { files[$$0] = 1; } \
 	       END { for (i in files) print i; }'`; \
-	test -z "$(ETAGS_ARGS)config.h.in$$unique$(LISP)$$tags" \
-	  || etags $(ETAGS_ARGS) $$tags config.h.in $$unique $(LISP)
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || etags $(ETAGS_ARGS) $$tags  $$unique $(LISP)
 
 GTAGS:
 	here=`CDPATH=: && cd $(top_builddir) && pwd` \
@@ -485,21 +483,21 @@ maintainer-clean-am:  maintainer-clean-hdr maintainer-clean-tags \
 maintainer-clean: maintainer-clean-recursive
 	-rm -f config.status
 
-.PHONY: mostlyclean-hdr distclean-hdr clean-hdr maintainer-clean-hdr \
-uninstall-binSCRIPTS install-binSCRIPTS uninstall-m4dataDATA \
-install-m4dataDATA install-recursive uninstall-recursive \
-install-data-recursive uninstall-data-recursive install-exec-recursive \
-uninstall-exec-recursive installdirs-recursive uninstalldirs-recursive \
-all-recursive check-recursive installcheck-recursive info-recursive \
-dvi-recursive mostlyclean-recursive distclean-recursive clean-recursive \
-maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
-distclean-tags clean-tags maintainer-clean-tags distdir info-am info \
-dvi-am dvi check check-am installcheck-am installcheck all-recursive-am \
-install-exec-am install-exec install-data-am install-data install-am \
-install uninstall-am uninstall all-redirect all-am all install-strip \
-installdirs-am installdirs mostlyclean-generic distclean-generic \
-clean-generic maintainer-clean-generic clean mostlyclean distclean \
-maintainer-clean
+.PHONY: all all-am all-recursive all-recursive-am all-redirect check \
+check-am check-recursive clean clean-generic clean-hdr clean-recursive \
+clean-tags distclean distclean-generic distclean-hdr \
+distclean-recursive distclean-tags distdir dvi dvi-am dvi-recursive \
+info info-am info-recursive install install-am install-binSCRIPTS \
+install-data install-data-am install-data-recursive install-exec \
+install-exec-am install-exec-recursive install-m4dataDATA \
+install-recursive install-strip installcheck installcheck-am \
+installcheck-recursive installdirs installdirs-am installdirs-recursive \
+maintainer-clean maintainer-clean-generic maintainer-clean-hdr \
+maintainer-clean-recursive maintainer-clean-tags mostlyclean \
+mostlyclean-generic mostlyclean-hdr mostlyclean-recursive \
+mostlyclean-tags tags tags-recursive uninstall uninstall-am \
+uninstall-binSCRIPTS uninstall-data-recursive uninstall-exec-recursive \
+uninstall-m4dataDATA uninstall-recursive uninstalldirs-recursive
 
 simage-config: simage-config.in
 
