@@ -141,11 +141,6 @@ SimpegWrite_encode(const char *output_filename,
 
   if (setjmp(context->jmpbuf)) {
     /* error if we get here */
-
-    if (context->outfile) fclose(context->outfile);
-    if (context->statfile != NULL)
-      fclose(context->statfile);
-
     cleanup(context);
     free(context);
     return 0;
@@ -183,10 +178,6 @@ SimpegWrite_encode(const char *output_filename,
 
   simpeg_encode_putseq(context);
 
-  fclose(context->outfile);
-  if (context->statfile != NULL)
-    fclose(context->statfile);
-
   cleanup(context);
   free(context);
 
@@ -211,10 +202,6 @@ SimpegWrite_begin_encode(const char *output_filename,
 
   if (setjmp(context->jmpbuf)) {
     /* error if we get here */
-    if (context->outfile) fclose(context->outfile);
-    if (context->statfile != NULL)
-      fclose(context->statfile);
-
     cleanup(context);
     free(context);
     return NULL;
@@ -271,33 +258,30 @@ SimpegWrite_encode_bitmap(void * handle, const unsigned char *rgb_buffer)
     return 0;
   }
 
-  if ((context->SimpegWrite_current_input_frame)%context->M==0)
-  {
+  if ((context->SimpegWrite_current_input_frame)%context->M == 0) {
     /* encode this */
     SimpegWrite_putseq_encode_bitmap((simpeg_encode_context*) handle, rgb_buffer);
     /* encode the buffered ones */
-    for (i=0; i<context->M; i++)
-    {
+    for (i = 0; i < context->M; i++) {
       if (context->bufbuf[i] != NULL)
         SimpegWrite_putseq_encode_bitmap((simpeg_encode_context*) handle, 
-          context->bufbuf[i]);
+                                         context->bufbuf[i]);
     }
     /* clean buffer */
-    for (i=0; i<context->M; i++)
-      if (context->bufbuf[i] != NULL)
-      {
+    for (i = 0; i < context->M; i++) {
+      if (context->bufbuf[i] != NULL) {
         free(context->bufbuf[i]);
         context->bufbuf[i] = NULL;
-      };
+      }
+    }
   }
-  else
-  {
+  else {
     context->bufbuf[(context->SimpegWrite_current_input_frame)%context->M] = 
       (unsigned char *) malloc(context->vertical_size * context->horizontal_size * 3);
     memcpy(context->bufbuf[(context->SimpegWrite_current_input_frame)%context->M],
-      rgb_buffer, context->vertical_size * context->horizontal_size * 3);
+           rgb_buffer, context->vertical_size * context->horizontal_size * 3);
   }
-
+  
   context->SimpegWrite_current_input_frame++;
   
   return 1; /* ok */
@@ -311,36 +295,22 @@ SimpegWrite_end_encode(void * handle)
 
   if (setjmp(context->jmpbuf)) {
     /* error if we get here */
-    if (context->outfile) fclose(context->outfile);
-    if (context->statfile != NULL)
-      fclose(context->statfile); 
     cleanup(context);
     free(context);
     return 0;
   }
 
   /* before we're done - encode any buffered frames */
-  for (i=0; i<context->M; i++)
-  {
-    if (context->bufbuf[i] != NULL)
+  for (i=0; i<context->M; i++) {
+    if (context->bufbuf[i] != NULL) {
       SimpegWrite_putseq_encode_bitmap((simpeg_encode_context*) handle, 
-        context->bufbuf[i]);
+                                       context->bufbuf[i]);
+    }
   }
-  /* clean buffer */
-  for (i=0; i<context->M; i++)
-    if (context->bufbuf[i] != NULL)
-    {
-      free(context->bufbuf[i]);
-      context->bufbuf[i] = NULL;
-    };
-
+  
   /* finish sequence */
 
   SimpegWrite_putseq_end(context);
-
-  fclose(context->outfile);
-  if (context->statfile != NULL)
-    fclose(context->statfile);
 
   cleanup(context);
   free(context);
@@ -353,23 +323,31 @@ cleanup(simpeg_encode_context * context)
   int i;
 
   /* cleanup after mallocs in readpic.c read_ppm() */
-  if (context->chroma_format==CHROMA444)
-    {
-    }
-  else
-  {
+  if (context->chroma_format==CHROMA444) {
+    /* do nothing */
+  }
+  else {
     if (context->read_ppm_u444 != NULL)
       free(context->read_ppm_u444);
     if (context->read_ppm_v444 != NULL)
       free(context->read_ppm_v444);
-    if (context->chroma_format==CHROMA420)
-    {
+    if (context->chroma_format==CHROMA420) {
       if (context->read_ppm_u422 != NULL)
         free(context->read_ppm_u422);
       if (context->read_ppm_v422 != NULL)
         free(context->read_ppm_v422);
     }
   }
+
+  if (context->outfile) {
+    fclose(context->outfile);
+    context->outfile = NULL;
+  }
+  if (context->statfile) {
+    fclose(context->statfile);
+    context->statfile = NULL;
+  }
+  
   if (context->mbinfo) free(context->mbinfo);
   if (context->motion_data) free(context->motion_data);
   if (context->blocks) free(context->blocks);
@@ -385,20 +363,21 @@ cleanup(simpeg_encode_context * context)
     if (context->oldorgframe[i]) free(context->oldorgframe[i]);
   }
 
-  if (context->bufbuf != NULL)
-  {
-    for (i=0; i<context->M; i++)
-      if (context->bufbuf[i] != NULL)
+  if (context->bufbuf != NULL) {
+    for (i=0; i<context->M; i++) {
+      if (context->bufbuf[i] != NULL) {
         free(context->bufbuf[i]);
+      }
+    }
     free(context->bufbuf);
-  };
+    context->bufbuf = NULL;
+  }
 }
 
 
 void SimpegWrite_error(simpeg_encode_context * context, const char *text, ...)
 {
-  if (context->SimpegWrite_error_cb_user != NULL)
-  {
+  if (context->SimpegWrite_error_cb_user != NULL) {
     char buf[256];
     va_list p;
     va_start(p, text);
@@ -406,14 +385,13 @@ void SimpegWrite_error(simpeg_encode_context * context, const char *text, ...)
     va_end(p);
     
     context->SimpegWrite_error_cb_user(context->cbuserdata, buf);
-  };
+  }
   longjmp(context->jmpbuf, 1);
 };
 
 void SimpegWrite_warning(simpeg_encode_context * context,const char *text, ...)
 {
-  if (context->SimpegWrite_warning_cb_user != NULL)
-  {
+  if (context->SimpegWrite_warning_cb_user != NULL) {
     char buf[256];
     va_list p;
     va_start(p, text);
@@ -421,7 +399,7 @@ void SimpegWrite_warning(simpeg_encode_context * context,const char *text, ...)
     va_end(p);
     
     context->SimpegWrite_warning_cb_user(context->cbuserdata, buf);
-  };
+  }
 };
 
 int SimpegWrite_progress(simpeg_encode_context * context, float sub, int current_frame, int num_frames)
@@ -526,11 +504,10 @@ readparmfile(simpeg_encode_context * context,
     {24000.0/1001.0,24.0,25.0,30000.0/1001.0,30.0,50.0,60000.0/1001.0,60.0};
   
   if (fname) {
-    if (!(fd = fopen(fname,"r")))
-      {
-        sprintf(context->errortext,"Couldn't open parameter file %s",fname);
+    if (!(fd = fopen(fname,"r"))) {
+      sprintf(context->errortext,"Couldn't open parameter file %s",fname);
         simpeg_encode_error(context, context->errortext);
-      }
+    }
     
     fgets(context->id_string,254,fd);
     fgets(line,254,fd); sscanf(line,"%s",context->tplorg);
@@ -624,25 +601,23 @@ readparmfile(simpeg_encode_context * context,
     if (!context->motion_data)
       simpeg_encode_error(context, "malloc failed\n");
     
-    for (i=0; i<context->M; i++)
-      {
+    for (i=0; i<context->M; i++) {
+      fgets(line,254,fd);
+      sscanf(line,"%d %d %d %d",
+             &context->motion_data[i].forw_hor_f_code, 
+             &context->motion_data[i].forw_vert_f_code,
+             &context->motion_data[i].sxf, 
+             &context->motion_data[i].syf);
+      
+      if (i!=0) {
         fgets(line,254,fd);
         sscanf(line,"%d %d %d %d",
-               &context->motion_data[i].forw_hor_f_code, 
-               &context->motion_data[i].forw_vert_f_code,
-               &context->motion_data[i].sxf, 
-               &context->motion_data[i].syf);
-        
-        if (i!=0)
-          {
-            fgets(line,254,fd);
-            sscanf(line,"%d %d %d %d",
-                   &context->motion_data[i].back_hor_f_code, 
-                   &context->motion_data[i].back_vert_f_code,
-                   &context->motion_data[i].sxb, 
-                   &context->motion_data[i].syb);
-          }
+               &context->motion_data[i].back_hor_f_code, 
+               &context->motion_data[i].back_vert_f_code,
+               &context->motion_data[i].sxb, 
+               &context->motion_data[i].syb);
       }
+    }
     
     fclose(fd);
   }
@@ -895,8 +870,7 @@ readparmfile(simpeg_encode_context * context,
   context->prog_seq = !!context->prog_seq;
   context->topfirst = !!context->topfirst;
 
-  for (i=0; i<3; i++)
-  {
+  for (i = 0; i < 3; i++) {
     context->frame_pred_dct_tab[i] = !!context->frame_pred_dct_tab[i];
     context->conceal_tab[i] = !!context->conceal_tab[i];
     context->qscale_tab[i] = !!context->qscale_tab[i];
@@ -908,7 +882,7 @@ readparmfile(simpeg_encode_context * context,
 
   /* make sure MPEG specific parameters are valid */
   simpeg_encode_range_checks(context);
-
+  
   context->frame_rate = ratetab[context->frame_rate_code-1];
 
   /* timecode -> frame number */
@@ -917,59 +891,48 @@ readparmfile(simpeg_encode_context * context,
   context->tc0 = 60*context->tc0 + s;
   context->tc0 = (int)(context->frame_rate+0.5)*context->tc0 + f;
 
-  if (!context->mpeg1)
-  {
+  if (!context->mpeg1) {
     simpeg_encode_profile_and_level_checks(context);
   }
-  else
-  {
+  else {
     /* MPEG-1 */
-    if (context->constrparms)
-    {
-      if (context->horizontal_size>768
-          || context->vertical_size>576
+    if (context->constrparms) {
+      if (context->horizontal_size > 768
+          || context->vertical_size > 576
           || ((context->horizontal_size+15)/16)*((context->vertical_size+15)/16)>396
           || ((context->horizontal_size+15)/16)*((context->vertical_size+15)/16)*context->frame_rate>396*25.0
-          || context->frame_rate>30.0)
-      {
+          || context->frame_rate>30.0) {
         if (!context->quiet)
           SimpegWrite_warning(context, "setting constrained_parameters_flag = 0");
         context->constrparms = 0;
       }
     }
     
-    if (context->constrparms)
-    {
-      for (i=0; i<context->M; i++)
-      {
-        if (context->motion_data[i].forw_hor_f_code>4)
-        {
+    if (context->constrparms) {
+      for (i=0; i<context->M; i++) {
+        if (context->motion_data[i].forw_hor_f_code > 4) {
+          if (!context->quiet)
+            SimpegWrite_warning(context,"setting constrained_parameters_flag = 0");
+          context->constrparms = 0;
+          break;
+        }
+        
+        if (context->motion_data[i].forw_vert_f_code > 4) {
           if (!context->quiet)
             SimpegWrite_warning(context,"setting constrained_parameters_flag = 0");
           context->constrparms = 0;
           break;
         }
 
-        if (context->motion_data[i].forw_vert_f_code>4)
-        {
-          if (!context->quiet)
-            SimpegWrite_warning(context,"setting constrained_parameters_flag = 0");
-          context->constrparms = 0;
-          break;
-        }
-
-        if (i!=0)
-        {
-          if (context->motion_data[i].back_hor_f_code>4)
-          {
+        if (i!=0) {
+          if (context->motion_data[i].back_hor_f_code>4) {
             if (!context->quiet)
               SimpegWrite_warning(context,"setting constrained_parameters_flag = 0");
             context->constrparms = 0;
             break;
           }
 
-          if (context->motion_data[i].back_vert_f_code>4)
-          {
+          if (context->motion_data[i].back_vert_f_code>4) {
             if (!context->quiet)
               SimpegWrite_warning(context,"setting constrained_parameters_flag = 0");
             context->constrparms = 0;
@@ -982,105 +945,89 @@ readparmfile(simpeg_encode_context * context,
 
   /* relational checks */
 
-  if (context->mpeg1)
-  {
-    if (!context->prog_seq)
-    {
+  if (context->mpeg1) {
+    if (!context->prog_seq) {
       if (!context->quiet)
         SimpegWrite_warning(context,"setting progressive_sequence = 1");
       context->prog_seq = 1;
     }
 
-    if (context->chroma_format!=CHROMA420)
-    {
+    if (context->chroma_format!=CHROMA420) {
       if (!context->quiet)
         SimpegWrite_warning(context,"setting chroma_format = 1 (4:2:0)");
       context->chroma_format = CHROMA420;
     }
 
-    if (context->dc_prec!=0)
-    {
+    if (context->dc_prec!=0) {
       if (!context->quiet)
         SimpegWrite_warning(context,"setting intra_dc_precision = 0");
       context->dc_prec = 0;
     }
 
     for (i=0; i<3; i++)
-      if (context->qscale_tab[i])
-      {
+      if (context->qscale_tab[i]) {
         if (!context->quiet)
           SimpegWrite_warning(context,"setting qscale_tab[%d] = 0", i);
         context->qscale_tab[i] = 0;
       }
-
+    
     for (i=0; i<3; i++)
-      if (context->intravlc_tab[i])
-      {
+      if (context->intravlc_tab[i]) {
         if (!context->quiet)
           SimpegWrite_warning(context,"setting intravlc_tab[%d] = 0", i);
         context->intravlc_tab[i] = 0;
       }
 
     for (i=0; i<3; i++)
-      if (context->altscan_tab[i])
-      {
+      if (context->altscan_tab[i]) {
         if (!context->quiet)
           SimpegWrite_warning(context,"setting altscan_tab[%d] = 0", i);
         context->altscan_tab[i] = 0;
       }
   }
-
-  if (!context->mpeg1 && context->constrparms)
-  {
+  
+  if (!context->mpeg1 && context->constrparms) {
     if (!context->quiet)
       SimpegWrite_warning(context,"setting constrained_parameters_flag = 0");
     context->constrparms = 0;
   }
 
-  if (context->prog_seq && !context->prog_frame)
-  {
+  if (context->prog_seq && !context->prog_frame) {
     if (!context->quiet)
       SimpegWrite_warning(context,"setting progressive_frame = 1");
     context->prog_frame = 1;
   }
 
-  if (context->prog_frame && context->fieldpic)
-  {
+  if (context->prog_frame && context->fieldpic) {
     if (!context->quiet)
       SimpegWrite_warning(context,"setting field_pictures = 0");
     context->fieldpic = 0;
   }
 
-  if (!context->prog_frame && context->repeatfirst)
-  {
+  if (!context->prog_frame && context->repeatfirst) {
     if (!context->quiet)
       SimpegWrite_warning(context,"setting repeat_first_field = 0");
     context->repeatfirst = 0;
   }
 
-  if (context->prog_frame)
-  {
+  if (context->prog_frame) {
     for (i=0; i<3; i++)
-      if (!context->frame_pred_dct_tab[i])
-      {
+      if (!context->frame_pred_dct_tab[i]) {
         if (!context->quiet)
           SimpegWrite_warning(context,"setting frame_pred_frame_dct[%d] = 1", i);
         context->frame_pred_dct_tab[i] = 1;
       }
   }
 
-  if (context->prog_seq && !context->repeatfirst && context->topfirst)
-  {
+  if (context->prog_seq && !context->repeatfirst && context->topfirst) {
     if (!context->quiet)
       SimpegWrite_warning(context,"setting top_field_first = 0");
     context->topfirst = 0;
   }
 
   /* search windows */
-  for (i=0; i<context->M; i++)
-  {
-    if (context->motion_data[i].sxf > (4<<context->motion_data[i].forw_hor_f_code)-1)
-    {
+  for (i=0; i<context->M; i++) {
+    if (context->motion_data[i].sxf > (4<<context->motion_data[i].forw_hor_f_code)-1) {
       if (!context->quiet)
         SimpegWrite_warning(context,
                             "Warning: reducing forward horizontal search width to %d",
@@ -1088,8 +1035,7 @@ readparmfile(simpeg_encode_context * context,
       context->motion_data[i].sxf = (4<<context->motion_data[i].forw_hor_f_code)-1;
     }
 
-    if (context->motion_data[i].syf > (4<<context->motion_data[i].forw_vert_f_code)-1)
-    {
+    if (context->motion_data[i].syf > (4<<context->motion_data[i].forw_vert_f_code)-1) {
       if (!context->quiet)
         SimpegWrite_warning(context,
                             "Warning: reducing forward vertical search width to %d",
@@ -1097,10 +1043,8 @@ readparmfile(simpeg_encode_context * context,
       context->motion_data[i].syf = (4<<context->motion_data[i].forw_vert_f_code)-1;
     }
 
-    if (i!=0)
-    {
-      if (context->motion_data[i].sxb > (4<<context->motion_data[i].back_hor_f_code)-1)
-      {
+    if (i!=0) {
+      if (context->motion_data[i].sxb > (4<<context->motion_data[i].back_hor_f_code)-1) {
         if (!context->quiet)
           SimpegWrite_warning(context,
             "Warning: reducing backward horizontal search width to %d",
@@ -1108,8 +1052,7 @@ readparmfile(simpeg_encode_context * context,
         context->motion_data[i].sxb = (4<<context->motion_data[i].back_hor_f_code)-1;
       }
 
-      if (context->motion_data[i].syb > (4<<context->motion_data[i].back_vert_f_code)-1)
-      {
+      if (context->motion_data[i].syb > (4<<context->motion_data[i].back_vert_f_code)-1) {
         if (!context->quiet)
           SimpegWrite_warning(context,
                               "Warning: reducing backward vertical search width to %d",
@@ -1118,7 +1061,6 @@ readparmfile(simpeg_encode_context * context,
       }
     }
   }
-  
 }
 
 static void readquantmat(simpeg_encode_context * context)
@@ -1126,53 +1068,45 @@ static void readquantmat(simpeg_encode_context * context)
   int i,v;
   FILE *fd;
 
-  if (context->iqname[0]=='-')
-  {
+  if (context->iqname[0]=='-') {
     /* use default intra matrix */
     context->load_iquant = 0;
     for (i=0; i<64; i++)
       context->intra_q[i] = context->default_intra_quantizer_matrix[i];
   }
-  else
-  {
+  else {
     /* read customized intra matrix */
     context->load_iquant = 1;
-    if (!(fd = fopen(context->iqname,"r")))
-    {
+    if (!(fd = fopen(context->iqname,"r"))) {
       sprintf(context->errortext,"Couldn't open quant matrix file %s",context->iqname);
       simpeg_encode_error(context,context->errortext);
     }
-
-    for (i=0; i<64; i++)
-    {
+    
+    for (i=0; i<64; i++) {
       fscanf(fd,"%d",&v);
       if (v<1 || v>255)
         simpeg_encode_error(context,"invalid value in quant matrix");
       context->intra_q[i] = v;
     }
-
+    
     fclose(fd);
   }
   
-  if (context->niqname[0]=='-')
-  {
+  if (context->niqname[0]=='-') {
     /* use default non-intra matrix */
     context->load_niquant = 0;
     for (i=0; i<64; i++)
       context->inter_q[i] = 16;
   }
-  else
-  {
+  else {
     /* read customized non-intra matrix */
     context->load_niquant = 1;
-    if (!(fd = fopen(context->niqname,"r")))
-    {
+    if (!(fd = fopen(context->niqname,"r"))) {
       sprintf(context->errortext,"Couldn't open quant matrix file %s",context->niqname);
       simpeg_encode_error(context, context->errortext);
     }
 
-    for (i=0; i<64; i++)
-    {
+    for (i=0; i<64; i++) {
       fscanf(fd,"%d",&v);
       if (v<1 || v>255)
         simpeg_encode_error(context,"invalid value in quant matrix");
