@@ -230,6 +230,8 @@ extern "C" {
   SIMAGE_DLL_API void s_movie_exporter_add(s_movie_create_func * create,
                                            s_movie_put_func * put,
                                            s_movie_close_func * close);
+  
+  SIMAGE_DLL_API s_params * s_movie_params(s_movie * movie);
 
   enum {
     S_PARAM_END = 0,

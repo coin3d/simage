@@ -8,6 +8,10 @@
 #include <simage.h>
 #include <string.h>
 
+#ifdef SIMAGE_MPEG2ENC_SUPPORT
+#include "../mpeg2enc/api.h"
+#endif /* SIMAGE_MPEG2ENC_SUPPORT */
+
 struct simage_movie_s {
   char * filename;
   
@@ -39,11 +43,37 @@ struct simage_movie_exporter {
 static struct simage_movie_importer * importers;
 static struct simage_movie_exporter * exporters;
 
+static void 
+add_internal_importers(void)
+{
+  static int first = 1;
+  if (first) {
+    /* none yet */
+    first = 0;
+  }                
+}
+
+static void
+add_internal_exporters(void)
+{
+  static int first = 1;
+  if (first) {    
+#ifdef SIMAGE_MPEG2ENC_SUPPORT
+    s_movie_exporter_add(mpeg2enc_movie_create,
+                         mpeg2enc_movie_put,
+                         mpeg2enc_movie_close);
+#endif
+   first = 0;
+  }
+}
+
 s_movie * 
 s_movie_open(const char * filename)
 {
   struct simage_movie_importer * imp;
   s_movie * movie = (s_movie*) malloc(sizeof(s_movie));
+
+  add_internal_importers();
 
   imp = importers;
   while (imp) {
@@ -57,7 +87,6 @@ s_movie_open(const char * filename)
 
   movie->filename = (char*) malloc(strlen(filename)+1);
   strcpy(movie->filename, filename);
-  movie->params = s_params_create();
   return movie;
 }
 
@@ -66,6 +95,8 @@ s_movie_create(const char * filename, s_params * params /* | NULL */)
 {
   struct simage_movie_exporter * exp;
   s_movie * movie = (s_movie*) malloc(sizeof(s_movie));
+
+  add_internal_exporters();
 
   exp = exporters;
   while (exp) {
@@ -79,8 +110,6 @@ s_movie_create(const char * filename, s_params * params /* | NULL */)
 
   movie->filename = (char*) malloc(strlen(filename)+1);
   strcpy(movie->filename, filename);
-  if (params) movie->params = s_params_copy(params);
-  else movie->params = s_params_create();
   return movie;
 }
 
@@ -106,9 +135,18 @@ s_movie_close(s_movie * movie)
 void 
 s_movie_destroy(s_movie * movie)
 {
-  s_params_destroy(movie->params);
+  if (movie->params) s_params_destroy(movie->params);
   free((void*) movie->filename);
   free((void*) movie);
+}
+
+s_params * 
+s_movie_params(s_movie * movie)
+{
+  if (movie->params == NULL) {
+    movie->params = s_params_create();
+  }
+  return movie->params;
 }
 
 void 

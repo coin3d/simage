@@ -9,6 +9,58 @@
 #include "global.h"
 #include "putseq.h"
 
+static int 
+SimpegWrite_encode(const char * output_filename,
+                   const char * parameter_filename,
+                   SimpegWrite_error_cb error_cb, 
+                   SimpegWrite_warning_cb warning_cb,
+                   SimpegWrite_progress_cb progress_cb); 
+
+
+static void * 
+SimpegWrite_begin_encode(const char * output_filename,
+                         const char * parameter_filename,
+                         SimpegWrite_error_cb error_cb, 
+                         SimpegWrite_warning_cb warning_cb,
+                         SimpegWrite_progress_cb progress_cb); 
+
+static int 
+SimpegWrite_encode_bitmap(void * handle, const unsigned char * rgb_buffer);
+
+static int 
+SimpegWrite_end_encode(void * handle);
+
+/* simage movie interface */
+int 
+mpeg2enc_movie_create(const char * filename, s_movie * movie, s_params * params)
+{
+  void * handle = SimpegWrite_begin_encode(filename, NULL, NULL, NULL, NULL);
+  if (handle == NULL) return 0;
+  
+  s_params_set(s_movie_params(movie), S_POINTER_PARAM_TYPE, "mpeg2enc handle", handle, 0);
+  return 1;
+}
+
+int 
+mpeg2enc_movie_put(s_movie * movie, s_image * image, s_params * params)
+{
+  void * handle;
+  if (s_get_params(so_movie_get_params(movie), S_POINTER_PARAM_TYPE, "mpeg2enc handle", &handle, 0)) {
+    return SimpegWrite_encode_bitmap(handle, s_image_data(image));
+  }
+  return 0;
+}
+
+void 
+mpeg2enc_movie_close(s_movie * movie)
+{
+  void * handle;
+  if (s_get_params(so_movie_get_params(movie), S_POINTER_PARAM_TYPE, "mpeg2enc handle", &handle, 0)) {
+    SimpegWrite_end_encode(handle);
+  }
+}
+
+
 /* private prototypes */
 static void init(simpeg_encode_context * context);
 static void init_context_data(simpeg_encode_context * context);
@@ -16,9 +68,11 @@ static void readparmfile(simpeg_encode_context * context, const char *fname);
 static void readquantmat(simpeg_encode_context * context);
 static void cleanup(simpeg_encode_context * context);
 
+
+
 /* fixme: statfile -> ignore */
 
-int 
+static int 
 SimpegWrite_encode(const char *output_filename,
                    const char *parameter_filename, 
                    SimpegWrite_error_cb error_cb, 
@@ -83,7 +137,7 @@ SimpegWrite_encode(const char *output_filename,
 }; 
 
 
-void * 
+static void * 
 SimpegWrite_begin_encode(const char *output_filename,
                          const char *parameter_filename,
                          SimpegWrite_error_cb error_cb, 
@@ -145,7 +199,7 @@ SimpegWrite_begin_encode(const char *output_filename,
   return (void*) context;
 }; 
 
-int 
+static int 
 SimpegWrite_encode_bitmap(void * handle, const unsigned char *rgb_buffer)
 {
   int i;
@@ -188,7 +242,7 @@ SimpegWrite_encode_bitmap(void * handle, const unsigned char *rgb_buffer)
   return 1; /* ok */
 };
 
-int 
+static int 
 SimpegWrite_end_encode(void * handle)
 {
   int i;
