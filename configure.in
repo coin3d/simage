@@ -1,6 +1,16 @@
 # **************************************************************************
-AC_INIT([src/simage.c])
-AC_CONFIG_AUX_DIR(cfg)
+# configure.ac for simage
+
+m4_define([SIMAGE_MAJOR], [1])
+m4_define([SIMAGE_MINOR], [1])
+m4_define([SIMAGE_MICRO], [1])
+
+# **************************************************************************
+AC_INIT([simage], [v[]SIMAGE_MAJOR.SIMAGE_MINOR.SIMAGE_MICRO])
+AC_REVISION([$Revision$])
+
+AC_CONFIG_AUX_DIR([cfg])
+AC_CONFIG_SRCDIR([src/simage.c])
 
 # cygpath misbehaves with certain values in this variable
 CYGWIN=
@@ -184,9 +194,9 @@ fi
 #
 # **************************************************************************
 
-SIMAGE_MAJOR_VERSION=1
-SIMAGE_MINOR_VERSION=1
-SIMAGE_MICRO_VERSION=1
+SIMAGE_MAJOR_VERSION=SIMAGE_MAJOR
+SIMAGE_MINOR_VERSION=SIMAGE_MINOR
+SIMAGE_MICRO_VERSION=SIMAGE_MICRO
 SIMAGE_VERSION=$SIMAGE_MAJOR_VERSION.$SIMAGE_MINOR_VERSION.$SIMAGE_MICRO_VERSION
 VERSION=$SIMAGE_VERSION
 
@@ -217,10 +227,7 @@ AC_DEFINE_UNQUOTED([SIMAGE_VERSION], ["$SIMAGE_VERSION"],
 # **************************************************************************
 # Miscellaneous options and initializations.
 
-AM_INIT_AUTOMAKE(simage, $VERSION)
-
-# Files to cram the configure tests into.
-AM_CONFIG_HEADER(config.h include/simage.h)
+AM_INIT_AUTOMAKE([simage], [$VERSION])
 
 # Default to not building a static library.
 # Can be overridden by the user with --enable-static.
@@ -455,9 +462,11 @@ SIM_AC_UNIQIFY_LIST(CPPFLAGS, $CPPFLAGS)
 SIM_AC_UNIQIFY_LIST(LDFLAGS, $LDFLAGS)
 SIM_AC_UNIQIFY_LIST(LIBS, $LIBS)
 
-SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_CPPFLAGS, -I$includedir $SIMAGE_EXTRA_CPPFLAGS)
-SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LDFLAGS, -L$libdir $SIMAGE_EXTRA_LDFLAGS)
-SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LIBS, $SIMAGE_EXTRA_LIBS)
+echo errors
+SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_CPPFLAGS, [-I"$includedir" $SIMAGE_EXTRA_CPPFLAGS])
+echo no errors
+SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LDFLAGS, [-L"$libdir" $SIMAGE_EXTRA_LDFLAGS])
+SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LIBS, [$SIMAGE_EXTRA_LIBS])
 
 AC_SUBST(LDFLAGS)
 
@@ -545,11 +554,17 @@ fi
 
 # **************************************************************************
 
-AC_OUTPUT([
+AM_CONFIG_HEADER([config.h include/simage.h])
+
+AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
 	build/simage.spec
 ])
+
+AC_OUTPUT
+
+# **************************************************************************
 
 SIM_AC_CONFIGURATION_SUMMARY
 
