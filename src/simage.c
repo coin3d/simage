@@ -173,23 +173,14 @@ simage_read_image(const char *filename,
 		   int *width, int *height,
 		   int *numComponents)
 {
-  FILE *fp;
-  char buf[256] = {0};
   loader_data *loader;
 
-  add_internal_loaders();
-  
-  fp = fopen(filename, "rb");
-  if (!fp) return NULL;
+  add_internal_loaders();  
 
-  if (fread(buf, 1, 256, fp) <= 0) {
-    fclose(fp);
-    return NULL;
-  }
-  fclose(fp);
-  
   loader = find_loader(filename);
-  if (loader) return loader->funcs.load_func(filename, width, height, numComponents);
+
+  if (loader) return loader->funcs.load_func(filename, width, 
+					     height, numComponents);
   else return NULL;
 }
 
