@@ -1,0 +1,75 @@
+Only in .: Debug
+Only in .: Release
+diff -u ../../libungif-4.1.0/lib/dgif_lib.c ./dgif_lib.c
+--- ../../libungif-4.1.0/lib/dgif_lib.c	1999-01-20 05:19:38.000000000 +0100
++++ ./dgif_lib.c	2003-10-08 17:23:49.000000000 +0200
+@@ -16,6 +16,10 @@
+ #include <alloc.h>
+ #include <stdlib.h>
+ #include <sys\stat.h>
++#elif defined _WIN32
++#include <io.h>
++#include <stdlib.h>
++#include <sys\stat.h>
+ #else
+ #include <sys/types.h>
+ #include <sys/stat.h>
+@@ -61,7 +65,7 @@
+     GifFileType *GifFile;
+ 
+     if ((FileHandle = open(FileName, O_RDONLY
+-#ifdef __MSDOS__
++#if defined (__MSDOS__) || defined (_WIN32)
+ 			           | O_BINARY
+ #endif /* __MSDOS__ */
+ 			                     )) == -1) {
+@@ -101,7 +105,7 @@
+         return NULL;
+     }
+ 
+-#ifdef __MSDOS__
++#if defined (__MSDOS__) || defined (_WIN32)
+     setmode(FileHandle, O_BINARY);      /* Make sure it is in binary mode. */
+     f = fdopen(FileHandle, "rb");           /* Make it into a stream: */
+     setvbuf(f, NULL, _IOFBF, GIF_FILE_BUFFER_SIZE);/* And inc. stream buffer.*/
+diff -u ../../libungif-4.1.0/lib/egif_lib.c ./egif_lib.c
+--- ../../libungif-4.1.0/lib/egif_lib.c	1999-01-20 05:25:36.000000000 +0100
++++ ./egif_lib.c	2003-10-08 17:23:49.000000000 +0200
+@@ -15,6 +15,9 @@
+ #include <io.h>
+ #include <alloc.h>
+ #include <sys\stat.h>
++#elif defined _WIN32
++#include <io.h>
++#include <sys\stat.h>
+ #else
+ #include <sys/types.h>
+ #include <sys/stat.h>
+@@ -68,7 +71,7 @@
+     if (TestExistance)
+ 	FileHandle = open(FileName,
+ 			  O_WRONLY | O_CREAT | O_EXCL
+-#ifdef __MSDOS__
++#if defined (__MSDOS__) || defined (_WIN32)
+ 			                     | O_BINARY
+ #endif /* __MSDOS__ */
+ 			                               ,
+@@ -76,7 +79,7 @@
+     else
+ 	FileHandle = open(FileName,
+ 			  O_WRONLY | O_CREAT | O_TRUNC
+-#ifdef __MSDOS__
++#if defined (__MSDOS__) || defined (_WIN32)
+ 			                     | O_BINARY
+ #endif /* __MSDOS__ */
+ 			                               ,
+@@ -118,7 +121,7 @@
+         return NULL;
+     }
+ 
+-#ifdef __MSDOS__
++#if defined (__MSDOS__) || defined (_WIN32)
+     setmode(FileHandle, O_BINARY);      /* Make sure it is in binary mode. */
+     f = fdopen(FileHandle, "wb");           /* Make it into a stream: */
+     setvbuf(f, NULL, _IOFBF, GIF_FILE_BUFFER_SIZE);   /* And inc. stream buffer. */
+Only in .: libungif_mswin.diff

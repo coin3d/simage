@@ -30,3 +30,23 @@ build_simage_win32.sh
         simage users. If you want to configure and build simage yourself,
         please read the INSTALL file in the simage root directory for 
         instructions.
+
+libungif_win32.diff
+
+        Patches libungif-4.1.0 to work on the Win32 platform.
+
+        This patch is used by build_simage_win32.sh.
+
+libungif_win32.mak
+
+        Makefile for building libungif-4.1.0 on the Win32 platform.
+
+        This file is used by build_simage_win32.sh.
+
+libungif_win32.dsp
+
+        VisualC++ project file for building libungif-4.1.0.
+
+        This file was used to create the above makefile, and
+        is kept for future reference.
+
