@@ -95,37 +95,46 @@
 extern "C" {
 #endif
 
-  /* for run-time version checking */
+  /* run-time version checking */
   SIMAGE_DLL_EXPORT void simage_version(int * major, int * minor, int * micro);
 
-  /* user interface for reading and parsing image files */
+  /* check if image file format is supported */
+  SIMAGE_DLL_EXPORT int simage_check_supported(const char * filename);
+
+  /* reading and parsing image files */
+  /* returned image buffer must be freed by simage_free_image() */
   SIMAGE_DLL_EXPORT unsigned char * simage_read_image(const char * filename,
 						      int * w, int * h,
 						      int * numcomponents);
-  SIMAGE_DLL_EXPORT int simage_check_supported(const char * filename);
 
   /* check this if simage_read_image returns NULL */
   SIMAGE_DLL_EXPORT const char * simage_get_last_error(void);
 
-  /* convenience functions */
+  /* scale the input image and return a new image with the given dimensions */
+  /* returned image buffer must be freed by simage_free_image() */
   SIMAGE_DLL_EXPORT unsigned char * simage_resize(unsigned char * imagedata,
 						  int width, int height,
 						  int numcomponents,
 						  int newwidth, int newheight);
+
+  /* free resources allocated by either simage_read_image() or
+     simage_resize() (Windows goes berzerk if you call free() from the
+     client application) */
+  SIMAGE_DLL_EXPORT void simage_free_image(unsigned char * imagedata);
   
+  /* convenience function */
   SIMAGE_DLL_EXPORT int simage_next_power_of_two(int val);
 
 
-  /* plugin interface */
+  /* use the plugin interface described below for extending simage to
+     handle more file formats */
+
   struct simage_plugin 
   {
-    unsigned char *(*load_func)(const char *,
-				int * width,
-				int * height,
+    unsigned char *(*load_func)(const char * name, int * width, int * height,
 				int * numcomponents);
     int (*identify_func)(const char * filename,
-			 const unsigned char * header,
-			 int headerlen);
+			 const unsigned char * header, int headerlen);
     int (*error_func)(char * textbuffer, int bufferlen);
   };
   

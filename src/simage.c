@@ -301,7 +301,7 @@ cnt_bits(int val, int * highbit)
     val>>=1;
     (*highbit)++;
   }
-  return cnt;  
+  return cnt;
 }
 
 int 
@@ -320,4 +320,10 @@ simage_version(int * major, int * minor, int * micro)
   *major = SIMAGE_MAJOR_VERSION;
   *minor = SIMAGE_MINOR_VERSION;
   *micro = SIMAGE_MICRO_VERSION;
+}
+
+void
+simage_free_image(unsigned char * imagedata)
+{
+  if (imagedata) free(imagedata);
 }
