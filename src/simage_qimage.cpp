@@ -59,7 +59,7 @@ simage_qimage_load(const char * filename,
       c = 1;
     else {
       image = image.convertDepth(32);
-      int c = image.hasAlphaBuffer() ? 4 : 3;
+      c = image.hasAlphaBuffer() ? 4 : 3;
     }
 
     unsigned char *buffer = (unsigned char *)malloc(w*h*c);
