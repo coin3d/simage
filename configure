@@ -10774,6 +10774,9 @@ echo "${ECHO_T}$sim_cv_lib_oggvorbis_avail" >&6
   if test x"$sim_cv_lib_oggvorbis_avail" = xyes; then
     sim_ac_oggvorbis_avail=yes
 
+  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_oggvorbis_cppflags"
+  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_oggvorbis_ldflags"
+  SIMAGE_EXTRA_LIBS="$sim_ac_oggvorbis_libs $SIMAGE_EXTRA_LIBS"
   CPPFLAGS="$CPPFLAGS $sim_ac_oggvorbis_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_oggvorbis_ldflags"
   LIBS="$sim_ac_oggvorbis_libs $LIBS"
@@ -10826,7 +10829,7 @@ if test x"$with_libsndfile" != xno; then
     sim_ac_libsndfile_cppflags="-I${with_libsndfile}/src"
     sim_ac_libsndfile_ldflags="-L${with_libsndfile}"
   fi
-  sim_ac_libsndfile_libs="-llibsndfile"
+  sim_ac_libsndfile_libs="-lsndfile"
 
   sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
@@ -10885,6 +10888,9 @@ echo "${ECHO_T}$sim_cv_lib_libsndfile_avail" >&6
   if test x"$sim_cv_lib_libsndfile_avail" = xyes; then
     sim_ac_libsndfile_avail=yes
 
+  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libsndfile_cppflags"
+  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libsndfile_ldflags"
+  SIMAGE_EXTRA_LIBS="$sim_ac_libsndfile_libs $SIMAGE_EXTRA_LIBS"
   CPPFLAGS="$CPPFLAGS $sim_ac_libsndfile_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_libsndfile_ldflags"
   LIBS="$sim_ac_libsndfile_libs $LIBS"

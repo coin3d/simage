@@ -476,6 +476,9 @@ fi
 # Check if oggvorbis is wanted.
 
 SIM_AC_CHECK_OGGVORBIS([
+  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_oggvorbis_cppflags"
+  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_oggvorbis_ldflags"
+  SIMAGE_EXTRA_LIBS="$sim_ac_oggvorbis_libs $SIMAGE_EXTRA_LIBS"
   CPPFLAGS="$CPPFLAGS $sim_ac_oggvorbis_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_oggvorbis_ldflags"
   LIBS="$sim_ac_oggvorbis_libs $LIBS"
@@ -489,6 +492,9 @@ SIM_AC_CHECK_OGGVORBIS([
 # Check if libsndfile is wanted.
 
 SIM_AC_CHECK_LIBSNDFILE([
+  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libsndfile_cppflags"
+  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libsndfile_ldflags"
+  SIMAGE_EXTRA_LIBS="$sim_ac_libsndfile_libs $SIMAGE_EXTRA_LIBS"
   CPPFLAGS="$CPPFLAGS $sim_ac_libsndfile_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_libsndfile_ldflags"
   LIBS="$sim_ac_libsndfile_libs $LIBS"

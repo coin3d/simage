@@ -6693,7 +6693,7 @@ if test x"$with_libsndfile" != xno; then
     sim_ac_libsndfile_cppflags="-I${with_libsndfile}/src"
     sim_ac_libsndfile_ldflags="-L${with_libsndfile}"
   fi
-  sim_ac_libsndfile_libs="-llibsndfile"
+  sim_ac_libsndfile_libs="-lsndfile"
 
   sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
