@@ -533,6 +533,7 @@ if test -z "$show_help"; then
 	  if grep "^# ### BEGIN LIBTOOL TAG CONFIG: $z$" < "$0" > /dev/null; then
 	    # Evaluate the configuration.
 	    eval "`${SED} -n -e '/^# ### BEGIN LIBTOOL TAG CONFIG: '$z'$/,/^# ### END LIBTOOL TAG CONFIG: '$z'$/p' < $0`"
+	    true # MKS weirdness
 	    case "$base_compile " in
 	    "$CC "* | " $CC "* | "`$echo $CC` "* | " `$echo $CC` "*)
 	      # The compiler in the base compile command matches
@@ -1225,38 +1226,6 @@ EOF
 	continue
 	;;
 
-      -L*)
-	dir=`$echo "X$arg" | $Xsed -e 's/^-L//'`
-	# We need an absolute path.
-	case $dir in
-	[\\/]* | [A-Za-z]:[\\/]*) ;;
-	*)
-	  absdir=`cd "$dir" && pwd`
-	  if test -z "$absdir"; then
-	    $echo "$modename: cannot determine absolute directory name of \`$dir'" 1>&2
-	    exit 1
-	  fi
-	  dir="$absdir"
-	  ;;
-	esac
-	case "$deplibs " in
-	*" -L$dir "*) ;;
-	*)
-	  deplibs="$deplibs -L$dir"
-	  lib_search_path="$lib_search_path $dir"
-	  ;;
-	esac
-	case $host in
-	*-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2*)
-	  case :$dllsearchpath: in
-	  *":$dir:"*) ;;
-	  *) dllsearchpath="$dllsearchpath:$dir";;
-	  esac
-	  ;;
-	esac
-	continue
-	;;
-
       -l*)
 	if test "X$arg" = "X-lc" || test "X$arg" = "X-lm"; then
 	  case $host in
@@ -1286,6 +1255,38 @@ EOF
 	 esac
 	fi
 	deplibs="$deplibs $arg"
+	continue
+	;;
+
+      -L*)
+	dir=`$echo "X$arg" | $Xsed -e 's/^-L//'`
+	# We need an absolute path.
+	case $dir in
+	[\\/]* | [A-Za-z]:[\\/]*) ;;
+	*)
+	  absdir=`cd "$dir" && pwd`
+	  if test -z "$absdir"; then
+	    $echo "$modename: cannot determine absolute directory name of \`$dir'" 1>&2
+	    exit 1
+	  fi
+	  dir="$absdir"
+	  ;;
+	esac
+	case "$deplibs " in
+	*" -L$dir "*) ;;
+	*)
+	  deplibs="$deplibs -L$dir"
+	  lib_search_path="$lib_search_path $dir"
+	  ;;
+	esac
+	case $host in
+	*-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2*)
+	  case :$dllsearchpath: in
+	  *":$dir:"*) ;;
+	  *) dllsearchpath="$dllsearchpath:$dir";;
+	  esac
+	  ;;
+	esac
 	continue
 	;;
 
@@ -1637,6 +1638,7 @@ EOF
 	  if grep "^# ### BEGIN LIBTOOL TAG CONFIG: $z$" < "$0" > /dev/null; then
 	    # Evaluate the configuration.
 	    eval "`${SED} -n -e '/^# ### BEGIN LIBTOOL TAG CONFIG: '$z'$/,/^# ### END LIBTOOL TAG CONFIG: '$z'$/p' < $0`"
+	    true # MKS weirdness
 	    case $base_compile in
 	    "$CC "* | " $CC "* | "`$echo $CC` "* | " `$echo $CC` "*)
 	      # The compiler in $compile_command matches
