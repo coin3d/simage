@@ -23,6 +23,8 @@ EXTRA_DIST = \
 	cfg/m4/wrapmsvc.cpp \
 	cfg/m4/wrapmsvc.exe \
 	build/simage.spec.in \
+	src/simage_jpeg_reader.icc \
+	src/simage_jpeg_writer.icc \
 	README.WIN32
 
 DISTCLEANFILES = \

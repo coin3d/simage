@@ -1,12 +1,15 @@
-#ifndef _SIMAGE_JPEG_H_
-#define _SIMAGE_JPEG_H_
+#ifndef SIMAGE_JPEG_H
+#define SIMAGE_JPEG_H
 
+/* This is an internal header file to the simage library. */
+
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif /* HAVE_CONFIG_H */
 
 #ifndef HAVE_JPEGLIB
 #error "This file should not be used under the current configuration!"
 #endif /* !HAVE_JPEGLIB */
-
 
 unsigned char * simage_jpeg_load(const char *filename,
 				 int *width,
@@ -24,4 +27,4 @@ int simage_jpeg_identify(const char * filename,
 
 int simage_jpeg_error(char * textbuffer, int buffersize);
 
-#endif /* _SIMAGE_JPEG_H_ */
+#endif /* SIMAGE_JPEG_H */

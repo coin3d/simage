@@ -3,13 +3,17 @@
  *
  */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif /* HAVE_CONFIG_H */
+
 #ifdef HAVE_JPEGLIB
 
 #include <stdio.h>
 #include <setjmp.h>
 #include <string.h>
 #include <stdlib.h>
+
 #include <simage_jpeg.h>
 
 /* The geniuses that made the libjpeg forgot to add this wrapper
@@ -21,6 +25,9 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#include "simage_jpeg_reader.icc"
+#include "simage_jpeg_writer.icc"
 
 
 #define ERR_NO_ERROR      0
@@ -104,7 +111,6 @@ copyScanline(unsigned char *currPtr, unsigned char *from, int cnt)
   return currPtr;
 }
 
-  
 unsigned char *
 simage_jpeg_load(const char *filename,
 		 int *width_ret,
@@ -164,9 +170,9 @@ simage_jpeg_load(const char *filename,
   /* Now we can initialize the JPEG decompression object. */
   jpeg_create_decompress(&cinfo);
 
-  /* Step 2: specify data source (eg, a file) */
+  /* Step 2: specify data source */
 
-  jpeg_stdio_src(&cinfo, infile);
+  simage_jpeg_src_init(&cinfo, infile);
 
   /* Step 3: read file parameters with jpeg_read_header() */
 
@@ -345,7 +351,7 @@ simage_jpeg_save(const char * filename,
     return 0;
   }
 
-  jpeg_stdio_dest(&cinfo, outfile);
+  simage_jpeg_dest_init(&cinfo, outfile);
 
 
   /*
