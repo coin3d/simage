@@ -245,7 +245,7 @@ fi
 if $sim_ac_quicktime_support; then
   SIM_AC_HAVE_QUICKTIME_IFELSE([
     AC_DEFINE(SIMAGE_QUICKTIME_SUPPORT, , [define to support the QuickTime library])
-    SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_quicktime_extra_libs"
+    SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_quicktime_libs"
     LIBS="$LIBS $sim_ac_quicktime_libs"
     # These formats are guaranteed to be readable if we have
     # a QuickTime framework, so we do not have to test for them
@@ -617,13 +617,13 @@ AM_CONDITIONAL(HAVE_GUILE, $HAVE_GUILE)
 # **************************************************************************
 # Remove redundant options from environment variable option lists.
 
-SIM_AC_UNIQIFY_LIST(CPPFLAGS, $CPPFLAGS)
-SIM_AC_UNIQIFY_LIST(LDFLAGS, $LDFLAGS)
-SIM_AC_UNIQIFY_LIST(LIBS, $LIBS)
+SIM_AC_UNIQIFY_OPTION_LIST(CPPFLAGS, $CPPFLAGS)
+SIM_AC_UNIQIFY_OPTION_LIST(LDFLAGS, $LDFLAGS)
+SIM_AC_UNIQIFY_OPTION_LIST(LIBS, $LIBS)
 
-SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_CPPFLAGS, [-I"$includedir" $SIMAGE_EXTRA_CPPFLAGS])
-SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LDFLAGS, [-L"$libdir" $SIMAGE_EXTRA_LDFLAGS])
-SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LIBS, [$SIMAGE_EXTRA_LIBS])
+SIM_AC_UNIQIFY_OPTION_LIST(SIMAGE_EXTRA_CPPFLAGS, [-I"$includedir" $SIMAGE_EXTRA_CPPFLAGS])
+SIM_AC_UNIQIFY_OPTION_LIST(SIMAGE_EXTRA_LDFLAGS, [-L"$libdir" $SIMAGE_EXTRA_LDFLAGS])
+SIM_AC_UNIQIFY_OPTION_LIST(SIMAGE_EXTRA_LIBS, [$SIMAGE_EXTRA_LIBS])
 
 AC_SUBST(LDFLAGS)
 
