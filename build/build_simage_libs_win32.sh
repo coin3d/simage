@@ -381,7 +381,7 @@ if ! test -d $SIMAGELIBS_BUILD/libtiff; then
 
   for SIMAGELIBS_CRT in $SIMAGELIBS_CRT_LIST; do
     mkdir $SIMAGELIBS_BUILD/libtiff/$SIMAGELIBS_CRT
-    cp -R $SIMAGELIBS_BUILD/libtiff/temp/tiff-v3.5.7./libtiff/* $SIMAGELIBS_BUILD/libtiff/$SIMAGELIBS_CRT
+    cp -R $SIMAGELIBS_BUILD/libtiff/temp/tiff-v3.5.7/libtiff/* $SIMAGELIBS_BUILD/libtiff/$SIMAGELIBS_CRT
     cp $SIMAGELIBS_BUILD/libtiff/temp/tiff-v3.5.7/VERSION $SIMAGELIBS_BUILD/libtiff
     cp $SIMAGELIBS_BUILD/libtiff/temp/tiff-v3.5.7/RELEASE-DATE $SIMAGELIBS_BUILD/libtiff
     cp $SIMAGELIBS_BUILD/libtiff/temp/tiff-v3.5.7/COPYRIGHT $SIMAGELIBS_BUILD/libtiff
