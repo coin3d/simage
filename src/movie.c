@@ -13,6 +13,10 @@
 #include "../mpeg2enc/api.h"
 #endif /* SIMAGE_MPEG2ENC_SUPPORT */
 
+#ifdef SIMAGE_AVIENC_SUPPORT
+#include "simage_avi.h"
+#endif /* SIMAGE_AVIENC_SUPPORT */
+
 struct simage_movie_s {
   char * filename;
   
@@ -63,6 +67,11 @@ add_internal_exporters(void)
     s_movie_exporter_add(mpeg2enc_movie_create,
                          mpeg2enc_movie_put,
                          mpeg2enc_movie_close);
+#endif
+#ifdef SIMAGE_AVIENC_SUPPORT
+    s_movie_exporter_add(avienc_movie_create,
+                         avienc_movie_put,
+                         avienc_movie_close);
 #endif
    first = 0;
   }

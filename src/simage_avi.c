@@ -15,9 +15,30 @@ avienc_movie_create(const char * filename, s_movie * movie, s_params * params)
   int height;
   int fps;
   const char *preferences_filename;
+  const char *mime_type;
 
   width = height = fps = 0;
   preferences_filename = NULL;
+  mime_type = NULL;
+
+  s_params_get(params, 
+               "mime-type", S_STRING_PARAM_TYPE, &mime_type, NULL);
+
+  if ( (strcmp(mime_type, "video/x-msvideo") != 0) &&
+       (strcmp(mime_type, "video/msvideo") != 0) &&
+       (strcmp(mime_type, "video/avi") != 0) )
+    return 0;
+
+  /* Note 20020321 thammer: 
+     I was unable to find any RFC with a MIME video subtype for avi-files.
+     However, the three subtypes above seems to be widely used.
+     Some examples:
+     Mosaic - http://archive.ncsa.uiuc.edu/SDG/Software/Mosaic/Docs/extension-map.html
+     Netscape - http://developer.netscape.com/docs/manuals/enterprise/40/nsapi/0c_mime.htm#1017298
+              - http://www.ulis.ac.jp/newsys/man/mimetypes.html
+     Jumpline - http://support.jumpline.com/mimetype_list.phtml <Extensive list of extension <-> mimetype mappings>
+     Pure Mac - http://www.eskimo.com/~pristine/extkey.html
+  */
 
   s_params_get(params, 
                "parameter file", S_STRING_PARAM_TYPE, &preferences_filename, NULL);
