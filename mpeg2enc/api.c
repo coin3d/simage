@@ -678,7 +678,7 @@ readparmfile(simpeg_encode_context * context,
     context->bit_rate = 1152000.0;
     context->vbv_buffer_size = 20;
     context->low_delay = 0;
-    context->constrparms = 1;
+    context->constrparms = 0;
     context->profile = 4;
     context->level = 8;
     context->prog_seq = 1;

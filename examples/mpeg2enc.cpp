@@ -83,6 +83,9 @@ main(
                /* use to specify userdata for all callbacks */
                "callback userdata", S_POINTER_PARAM_TYPE, NULL,
 
+               /* use to encode as mpeg1 instead of mpeg2 */
+               "mpeg1", S_BOOL_PARAM_TYPE, 1,
+
                /* use to specify a parameter file */
                /* "parameter file", S_STRING_PARAM_TYPE, "ntsc_coin.par", */
 
