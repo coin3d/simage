@@ -14,7 +14,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <simage_jpeg.h>
+/* This define is also used in the public jpeglib headers. Ugh.*/
+#undef HAVE_STDLIB_H
+
 
 /* The geniuses that made the libjpeg forgot to add this wrapper
    around the header file. */
