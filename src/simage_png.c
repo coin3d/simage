@@ -332,7 +332,7 @@ simage_png_save(const char *filename,
    * as to the correct gamma of the image. */
   /* png_set_gAMA(png_ptr, info_ptr, gamma); */
 
-#ifdef PNG_TEXT_SUPPORTED
+#if defined(PNG_TEXT_SUPPORTED)
   /* Optionally write comments into the image */
   text_ptr[0].key = "Title";
   text_ptr[0].text = (char*)filename;
@@ -410,7 +410,7 @@ simage_png_save(const char *filename,
   /* if you allocated any text comments, free them here */
 
   /* clean up after the write, and free any memory allocated */
-  png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
+  png_destroy_write_struct(&png_ptr, &info_ptr);
 
   /* close the file */
   fclose(fp);
