@@ -1,5 +1,5 @@
-#ifndef _SIMAGE_H_
-#define _SIMAGE_H_
+#ifndef SIMAGE_H
+#define SIMAGE_H
 
 /*
  * simage:
@@ -91,16 +91,17 @@
 #endif /* !SIMAGE_VERSION */
 
 
-
 /* Enable to generate SIMAGE.DLL (under Win32). */
 #ifdef SIMAGE_MAKE_DLL
 #define SIMAGE_DLL_EXPORT __declspec(dllexport)
-#endif /* !SIMAGE_MAKE_DLL */
-
+#else
+#ifdef SIMAGE_DLL
+#define SIMAGE_DLL_EXPORT __declspec(dllimport)
+#else
 /* Empty define to avoid errors when _not_ compiling as a DLL. */
-#ifndef SIMAGE_DLL_EXPORT
 #define SIMAGE_DLL_EXPORT
-#endif /* !SIMAGE_DLL_EXPORT */
+#endif
+#endif /* !SIMAGE_MAKE_DLL */
 
 
 #ifdef __cplusplus
@@ -194,4 +195,4 @@ extern "C" {
 }
 #endif
 
-#endif /* _SIMAGE_H_ */
+#endif /* ! SIMAGE_H */
