@@ -379,7 +379,8 @@ s_image_open(const char * filename, int oktoreadall)
       return image;
     }
   }
-  else if (oktoreadall) {
+  
+  if (oktoreadall) {
     /* just load everything */
     return s_image_load(filename, NULL);
   }
