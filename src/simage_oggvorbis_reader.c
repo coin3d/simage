@@ -94,6 +94,19 @@ static int
 oggvorbis_reader_read(oggvorbis_reader_context *context, 
                       char *buffer, int size)
 {
+  union {
+    int testWord;
+    char testByte[4];
+  } endianTest;
+  int bigEndian;
+
+  endianTest.testWord = 1;
+  if (endianTest.testByte[0] == 1) {
+    bigEndian = 0; // little endian
+  } else {
+    bigEndian = 1; // big endian
+  }
+
   int readsize;
   int numread;
 
@@ -108,7 +121,7 @@ oggvorbis_reader_read(oggvorbis_reader_context *context,
     */
     numread=ov_read(&context->vorbisfile, 
                     buffer+readsize, 
-                    size-readsize, 0, 2, 1, 
+                    size-readsize, bigEndian, 2, 1, 
                     &context->current_section);
     /* FIXME: Verify that EOF's (and numread=0) are
        handled correctly. 2003-01-09 thammer
@@ -118,28 +131,6 @@ oggvorbis_reader_read(oggvorbis_reader_context *context,
     else
       readsize += numread;
   }
-
-  /*
-  FIXME: The above code fills buffer with little-endian
-  short ints on all platforms. We want to return the
-  buffer using the endian-ness of the platform instead.
-
-  Problem reported by kyrah.
-
-  The code below changes the endian-ness of the buffer.
-  It is kept only for debugging purposes. The final
-  fix will probably set the bigendianp parameter to 1 in 
-  the ov_read call above if the platform is big-endian.
-  
-  unsigned char tmp;
-  for (int i=0; i<size-1; i+=2) {
-    tmp = buffer[i]; 
-    buffer[i] = buffer[i+1];
-    buffer[i+1] = tmp;
-  }
-
-  2003-01-10 thammer
-  */
 
   return readsize;
 }
