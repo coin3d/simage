@@ -127,8 +127,10 @@ scimage_image_free(
   scm_sizet size;
   simage_image_data =
     (struct simage_image *) SCM_SMOB_DATA( scm_simage_image );
-  size = simage_image_data->width * simage_image_data->height * 4
-    + sizeof( struct simage_image );
+  size = simage_image_data->width *
+      simage_image_data->height *
+      simage_image_data->components +
+      sizeof( struct simage_image );
   simage_free_image( simage_image_data->data );
   free( simage_image_data );
   return size;
@@ -164,15 +166,16 @@ scimage_make_image(
 {
   struct simage_image * simage_image_data;
   int width, height, components = 4;
-  simage_image_data = malloc( sizeof( struct simage_image ) );
+  simage_image_data = (struct simage_image *)
+      scm_must_malloc( sizeof( struct simage_image ), "simage-image" );
   width = gh_scm2int( scm_width );
   height = gh_scm2int( scm_height );
   if ( scm_components != SCM_UNDEFINED )
     components = gh_scm2int( scm_components );
   /* FIXME: assert components are 3 or 4 (rather use bits?) */
   /* FIXME: need to flag this to avoid using simage_free_image() on buffer */
-  simage_image_data->data =
-    (unsigned char *) malloc( width * height * components );
+  simage_image_data->data = (unsigned char *)
+      scm_must_malloc( width * height * components, "simage-pixel" );
   memset( simage_image_data->data, 0, width * height * components );
   simage_image_data->width = width;
   simage_image_data->height = height;
@@ -371,8 +374,11 @@ scimage_load(
   filename = gh_scm2newstr( scm_filename, NULL );
   data = simage_read_image( filename, &width, &height, &components );
   if ( ! data ) return SCM_UNSPECIFIED;
-  simage_image_data =
-    (struct simage_image *) malloc( sizeof( struct simage_image ) );
+  /* tell gc */
+  scm_done_malloc(width * height * components);
+  
+  simage_image_data = (struct simage_image *)
+      scm_must_malloc( sizeof( struct simage_image ), "simage-image" );
   simage_image_data->data = data;
   simage_image_data->width = width;
   simage_image_data->height = height;
@@ -410,7 +416,7 @@ scimage_save(
   struct simage_image * simage_image_data;
   int result;
   SCM_ASSERT( SCM_SMOB_PREDICATE( simage_image_smob_type, scm_simage_image ),
-              scm_simage_image, SCM_ARG1, "simage-image-width" );
+              scm_simage_image, SCM_ARG1, "simage-save" );
   simage_image_data =
     (struct simage_image *) SCM_SMOB_DATA( scm_simage_image );
   filename = gh_scm2newstr( scm_filename, NULL );
@@ -438,7 +444,7 @@ scimage_resize(
   unsigned char * new_data;
 
   SCM_ASSERT( SCM_SMOB_PREDICATE( simage_image_smob_type, scm_simage_image ),
-              scm_simage_image, SCM_ARG1, "simage-image-width" );
+              scm_simage_image, SCM_ARG1, "simage-resize" );
   simage_image_data =
     (struct simage_image *) SCM_SMOB_DATA( scm_simage_image );
   new_width = gh_scm2int( scm_width );
@@ -450,8 +456,11 @@ scimage_resize(
     simage_image_data->components, new_width, new_height );
 
   if ( ! new_data ) return SCM_UNSPECIFIED;
-  simage_image_data =
-    (struct simage_image *) malloc( sizeof( struct simage_image ) );
+  /* tell gc */
+  scm_done_malloc(new_width * new_height * new_components);
+
+  simage_image_data = (struct simage_image *)
+      scm_must_malloc( sizeof( struct simage_image ), "simage-image" );
   simage_image_data->data = new_data;
   simage_image_data->width = new_width;
   simage_image_data->height = new_height;
@@ -483,9 +492,9 @@ scimage_image_get_pixel(
   x = gh_scm2int( scm_x );
   y = gh_scm2int( scm_y );
   if ( x < 0 || x >= simage_image_data->width )
-    return SCM_UNDEFINED;
+    return SCM_BOOL_F;
   if ( y < 0 || y >= simage_image_data->height )
-    return SCM_UNDEFINED;
+    return SCM_BOOL_F;
   pos = simage_image_data->data +
     (simage_image_data->width * y + x) * simage_image_data->components;
   pixel = pos[0] << 24 | pos[1] << 16 | pos[2] << 8 | 0xff;
@@ -519,9 +528,9 @@ scimage_image_set_pixel(
   y = gh_scm2int( scm_y );
   pixel = (unsigned long) SCM_SMOB_DATA( scm_simage_pixel );
   if ( x < 0 || x >= simage_image_data->width )
-    return SCM_UNDEFINED;
+    return SCM_BOOL_F;
   if ( y < 0 || y >= simage_image_data->height )
-    return SCM_UNDEFINED;
+    return SCM_BOOL_F;
   pos = simage_image_data->data +
     (simage_image_data->width * y + x) * simage_image_data->components;
   pos[0] = (pixel >> 24) & 0xff;
@@ -529,7 +538,7 @@ scimage_image_set_pixel(
   pos[2] = (pixel >> 8) & 0xff;
   if ( simage_image_data->components == 4 )
     pos[3] = pixel & 0xff;
-  return SCM_UNSPECIFIED;
+  return SCM_BOOL_T;
 } /* scimage_image_set_pixel() */
   
 /* ********************************************************************** */
@@ -567,30 +576,30 @@ guilesimage_init(
   scm_set_smob_print( simage_pixel_smob_type, scimage_pixel_print );
 
   /* register guile hooks */
-  scm_make_gsubr( "simage-version-major", 0, 0, 0, scimage_version_major );
-  scm_make_gsubr( "simage-version-minor", 0, 0, 0, scimage_version_minor );
-  scm_make_gsubr( "simage-version-micro", 0, 0, 0, scimage_version_micro );
-  scm_make_gsubr( "simage-get-last-error", 0, 0, 0, scimage_get_last_error );
+  scm_c_define_gsubr( "simage-version-major", 0, 0, 0, scimage_version_major );
+  scm_c_define_gsubr( "simage-version-minor", 0, 0, 0, scimage_version_minor );
+  scm_c_define_gsubr( "simage-version-micro", 0, 0, 0, scimage_version_micro );
+  scm_c_define_gsubr( "simage-get-last-error", 0, 0, 0, scimage_get_last_error );
 
-  scm_make_gsubr( "make-simage-image", 2, 1, 0, scimage_make_image );
-  scm_make_gsubr( "simage-image-width", 1, 0, 0, scimage_image_width );
-  scm_make_gsubr( "simage-image-height", 1, 0, 0, scimage_image_height );
-  scm_make_gsubr( "simage-image-components", 1, 0, 0,scimage_image_components );
+  scm_c_define_gsubr( "make-simage-image", 2, 1, 0, scimage_make_image );
+  scm_c_define_gsubr( "simage-image-width", 1, 0, 0, scimage_image_width );
+  scm_c_define_gsubr( "simage-image-height", 1, 0, 0, scimage_image_height );
+  scm_c_define_gsubr( "simage-image-components", 1, 0, 0,scimage_image_components );
 
-  scm_make_gsubr( "simage-load-supported?", 1, 0, 0, scimage_load_supported_p );
-  scm_make_gsubr( "simage-load", 1, 0, 0, scimage_load );
-  scm_make_gsubr( "simage-save-supported?", 1, 0, 0, scimage_save_supported_p );
-  scm_make_gsubr( "simage-save", 3, 0, 0, scimage_save );
-  scm_make_gsubr( "simage-resize", 3, 0, 0, scimage_resize );
+  scm_c_define_gsubr( "simage-load-supported?", 1, 0, 0, scimage_load_supported_p );
+  scm_c_define_gsubr( "simage-load", 1, 0, 0, scimage_load );
+  scm_c_define_gsubr( "simage-save-supported?", 1, 0, 0, scimage_save_supported_p );
+  scm_c_define_gsubr( "simage-save", 3, 0, 0, scimage_save );
+  scm_c_define_gsubr( "simage-resize", 3, 0, 0, scimage_resize );
 
-  scm_make_gsubr( "make-simage-pixel", 3, 1, 0, scimage_make_pixel );
-  scm_make_gsubr( "simage-pixel-get-red", 1, 0, 0, scimage_pixel_get_red );
-  scm_make_gsubr( "simage-pixel-get-green", 1, 0, 0, scimage_pixel_get_green );
-  scm_make_gsubr( "simage-pixel-get-blue", 1, 0, 0, scimage_pixel_get_blue );
-  scm_make_gsubr( "simage-pixel-get-alpha", 1, 0, 0, scimage_pixel_get_alpha );
+  scm_c_define_gsubr( "make-simage-pixel", 3, 1, 0, scimage_make_pixel );
+  scm_c_define_gsubr( "simage-pixel-get-red", 1, 0, 0, scimage_pixel_get_red );
+  scm_c_define_gsubr( "simage-pixel-get-green", 1, 0, 0, scimage_pixel_get_green );
+  scm_c_define_gsubr( "simage-pixel-get-blue", 1, 0, 0, scimage_pixel_get_blue );
+  scm_c_define_gsubr( "simage-pixel-get-alpha", 1, 0, 0, scimage_pixel_get_alpha );
 
-  scm_make_gsubr( "simage-image-get-pixel", 3, 0, 0, scimage_image_get_pixel );
-  scm_make_gsubr( "simage-image-set-pixel!", 4, 0, 0, scimage_image_set_pixel );
+  scm_c_define_gsubr( "simage-image-get-pixel", 3, 0, 0, scimage_image_get_pixel );
+  scm_c_define_gsubr( "simage-image-set-pixel!", 4, 0, 0, scimage_image_set_pixel );
 } /* guilesimage_init() */
 
 /* EOF ****************************************************************** */
