@@ -43,9 +43,21 @@ fi
 $sim_ac_cvs_syncproblem && echo "" && echo "Aborting..." && exit 1
 
 # **************************************************************************
+# If the Microsoft Visual C++ cl.exe compiler is available, set us up for
+# compiling with it and to generate an MSWindows .dll file.
+
+simage_build_with_msvc=false
+if test -z "$CC" && $sim_ac_macro_dir/msvccc >/dev/null 2>&1; then
+  CC=$sim_ac_macro_dir/msvccc
+  simage_build_with_msvc=true
+fi
+
+# **************************************************************************
 # Check to see if the compiler supports the ANSI standard, and
 # automatically add the necessary options if the compiler defaults
-# to K&R C. If no ANSI mode is available, terminate.
+# to K&R C. If no ANSI mode is available, warn. (Don't terminate, as
+# C++ compilers won't be strictly ANSI C compliant but most of them
+# should still be able to compile the simage code.)
 
 AC_PROG_CC
 AM_PROG_CC_STDC
@@ -165,7 +177,7 @@ AC_SUBST(LT_AGE)
 AC_DEFINE_UNQUOTED(SIMAGE_MAJOR_VERSION, $SIMAGE_MAJOR_VERSION, [define this to the simage major version number])
 AC_DEFINE_UNQUOTED(SIMAGE_MINOR_VERSION, $SIMAGE_MINOR_VERSION, [define this to the simage minor version number])
 AC_DEFINE_UNQUOTED(SIMAGE_MICRO_VERSION, $SIMAGE_MICRO_VERSION, [define this to the simage release version number])
-AC_DEFINE_UNQUOTED(SIMAGE_VERSION, "$SIMAGE_VERSION", [define this to the full simage major.minor.release version number])
+AC_DEFINE_UNQUOTED(SIMAGE_VERSION, "$SIMAGE_VERSION", [define this to the full simage major.minor.micro version number])
 
 # **************************************************************************
 # Miscellaneous options and initializations.
@@ -339,7 +351,7 @@ fi
 SIM_EXPAND_DIR_VARS
 
 # **************************************************************************
-# List all files configure shall generate.
+# XXX Kill these when they are _definitely_ not in use anymore.
 
 # Set simage_build_dir so we can change simage.dsp
 #simage_current_dir=`pwd`
@@ -351,31 +363,26 @@ SIM_EXPAND_DIR_VARS
 #AC_SUBST(simage_src_dir)
 
 # For the build/simage.spec RPM specification file.
-SIM_AC_ISO8601_DATE(simage_configure_date)
-AC_SUBST(simage_configure_date)
+#SIM_AC_ISO8601_DATE(simage_configure_date)
+#AC_SUBST(simage_configure_date)
 
 # **************************************************************************
-# Remove redundant options from certain option lists.
-# We add the first argument ourselves to shift it off because it's added
-# again inside simage-config.in
+# Remove redundant options from environment variable option lists.
 
-SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_CPPFLAGS, -I$includedir $SIMAGE_EXTRA_CPPFLAGS)
-set : $SIMAGE_EXTRA_CPPFLAGS
-shift
-shift
-SIMAGE_EXTRA_CPPFLAGS=$@
-
-SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LDFLAGS, -L$libdir $SIMAGE_EXTRA_LDFLAGS)
-set : $SIMAGE_EXTRA_LDFLAGS
-shift
-shift
-SIMAGE_EXTRA_LDFLAGS=$@
-
-# We don't have to do shift magic on these:
-SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LIBS, $SIMAGE_EXTRA_LIBS)
 SIM_AC_UNIQIFY_LIST(CPPFLAGS, $CPPFLAGS)
 SIM_AC_UNIQIFY_LIST(LDFLAGS, $LDFLAGS)
 SIM_AC_UNIQIFY_LIST(LIBS, $LIBS)
+
+SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_CPPFLAGS, -I$includedir $SIMAGE_EXTRA_CPPFLAGS)
+SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LDFLAGS, -L$libdir $SIMAGE_EXTRA_LDFLAGS)
+SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LIBS, $SIMAGE_EXTRA_LIBS)
+
+if $simage_build_with_msvc; then
+  CPPFLAGS="-DSIMAGE_MAKE_DLL $CPPFLAGS"
+  SIMAGE_EXTRA_LIBS="-lsimage0 $SIMAGE_EXTRA_LIBS"
+else
+  SIMAGE_EXTRA_LIBS="-lsimage $SIMAGE_EXTRA_LIBS"
+fi
 
 # **************************************************************************
 

@@ -20,9 +20,9 @@ version="@SIMAGE_VERSION@"
 # NOTE: If the first argument is changed in the following variables, it is
 # also necessary to update configure.in, since that argument is shifted off.
 
-cppflags="-I@includedir@ @SIMAGE_EXTRA_CPPFLAGS@"
-ldflags="-L@libdir@ @SIMAGE_EXTRA_LDFLAGS@"
-libs="-lsimage @SIMAGE_EXTRA_LIBS@"
+cppflags="@SIMAGE_EXTRA_CPPFLAGS@"
+ldflags="@SIMAGE_EXTRA_LDFLAGS@"
+libs="@SIMAGE_EXTRA_LIBS@"
 
 while test $# -gt 0
 do
