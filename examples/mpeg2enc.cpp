@@ -54,6 +54,7 @@ progress_cb(void * userdata, float sub, int current_frame, int num_frames)
 static void
 print_usage(const char * appname)
 {
+  if (appname == NULL) { appname = "mpeg2enc"; }
   (void)fprintf(stderr, "\n\tUsage: %s [options] <moviefile>\n\n", appname);
   (void)fprintf(stderr, "\t\t--width     <xsize> \n");
   (void)fprintf(stderr, "\t\t--height    <ysize> \n");
@@ -89,7 +90,7 @@ main(int argc, char ** argv)
 
   if (optidx < argc) {
     if (strncmp("--", argv[optidx], 2) == 0) {
-      (void)fprintf(stderr, "Error: unknown option '%s'\n", argv[optidx]);
+      print_usage(APPNAME);
     }
     else {
       MPGOUT = argv[optidx];
@@ -97,7 +98,7 @@ main(int argc, char ** argv)
   }
 
   if (MPGOUT == NULL) {
-    print_usage(APPNAME == NULL ? "mpeg2enc" : APPNAME);
+    print_usage(APPNAME);
     exit(1);
   }
 
@@ -159,7 +160,7 @@ main(int argc, char ** argv)
                /* NULL means no more params */
                NULL);
                
-  s_movie * movie = s_movie_create(argv[1], params);
+  s_movie * movie = s_movie_create(MPEGOUT, params);
   if (movie == NULL) {
     error_cb(NULL, "could not create movie file");
     exit(1);
@@ -167,12 +168,13 @@ main(int argc, char ** argv)
 
   s_image * image = NULL;
 
-  for (int i=0; i<NUMFRAMES; i++)
+  for (int i=0; i < NUMFRAMES; i++)
   { 
     SbVec3f cpos = camera->position.getValue();
     float x, y, z;
     cpos.getValue(x, y, z);
-    x=1.0-(float)i/(float)NUMFRAMES *1.0*2.0;
+//      x = 1.0-(float)i/(float)NUMFRAMES * 2.0;
+    x = 1.0 - (float)i * 2.0;
     camera->position.setValue(x, y, z);
 
     renderer->render(root);
