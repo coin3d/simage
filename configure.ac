@@ -22,17 +22,6 @@ AC_CONFIG_SRCDIR([src/simage.c])
 CYGWIN=
 
 # **************************************************************************
-# Check the CVS repository setup
-
-SIM_AC_CVS_CHANGES([
-  SIM_AC_CVS_CHANGE([
-    rm -rf conf-macros
-    cvs co simage-macros],
-    [test -d cfg/m4],
-    [test ! -d conf-macros])
-])
-
-# **************************************************************************
 
 AC_CANONICAL_TARGET
 
