@@ -122,9 +122,7 @@
 /* version 1.3 added simage_resize3d */
 #define SIMAGE_VERSION_1_3
 
-/* version 1.4 added an interface for reading and writing streams 
- * (used for reading audio files). 
- */
+/* version 1.4 added API for stream I/O */
 #define SIMAGE_VERSION_1_4
 
 /* These are available for adding or omitting features based on simage
@@ -401,6 +399,17 @@ extern "C" {
                                             s_stream_put_func * put,
                                             s_stream_close_func * close);
 
+  enum { 
+    S_SEEK_SET = 0,
+    S_SEEK_CUR = 1,
+    S_SEEK_END = 2
+  };
+
+
+  SIMAGE_DLL_API int s_stream_seek(s_stream * stream, int offset, int whence,
+                                   s_params * params /* | NULL */);
+  SIMAGE_DLL_API int s_stream_tell(s_stream *stream,
+                                   s_params * params /* | NULL */);
 
 #ifdef __cplusplus
 }

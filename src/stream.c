@@ -235,3 +235,16 @@ s_stream_exporter_add(s_stream_create_func * create,
   }
   else last->next = exp;
 }
+
+int 
+s_stream_seek(s_stream * stream, int offset, int whence,
+              s_params * params /* | NULL */)
+{
+  return -1;
+}
+
+int s_stream_tell(s_stream *stream,
+                  s_params * params /* | NULL */)
+{
+  return -1;
+}

@@ -6,6 +6,7 @@
 #include <simage_libsndfile.h>
 
 #include <stdio.h>
+#include <assert.h>
 
 #include <sndfile.h>
 
@@ -109,10 +110,24 @@ libsndfile_stream_get(s_stream * stream, void * buffer, int * size, s_params * p
       context->tempbuffer = (double *)malloc(itemssize);
     }
 
+    if (params != NULL) {
+      int pos;
+      if (s_params_get(params, "position", S_INTEGER_PARAM_TYPE, &pos, NULL)) {
+        int newpos;
+        newpos = sf_seek(context->file, pos, SEEK_SET);
+      }
+    }
+
     intbuffer = (short int*)buffer;
     itemsread = sf_read_double(context->file, context->tempbuffer, items);
     for (i=0; i<itemsread; i++) {
       intbuffer[i] = context->tempbuffer[i] * (double)32767.0;
+    }
+
+    if (params != NULL) {
+      int pos;
+      pos = sf_seek(context->file, 0, SEEK_SET);
+      s_params_set(params, "position", S_INTEGER_PARAM_TYPE, pos, NULL);
     }
     
     if (itemsread > 0) {

@@ -41,7 +41,15 @@ oggvorbis_reader_read_cb(void *ptr, size_t size, size_t nmemb,
 static int 
 oggvorbis_reader_seek_cb(void *datasource, ogg_int64_t offset, int whence)
 {
-  return -1; /* seek not supported */
+  oggvorbis_reader_context *context = (oggvorbis_reader_context *)datasource;
+  return fseek(context->file, (int)offset, whence);
+}
+
+static long
+oggvorbis_reader_tell_cb(void *datasource)
+{
+  oggvorbis_reader_context *context = (oggvorbis_reader_context *)datasource;
+  return ftell(context->file);
 }
 
 static int 
@@ -76,7 +84,7 @@ oggvorbis_reader_open(oggvorbis_reader_context **contextp,
   callbacks.read_func = oggvorbis_reader_read_cb;
   callbacks.seek_func = oggvorbis_reader_seek_cb;
   callbacks.close_func = oggvorbis_reader_close_cb;
-  callbacks.tell_func = NULL;
+  callbacks.tell_func = oggvorbis_reader_tell_cb;
 
   if(ov_open_callbacks((void *)context, &context->vorbisfile, NULL, 0, 
                        callbacks) < 0) {
