@@ -139,6 +139,9 @@ $1
 #   Fetches the error messages from the error message file and displays
 #   them on stderr. The configure process will subsequently exit.
 #
+# SIM_AC_WARN( ERROR [, ERROR ...] )
+#   As SIM_AC_ERROR, but will not exit after displaying the message(s).
+#
 # SIM_AC_WITH_ERROR( WITHARG )
 #   Invokes AC_MSG_ERROR in a consistent way for problems with the --with-*
 #   $withval argument.
@@ -181,6 +184,12 @@ _SIM_AC_ERROR($@)
 echo >&2 ""
 AC_MSG_ERROR([aborting])
 ]) # SIM_AC_ERROR
+
+AC_DEFUN([SIM_AC_WARN], [
+echo >&2 ""
+_SIM_AC_ERROR($@)
+echo >&2 ""
+]) # SIM_AC_WARN
 
 AC_DEFUN([SIM_AC_WITH_ERROR], [
 AC_MSG_ERROR([invalid value "${withval}" for "$1" configure argument])
@@ -7241,6 +7250,83 @@ fi
 ]) # SIM_AC_MATHLIB_READY_IFELSE()
 
 
+# Helper macros for the SIM_AC_CHECK_QT macro below.
+
+# SIM_AC_WITH_QT
+#
+# Sets sim_ac_with_qt (from --with-qt=[true|false]) and
+# sim_ac_qtdir (from either --with-qt=DIR or $QTDIR).
+
+AC_DEFUN([SIM_AC_WITH_QT], [
+sim_ac_qtdir=
+AC_ARG_WITH(
+  [qt],
+  AC_HELP_STRING([--with-qt=[true|false|DIR]],
+                 [specify if Qt should be used, and optionally the location of the Qt library [default=true]]),
+  [case $withval in
+  no | false ) sim_ac_with_qt=false ;;
+  yes | true ) sim_ac_with_qt=true ;;
+  *)
+    sim_ac_with_qt=true
+    sim_ac_qtdir=$withval
+    ;;
+  esac],
+  [sim_ac_with_qt=true])
+
+if $sim_ac_with_qt; then
+  if test -z "$sim_ac_qtdir"; then
+    # The Cygwin environment needs to invoke moc with a POSIX-style path.
+    AC_PATH_PROG(sim_ac_qt_cygpath, cygpath, false)
+    if test $sim_ac_qt_cygpath = "false"; then
+      sim_ac_qtdir=$QTDIR
+    else
+      # Quote $QTDIR in case it's empty.
+      sim_ac_qtdir=`$sim_ac_qt_cygpath -u "$QTDIR"`
+    fi
+
+    AC_MSG_CHECKING([value of the QTDIR environment variable])
+    if test x"$sim_ac_qtdir" = x""; then
+      AC_MSG_RESULT([empty])
+      AC_MSG_WARN([QTDIR environment variable not set -- this might be an indication of a problem])
+    else
+      AC_MSG_RESULT([$sim_ac_qtdir])
+
+      # list contents of what's in the qt dev environment into config.log
+      for i in "" bin lib; do
+        echo "Listing contents of $sim_ac_qtdir/$i:" >&5
+        ls -l $sim_ac_qtdir/$i >&5 2>&1
+      done
+    fi
+  fi
+fi
+])
+
+# SIM_AC_QT_PROG(VARIABLE, PROG-TO-CHECK-FOR)
+#
+# Substs VARIABLE to the path of the PROG-TO-CHECK-FOR, if found
+# in either $PATH, $QTDIR/bin or the --with-qt=DIR directories.
+#
+# If not found, VARIABLE will be set to false.
+
+AC_DEFUN([SIM_AC_QT_PROG], [
+AC_REQUIRE([SIM_AC_WITH_QT])
+
+if $sim_ac_with_qt; then
+
+  sim_ac_path=$PATH
+  if test -n "$sim_ac_qtdir"; then
+    sim_ac_path=$sim_ac_qtdir/bin:$PATH
+  fi
+
+  AC_PATH_PROG([$1], $2, false, $sim_ac_path)
+  if test x"$$1" = x"false"; then
+    AC_MSG_WARN([the ``$2'' Qt pre-processor tool not found])
+  fi
+else
+  AC_SUBST([$1], [false])
+fi
+])
+
 # Usage:
 #  SIM_AC_CHECK_QT([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 #
@@ -7261,12 +7347,7 @@ fi
 
 AC_DEFUN([SIM_AC_CHECK_QT], [
 
-AC_ARG_WITH(
-  [qt],
-  AC_HELP_STRING([--with-qt=DIR],
-                 [specify location of Qt library [default=yes]]),
-  [],
-  [with_qt=yes])
+AC_REQUIRE([SIM_AC_WITH_QT])
 
 AC_ARG_ENABLE(
   [qt-debug],
@@ -7279,68 +7360,27 @@ AC_ARG_ENABLE(
 
 sim_ac_qt_avail=no
 
-if test x"$with_qt" != xno; then
-  sim_ac_path=$PATH
-
-  # Remember over config.status re-runs of configure.
-  # FIXME: this doesn't work unless QTDIR is part of the configure
-  # argument line. We should be able to grab it from the
-  # environment settings. 20011018 mortene. 
-  AC_SUBST([QTDIR], [$QTDIR])
-
-  # The Cygwin environment needs to invoke moc with a POSIX-style path.
-  AC_PATH_PROG(sim_ac_qt_cygpath, cygpath, false)
-  if test $sim_ac_qt_cygpath = "false"; then
-    sim_ac_qt_dir=$QTDIR
-  else
-    # Quote $QTDIR in case it's empty.
-    sim_ac_qt_dir=`$sim_ac_qt_cygpath -u "$QTDIR"`
-  fi
-
-  if test x"$with_qt" != xyes; then
-    sim_ac_qt_incflags="-I${with_qt}/include"
-    sim_ac_qt_ldflags="-L${with_qt}/lib"
-    sim_ac_path=${with_qt}/bin:$PATH
-  else
-    AC_MSG_CHECKING([value of the QTDIR environment variable])
-    if test x"$sim_ac_qt_dir" = x""; then
-      AC_MSG_RESULT([empty])
-      AC_MSG_WARN([QTDIR environment variable not set -- this might be an indication of a problem])
-    else
-      AC_MSG_RESULT([$sim_ac_qt_dir])
-
-      # list contents of what's in the qt dev environment into config.log...
-      for i in "" bin lib; do
-        echo "Listing contents of $sim_ac_qt_dir/$i:" >&5
-        ls -l $sim_ac_qt_dir/$i >&5 2>&1
-      done
-
-      sim_ac_qt_incflags="-I$sim_ac_qt_dir/include"
-      sim_ac_qt_ldflags="-L$sim_ac_qt_dir/lib"
-      sim_ac_path=$sim_ac_qt_dir/bin:$PATH
-    fi
-  fi
+if $sim_ac_with_qt; then
 
   sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
   sim_ac_save_libs=$LIBS
+
+  if test -n "$sim_ac_qtdir"; then
+    sim_ac_qt_incflags="-I$sim_ac_qtdir/include"
+    sim_ac_qt_ldflags="-L$sim_ac_qtdir/lib"
+  fi
 
   CPPFLAGS="$sim_ac_qt_incflags $CPPFLAGS"
   LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
 
   sim_ac_qt_libs=UNRESOLVED
 
-  AC_PATH_PROG(MOC, moc, false, $sim_ac_path)
-
-  if test x"$MOC" = x"false"; then
-    AC_MSG_WARN([the ``moc'' Qt pre-processor tool not found])
-  else
-
   sim_ac_qglobal=false
   SIM_AC_CHECK_HEADER_SILENT([qglobal.h],
     [sim_ac_qglobal=true],
     # Debian Linux and Darwin fink have the Qt-dev installation headers in 
-    #a separate subdir.
+    # a separate subdir.
     [sim_ac_debian_qtheaders=/usr/include/qt
      if test -d $sim_ac_debian_qtheaders; then
        sim_ac_qt_incflags="-I$sim_ac_debian_qtheaders $sim_ac_qt_incflags"
@@ -7357,70 +7397,70 @@ if test x"$with_qt" != xno; then
 
   if $sim_ac_qglobal; then
 
-  # Find version of the Qt library (MSWindows .dll is named with the
-  # version number.)
-  AC_MSG_CHECKING([version of Qt library])
-  cat > conftest.c << EOF
+    # Find version of the Qt library (MSWindows .dll is named with the
+    # version number.)
+    AC_MSG_CHECKING([version of Qt library])
+    cat > conftest.c << EOF
 #include <qglobal.h>
 int VerQt = QT_VERSION;
 EOF
-  # The " *"-parts of the last sed-expression on the next line are necessary
-  # because at least the Solaris/CC preprocessor adds extra spaces before and
-  # after the trailing semicolon.
-  sim_ac_qt_version=`$CXXCPP $CPPFLAGS conftest.c 2>/dev/null | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's% *; *$%%'`
+    # The " *"-parts of the last sed-expression on the next line are necessary
+    # because at least the Solaris/CC preprocessor adds extra spaces before and
+    # after the trailing semicolon.
+    sim_ac_qt_version=`$CXXCPP $CPPFLAGS conftest.c 2>/dev/null | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's% *; *$%%'`
 
-  case $sim_ac_qt_version in
-  0x* )
-    sim_ac_qt_version=`echo $sim_ac_qt_version | sed -e 's/^0x.\(.\).\(.\).\(.\)/\1\2\3/;'`
-    ;;
-  * )
-    # nada
-    ;;
-  esac
+    case $sim_ac_qt_version in
+    0x* )
+      sim_ac_qt_version=`echo $sim_ac_qt_version | sed -e 's/^0x.\(.\).\(.\).\(.\)/\1\2\3/;'`
+      ;;
+    * )
+      # nada
+      ;;
+    esac
 
-  rm -f conftest.c
-  AC_MSG_RESULT($sim_ac_qt_version)
+    rm -f conftest.c
+    AC_MSG_RESULT($sim_ac_qt_version)
 
-  if test $sim_ac_qt_version -lt 200; then
-    SIM_AC_ERROR([too-old-qt])
-  fi
+    if test $sim_ac_qt_version -lt 200; then
+      SIM_AC_ERROR([too-old-qt])
+    fi
 
-  # Too hard to feature-check for the Qt-on-Mac problems, as they involve
-  # obscure behavior of the QGLWidget -- so we just resort to do platform
-  # and version checking instead.
-  case $host_os in
-  darwin*)
-    if test $sim_ac_qt_version -lt 302; then
-      SIM_AC_CONFIGURATION_WARNING([The version of Qt you are using is
+    # Too hard to feature-check for the Qt-on-Mac problems, as they involve
+    # obscure behavior of the QGLWidget -- so we just resort to do platform
+    # and version checking instead.
+    case $host_os in
+    darwin*)
+      if test $sim_ac_qt_version -lt 302; then
+        SIM_AC_CONFIGURATION_WARNING([The version of Qt you are using is
 known to contain some serious bugs on MacOS X. We strongly recommend you to
 upgrade. (See $srcdir/README.MAC for details.)])
-    fi
+      fi
 
-    if test x"$sim_ac_want_x11" = xno; then   
-    # Qt/X11 needs X11, which you need to enable by --enable-x11
-    AC_TRY_LINK([#include <qapplication.h>],
-                [#if defined(__APPLE__) && defined(Q_WS_X11)
-                 #error blah!
-                 #endif],[],
-                [SIM_AC_ERROR([x11-qt-on-mac])])
-    fi
-    ;;
-  esac
+      if test x"$sim_ac_want_x11" = xno; then   
+      # Qt/X11 needs X11, which you need to enable by --enable-x11
+      AC_TRY_LINK([#include <qapplication.h>],
+                  [#if defined(__APPLE__) && defined(Q_WS_X11)
+                   #error blah!
+                   #endif],[],
+                  [SIM_AC_ERROR([x11-qt-on-mac])])
+      fi
+      ;;
+    esac
 
-  # Known problems:
-  #
-  #   * Qt v3.0.1 has a bug where SHIFT-PRESS + CTRL-PRESS + CTRL-RELEASE
-  #     results in the last key-event coming out completely wrong under X11.
-  #     Known to be fixed in 3.0.3, unknown status in 3.0.2.  <mortene@sim.no>.
-  #
-  if test $sim_ac_qt_version -lt 303; then
-    SIM_AC_CONFIGURATION_WARNING([The version of Qt you are compiling against
+    # Known problems:
+    #
+    #   * Qt v3.0.1 has a bug where SHIFT-PRESS + CTRL-PRESS + CTRL-RELEASE
+    #     results in the last key-event coming out completely wrong under X11.
+    #     Known to be fixed in 3.0.3, unknown status in 3.0.2.  <mortene@sim.no>.
+    #
+    if test $sim_ac_qt_version -lt 303; then
+      SIM_AC_CONFIGURATION_WARNING([The version of Qt you are compiling against
 is known to contain bugs which influences functionality in SoQt. We strongly
 recommend you to upgrade.])
-  fi
+    fi
 
-  sim_ac_qt_cppflags=
-  if test x"$MOC" != xfalse; then
+    sim_ac_qt_cppflags=
+
     # Do not cache the result, as we might need to play tricks with
     # CPPFLAGS under MSWin.
 
@@ -7514,6 +7554,7 @@ recommend you to upgrade.])
             "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32 -lws2_32" \
             "-lqt-mt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
             "-lqt-mt${sim_ac_qt_version}nc${sim_ac_qt_suffix} -lqtmain -lgdi32" \
+            "-lqt-mtedu${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
             "-lqt -lqtmain -lgdi32" \
             "-lqt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
             "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32" \
@@ -7533,14 +7574,12 @@ recommend you to upgrade.])
 
       AC_MSG_RESULT($sim_ac_qt_cppflags $sim_ac_qt_libs)
     fi
-  fi
 
   else # sim_ac_qglobal = false
     AC_MSG_WARN([header file qglobal.h not found, can not compile Qt code])
   fi
-  fi # MOC = false
 
-  sim_ac_qt_install=`cd $sim_ac_qt_dir; pwd`/bin/install
+  sim_ac_qt_install=`cd $sim_ac_qtdir; pwd`/bin/install
 
   AC_MSG_CHECKING(install sanity)
   case $INSTALL in
@@ -7590,12 +7629,15 @@ fi
 # Author: Morten Eriksen, <mortene@sim.no>.
 
 AC_DEFUN([SIM_AC_CHECK_QGL], [
+
+AC_REQUIRE([SIM_AC_WITH_QT])
+
 sim_ac_qgl_avail=no
 sim_ac_qgl_cppflags=
 sim_ac_qgl_ldflags=
 sim_ac_qgl_libs=
 
-if test x"$with_qt" != xno; then
+if $sim_ac_with_qt; then
   # first check if we can link with the QGL widget already
   AC_CACHE_CHECK(
     [whether the QGL widget is part of main Qt library],
@@ -7818,15 +7860,15 @@ if test x"$with_opengl" != x"no"; then
 
   CPPFLAGS="$CPPFLAGS $sim_ac_gl_cppflags"
 
-  SIM_AC_CHECK_HEADER_SILENT([GL/gl.h], [
+  SIM_AC_CHECK_HEADER_SILENT([OpenGL/gl.h], [
     sim_ac_gl_header_avail=true
-    sim_ac_gl_header=GL/gl.h
-    AC_DEFINE([HAVE_GL_GL_H], 1, [define if the GL header should be included as GL/gl.h])
+    sim_ac_gl_header=OpenGL/gl.h
+    AC_DEFINE([HAVE_OPENGL_GL_H], 1, [define if the GL header should be included as OpenGL/gl.h])
   ], [
-    SIM_AC_CHECK_HEADER_SILENT([OpenGL/gl.h], [
+    SIM_AC_CHECK_HEADER_SILENT([GL/gl.h], [
       sim_ac_gl_header_avail=true
-      sim_ac_gl_header=OpenGL/gl.h
-      AC_DEFINE([HAVE_OPENGL_GL_H], 1, [define if the GL header should be included as OpenGL/gl.h])
+      sim_ac_gl_header=GL/gl.h
+      AC_DEFINE([HAVE_GL_GL_H], 1, [define if the GL header should be included as GL/gl.h])
     ])
   ])
 
@@ -7875,15 +7917,15 @@ if test x"$with_opengl" != x"no"; then
 
   CPPFLAGS="$CPPFLAGS $sim_ac_glu_cppflags"
 
-  SIM_AC_CHECK_HEADER_SILENT([GL/glu.h], [
+  SIM_AC_CHECK_HEADER_SILENT([OpenGL/glu.h], [
     sim_ac_glu_header_avail=true
-    sim_ac_glu_header=GL/glu.h
-    AC_DEFINE([HAVE_GL_GLU_H], 1, [define if the GLU header should be included as GL/glu.h])
+    sim_ac_glu_header=OpenGL/glu.h
+    AC_DEFINE([HAVE_OPENGL_GLU_H], 1, [define if the GLU header should be included as OpenGL/glu.h])
   ], [
-    SIM_AC_CHECK_HEADER_SILENT([OpenGL/glu.h], [
+    SIM_AC_CHECK_HEADER_SILENT([GL/glu.h], [
       sim_ac_glu_header_avail=true
-      sim_ac_glu_header=OpenGL/glu.h
-      AC_DEFINE([HAVE_OPENGL_GLU_H], 1, [define if the GLU header should be included as OpenGL/glu.h])
+      sim_ac_glu_header=GL/glu.h
+      AC_DEFINE([HAVE_GL_GLU_H], 1, [define if the GLU header should be included as GL/glu.h])
     ])
   ])
 
@@ -7932,15 +7974,15 @@ if test x"$with_opengl" != x"no"; then
 
   CPPFLAGS="$CPPFLAGS $sim_ac_glext_cppflags"
 
-  SIM_AC_CHECK_HEADER_SILENT([GL/glext.h], [
+  SIM_AC_CHECK_HEADER_SILENT([OpenGL/glext.h], [
     sim_ac_glext_header_avail=true
-    sim_ac_glext_header=GL/glext.h
-    AC_DEFINE([HAVE_GL_GLEXT_H], 1, [define if the GLEXT header should be included as GL/glext.h])
+    sim_ac_glext_header=OpenGL/glext.h
+    AC_DEFINE([HAVE_OPENGL_GLEXT_H], 1, [define if the GLEXT header should be included as OpenGL/glext.h])
   ], [
-    SIM_AC_CHECK_HEADER_SILENT([OpenGL/gl.h], [
+    SIM_AC_CHECK_HEADER_SILENT([GL/gl.h], [
       sim_ac_glext_header_avail=true
-      sim_ac_glext_header=OpenGL/glext.h
-      AC_DEFINE([HAVE_OPENGL_GLEXT_H], 1, [define if the GLEXT header should be included as OpenGL/glext.h])
+      sim_ac_glext_header=GL/glext.h
+      AC_DEFINE([HAVE_GL_GLEXT_H], 1, [define if the GLEXT header should be included as GL/glext.h])
     ])
   ])
 
@@ -8470,7 +8512,7 @@ fi
 # **************************************************************************
 # SIM_AC_HAVE_AGL_IFELSE( IF-FOUND, IF-NOT-FOUND )
 #
-# Check whether WGL is on the system.
+# Check whether AGL is on the system.
 
 AC_DEFUN([SIM_AC_HAVE_AGL_IFELSE], [
 sim_ac_save_ldflags=$LDFLAGS
@@ -8495,6 +8537,22 @@ else
   ifelse([$2], , :, [$2])
 fi
 ]) # SIM_AC_HAVE_AGL_IFELSE()
+ 
+
+AC_DEFUN([SIM_AC_HAVE_AGL_PBUFFER], [
+  AC_CACHE_CHECK([whether we can use AGL pBuffers],
+    sim_cv_agl_pbuffer_avail,
+    [AC_TRY_LINK([ #include <AGL/agl.h> ],
+                 [AGLPbuffer pbuffer;],
+                 [sim_cv_agl_pbuffer_avail=yes],
+                 [sim_cv_agl_pbuffer_avail=no])])
+  
+  if test x"$sim_cv_agl_pbuffer_avail" = xyes; then
+    ifelse([$1], , :, [$1])
+  else
+    ifelse([$2], , :, [$2])
+  fi
+])
 
 
 #   Use this file to store miscellaneous macros related to checking
@@ -8532,7 +8590,7 @@ fi
 
 AC_DEFUN([SIM_AC_CC_COMPILER_OPTION], [
 AC_LANG_SAVE
-AC_LANG_C
+AC_LANG(C)
 AC_MSG_CHECKING([whether $CC accepts $1])
 SIM_AC_COMPILER_OPTION($1, $2, $3)
 AC_LANG_RESTORE
@@ -8540,7 +8598,7 @@ AC_LANG_RESTORE
 
 AC_DEFUN([SIM_AC_CXX_COMPILER_OPTION], [
 AC_LANG_SAVE
-AC_LANG_CPLUSPLUS
+AC_LANG(C++)
 AC_MSG_CHECKING([whether $CXX accepts $1])
 SIM_AC_COMPILER_OPTION($1, $2, $3)
 AC_LANG_RESTORE

@@ -96,7 +96,6 @@ MAINT = @MAINT@
 MAINTAINER_MODE_FALSE = @MAINTAINER_MODE_FALSE@
 MAINTAINER_MODE_TRUE = @MAINTAINER_MODE_TRUE@
 MAKEINFO = @MAKEINFO@
-MOC = @MOC@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
@@ -105,7 +104,6 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
-QTDIR = @QTDIR@
 RANLIB = @RANLIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
@@ -198,6 +196,7 @@ EXTRA_DIST = \
 	cfg/depcomp \
 	cfg/ltconfig \
 	cfg/wrapmsvc.exe \
+	cfg/gendsp.sh \
 	build/simage.spec.in \
 	src/simage_jpeg_reader.icc \
 	src/simage_jpeg_writer.icc \
@@ -761,6 +760,24 @@ debian-packages: debian-setup
 	dpkg-buildpackage -b -uc;
 	cd simage1-dev_$(VERSION); \
 	dpkg-buildpackage -b -uc;
+
+# **************************************************************************
+# misc rules for automatic Microsoft Windows packaging.
+# main: `windows-packages'
+
+windows-files:
+	@if test -d windows; then :; else \
+	  echo " mkdir windows"; \
+	  mkdir windows; \
+	fi
+	@for file in $(top_srcdir)/packaging/windows/*.in; do \
+	  basename=`echo $$file | sed 's%^.*/%%g; s%\.in$$%%'`; \
+	  echo " config.status: generating windows/$$basename"; \
+	  ./config.status --file=-:- >"windows/$$basename" <"$$file"; \
+	done
+
+windows-packages: windows-files
+	@( cd windows; $(MAKE) VERSION=$(VERSION) )
 
 # EOF ######################################################################
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
