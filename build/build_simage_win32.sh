@@ -20,50 +20,90 @@
 #   to the installation dir
 #
 
-# Beginning of environment variables the user should set
+SIMAGE_PARAMS_OK="no"
 
-# SIMAGE_SDK is the name of the directory where you want this script to
-# install all sdks (image and audio libs)
+if test $# -eq 1; then
+  SIMAGE_PARAMS_OK="yes"
+fi
 
-export SIMAGE_SDK=/cygdrive/c/temp/simage/sdk
+if test $# -eq 4; then
+  SIMAGE_PARAMS_OK="yes"
+fi
 
-# SIMAGE_* are the directories where you want this script to checkout,
-# configure and install simage
+if test "X$SIMAGE_PARAMS_OK" = "Xno"; then
+  echo "Usage: build_simage_win32.sh <target dir>"
+  echo "       build_simage_sin32.sh <sdk dir> <checkout dir> <config dir>"
+  echo "                             <inst dir>"
+  echo ""
+  echo "Ex:    build_simage_win32.sh /cygdrive/c/simage"
+  echo ""
+  echo "       If the first syntax is used, target dir will be created, and it"
+  echo "       will contain four subdirectories named \"sdk\", \"checkout\","
+  echo "       \"configure\", and \"install\"."
+  echo "       If the second syntax is used, the four specified directories"
+  echo "       are used instead of one top-level directory (target dir)."
+  echo ""
+  echo "       The script will download and build simage and all dependent"
+  echo "       libraries. If something fails during this process, try fixing"
+  echo "       the problem based on the error messages, then _delete_ the"
+  echo "       directories affected by the error. This is important because"
+  echo "       the script has not been built to be able to continue after"
+  echo "       any error."
+  echo ""
+  echo "       After the script has completed, the \"install\" directory will"
+  echo "       contain a binary release of simage, including all dependant"
+  echo "       libraries. This release consists of 8 different configurations"
+  echo "       using four different CRTs (MT MTD MD MDD), with and without"
+  echo "       sound support."
+  echo ""
+  exit
+fi
 
-export SIMAGE_CHECKOUT=/cygdrive/c/temp/simage/checkout
-export SIMAGE_CONFIGURE=/cygdrive/c/temp/simage/configure
-export SIMAGE_INSTALL=/cygdrive/c/temp/simage/install
+if test $# -eq 1; then
+  if ! test -d $1; then
+    echo "[SIMAGE]      Creating directory $1"
+    mkdir $1
+  fi
+  SIMAGE_SDK=$1/sdk
+  SIMAGE_CHECKOUT=$1/checkout
+  SIMAGE_CONFIGURE=$1/configure
+  SIMAGE_INSTALL=$1/install
+fi
 
-# end of the environment variables the user should set
-
+if test $# -eq 4; then
+  SIMAGE_SDK=$1
+  SIMAGE_CHECKOUT=$2
+  SIMAGE_CONFIGURE=$3
+  SIMAGE_INSTALL=$4
+fi
 
 if ! test -d $SIMAGE_CHECKOUT; then
-  echo "[SIMAGE]      Creating directory $SIMAGE_CHECKOUT"
+  echo "[SIMAGE]   Creating directory $SIMAGE_CHECKOUT"
   mkdir $SIMAGE_CHECKOUT
 fi
 
 if ! test -d $SIMAGE_CHECKOUT; then
-  echo "[SIMAGE]      Couldn\'t create directory $SIMAGE_CHECKOUT. Aborting."
+  echo "[SIMAGE]   Couldn\'t create directory $SIMAGE_CHECKOUT. Aborting."
   exit
 fi
 
 if ! test -d $SIMAGE_CONFIGURE; then
-  echo "[SIMAGE]      Creating directory $SIMAGE_CONFIGURE"
+  echo "[SIMAGE]   Creating directory $SIMAGE_CONFIGURE"
   mkdir $SIMAGE_CONFIGURE
 fi
 
 if ! test -d $SIMAGE_CONFIGURE; then
-  echo "[SIMAGE]      Couldn\'t create directory $SIMAGE_CONFIGURE. Aborting."
+  echo "[SIMAGE]   Couldn\'t create directory $SIMAGE_CONFIGURE. Aborting."
   exit
 fi
 
 if ! test -d $SIMAGE_INSTALL; then
-  echo "[SIMAGE]      Creating directory $SIMAGE_INSTALL"
+  echo "[SIMAGE]   Creating directory $SIMAGE_INSTALL"
   mkdir $SIMAGE_INSTALL
 fi
 
 if ! test -d $SIMAGE_INSTALL; then
-  echo "[SIMAGE]      Couldn\'t create directory $SIMAGE_INSTALL. Aborting."
+  echo "[SIMAGE]   Couldn\'t create directory $SIMAGE_INSTALL. Aborting."
   exit
 fi
 
