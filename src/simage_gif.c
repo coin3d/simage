@@ -117,12 +117,12 @@ simage_gif_load(const char *filename,
   transparent = -1; /* no transparent color by default */
   
   n = giffile->SHeight * giffile->SWidth;
-  buffer = malloc(n * 4);
+  buffer = (unsigned char*) malloc(n * 4);
   if (!buffer) {
     giferror = ERR_MEM;
     return NULL;
   }
-  rowdata = malloc(giffile->SWidth);
+  rowdata = (unsigned char*) malloc(giffile->SWidth);
   if (!rowdata) {
     giferror = ERR_MEM;
     free(buffer);
