@@ -22422,6 +22422,18 @@ fi
     fi
   fi
 fi
+
+if $HAVE_GUILE; then
+
+if test x"${sim_ac_configuration_warnings+set}" = x"set"; then
+  sim_ac_configuration_warnings="$sim_ac_configuration_warnings|simage does not support Guile at the moment"
+else
+  sim_ac_configuration_warnings="simage does not support Guile at the moment"
+fi
+
+  HAVE_GUILE=false
+fi
+
 if $HAVE_GUILE; then
 
 if test x"${sim_ac_configuration_settings+set}" = x"set"; then
