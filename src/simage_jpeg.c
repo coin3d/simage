@@ -352,7 +352,7 @@ simage_jpeg_save(const char * filename,
     unsigned char * dst;
     const unsigned char * src;
     int i, n = width * height;
-    dst = tmpbytes = malloc(n*3);
+    dst = tmpbytes = (unsigned char *) malloc(n*3);
     src = bytes;
     for (i = 0; i < n; i++) {
       *dst++ = *src++; 
@@ -366,7 +366,7 @@ simage_jpeg_save(const char * filename,
     unsigned char * dst;
     const unsigned char * src;
     int i, n = width * height;
-    dst = tmpbytes = malloc(n*3);
+    dst = tmpbytes = (unsigned char *) malloc(n*3);
     src = bytes;
     for (i = 0; i < n; i++) {
       *dst++ = *src++; 
