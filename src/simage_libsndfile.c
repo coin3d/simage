@@ -16,15 +16,28 @@ typedef struct {
   int tempbuffersize;
 } libsndfile_context;
 
-static void libsndfile_cleanup_context(libsndfile_context *context);
-static void libsndfile_init_context(libsndfile_context *context);
+static void 
+libsndfile_init_context(libsndfile_context *context)
+{
+  context->file = NULL;
+  context->tempbuffer = NULL;
+  context->tempbuffersize = 0;
+}
+
+static void 
+libsndfile_cleanup_context(libsndfile_context *context)
+{
+  if (context->tempbuffer) 
+    free(context->tempbuffer);
+  context->tempbuffer = NULL;
+  context->tempbuffersize = 0;
+}
 
 int 
 libsndfile_stream_open(const char * filename, s_stream * stream,
                              s_params * params)
 {
   libsndfile_context *context;
-  int channels;
   FILE *dummyfile;
 
   dummyfile = fopen(filename, "rb");
@@ -118,23 +131,6 @@ libsndfile_stream_close(s_stream * stream)
   }
   libsndfile_cleanup_context(context);
   free(context);
-}
-
-static void 
-libsndfile_init_context(libsndfile_context *context)
-{
-  context->file = NULL;
-  context->tempbuffer = NULL;
-  context->tempbuffersize = 0;
-}
-
-static void 
-libsndfile_cleanup_context(libsndfile_context *context)
-{
-  if (context->tempbuffer) 
-    free(context->tempbuffer);
-  context->tempbuffer = NULL;
-  context->tempbuffersize = 0;
 }
 
 #endif /* SIMAGE_LIBSNDFILE_SUPPORT */
