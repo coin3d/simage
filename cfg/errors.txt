@@ -73,7 +73,7 @@ instead of the Qt installer and re-run configure.
 
 !no-msvc++
 You need to have the Microsoft Visual C++ compiler suite accessible in the
-Cygwin environment.  Read the file <srcdir>/README.WIN32.
+Cygwin environment.  Read the file <srcdir>/readme_win32.txt.
 
 If you are absolutely sure you want to attempt to run the configure script
 and the build process without Microsoft Visual C++, and you know what you
