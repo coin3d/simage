@@ -1,0 +1,20 @@
+#ifndef _SIMAGE_GIF_H_
+#define _SIMAGE_GIF_H_
+
+#include <config.h>
+
+#ifndef HAVE_UNGIFLIB
+#error "This file should not be used under the current configuration!"
+#endif /* !HAVE_UNGIFLIB */
+
+unsigned char *simage_gif_load(const char * filename,
+				int *width,
+				int *height,
+				int *numComponents);
+int simage_gif_identify(const char *filename,
+			 const unsigned char *header,
+			 int headerlen);
+
+int simage_gif_error(char *buffer, int bufferlen);
+
+#endif /* _SIMAGE_GIF_H_ */

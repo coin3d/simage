@@ -44,7 +44,10 @@ static loader_data pic_loader;
 #include "simage_rgb.h"
 static loader_data rgb_loader;
 #endif /* SIMAGE_PIC_SUPPORT */
-
+#ifdef HAVE_UNGIFLIB
+#include "simage_gif.h"
+static loader_data gif_loader;
+#endif /* HAVE_UNGIFLIB */
 #include <assert.h>
 
 static loader_data *first_loader = NULL;
@@ -165,6 +168,13 @@ add_internal_loaders()
 	       simage_pic_error,
 	       1, 0);
 #endif /* SIMAGE_PIC_SUPPORT */
+#ifdef HAVE_UNGIFLIB
+    add_loader(&gif_loader, 
+               simage_gif_load,
+               simage_gif_identify,
+               simage_gif_error,
+               1, 0);
+#endif /* HAVE_UNGIFLIB */
   }
 }
 
