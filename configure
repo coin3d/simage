@@ -1014,6 +1014,7 @@ Optional Features:
   --enable-cvs-auto-update
                           auto-update CVS repository if possible
   --enable-qimage         Use Qt's QImage to load/save images
+  --enable-quicktime      Use Quicktime load/save images
   --disable-dependency-tracking Speeds up one-time builds
   --enable-dependency-tracking  Do not reject slow dependency extractors
   --enable-static=PKGS  build static libraries default=no
@@ -3355,6 +3356,28 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
+
+# **************************************************************************
+# Check to see if fink is installed on the system, so that the additional
+# libs and headers that are installed through fink can be found and used
+# from simage.
+
+case $host_os in
+darwin*)
+  echo "$as_me:$LINENO: checking if fink is available" >&5
+echo $ECHO_N "checking if fink is available... $ECHO_C" >&6
+  fink_avail="no"
+  if test -d /sw/include && test -d /sw/lib; then
+    fink_avail="yes"
+    CFLAGS="$CFLAGS -I/sw/include"
+    CPPFLAGS="$CPPFLAGS -I/sw/include"
+    LDFLAGS="$LDFLAGS -L/sw/lib"
+  fi
+  echo "$as_me:$LINENO: result: $fink_avail" >&5
+echo "${ECHO_T}$fink_avail" >&6
+  ;;
+esac
+
 sim_ac_qimage_support=false
 # Check whether --enable-qimage or --disable-qimage was given.
 if test "${enable_qimage+set}" = set; then
@@ -3372,6 +3395,22 @@ if test x"$am_cv_prog_cc_stdc" = x"no"; then
   { echo "$as_me:$LINENO: WARNING: doesn't look like you're using an ANSI compatible C compiler" >&5
 echo "$as_me: WARNING: doesn't look like you're using an ANSI compatible C compiler" >&2;}
 fi
+
+sim_ac_quicktime_support=false
+case $host_os in
+darwin*)
+  sim_ac_quicktime_support=true
+  # Check whether --enable-quicktime or --disable-quicktime was given.
+if test "${enable_quicktime+set}" = set; then
+  enableval="$enable_quicktime"
+
+   case $enableval in
+      no) sim_ac_quicktime_support=false ;;
+      *) ;;
+   esac
+fi;
+  ;;
+esac
 
 # circumvent Automake 1.4h problem - explicitly use OBJEXT and EXEEXT
 
@@ -5202,7 +5241,7 @@ test "x$enable_libtool_lock" != xno && enable_libtool_lock=yes
 case $host in
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5205 "configure"' > conftest.$ac_ext
+  echo '#line 5244 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -5738,7 +5777,7 @@ chmod -w .
 save_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -o out/conftest2.$ac_objext"
 compiler_c_o=no
-if { (eval echo configure:5741: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>out/conftest.err; } && test -s out/conftest2.$ac_objext; then
+if { (eval echo configure:5780: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>out/conftest.err; } && test -s out/conftest2.$ac_objext; then
   # The compiler can only warn and ignore the option if not recognized
   # So say no if there are warnings
   if test -s out/conftest.err; then
@@ -7531,7 +7570,7 @@ else
     lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 7534 "configure"
+#line 7573 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -7629,7 +7668,7 @@ else
     lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 7632 "configure"
+#line 7671 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -8980,6 +9019,73 @@ upgrade. (See $srcdir/README.MAC for details.)"
 fi
 
     fi
+
+  # Qt/X11 is currently not supported on Mac OS X.
+    cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <qapplication.h>
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+#if defined(__APPLE__) && defined(Q_WS_X11)
+                 #error blah!
+                 #endif
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  :
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+
+echo >&2 ""
+
+
+: ${sim_ac_message_file=$ac_aux_dir/m4/errors.txt}
+if test -f $sim_ac_message_file; then
+  sim_ac_message="`sed -n -e '/^!x11-qt-on-mac$/,/^!/ { /^!/ d; p; }' <$sim_ac_message_file`"
+  if test x"$sim_ac_message" = x""; then
+    { { echo "$as_me:$LINENO: error: no message named 'x11-qt-on-mac' in '$sim_ac_message_file' - notify the $PACKAGE_NAME maintainer(s)" >&5
+echo "$as_me: error: no message named 'x11-qt-on-mac' in '$sim_ac_message_file' - notify the $PACKAGE_NAME maintainer(s)" >&2;}
+   { (exit 1); exit 1; }; }
+  else
+    eval "echo >&2 \"$sim_ac_message\""
+  fi
+else
+  { { echo "$as_me:$LINENO: error: file '$sim_ac_message_file' not found - notify the $PACKAGE_NAME maintainer(s)" >&5
+echo "$as_me: error: file '$sim_ac_message_file' not found - notify the $PACKAGE_NAME maintainer(s)" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+
+
+echo >&2 ""
+{ { echo "$as_me:$LINENO: error: aborting" >&5
+echo "$as_me: error: aborting" >&2;}
+   { (exit 1); exit 1; }; }
+
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
     ;;
   esac
 
@@ -9106,9 +9212,9 @@ echo $ECHO_N "checking for Qt library devkit... $ECHO_C" >&6
       ## * "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32": should cover
       ##   static linking on Win32 platforms
       ##
-      ## * "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm":
+      ## * "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32":
       ##   added for the benefit of the Qt 3.0.0 Evaluation Version
-      ##
+      ##   (update: "advapi32.lib" seems to be a new dependency for Qt 3.1.0)
 
       sim_ac_qt_suffix=
       if $sim_ac_qt_debug; then
@@ -9123,7 +9229,7 @@ echo $ECHO_N "checking for Qt library devkit... $ECHO_C" >&6
             "-lqt -lqtmain -lgdi32" \
             "-lqt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
             "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32" \
-            "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm" \
+            "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32" \
             "-lqt-mt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
             "-lqt-mt${sim_ac_qt_version}nc${sim_ac_qt_suffix} -lqtmain -lgdi32"
         do
@@ -9241,9 +9347,155 @@ fi
 fi
 
 # **************************************************************************
-# Check if UNGIF support is wanted (and if so, available).
+# Check if QuickTime support is wanted (and if so, available).
 
-echo "$as_me:$LINENO: checking for X" >&5
+if $sim_ac_quicktime_support; then
+  : ${sim_ac_have_quicktime=false}
+echo "$as_me:$LINENO: checking for QuickTime framework" >&5
+echo $ECHO_N "checking for QuickTime framework... $ECHO_C" >&6
+$sim_ac_have_quicktime && break
+sim_ac_quicktime_save_LIBS=$LIBS
+sim_ac_quicktime_libs="-framework QuickTime -framework CoreServices"
+# workaround - use -Wl,blah syntax until SIM_AC_UNIQIFY_LIST supports spaces
+sim_ac_quicktime_extra_libs="-Wl,-framework,QuickTime -Wl,-framework,CoreServices"
+LIBS="$sim_ac_quicktime_libs $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <QuickTime/QuickTimeComponents.h>
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+Component c;
+  ComponentDescription cd;
+  FindNextComponent (c, &cd);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  sim_ac_have_quicktime=true
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+LIBS=$sim_ac_quicktime_save_LIBS
+if $sim_ac_have_quicktime; then
+  echo "$as_me:$LINENO: result: success ($sim_ac_quicktime_libs)" >&5
+echo "${ECHO_T}success ($sim_ac_quicktime_libs)" >&6
+
+
+cat >>confdefs.h <<\_ACEOF
+#define SIMAGE_QUICKTIME_SUPPORT
+_ACEOF
+
+    SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_quicktime_extra_libs"
+    LIBS="$LIBS $sim_ac_quicktime_libs"
+    # These formats are guaranteed to be readable if we have
+    # a QuickTime framework, so we do not have to test for them
+    # individually.
+    if test x${sim_ac_configuration_settings+set} != xset; then
+  sim_ac_configuration_settings="GIF image format support:Yes (QuickTime)"
+else
+  sim_ac_configuration_settings="$sim_ac_configuration_settings|GIF image format support:Yes (QuickTime)"
+fi
+
+    if test x${sim_ac_configuration_settings+set} != xset; then
+  sim_ac_configuration_settings="JPEG image format support:Yes (QuickTime)"
+else
+  sim_ac_configuration_settings="$sim_ac_configuration_settings|JPEG image format support:Yes (QuickTime)"
+fi
+
+    if test x${sim_ac_configuration_settings+set} != xset; then
+  sim_ac_configuration_settings="PNG image format support:Yes (QuickTime)"
+else
+  sim_ac_configuration_settings="$sim_ac_configuration_settings|PNG image format support:Yes (QuickTime)"
+fi
+
+    if test x${sim_ac_configuration_settings+set} != xset; then
+  sim_ac_configuration_settings="TIFF image format support:Yes (QuickTime)"
+else
+  sim_ac_configuration_settings="$sim_ac_configuration_settings|TIFF image format support:Yes (QuickTime)"
+fi
+
+    if test x${sim_ac_configuration_settings+set} != xset; then
+  sim_ac_configuration_settings="TGA image format support:Yes (QuickTime)"
+else
+  sim_ac_configuration_settings="$sim_ac_configuration_settings|TGA image format support:Yes (QuickTime)"
+fi
+
+    if test x${sim_ac_configuration_settings+set} != xset; then
+  sim_ac_configuration_settings="BMP image format support:Yes (QuickTime)"
+else
+  sim_ac_configuration_settings="$sim_ac_configuration_settings|BMP image format support:Yes (QuickTime)"
+fi
+
+    if test x${sim_ac_configuration_settings+set} != xset; then
+  sim_ac_configuration_settings="PSD image format support:Yes (QuickTime)"
+else
+  sim_ac_configuration_settings="$sim_ac_configuration_settings|PSD image format support:Yes (QuickTime)"
+fi
+
+
+else
+  echo "$as_me:$LINENO: result: failure" >&5
+echo "${ECHO_T}failure" >&6
+
+    if test x${sim_ac_configuration_settings+set} != xset; then
+  sim_ac_configuration_settings="QuickTime support:No"
+else
+  sim_ac_configuration_settings="$sim_ac_configuration_settings|QuickTime support:No"
+fi
+
+
+fi
+
+  if test $"$sim_ac_have_quicktime" = xfalse; then
+    sim_ac_quicktime_support=false
+  fi
+else
+    if test x${sim_ac_configuration_settings+set} != xset; then
+  sim_ac_configuration_settings="QuickTime support:No"
+else
+  sim_ac_configuration_settings="$sim_ac_configuration_settings|QuickTime support:No"
+fi
+
+fi
+
+
+
+if $sim_ac_quicktime_support; then
+  SIMAGE_QUICKTIME_SUPPORT_TRUE=
+  SIMAGE_QUICKTIME_SUPPORT_FALSE='#'
+else
+  SIMAGE_QUICKTIME_SUPPORT_TRUE='#'
+  SIMAGE_QUICKTIME_SUPPORT_FALSE=
+fi
+
+
+if test x"$sim_ac_quicktime_support" = xfalse; then
+  # **************************************************************************
+  # Check if UNGIF support is wanted (and if so, available).
+
+  echo "$as_me:$LINENO: checking for X" >&5
 echo $ECHO_N "checking for X... $ECHO_C" >&6
 
 
@@ -9636,13 +9888,13 @@ cat >>confdefs.h <<\_ACEOF
 #define HAVE_UNGIFLIB
 _ACEOF
 
-  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libungif_cppflags"
-  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libungif_ldflags"
-  SIMAGE_EXTRA_LIBS="$sim_ac_libungif_libs $SIMAGE_EXTRA_LIBS"
-  CPPFLAGS="$CPPFLAGS $sim_ac_libungif_cppflags"
-  LDFLAGS="$LDFLAGS $sim_ac_libungif_ldflags"
-  LIBS="$sim_ac_libungif_libs $LIBS"
-  if test x${sim_ac_configuration_settings+set} != xset; then
+    SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libungif_cppflags"
+    SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libungif_ldflags"
+    SIMAGE_EXTRA_LIBS="$sim_ac_libungif_libs $SIMAGE_EXTRA_LIBS"
+    CPPFLAGS="$CPPFLAGS $sim_ac_libungif_cppflags"
+    LDFLAGS="$LDFLAGS $sim_ac_libungif_ldflags"
+    LIBS="$sim_ac_libungif_libs $LIBS"
+    if test x${sim_ac_configuration_settings+set} != xset; then
   sim_ac_configuration_settings="GIF image format support:Yes"
 else
   sim_ac_configuration_settings="$sim_ac_configuration_settings|GIF image format support:Yes"
@@ -9653,7 +9905,7 @@ fi
     echo "$as_me:$LINENO: result: failure" >&5
 echo "${ECHO_T}failure" >&6
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
+    if test x${sim_ac_configuration_settings+set} != xset; then
   sim_ac_configuration_settings="GIF image format support:No"
 else
   sim_ac_configuration_settings="$sim_ac_configuration_settings|GIF image format support:No"
@@ -9665,7 +9917,7 @@ else
   echo "$as_me:$LINENO: result: disabled" >&5
 echo "${ECHO_T}disabled" >&6
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
+    if test x${sim_ac_configuration_settings+set} != xset; then
   sim_ac_configuration_settings="GIF image format support:No"
 else
   sim_ac_configuration_settings="$sim_ac_configuration_settings|GIF image format support:No"
@@ -9676,21 +9928,13 @@ fi
 # unset sim_ac_want_libungif
 
 
-: ${sim_ac_have_libungif=false}
+  # : ${sim_ac_have_libungif=false}
+  # AM_CONDITIONAL(SIMAGE_UNGIF_SUPPORT, $sim_ac_have_libungif)
 
+  # **************************************************************************
+  # Check if JPEG support is wanted (and if so, available).
 
-if $sim_ac_have_libungif; then
-  SIMAGE_UNGIF_SUPPORT_TRUE=
-  SIMAGE_UNGIF_SUPPORT_FALSE='#'
-else
-  SIMAGE_UNGIF_SUPPORT_TRUE='#'
-  SIMAGE_UNGIF_SUPPORT_FALSE=
-fi
-
-# **************************************************************************
-# Check if JPEG support is wanted (and if so, available).
-
-: ${sim_ac_have_libjpeg=false}
+  : ${sim_ac_have_libjpeg=false}
 echo "$as_me:$LINENO: checking for libjpeg" >&5
 echo $ECHO_N "checking for libjpeg... $ECHO_C" >&6
 
@@ -9803,13 +10047,13 @@ cat >>confdefs.h <<\_ACEOF
 #define HAVE_JPEGLIB
 _ACEOF
 
-  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libjpeg_cppflags"
-  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libjpeg_ldflags"
-  SIMAGE_EXTRA_LIBS="$sim_ac_libjpeg_libs $SIMAGE_EXTRA_LIBS"
-  CPPFLAGS="$CPPFLAGS $sim_ac_libjpeg_cppflags"
-  LDFLAGS="$LDFLAGS $sim_ac_libjpeg_ldflags"
-  LIBS="$sim_ac_libjpeg_libs $LIBS"
-  if test x${sim_ac_configuration_settings+set} != xset; then
+    SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libjpeg_cppflags"
+    SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libjpeg_ldflags"
+    SIMAGE_EXTRA_LIBS="$sim_ac_libjpeg_libs $SIMAGE_EXTRA_LIBS"
+    CPPFLAGS="$CPPFLAGS $sim_ac_libjpeg_cppflags"
+    LDFLAGS="$LDFLAGS $sim_ac_libjpeg_ldflags"
+    LIBS="$sim_ac_libjpeg_libs $LIBS"
+    if test x${sim_ac_configuration_settings+set} != xset; then
   sim_ac_configuration_settings="JPEG image format support:Yes"
 else
   sim_ac_configuration_settings="$sim_ac_configuration_settings|JPEG image format support:Yes"
@@ -9820,7 +10064,7 @@ fi
     echo "$as_me:$LINENO: result: failure" >&5
 echo "${ECHO_T}failure" >&6
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
+    if test x${sim_ac_configuration_settings+set} != xset; then
   sim_ac_configuration_settings="JPEG image format support:No"
 else
   sim_ac_configuration_settings="$sim_ac_configuration_settings|JPEG image format support:No"
@@ -9832,7 +10076,7 @@ else
   echo "$as_me:$LINENO: result: disabled" >&5
 echo "${ECHO_T}disabled" >&6
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
+    if test x${sim_ac_configuration_settings+set} != xset; then
   sim_ac_configuration_settings="JPEG image format support:No"
 else
   sim_ac_configuration_settings="$sim_ac_configuration_settings|JPEG image format support:No"
@@ -9843,12 +10087,12 @@ fi
 # unset sim_ac_want_libjpeg
 
 
-# : ${sim_ac_have_libjpeg=false}
-# AM_CONDITIONAL(SIMAGE_JPEG_SUPPORT, $sim_ac_have_libjpeg)
+  # : ${sim_ac_have_libjpeg=false}
+  # AM_CONDITIONAL(SIMAGE_JPEG_SUPPORT, $sim_ac_have_libjpeg)
 
-# **************************************************************************
+  # **************************************************************************
 
-: ${sim_ac_have_libzlib=false}
+  : ${sim_ac_have_libzlib=false}
 echo "$as_me:$LINENO: checking for zlib" >&5
 echo $ECHO_N "checking for zlib... $ECHO_C" >&6
 
@@ -9949,12 +10193,12 @@ if $sim_ac_want_libzlib; then
     echo "$as_me:$LINENO: result: success ($sim_ac_libzlib_libs)" >&5
 echo "${ECHO_T}success ($sim_ac_libzlib_libs)" >&6
 
-  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libzlib_cppflags"
-  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libzlib_ldflags"
-  SIMAGE_EXTRA_LIBS="$sim_ac_libzlib_libs $SIMAGE_EXTRA_LIBS"
-  CPPFLAGS="$CPPFLAGS $sim_ac_libzlib_cppflags"
-  LDFLAGS="$LDFLAGS $sim_ac_libzlib_ldflags"
-  LIBS="$sim_ac_libzlib_libs $LIBS"
+    SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libzlib_cppflags"
+    SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libzlib_ldflags"
+    SIMAGE_EXTRA_LIBS="$sim_ac_libzlib_libs $SIMAGE_EXTRA_LIBS"
+    CPPFLAGS="$CPPFLAGS $sim_ac_libzlib_cppflags"
+    LDFLAGS="$LDFLAGS $sim_ac_libzlib_ldflags"
+    LIBS="$sim_ac_libzlib_libs $LIBS"
 
   else
     echo "$as_me:$LINENO: result: failure" >&5
@@ -9969,10 +10213,10 @@ fi
 # unset sim_ac_want_libzlib
 
 
-# **************************************************************************
-# Check if PNG support is wanted (and if so, available).
+  # **************************************************************************
+  # Check if PNG support is wanted (and if so, available).
 
-: ${sim_ac_have_libpng=false}
+  : ${sim_ac_have_libpng=false}
 echo "$as_me:$LINENO: checking for libpng" >&5
 echo $ECHO_N "checking for libpng... $ECHO_C" >&6
 
@@ -10078,13 +10322,13 @@ cat >>confdefs.h <<\_ACEOF
 #define HAVE_PNGLIB
 _ACEOF
 
-  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libpng_cppflags"
-  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libpng_ldflags"
-  SIMAGE_EXTRA_LIBS="$sim_ac_libpng_libs $SIMAGE_EXTRA_LIBS"
-  CPPFLAGS="$CPPFLAGS $sim_ac_libpng_cppflags"
-  LDFLAGS="$LDFLAGS $sim_ac_libpng_ldflags"
-  LIBS="$sim_ac_libpng_libs $LIBS"
-  if test x${sim_ac_configuration_settings+set} != xset; then
+    SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libpng_cppflags"
+    SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libpng_ldflags"
+    SIMAGE_EXTRA_LIBS="$sim_ac_libpng_libs $SIMAGE_EXTRA_LIBS"
+    CPPFLAGS="$CPPFLAGS $sim_ac_libpng_cppflags"
+    LDFLAGS="$LDFLAGS $sim_ac_libpng_ldflags"
+    LIBS="$sim_ac_libpng_libs $LIBS"
+    if test x${sim_ac_configuration_settings+set} != xset; then
   sim_ac_configuration_settings="PNG image format support:Yes"
 else
   sim_ac_configuration_settings="$sim_ac_configuration_settings|PNG image format support:Yes"
@@ -10095,52 +10339,52 @@ fi
     echo "$as_me:$LINENO: result: failure" >&5
 echo "${ECHO_T}failure" >&6
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
+    if test x${sim_ac_configuration_settings+set} != xset; then
   sim_ac_configuration_settings="PNG image format support:No"
 else
   sim_ac_configuration_settings="$sim_ac_configuration_settings|PNG image format support:No"
 fi
 
-  if test x"$sim_ac_have_libzlib" = xfalse; then
-    if test x${sim_ac_configuration_warnings+set} != xset; then
+    if test x"$sim_ac_have_libzlib" = xfalse; then
+      if test x${sim_ac_configuration_warnings+set} != xset; then
   sim_ac_configuration_warnings="PNG image format support may be disabled because of missing libz"
 else
   sim_ac_configuration_warnings="$sim_ac_configuration_warnings|PNG image format support may be disabled because of missing libz"
 fi
 
-  fi
+    fi
 
   fi
 else
   echo "$as_me:$LINENO: result: disabled" >&5
 echo "${ECHO_T}disabled" >&6
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
+    if test x${sim_ac_configuration_settings+set} != xset; then
   sim_ac_configuration_settings="PNG image format support:No"
 else
   sim_ac_configuration_settings="$sim_ac_configuration_settings|PNG image format support:No"
 fi
 
-  if test x"$sim_ac_have_libzlib" = xfalse; then
-    if test x${sim_ac_configuration_warnings+set} != xset; then
+    if test x"$sim_ac_have_libzlib" = xfalse; then
+      if test x${sim_ac_configuration_warnings+set} != xset; then
   sim_ac_configuration_warnings="PNG image format support may be disabled because of missing libz"
 else
   sim_ac_configuration_warnings="$sim_ac_configuration_warnings|PNG image format support may be disabled because of missing libz"
 fi
 
-  fi
+    fi
 
 fi
 # unset sim_ac_want_libpng
 
 
-# : ${sim_ac_have_libpng=false}
-# AM_CONDITIONAL(SIMAGE_PNG_SUPPORT, $sim_ac_have_libpng)
+  # : ${sim_ac_have_libpng=false}
+  # AM_CONDITIONAL(SIMAGE_PNG_SUPPORT, $sim_ac_have_libpng)
 
-# **************************************************************************
-# Check if TIFF support is wanted (and if so, available).
+  # **************************************************************************
+  # Check if TIFF support is wanted (and if so, available).
 
-: ${sim_ac_have_libtiff=false}
+  : ${sim_ac_have_libtiff=false}
 echo "$as_me:$LINENO: checking for libtiff" >&5
 echo $ECHO_N "checking for libtiff... $ECHO_C" >&6
 
@@ -10286,13 +10530,13 @@ cat >>confdefs.h <<\_ACEOF
 #define HAVE_TIFFLIB
 _ACEOF
 
-  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libtiff_cppflags"
-  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libtiff_ldflags"
-  SIMAGE_EXTRA_LIBS="$sim_ac_libtiff_libs $SIMAGE_EXTRA_LIBS"
-  CPPFLAGS="$CPPFLAGS $sim_ac_libtiff_cppflags"
-  LDFLAGS="$LDFLAGS $sim_ac_libtiff_ldflags"
-  LIBS="$sim_ac_libtiff_libs $LIBS"
-  if test x${sim_ac_configuration_settings+set} != xset; then
+    SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libtiff_cppflags"
+    SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libtiff_ldflags"
+    SIMAGE_EXTRA_LIBS="$sim_ac_libtiff_libs $SIMAGE_EXTRA_LIBS"
+    CPPFLAGS="$CPPFLAGS $sim_ac_libtiff_cppflags"
+    LDFLAGS="$LDFLAGS $sim_ac_libtiff_ldflags"
+    LIBS="$sim_ac_libtiff_libs $LIBS"
+    if test x${sim_ac_configuration_settings+set} != xset; then
   sim_ac_configuration_settings="TIFF image format support:Yes"
 else
   sim_ac_configuration_settings="$sim_ac_configuration_settings|TIFF image format support:Yes"
@@ -10303,7 +10547,7 @@ fi
     echo "$as_me:$LINENO: result: failure" >&5
 echo "${ECHO_T}failure" >&6
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
+    if test x${sim_ac_configuration_settings+set} != xset; then
   sim_ac_configuration_settings="TIFF image format support:No"
 else
   sim_ac_configuration_settings="$sim_ac_configuration_settings|TIFF image format support:No"
@@ -10315,7 +10559,7 @@ else
   echo "$as_me:$LINENO: result: disabled" >&5
 echo "${ECHO_T}disabled" >&6
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
+    if test x${sim_ac_configuration_settings+set} != xset; then
   sim_ac_configuration_settings="TIFF image format support:No"
 else
   sim_ac_configuration_settings="$sim_ac_configuration_settings|TIFF image format support:No"
@@ -10326,47 +10570,48 @@ fi
 # unset sim_ac_want_libtiff
 
 
-# : ${sim_ac_have_libtiff=false}
-# AM_CONDITIONAL(SIMAGE_TIFF_SUPPORT, $sim_ac_have_libtiff)
+  # : ${sim_ac_have_libtiff=false}
+  # AM_CONDITIONAL(SIMAGE_TIFF_SUPPORT, $sim_ac_have_libtiff)
 
-# **************************************************************************
-# Check if TARGA support is wanted.
+  # **************************************************************************
+  # Check if TARGA support is wanted.
 
 
 # Check whether --with-targa or --without-targa was given.
 if test "${with_targa+set}" = set; then
   withval="$with_targa"
   case $withval in
-  yes | "") sim_ac_want_tga=true ;;
-  no)       sim_ac_want_tga=false ;;
-  *)        { { echo "$as_me:$LINENO: error: bad value \"$withval\" for --with-targa" >&5
+    yes | "") sim_ac_want_tga=true ;;
+    no)       sim_ac_want_tga=false ;;
+    *)        { { echo "$as_me:$LINENO: error: bad value \"$withval\" for --with-targa" >&5
 echo "$as_me: error: bad value \"$withval\" for --with-targa" >&2;}
    { (exit 1); exit 1; }; } ;;
-  esac
+    esac
 else
   sim_ac_want_tga=true
 fi;
 
-# AM_CONDITIONAL(SIMAGE_TGA_SUPPORT, $sim_ac_want_tga)
-if $sim_ac_want_tga; then
+  # AM_CONDITIONAL(SIMAGE_TGA_SUPPORT, $sim_ac_want_tga)
+  if $sim_ac_want_tga; then
 
 cat >>confdefs.h <<\_ACEOF
 #define SIMAGE_TGA_SUPPORT
 _ACEOF
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
+    if test x${sim_ac_configuration_settings+set} != xset; then
   sim_ac_configuration_settings="TGA image format support:Yes"
 else
   sim_ac_configuration_settings="$sim_ac_configuration_settings|TGA image format support:Yes"
 fi
 
-else
-  if test x${sim_ac_configuration_settings+set} != xset; then
+  else
+    if test x${sim_ac_configuration_settings+set} != xset; then
   sim_ac_configuration_settings="TGA image format support:No"
 else
   sim_ac_configuration_settings="$sim_ac_configuration_settings|TGA image format support:No"
 fi
 
+  fi
 fi
 
 # **************************************************************************
@@ -11444,6 +11689,12 @@ exec_prefix=$sim_ac_save_exec_prefix
 
 
 # **************************************************************************
+# Remove gcc system directories includes from the CPPFLAGS.
+
+# CPP_AC_SEARCH_ORDER_FILTER(CPPFLAGS, $CPPFLAGS)
+# CPP_AC_SEARCH_ORDER_FILTER(SIMAGE_EXTRA_CPPFLAGS, $SIMAGE_EXTRA_CPPFLAGS)
+
+# **************************************************************************
 # Section related to building with MS Visual C++ on Windows
 
 case $enable_static in
@@ -12227,8 +12478,8 @@ s,@sim_ac_qt_cygpath@,$sim_ac_qt_cygpath,;t t
 s,@MOC@,$MOC,;t t
 s,@SIMAGE_QIMAGE_SUPPORT_TRUE@,$SIMAGE_QIMAGE_SUPPORT_TRUE,;t t
 s,@SIMAGE_QIMAGE_SUPPORT_FALSE@,$SIMAGE_QIMAGE_SUPPORT_FALSE,;t t
-s,@SIMAGE_UNGIF_SUPPORT_TRUE@,$SIMAGE_UNGIF_SUPPORT_TRUE,;t t
-s,@SIMAGE_UNGIF_SUPPORT_FALSE@,$SIMAGE_UNGIF_SUPPORT_FALSE,;t t
+s,@SIMAGE_QUICKTIME_SUPPORT_TRUE@,$SIMAGE_QUICKTIME_SUPPORT_TRUE,;t t
+s,@SIMAGE_QUICKTIME_SUPPORT_FALSE@,$SIMAGE_QUICKTIME_SUPPORT_FALSE,;t t
 s,@SIMAGE_MPEG2ENC_SUPPORT_TRUE@,$SIMAGE_MPEG2ENC_SUPPORT_TRUE,;t t
 s,@SIMAGE_MPEG2ENC_SUPPORT_FALSE@,$SIMAGE_MPEG2ENC_SUPPORT_FALSE,;t t
 s,@SIMAGE_DEBUG_BUILD@,$SIMAGE_DEBUG_BUILD,;t t

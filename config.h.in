@@ -99,6 +99,9 @@
 /* define to support Qt's QImage */
 #undef SIMAGE_QIMAGE_SUPPORT
 
+/* define to support the QuickTime library */
+#undef SIMAGE_QUICKTIME_SUPPORT
+
 /* Define to enable rgb support */
 #undef SIMAGE_RGB_SUPPORT
 

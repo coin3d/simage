@@ -4748,6 +4748,13 @@ EOF
 known to contain some serious bugs on MacOS X. We strongly recommend you to
 upgrade. (See $srcdir/README.MAC for details.)])
     fi
+
+  # Qt/X11 is currently not supported on Mac OS X.
+    AC_TRY_LINK([#include <qapplication.h>],
+                [#if defined(__APPLE__) && defined(Q_WS_X11)
+                 #error blah!
+                 #endif],[],
+                [SIM_AC_ERROR([x11-qt-on-mac])])
     ;;
   esac
 
@@ -4830,9 +4837,9 @@ recommend you to upgrade.])
       ## * "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32": should cover
       ##   static linking on Win32 platforms
       ##
-      ## * "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm":
+      ## * "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32":
       ##   added for the benefit of the Qt 3.0.0 Evaluation Version
-      ##
+      ##   (update: "advapi32.lib" seems to be a new dependency for Qt 3.1.0)
 
       sim_ac_qt_suffix=
       if $sim_ac_qt_debug; then
@@ -4847,7 +4854,7 @@ recommend you to upgrade.])
             "-lqt -lqtmain -lgdi32" \
             "-lqt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
             "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32" \
-            "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm" \
+            "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32" \
             "-lqt-mt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
             "-lqt-mt${sim_ac_qt_version}nc${sim_ac_qt_suffix} -lqtmain -lgdi32"
         do
@@ -5914,6 +5921,20 @@ if test x"$with_pthread" != xno; then
                  [sim_cv_lib_pthread_avail=false])])
 
   if $sim_cv_lib_pthread_avail; then
+    AC_CACHE_CHECK(
+      [the struct timespec resolution],
+      sim_cv_lib_pthread_timespec_resolution,
+      [AC_TRY_COMPILE([#include <pthread.h>],
+                      [struct timespec timeout;
+                       timeout.tv_nsec = 0;],
+                      [sim_cv_lib_pthread_timespec_resolution=nsecs],
+                      [sim_cv_lib_pthread_timespec_resolution=usecs])])
+    if test x"$sim_cv_lib_pthread_timespec_resolution" = x"nsecs"; then
+      AC_DEFINE([HAVE_PTHREAD_TIMESPEC_NSEC], 1, [define if pthread's struct timespec uses nsecs and not usecs])
+    fi
+  fi
+
+  if $sim_cv_lib_pthread_avail; then
     sim_ac_pthread_avail=yes
     $1
   else
@@ -6014,6 +6035,44 @@ done
 fi
 ]) # SIM_AC_CONFIGURATION_SUMMARY
 
+
+# **************************************************************************
+# SIM_AC_HAVE_QUICKTIME_IFELSE( IF-FOUND, IF-NOT-FOUND )
+#
+# Variables:
+#   sim_ac_have_quicktime
+#   sim_ac_quicktime_libs
+#   sim_ac_quicktime_extra_libs
+#
+# Authors:
+#   Karin Kosina <kyrah@sim.no>
+
+AC_DEFUN([SIM_AC_HAVE_QUICKTIME_IFELSE],
+[: ${sim_ac_have_quicktime=false}
+AC_MSG_CHECKING([for QuickTime framework])
+$sim_ac_have_quicktime && break
+sim_ac_quicktime_save_LIBS=$LIBS
+sim_ac_quicktime_libs="-framework QuickTime -framework CoreServices"
+# workaround - use -Wl,blah syntax until SIM_AC_UNIQIFY_LIST supports spaces
+sim_ac_quicktime_extra_libs="-Wl,-framework,QuickTime -Wl,-framework,CoreServices"
+LIBS="$sim_ac_quicktime_libs $LIBS"
+AC_TRY_LINK(
+  [#include <QuickTime/QuickTimeComponents.h>],
+  [Component c;
+  ComponentDescription cd;
+  FindNextComponent (c, &cd);],
+  [sim_ac_have_quicktime=true])
+LIBS=$sim_ac_quicktime_save_LIBS
+if $sim_ac_have_quicktime; then
+  AC_MSG_RESULT([success ($sim_ac_quicktime_libs)])
+  $1
+else
+  AC_MSG_RESULT([failure])
+  $2
+fi
+])
+
+# EOF **********************************************************************
 
 # **************************************************************************
 # SIM_AC_HAVE_LIBUNGIF_IFELSE( IF-FOUND, IF-NOT-FOUND )
