@@ -293,7 +293,7 @@ simage_png_save(const char *filename,
   if (setjmp(png_ptr->jmpbuf)) {
     /* If we get here, we had a problem reading the file */
     fclose(fp);
-    png_destroy_write_struct(&png_ptr,  (png_infopp)NULL);
+    png_destroy_write_struct(&png_ptr,  (png_infopp)info_ptr);
     pngerror = ERR_PNGLIB_WRITE;
     return 0;
   }
