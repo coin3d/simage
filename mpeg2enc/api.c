@@ -26,7 +26,7 @@ SimpegWrite_begin_encode(const char * output_filename,
                          SimpegWrite_warning_cb warning_cb,
                          SimpegWrite_progress_cb progress_cb,
                          void * cbuserdata,
-                         int w, int h, int numframes); 
+                         int w, int h, int numframes, int mpeg1); 
 
 static int 
 SimpegWrite_encode_bitmap(void * handle, const unsigned char * rgb_buffer);
@@ -43,10 +43,12 @@ mpeg2enc_movie_create(const char * filename, s_movie * movie, s_params * params)
   void * cb0, *cb1, *cb2;
   void * cbdata;
   int w, h, numframes;
+  int mpeg1;
 
   w = h = 0;
   numframes = 0;
-  
+  mpeg1 = 0;
+
   paramfile = NULL;
   cb0 = NULL;
   cb1 = NULL;
@@ -76,14 +78,16 @@ mpeg2enc_movie_create(const char * filename, s_movie * movie, s_params * params)
   s_params_get(params,
                "num frames", S_INTEGER_PARAM_TYPE, &numframes, NULL);
 
-
+  s_params_get(params,
+               "mpeg1", S_BOOL_PARAM_TYPE, &mpeg1, NULL);
+  
   handle = SimpegWrite_begin_encode(filename, 
                                     paramfile, 
                                     (SimpegWrite_error_cb) cb0, 
                                     (SimpegWrite_warning_cb) cb1, 
                                     (SimpegWrite_progress_cb) cb2,
                                     cbdata,
-                                    w, h, numframes);
+                                    w, h, numframes, mpeg1);
   if (handle == NULL) return 0;
   
   s_params_set(s_movie_params(movie), "mpeg2enc handle", S_POINTER_PARAM_TYPE, handle, 0);
@@ -115,7 +119,7 @@ mpeg2enc_movie_close(s_movie * movie)
 static void init(simpeg_encode_context * context);
 static void init_context_data(simpeg_encode_context * context);
 static void readparmfile(simpeg_encode_context * context, const char *fname, 
-                         int w, int h, int numframes);
+                         int w, int h, int numframes, int mpeg1);
 static void readquantmat(simpeg_encode_context * context);
 static void cleanup(simpeg_encode_context * context);
 
@@ -163,7 +167,7 @@ SimpegWrite_encode(const char *output_filename,
 
 
   /* read parameter file */
-  readparmfile(context, parameter_filename, 0, 0, 0);
+  readparmfile(context, parameter_filename, 0, 0, 0, 0);
 
   /* read quantization matrices */
   readquantmat(context);
@@ -197,7 +201,7 @@ SimpegWrite_begin_encode(const char *output_filename,
                          SimpegWrite_warning_cb warning_cb,
                          SimpegWrite_progress_cb progress_cb,
                          void * cbuserdata,
-                         int w, int h, int numframes)
+                         int w, int h, int numframes, int mpeg1)
 {
   int i;
   simpeg_encode_context * context;
@@ -232,7 +236,7 @@ SimpegWrite_begin_encode(const char *output_filename,
   context->bufbuf = NULL;
 
   /* read parameter file */
-  readparmfile(context, parameter_filename, w, h, numframes);
+  readparmfile(context, parameter_filename, w, h, numframes, mpeg1);
 
   /* read quantization matrices */
   readquantmat(context);
@@ -512,7 +516,7 @@ void simpeg_encode_error(simpeg_encode_context * context, char *text)
 
 static void 
 readparmfile(simpeg_encode_context * context,
-             const char *fname, int width, int height, int numframes)
+             const char *fname, int width, int height, int numframes, int mpeg1)
 {
   int i;
   int h, m, s, f;
@@ -642,7 +646,127 @@ readparmfile(simpeg_encode_context * context,
     
     fclose(fd);
   }
-  else { /* fill in some default values */
+  else  if (mpeg1) { /* fill in some default values for mpeg1 */
+    strcpy(context->id_string, "MPEG-1 sequence, created using simage (www.coin3d.org)");
+    strcpy(context->tplorg, "orgimage%d");
+    strcpy(context->tplref, "-");
+    strcpy(context->iqname, "-");
+    strcpy(context->niqname, "-");
+    strcpy(context->statname, "%");
+    context->inputtype = 3;
+    context->nframes = 10;
+    if (numframes > 0) context->nframes = numframes;
+    context->frame0 = 0;
+    h = m = s = f = 0; 
+
+    context->N = 6;
+    context->M = 3;
+
+    context->mpeg1 = 1;
+    context->fieldpic = 0;
+
+    context->horizontal_size = 704;
+    context->vertical_size = 480;
+
+    if (width > 0 && height > 0) {
+      context->horizontal_size = width;
+      context->vertical_size = height;
+    }
+
+    context->aspectratio = 8;
+    context->frame_rate_code = 3;
+    context->bit_rate = 1152000.0;
+    context->vbv_buffer_size = 20;
+    context->low_delay = 0;
+    context->constrparms = 1;
+    context->profile = 4;
+    context->level = 8;
+    context->prog_seq = 1;
+    context->chroma_format = 1;
+    context->video_format = 1;
+    context->color_primaries = 5;
+    context->transfer_characteristics = 5;
+    context->matrix_coefficients = 5;
+    context->display_horizontal_size = 704;
+    context->display_vertical_size = 480;
+
+    if (width > 0 && height < 0) {
+      context->display_horizontal_size = width;
+      context->display_vertical_size = height;
+    }
+
+    context->dc_prec = 0;
+    context->topfirst = 0;
+    context->frame_pred_dct_tab[0] = 1;
+    context->frame_pred_dct_tab[1] = 1;
+    context->frame_pred_dct_tab[2] = 1;
+    
+    context->conceal_tab[0] = 0;
+    context->conceal_tab[1] = 0;
+    context->conceal_tab[2] = 0;
+    
+    context->qscale_tab[0] = 0;
+    context->qscale_tab[1] = 0;
+    context->qscale_tab[2] = 0;
+    
+    context->intravlc_tab[0] = 0;
+    context->intravlc_tab[1] = 0;
+    context->intravlc_tab[2] = 0;
+
+    context->altscan_tab[0] = 0;
+    context->altscan_tab[1] = 0;
+    context->altscan_tab[2] = 0;
+    
+    context->repeatfirst = 0;
+    context->prog_frame = 1;
+
+    context->P = 0;
+    context->r = 0;
+    context->avg_act = 0;
+    context->Xi = 0;
+    context->Xp = 0;
+    context->Xb = 0;
+    context->d0i = 0;
+    context->d0p = 0;
+    context->d0b = 0;
+    
+    if (context->N<1)
+      simpeg_encode_error(context, "N must be positive");
+    if (context->M<1)
+      simpeg_encode_error(context,"M must be positive");
+    if (context->N%context->M != 0)
+      simpeg_encode_error(context,"N must be an integer multiple of M");
+
+    context->motion_data = (struct motion_data *)malloc(context->M*sizeof(struct motion_data));    
+    if (!context->motion_data)
+      simpeg_encode_error(context, "malloc failed\n");
+        
+    context->motion_data[0].forw_hor_f_code = 2;
+    context->motion_data[0].forw_vert_f_code = 2;
+    context->motion_data[0].sxf = 11;
+    context->motion_data[0].syf = 11;
+
+    context->motion_data[1].forw_hor_f_code = 1;
+    context->motion_data[1].forw_vert_f_code = 1;
+    context->motion_data[1].sxf = 3;
+    context->motion_data[1].syf = 3;
+    
+    context->motion_data[1].back_hor_f_code = 1; 
+    context->motion_data[1].back_vert_f_code = 1;
+    context->motion_data[1].sxb = 7; 
+    context->motion_data[1].syb = 7;
+
+    context->motion_data[2].forw_hor_f_code = 1;
+    context->motion_data[2].forw_vert_f_code = 1;
+    context->motion_data[2].sxf = 7;
+    context->motion_data[2].syf = 7;
+    
+    context->motion_data[2].back_hor_f_code = 1; 
+    context->motion_data[2].back_vert_f_code = 1;
+    context->motion_data[2].sxb = 3; 
+    context->motion_data[2].syb = 3;
+  }
+  else { /* fill in some default values for mpeg2 */
     strcpy(context->id_string, "MPEG-2 sequence, created using simage (www.coin3d.org)");
     strcpy(context->tplorg, "orgimage%d");
     strcpy(context->tplref, "-");
