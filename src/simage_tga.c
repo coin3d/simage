@@ -370,7 +370,7 @@ simage_tga_identify(const char *filename,
 		     const unsigned char *buf,
 		     int headerlen)
 {
-  char * ptr;
+  const char * ptr;
   if (headerlen < 18) return 0;
   ptr = strrchr(filename, '.');
   if (!ptr) return 0; /* TGA files must end with .tga|.TGA */
