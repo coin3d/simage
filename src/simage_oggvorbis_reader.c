@@ -17,7 +17,7 @@ typedef struct {
 } oggvorbis_reader_context;
 
 void oggvorbis_reader_close(oggvorbis_reader_context *context);
-int oggvorbis_reader_get_num_channels(oggvorbis_reader_context *context);
+void oggvorbis_reader_get_stream_info(oggvorbis_reader_context *context, int *channels, int *samplerate);
 int oggvorbis_reader_read(oggvorbis_reader_context *context, 
                           char *buffer, int size);
 int oggvorbis_reader_open(oggvorbis_reader_context **contextp, 
@@ -35,16 +35,18 @@ oggvorbis_reader_stream_open(const char * filename, s_stream * stream,
                              s_params * params)
 {
   oggvorbis_reader_context *context;
-  int channels;
+  int channels, samplerate;
   
   if (!oggvorbis_reader_open(&context, filename)) 
     return 0;
 
   s_stream_context_set(stream, (void *)context);
 
-  channels = oggvorbis_reader_get_num_channels(context);
+  oggvorbis_reader_get_stream_info(context, &channels, &samplerate);
   s_params_set(s_stream_params(stream), "channels", 
                S_INTEGER_PARAM_TYPE, channels, 0);
+  s_params_set(s_stream_params(stream), "samplerate", 
+               S_INTEGER_PARAM_TYPE, samplerate, 0);
   return 1;
 }
 
@@ -62,11 +64,10 @@ oggvorbis_reader_stream_get(s_stream * stream, void * buffer, int * size, s_para
       *size = ret;
       return buffer;
     }
-    else
-      *size = 0;
     /* fixme 20020904 thammer: check params for conversion requests
      */
   }
+  *size=0;
   return NULL;
 }
 
@@ -168,13 +169,14 @@ int oggvorbis_reader_read(oggvorbis_reader_context *context,
   return readsize;
 }
 
-int oggvorbis_reader_get_num_channels(oggvorbis_reader_context *context)
+void oggvorbis_reader_get_stream_info(oggvorbis_reader_context *context, int *channels, int *samplerate)
 {
   vorbis_info *vi;
   if (context->file == NULL)
     return 0;
   vi=ov_info(&context->vorbisfile,-1);
-  return vi->channels;
+  *channels = vi->channels;
+  *samplerate = vi->rate;
 }
 
 

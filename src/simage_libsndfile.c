@@ -95,14 +95,15 @@ libsndfile_stream_get(s_stream * stream, void * buffer, int * size, s_params * p
       intbuffer[i] = context->tempbuffer[i] * (double)32767.0;
     }
     
-    *size = itemsread * 2;
-    
-    if (itemsread > 0)
+    if (itemsread > 0) {
+      *size = itemsread * 2;
       return buffer;
+    }
 
     /* fixme 20020924 thammer: check params for conversion requests
      */
   }
+  *size = 0;
   return NULL;
 }
 
