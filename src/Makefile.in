@@ -131,6 +131,7 @@ SIMAGESOURCES = \
 	simage_write.c \
 	resize.c \
 	simage12.c \
+	simage13.c \
 	movie.c \
 	params.c \
 	$(top_srcdir)/include/simage_private.h \
@@ -186,7 +187,8 @@ simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_AR = $(AR) cru
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_write.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	resize.$(OBJEXT) simage12.$(OBJEXT) \
-@SIMAGE_QIMAGE_SUPPORT_TRUE@	movie.$(OBJEXT) params.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage13.$(OBJEXT) movie.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	params.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_jpeg.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_gif.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_png.$(OBJEXT) \
@@ -201,7 +203,8 @@ simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_AR = $(AR) cru
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_write.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	resize.$(OBJEXT) \
-@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage12.$(OBJEXT) movie.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage12.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage13.$(OBJEXT) movie.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	params.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_jpeg.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_gif.$(OBJEXT) \
@@ -223,20 +226,21 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 @BUILD_WITH_MSVC_TRUE@@SIMAGE_MPEG2ENC_SUPPORT_FALSE@libsimage@SUFFIX@_la_DEPENDENCIES =
 @SIMAGE_QIMAGE_SUPPORT_TRUE@am_libsimage@SUFFIX@_la_OBJECTS = simage.lo \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_write.lo resize.lo \
-@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage12.lo movie.lo params.lo \
-@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_jpeg.lo simage_gif.lo \
-@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_png.lo simage_tiff.lo \
-@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_tga.lo simage_rgb.lo \
-@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_pic.lo simage_xwd.lo \
-@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_eps.lo simage_qimage.lo
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage12.lo simage13.lo movie.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	params.lo simage_jpeg.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_gif.lo simage_png.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_tiff.lo simage_tga.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_rgb.lo simage_pic.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_xwd.lo simage_eps.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_qimage.lo
 @SIMAGE_QIMAGE_SUPPORT_FALSE@am_libsimage@SUFFIX@_la_OBJECTS = simage.lo \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_write.lo resize.lo \
-@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage12.lo movie.lo params.lo \
-@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_jpeg.lo simage_gif.lo \
-@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_png.lo simage_tiff.lo \
-@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_tga.lo simage_rgb.lo \
-@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_pic.lo simage_xwd.lo \
-@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_eps.lo
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage12.lo simage13.lo movie.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	params.lo simage_jpeg.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_gif.lo simage_png.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_tiff.lo simage_tga.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_rgb.lo simage_pic.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_xwd.lo simage_eps.lo
 libsimage@SUFFIX@_la_OBJECTS = $(am_libsimage@SUFFIX@_la_OBJECTS)
 
 DEFS = @DEFS@
@@ -250,6 +254,7 @@ depcomp = $(SHELL) $(top_srcdir)/cfg/depcomp
 @AMDEP_TRUE@	$(DEPDIR)/resize.Plo $(DEPDIR)/resize.Po \
 @AMDEP_TRUE@	$(DEPDIR)/simage.Plo $(DEPDIR)/simage.Po \
 @AMDEP_TRUE@	$(DEPDIR)/simage12.Plo $(DEPDIR)/simage12.Po \
+@AMDEP_TRUE@	$(DEPDIR)/simage13.Plo $(DEPDIR)/simage13.Po \
 @AMDEP_TRUE@	$(DEPDIR)/simage_eps.Plo $(DEPDIR)/simage_eps.Po \
 @AMDEP_TRUE@	$(DEPDIR)/simage_gif.Plo $(DEPDIR)/simage_gif.Po \
 @AMDEP_TRUE@	$(DEPDIR)/simage_jpeg.Plo $(DEPDIR)/simage_jpeg.Po \
@@ -376,6 +381,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage12.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage12.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage13.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage13.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_eps.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_eps.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_gif.Plo@am__quote@

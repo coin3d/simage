@@ -24,6 +24,7 @@ SIMAGESOURCES = \
 	simage_write.c \
 	resize.c \
 	simage12.c \
+	simage13.c \
 	movie.c \
 	params.c \
 	$(top_srcdir)/include/simage_private.h \

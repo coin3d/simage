@@ -76,6 +76,9 @@
 /* version 1.2 added a new API, and support for movies */
 #define SIMAGE_VERSION_1_2
 
+/* version 1.3 added simage_resize3d */
+#define SIMAGE_VERSION_1_3
+
 /* These are available for adding or omitting features based on simage
  * version numbers in "client" sources. NB: they are automatically
  * synchronized with the settings in configure.in when configure is
@@ -296,6 +299,17 @@ extern "C" {
   
   SIMAGE_DLL_API void s_params_set(s_params * params, ...);
   SIMAGE_DLL_API int s_params_get(s_params * params, ...);
+
+  /*****************************************************************/
+  /**** NOTE: new methods for simage version 1.3 *******************/
+  /*****************************************************************/
+
+  SIMAGE_DLL_API unsigned char * simage_resize3d(unsigned char * imagedata,
+						 int width, int height,
+						 int numcomponents,
+						 int layers,
+						 int newwidth, int newheight,
+						 int newlayers);
 
 #ifdef __cplusplus
 }

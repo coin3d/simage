@@ -66,11 +66,11 @@ get_column(unsigned char * column, Image * image, int x)
 }
 
 static void
-put_pixel(Image * image, int x, int y, double * data)
+put_pixel(Image * image, int x, int y, float * data)
 {
   int i, bpp;
   unsigned char * p;
-  double val;
+  float val;
 
   assert(x >= 0);
   assert(x < image->xsize);
@@ -94,8 +94,8 @@ put_pixel(Image * image, int x, int y, double * data)
 
 #define	filter_support		(1.0)
 
-static double
-filter(double t)
+static float
+filter(float t)
 {
   /* f(t) = 2|t|^3 - 3|t|^2 + 1, -1 <= t <= 1 */
   if(t < 0.0) t = -t;
@@ -105,8 +105,8 @@ filter(double t)
 
 #define	box_support		(0.5)
 
-static double
-box_filter(double t)
+static float
+box_filter(float t)
 {
   if((t > -0.5) && (t <= 0.5)) return(1.0);
   return(0.0);
@@ -114,8 +114,8 @@ box_filter(double t)
 
 #define	triangle_support	(1.0)
 
-static double
-triangle_filter(double t)
+static float
+triangle_filter(float t)
 {
   if(t < 0.0) t = -t;
   if(t < 1.0) return(1.0 - t);
@@ -124,8 +124,8 @@ triangle_filter(double t)
 
 #define	bell_support		(1.5)
 
-static double
-bell_filter(double t)		/* box (*) box (*) box */
+static float
+bell_filter(float t)		/* box (*) box (*) box */
 {
   if(t < 0) t = -t;
   if(t < .5) return(.75 - (t * t));
@@ -138,10 +138,10 @@ bell_filter(double t)		/* box (*) box (*) box */
 
 #define	B_spline_support	(2.0)
 
-static double
-B_spline_filter(double t)  /* box (*) box (*) box (*) box */
+static float
+B_spline_filter(float t)  /* box (*) box (*) box (*) box */
 {
-  double tt;
+  float tt;
   
   if(t < 0) t = -t;
   if(t < 1) {
@@ -154,8 +154,8 @@ B_spline_filter(double t)  /* box (*) box (*) box (*) box */
   return(0.0);
 }
 
-static double
-sinc(double x)
+static float
+sinc(float x)
 {
   x *= M_PI;
   if(x != 0) return(sin(x) / x);
@@ -164,8 +164,8 @@ sinc(double x)
 
 #define	Lanczos3_support	(3.0)
 
-static double
-Lanczos3_filter(double t)
+static float
+Lanczos3_filter(float t)
 {
   if(t < 0) t = -t;
   if(t < 3.0) return(sinc(t) * sinc(t/3.0));
@@ -177,10 +177,10 @@ Lanczos3_filter(double t)
 #define	B	(1.0 / 3.0)
 #define	C	(1.0 / 3.0)
 
-static double
-Mitchell_filter(double t)
+static float
+Mitchell_filter(float t)
 {
-  double tt;
+  float tt;
 
   tt = t * t;
   if(t < 0.0) t = -t;
@@ -206,7 +206,7 @@ Mitchell_filter(double t)
 
 typedef struct {
   int pixel;
-  double weight;
+  float weight;
 } CONTRIB;
 
 typedef struct {
@@ -230,18 +230,18 @@ new_image(int xsize, int ysize, int bpp, unsigned char * data)
 static void
 zoom(Image * dst,               /* destination image structure */
      Image * src,               /* source image structure */
-     double (*filterf)(double), /* filter function */
-     double fwidth)             /* filter width (support) */
+     float (*filterf)(float), /* filter function */
+     float fwidth)             /* filter width (support) */
 {
   CLIST * contrib;
   Image * tmp;                  /* intermediate image */
-  double xscale, yscale;	/* zoom scale factors */
+  float xscale, yscale;	/* zoom scale factors */
   int i, j, k, b;			/* loop variables */
   int n;			/* pixel number */
-  double center, left, right;	/* filter calculation variables */
-  double width, fscale, weight;	/* filter calculation variables */
+  float center, left, right;	/* filter calculation variables */
+  float width, fscale, weight;	/* filter calculation variables */
   unsigned char * raster;	/* a row or column of pixels */
-  double pixel[4];              /* one pixel */
+  float pixel[4];              /* one pixel */
   int bpp;
   unsigned char * dstptr;
   int dstxsize, dstysize;
@@ -252,8 +252,8 @@ zoom(Image * dst,               /* destination image structure */
 
   /* create intermediate image to hold horizontal zoom */
   tmp = new_image(dstxsize, src->ysize, dst->bpp, NULL);
-  xscale = (double) dstxsize / (double) src->xsize;
-  yscale = (double) dstysize / (double) src->ysize;
+  xscale = (float) dstxsize / (float) src->xsize;
+  yscale = (float) dstysize / (float) src->ysize;
 
   /* pre-calculate filter contributions for a row */
   contrib = (CLIST *)calloc(dstxsize, sizeof(CLIST));
@@ -264,11 +264,11 @@ zoom(Image * dst,               /* destination image structure */
       contrib[i].n = 0;
       contrib[i].p = (CONTRIB *)calloc((int) (width * 2 + 1),
                                        sizeof(CONTRIB));
-      center = (double) i / xscale;
+      center = (float) i / xscale;
       left = ceil(center - width);
       right = floor(center + width);
       for(j = left; j <= right; j++) {
-        weight = center - (double) j;
+        weight = center - (float) j;
         weight = (*filterf)(weight / fscale) / fscale;
         if(j < 0) {
           n = -j;
@@ -290,11 +290,11 @@ zoom(Image * dst,               /* destination image structure */
       contrib[i].n = 0;
       contrib[i].p = (CONTRIB *)calloc((int) (fwidth * 2 + 1),
                                        sizeof(CONTRIB));
-      center = (double) i / xscale;
+      center = (float) i / xscale;
       left = ceil(center - fwidth);
       right = floor(center + fwidth);
       for(j = left; j <= right; j++) {
-        weight = center - (double) j;
+        weight = center - (float) j;
         weight = (*filterf)(weight);
         if(j < 0) {
           n = -j;
@@ -331,7 +331,7 @@ zoom(Image * dst,               /* destination image structure */
       put_pixel(tmp, i, k, pixel);
 #else /* new code */
       for (b = 0; b < bpp; b++) {
-        double val = pixel[b];
+        float val = pixel[b];
         if (val < 0.0) val = 0.0;
         else if (val > 255.0) val = 255.0;
         *dstptr++ = (unsigned char ) val;
@@ -356,11 +356,11 @@ zoom(Image * dst,               /* destination image structure */
       contrib[i].n = 0;
       contrib[i].p = (CONTRIB *)calloc((int) (width * 2 + 1),
                                        sizeof(CONTRIB));
-      center = (double) i / yscale;
+      center = (float) i / yscale;
       left = ceil(center - width);
       right = floor(center + width);
       for(j = left; j <= right; j++) {
-        weight = center - (double) j;
+        weight = center - (float) j;
         weight = (*filterf)(weight / fscale) / fscale;
         if(j < 0) {
           n = -j;
@@ -382,11 +382,11 @@ zoom(Image * dst,               /* destination image structure */
       contrib[i].n = 0;
       contrib[i].p = (CONTRIB *)calloc((int) (fwidth * 2 + 1),
                                        sizeof(CONTRIB));
-      center = (double) i / yscale;
+      center = (float) i / yscale;
       left = ceil(center - fwidth);
       right = floor(center + fwidth);
       for(j = left; j <= right; j++) {
-        weight = center - (double) j;
+        weight = center - (float) j;
         weight = (*filterf)(weight);
         if(j < 0) {
           n = -j;
@@ -421,7 +421,7 @@ zoom(Image * dst,               /* destination image structure */
       put_pixel(dst, k, i, pixel);
 #else /* new code */
       for (b = 0; b < bpp; b++) {
-        double val = pixel[b];
+        float val = pixel[b];
         if (val < 0.0) val = 0.0;
         else if (val > 255.0) val = 255.0;
         dstptr[b] = (unsigned char) val;
