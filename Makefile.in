@@ -74,10 +74,10 @@ BUILD_WITH_MSVC = @BUILD_WITH_MSVC@
 CC = @CC@
 CONFIG = @CONFIG@
 DEPDIR = @DEPDIR@
-DLLFLAGS = @DLLFLAGS@
 DLLTOOL = @DLLTOOL@
 DSUFFIX = @DSUFFIX@
 LDFLAGS = @LDFLAGS@
+LIBFLAGS = @LIBFLAGS@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 LT_AGE = @LT_AGE@
@@ -89,12 +89,15 @@ OBJDUMP = @OBJDUMP@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 SIMAGE_DEBUG_BUILD = @SIMAGE_DEBUG_BUILD@
+SIMAGE_EXTRA_CFLAGS = @SIMAGE_EXTRA_CFLAGS@
 SIMAGE_EXTRA_CPPFLAGS = @SIMAGE_EXTRA_CPPFLAGS@
 SIMAGE_EXTRA_LDFLAGS = @SIMAGE_EXTRA_LDFLAGS@
 SIMAGE_EXTRA_LIBS = @SIMAGE_EXTRA_LIBS@
 SIMAGE_MAJOR_VERSION = @SIMAGE_MAJOR_VERSION@
 SIMAGE_MICRO_VERSION = @SIMAGE_MICRO_VERSION@
 SIMAGE_MINOR_VERSION = @SIMAGE_MINOR_VERSION@
+SIMAGE_SHARED = @SIMAGE_SHARED@
+SIMAGE_STATIC = @SIMAGE_STATIC@
 SIMAGE_VERSION = @SIMAGE_VERSION@
 SUFFIX = @SUFFIX@
 VERSION = @VERSION@
@@ -110,8 +113,6 @@ win_srcdir = @win_srcdir@
 SUBDIRS = src
 
 bin_SCRIPTS = simage-config
-
-EXTRA_DIST = $(m4data_DATA)
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = cfg/m4/simage.m4
@@ -411,7 +412,7 @@ dist-all: distdir
 distdir: $(DISTFILES)
 	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
 	mkdir $(distdir)
-	$(mkinstalldirs) $(distdir)/. $(distdir)/cfg $(distdir)/cfg/m4 $(distdir)/include . cfg cfg/m4 include
+	$(mkinstalldirs) $(distdir)/. $(distdir)/cfg $(distdir)/include . cfg include
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -515,8 +516,8 @@ mostlyclean-am: mostlyclean-generic
 	uninstall-m4dataDATA uninstall-recursive
 
 
-simage-@CONFIG@.cfg: $(top_srcdir)/simage.cfg.in
-	@./config.status --file=$@:simage.cfg.in
+simage-@CONFIG@.cfg: $(srcdir)/simage.cfg.in
+	@$(SHELL) config.status --file=$@:simage.cfg.in
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
