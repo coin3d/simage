@@ -393,9 +393,9 @@ static void SimpegWrite_read_buffer(simpeg_encode_context * context, unsigned ch
 
     for (j=0; j<horizontal_size; j++)
     {
-      r=buffer[heightsum + (horizontal_size-j-1)*3 + 0]; 
-      g=buffer[heightsum + (horizontal_size-j-1)*3 + 1]; 
-      b=buffer[heightsum + (horizontal_size-j-1)*3 + 2];
+      r=buffer[heightsum + j*3 + 0]; 
+      g=buffer[heightsum + j*3 + 1]; 
+      b=buffer[heightsum + j*3 + 2];
       /* convert to YUV */
       y = cr*r + cg*g + cb*b;
       u = cu*(b-y);
