@@ -290,7 +290,9 @@ simage_rgb_close(void * opendata)
   for (i = 0; i < od->nc; i++) {
     free(od->tmpbuf[i]);
   }
-  free(od->rlebuf);
+  if (od->rowseek) free(od->rowseek);
+  if (od->rowlen) free(od->rowlen);
+  if (od->rlebuf) free(od->rlebuf);
   free(od);
 }
 
