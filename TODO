@@ -2,60 +2,63 @@
 Todo
 ====
 
-(format is: "* [author][conceived-date] item", listed in approx
+(format is: "* [author:conceived-date] item", listed in approx
 prioritized order)
 
-* [mortene][19990901] make an example/test application
-
-* [mortene][19990826] make it user-selectable whether or not to
-  include support for the various image file formats (with everything
-  defaulting to "include if available", of course)
-
-* [mortene][19990826] have the build process put generated
+* [mortene:19990826] have the build process put generated
   architecture specific files (object files etc) into their own
   subdirectory, which should somehow be named in an
   architecture-specific way. This will then make it possible to build
   for multiple platforms within the same source-copy.
 
-* [mortene][19990826] most of the code in the .cpp files (and _all_ of
-  the code in some of them) looks suspiciously "C-ish" -- and if the
-  code is C, we should compile it as C, not C++.
+* [mortene:19990822] write simage-specific information in the INSTALL
+  and README files.
 
-* [mortene][19990822] fix version number problem (installs as 0.0.0,
-  even though it's set as 0.9.0 in configure.in).
+* [mortene:19990822] use libgif/libungif to add support for GIFs.
 
-* [mortene][19990822] write information in these files: INSTALL, NEWS,
-  README.
-
-* [mortene][19990822] commit to SIM CVS new build system based upon
-  autoconf.
-
-* [mortene][19990822] use libgif/libungif to add support for GIFs.
-
-* [mortene][19990822] use Qt, if present, to add support for a number
+* [mortene:19990822] use Qt, if present, to add support for a number
   of additional formats (XPM etc).
 
-* [mortene][19990822] use imlib if available for the possibility of
+* [mortene:19990822] use imlib if available for the possibility of
   having a super slim libsimage -- or perhaps we should instead put in
   a test for imlib within the Coin library, at the same way as we'll
   do for simage (when the autoconf-based build is in place in Coin)?
 
-* [mortene][19990826] exclude source files from build process when
-  possible, based on HAVE_LIBJPEG, HAVE_LIBPNG and HAVE_LIBTIFF
-  defines
+* [mortene:19990901] make an example/test application
 
 ===============================================================================
 Done
 ====
 
-(format is: "* [author][conceived-date][finished-date][implementer] item")
+(format is: "* [author:conceived-date][implementer:finished-date] item")
 
-* [mortene][19990822][19990826][mortene] check for the existence of
-  the image import/export libraries which we depend upon, generate
-  correct #ifdef statements in the code.
+* [mortene:19990826][mortene:19990905] make it user-selectable whether
+  or not to include support for the various image file formats (with
+  everything defaulting to "include if available", of course)
 
-* [mortene][19990822][19990826][mortene] write information in these
+* [mortene:19990905][mortene:19990905] default to only building the
+  shared version of the library
+
+* [mortene:19990826][mortene:19990905] exclude source files from build
+  process when possible, based on HAVE_LIBJPEG, HAVE_LIBPNG and
+  HAVE_LIBTIFF defines
+
+* [mortene:19990822][mortene:19990905] fix version number problem
+  (installs as 0.0.0, even though it's set as 0.9.0 in configure.in).
+
+* [mortene:19990826][mortene:19990904] most of the code in the .cpp
+  files (and _all_ of the code in some of them) looks suspiciously
+  "C-ish" -- and if the code is C, we should compile it as C, not C++.
+
+* [mortene:19990822][mortene:19990826] check for the existence of the
+  image import/export libraries which we depend upon, generate correct
+  #ifdef statements in the code.
+
+* [mortene:19990822][mortene:19990826] write information in these
   files: AUTHORS, COPYING (fetch the old file from CVS first),
   ChangeLog.
+
+* [mortene:19990822][mortene:19990822] commit to SIM CVS new build
+  system based upon autoconf.
 
 ===============================================================================

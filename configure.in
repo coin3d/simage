@@ -1,22 +1,75 @@
 dnl  This can be any file in the package.
 AC_INIT(include/simage.h)
 
-AM_INIT_AUTOMAKE(libsimage, 0.9.0)
+dnl  Locate C compiler.
+AC_PROG_CC
+
+dnl  Making releases:
+dnl    SIMAGE_MICRO_VERSION += 1;
+dnl    SIMAGE_INTERFACE_AGE += 1;
+dnl    SIMAGE_BINARY_AGE += 1;
+dnl  if any functions have been added, set SIMAGE_INTERFACE_AGE to 0.
+dnl  if backwards compatibility has been broken,
+dnl  set SIMAGE_BINARY_AGE _and_ SIMAGE_INTERFACE_AGE to 0.
+dnl 
+SIMAGE_MAJOR_VERSION=0
+SIMAGE_MINOR_VERSION=9
+SIMAGE_MICRO_VERSION=0
+SIMAGE_INTERFACE_AGE=0
+SIMAGE_BINARY_AGE=0
+SIMAGE_VERSION=$SIMAGE_MAJOR_VERSION.$SIMAGE_MINOR_VERSION.$SIMAGE_MICRO_VERSION
+
+AC_SUBST(SIMAGE_MAJOR_VERSION)
+AC_SUBST(SIMAGE_MINOR_VERSION)
+AC_SUBST(SIMAGE_MICRO_VERSION)
+AC_SUBST(SIMAGE_VERSION)
+AC_SUBST(SIMAGE_INTERFACE_AGE)
+AC_SUBST(SIMAGE_BINARY_AGE)
+
+dnl  libtool versioning
+LT_RELEASE=$SIMAGE_MAJOR_VERSION.$SIMAGE_MINOR_VERSION
+LT_CURRENT=`expr $SIMAGE_MICRO_VERSION - $SIMAGE_INTERFACE_AGE`
+LT_REVISION=$SIMAGE_INTERFACE_AGE
+LT_AGE=`expr $SIMAGE_BINARY_AGE - $SIMAGE_INTERFACE_AGE`
+AC_SUBST(LT_RELEASE)
+AC_SUBST(LT_CURRENT)
+AC_SUBST(LT_REVISION)
+AC_SUBST(LT_AGE)
+
+VERSION=$SIMAGE_VERSION
+
+AM_INIT_AUTOMAKE(libsimage, $VERSION)
 
 dnl  File to cram the configure tests into.
 AM_CONFIG_HEADER(config.h)
 
+
+dnl  Default to not building a static library.
+dnl  Can be overridden by the user with --enable-static.
+AM_DISABLE_STATIC
+
 dnl Initialize libtool
 AM_PROG_LIBTOOL
 
-dnl  Locate C compiler.
-AC_PROG_CC
-dnl  Locate C++ compiler.
-AC_PROG_CXX
 
+dnl *******************************************************************
+dnl * Check if JPEG support is wanted.
+dnl *******************************************************************
 
-dnl  Check if libjpeg development system is installed.
+AC_ARG_WITH(jpeg,
+	[  --with-jpeg             include support for JPEG images [default=yes]],
+	[case "${withval}" in
+		yes) want_jpeg=yes ;;
+		no)  want_jpeg=no ;;
+		*) AC_MSG_ERROR(bad value \"${withval}\" for --with-jpeg) ;;
+	esac],
+	[want_jpeg=yes])
 
+dnl *******************************************************************
+dnl * Check if libjpeg development system is installed.
+dnl *******************************************************************
+
+if test "$want_jpeg" = yes; then
 AC_CHECK_HEADER(jpeglib.h, jpeg_dev=yes, jpeg_dev=no)
 if test "$jpeg_dev" = yes; then
   AC_CHECK_LIB(jpeg, jpeg_read_header, , jpeg_dev=no)
@@ -24,10 +77,32 @@ fi
 if test "$jpeg_dev" = no; then
   AC_MSG_WARN(libjpeg development system not found -- no JPEG support)
 fi
+fi
+
+AM_CONDITIONAL(JPEG_SUPPORT, test "x$jpeg_dev" = "xyes")
+if test "$jpeg_dev" = yes; then
+  AC_DEFINE(SIMAGE_JPEG_SUPPORT, 1)
+fi
 
 
-dnl  Check if libtiff development system is installed.
+dnl *******************************************************************
+dnl * Check if TIFF supported is wanted.
+dnl *******************************************************************
 
+AC_ARG_WITH(tiff,
+	[  --with-tiff             include support for TIFF images [default=yes]],
+	[case "${withval}" in
+		yes) want_tiff=yes ;;
+		no)  want_tiff=no ;;
+		*) AC_MSG_ERROR(bad value \"${withval}\" for --with-tiff) ;;
+	esac],
+	[want_tiff=yes])
+
+dnl *******************************************************************
+dnl * Check if libtiff development system is installed.
+dnl *******************************************************************
+
+if test "$want_tiff" = yes; then
 AC_CHECK_HEADER(tiffio.h, tiff_dev=yes, tiff_dev=no)
 if test "$tiff_dev" = yes; then
   AC_CHECK_LIB(tiff, TIFFOpen, , tiff_dev=no, -lm)
@@ -35,10 +110,32 @@ fi
 if test "$tiff_dev" = no; then
   AC_MSG_WARN(libtiff development system not found -- no TIFF support)
 fi
+fi
+
+AM_CONDITIONAL(TIFF_SUPPORT, test "x$tiff_dev" = "xyes")
+if test "$tiff_dev" = yes; then
+  AC_DEFINE(SIMAGE_TIFF_SUPPORT, 1)
+fi
 
 
-dnl  Check if libpng development system is installed.
+dnl *******************************************************************
+dnl * Check if PNG support is wanted.
+dnl *******************************************************************
 
+AC_ARG_WITH(png,
+	[  --with-png              include support for PNG images [default=yes]],
+	[case "${withval}" in
+		yes) want_png=yes ;;
+		no)  want_png=no ;;
+		*) AC_MSG_ERROR(bad value \"${withval}\" for --with-png) ;;
+	esac],
+	[want_png=yes])
+
+dnl *******************************************************************
+dnl * Check if libpng development system is installed.
+dnl *******************************************************************
+
+if test "$want_png" = yes; then
 AC_CHECK_HEADER(png.h, png_dev=yes, png_dev=no)
 if test "$png_dev" = yes; then
   AC_CHECK_LIB(png, png_read_info, , png_dev=no, -lz -lm)
@@ -46,8 +143,72 @@ fi
 if test "$png_dev" = no; then
   AC_MSG_WARN(libpng development system not found -- no PNG support)
 fi
+fi
+
+AM_CONDITIONAL(PNG_SUPPORT, test "x$png_dev" = "xyes")
+if test "$png_dev" = yes; then
+  AC_DEFINE(SIMAGE_PNG_SUPPORT, 1)
+fi
 
 
+dnl *******************************************************************
+dnl * Check if Targa support is wanted.
+dnl *******************************************************************
 
-dnl  List of all files to generate.
+AC_ARG_WITH(targa,
+	[  --with-targa            include support for Targa images [default=yes]],
+	[case "${withval}" in
+		yes) want_tga=yes ;;
+		no)  want_tga=no ;;
+		*) AC_MSG_ERROR(bad value \"${withval}\" for --with-targa) ;;
+	esac],
+	[want_tga=yes])
+
+AM_CONDITIONAL(TGA_SUPPORT, test "x$want_tga" = "xyes")
+if test "$want_tga" = yes; then
+  AC_DEFINE(SIMAGE_TGA_SUPPORT, 1)
+fi
+
+
+dnl *******************************************************************
+dnl * Check if RGB support is wanted.
+dnl *******************************************************************
+
+AC_ARG_WITH(rgb,
+	[  --with-rgb              include support for SGI RGB images [default=yes]],
+	[case "${withval}" in
+		yes) want_rgb=yes ;;
+		no)  want_rgb=no ;;
+		*) AC_MSG_ERROR(bad value \"${withval}\" for --with-rgb) ;;
+	esac],
+	[want_rgb=yes])
+
+AM_CONDITIONAL(RGB_SUPPORT, test "x$want_rgb" = "xyes")
+if test "$want_rgb" = yes; then
+  AC_DEFINE(SIMAGE_RGB_SUPPORT, 1)
+fi
+
+
+dnl *******************************************************************
+dnl * Check if PIC support is wanted.
+dnl *******************************************************************
+
+AC_ARG_WITH(pic,
+	[  --with-pic              include support for PIC images [default=yes]],
+	[case "${withval}" in
+		yes) want_pic=yes ;;
+		no)  want_pic=no ;;
+		*) AC_MSG_ERROR(bad value \"${withval}\" for --with-pic) ;;
+	esac],
+	[want_pic=yes])
+
+AM_CONDITIONAL(PIC_SUPPORT, test "x$want_pic" = "xyes")
+if test "$want_pic" = yes; then
+  AC_DEFINE(SIMAGE_PIC_SUPPORT, 1)
+fi
+
+dnl *******************************************************************
+dnl * List all files configure shall generate.
+dnl *******************************************************************
+
 AC_OUTPUT(Makefile src/Makefile)

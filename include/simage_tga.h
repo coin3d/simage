@@ -1,6 +1,12 @@
 #ifndef _SIMAGE_TGA_H_
 #define _SIMAGE_TGA_H_
 
+#include <config.h>
+
+#ifndef SIMAGE_TGA_SUPPORT
+#error "This file should not be used under the current configuration!"
+#endif /* !SIMAGE_TGA_SUPPORT */
+
 unsigned char *simage_tga_load(const char * filename,
 				int *width,
 				int *height,

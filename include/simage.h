@@ -89,7 +89,7 @@ extern "C" {
     int (*error_func)(char *textbuffer, int bufferlen);
   };
   
-  void *simage_add_plugin_loader(const simage_plugin *plugin,
+  void *simage_add_plugin_loader(const struct simage_plugin *plugin,
 				 int addbefore);
   void simage_remove_plugin_loader(void *handle);
   

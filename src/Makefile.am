@@ -4,28 +4,59 @@ lib_LTLIBRARIES = libsimage.la
 
 INCLUDES = -I../include/
 
+
 ## All source files used when building the libraries, including all
 ## headers.
 
+if JPEG_SUPPORT
+JPEGSOURCES = simage_jpeg.c simage_jpeg.h
+else
+JPEGSOURCES =
+endif
+
+if TIFF_SUPPORT
+TIFFSOURCES = simage_tiff.c simage_tiff.h
+else
+TIFFSOURCES =
+endif
+
+if PNG_SUPPORT
+PNGSOURCES = simage_png.c simage_png.h
+else
+PNGSOURCES =
+endif
+
+if TGA_SUPPORT
+TGASOURCES = simage_tga.c simage_tga.h
+else
+TGASOURCES =
+endif
+
+if RGB_SUPPORT
+RGBSOURCES = simage_rgb.c simage_rgb.h
+else
+RGBSOURCES =
+endif
+
+if PIC_SUPPORT
+PICSOURCES = simage_pic.c simage_pic.h
+else
+PICSOURCES =
+endif
+
 libsimage_la_SOURCES = \
-	simage.cpp \
-	simage.h \
-	simage_jpeg.cpp \
-	simage_jpeg.h \
-	simage_tga.cpp \
-	simage_tga.h \
-	simage_tiff.cpp \
-	simage_tiff.h \
-	simage_rgb.cpp \
-	simage_rgb.h \
-	simage_png.cpp \
-	simage_png.h \
-	simage_pic.cpp \
-	simage_pic.h
+	simage.c simage.h \
+	$(JPEGSOURCES) $(PNGSOURCES) $(TIFFSOURCES) \
+	$(TGASOURCES) $(RGBSOURCES) $(PICSOURCES)
+
 
 ## Installation information.
 
 libsimageincdir = $(includedir)
+
+libsimage_la_LDFLAGS = \
+	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
+	-release $(LT_RELEASE)
 
 libsimageinc_HEADERS = \
 	../include/simage.h

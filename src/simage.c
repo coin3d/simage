@@ -2,8 +2,9 @@
  * simage.cpp
  */
 
+#include <config.h>
+
 #include "simage.h"
-#include "config.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -19,30 +20,30 @@ struct _loader_data
 typedef struct _loader_data loader_data;
 
 /* built in image loaders */ 
-#ifdef HAVE_LIBJPEG
+#ifdef SIMAGE_JPEG_SUPPORT
 #include "simage_jpeg.h"
 static loader_data jpeg_loader;
-#endif /* HAVE_LIBJPEG */
-#ifdef HAVE_LIBPNG
+#endif /* SIMAGE_JPEG_SUPPORT */
+#ifdef SIMAGE_PNG_SUPPORT
 #include "simage_png.h"
 static loader_data png_loader;
-#endif /* HAVE_LIBPNG */
-#if !defined(SIMAGE_EXCLUDE_SIMAGE_TGA)
+#endif /* SIMAGE_PNG_SUPPORT */
+#ifdef SIMAGE_TGA_SUPPORT
 #include "simage_tga.h"
 static loader_data targa_loader;
-#endif
-#ifdef HAVE_LIBTIFF
+#endif /* SIMAGE_TGA_SUPPORT */
+#ifdef SIMAGE_TIFF_SUPPORT
 #include "simage_tiff.h"
 static loader_data tiff_loader;
-#endif /* HAVE_LIBTIFF */
-#if !defined(SIMAGE_EXCLUDE_SIMAGE_PIC)
+#endif /* SIMAGE_TIFF_SUPPORT */
+#ifdef SIMAGE_PIC_SUPPORT
 #include "simage_pic.h"
 static loader_data pic_loader;
-#endif
-#if !defined(SIMAGE_EXCLUDE_SIMAGE_RGB)
+#endif /* SIMAGE_PIC_SUPPORT */
+#ifdef SIMAGE_RGB_SUPPORT
 #include "simage_rgb.h"
 static loader_data rgb_loader;
-#endif
+#endif /* SIMAGE_PIC_SUPPORT */
 
 #include <assert.h>
 
@@ -97,15 +98,17 @@ add_loader(loader_data *loader,
 static loader_data *
 find_loader(const char *filename)
 {
+  loader_data *loader;
+  int readlen;
   unsigned char buf[256] = {0};
   FILE *fp = fopen(filename, "rb");
   if (!fp) return NULL;
 
-  int readlen = fread(buf, 1, 256, fp);
+  readlen = fread(buf, 1, 256, fp);
   fclose(fp);
   if (readlen <= 0) return NULL;
 
-  loader_data *loader = first_loader;
+  loader = first_loader;
   while (loader) {
     if (loader->funcs.identify_func(filename, buf, readlen)) break;
     loader = loader->next;
@@ -120,48 +123,48 @@ add_internal_loaders()
   static int first = 1;
   if (first) {
     first = 0;
-#ifdef HAVE_LIBJPEG
+#ifdef SIMAGE_JPEG_SUPPORT
     add_loader(&jpeg_loader, 
 	       simage_jpeg_load,
 	       simage_jpeg_identify,
 	       simage_jpeg_error,
 	       1, 0);
-#endif /* HAVE_LIBJPEG */
-#ifdef HAVE_LIBPNG
+#endif /* SIMAGE_JPEG_SUPPORT */
+#ifdef SIMAGE_PNG_SUPPORT
     add_loader(&png_loader, 
 	       simage_png_load,
 	       simage_png_identify,
 	       simage_png_error,
 	       1, 0);
-#endif /* HAVE_LIBPNG */
-#if !defined(SIMAGE_EXCLUDE_SIMAGE_TGA)
+#endif /* SIMAGE_PNG_SUPPORT */
+#ifdef SIMAGE_TGA_SUPPORT
     add_loader(&targa_loader, 
 	       simage_tga_load,
 	       simage_tga_identify,
 	       simage_tga_error,
 	       1, 0);
-#endif
-#ifdef HAVE_LIBTIFF
+#endif /* SIMAGE_TGA_SUPPORT */
+#ifdef SIMAGE_TIFF_SUPPORT
     add_loader(&tiff_loader, 
 	       simage_tiff_load,
 	       simage_tiff_identify,
 	       simage_tiff_error,
 	       1, 0);
-#endif /* HAVE_LIBTIFF */
-#if !defined(SIMAGE_EXCLUDE_SIMAGE_RGB)
+#endif /* SIMAGE_TIFF_SUPPORT */
+#ifdef SIMAGE_RGB_SUPPORT
     add_loader(&rgb_loader, 
 	       simage_rgb_load,
 	       simage_rgb_identify,
 	       simage_rgb_error,
 	       1, 0);
-#endif
-#if !defined(SIMAGE_EXCLUDE_SIMAGE_PIC)
+#endif /* SIMAGE_RGB_SUPPORT */
+#ifdef SIMAGE_PIC_SUPPORT
     add_loader(&pic_loader, 
 	       simage_pic_load,
 	       simage_pic_identify,
 	       simage_pic_error,
 	       1, 0);
-#endif
+#endif /* SIMAGE_PIC_SUPPORT */
   }
 }
 
@@ -170,11 +173,12 @@ simage_read_image(const char *filename,
 		   int *width, int *height,
 		   int *numComponents)
 {
-  add_internal_loaders();
-  
   FILE *fp;
   char buf[256] = {0};
+  loader_data *loader;
 
+  add_internal_loaders();
+  
   fp = fopen(filename, "rb");
   if (!fp) return NULL;
 
@@ -184,7 +188,7 @@ simage_read_image(const char *filename,
   }
   fclose(fp);
   
-  loader_data *loader = find_loader(filename);
+  loader = find_loader(filename);
   if (loader) return loader->funcs.load_func(filename, width, height, numComponents);
   else return NULL;
 }
@@ -197,11 +201,11 @@ simage_check_supported(const char *filename)
 }
 
 void *
-simage_add_plugin_loader(const simage_plugin *plugin, int addbefore)
+simage_add_plugin_loader(const struct simage_plugin *plugin, int addbefore)
   
 {
   add_internal_loaders();
-  return add_loader(new loader_data, 
+  return add_loader(malloc(sizeof(loader_data)), 
 		    plugin->load_func, 
 		    plugin->identify_func,
 		    plugin->error_func,
@@ -225,7 +229,7 @@ simage_remove_plugin_loader(void *handle)
     }
     if (prev) prev->next = loader->next;
     else first_loader = loader->next;
-    delete loader;
+    if (loader) free(loader);
   }
 }
 
@@ -237,23 +241,24 @@ simage_resize(unsigned char *src, int width,
 	      int height, int num_comp,
 	      int newwidth, int newheight)
 {
+  float sx, sy, dx, dy;
+  int src_bpr, dest_bpr, xstop, ystop, x, y, offset, i;
   unsigned char *dest = 
     (unsigned char*) malloc(newwidth*newheight*num_comp);
   
-  float sx, sy, dx, dy;
-  dx = float(width)/float(newwidth);
-  dy = float(height)/float(newheight);
-  int src_bpr = width * num_comp;
-  int dest_bpr = newwidth * num_comp;
+  dx = ((float)width)/((float)newwidth);
+  dy = ((float)height)/((float)newheight);
+  src_bpr = width * num_comp;
+  dest_bpr = newwidth * num_comp;
   
   sy = 0.0f;
-  int ystop = newheight * dest_bpr;
-  int xstop = newwidth * num_comp;   
-  for (int y = 0; y < ystop; y += dest_bpr) {
+  ystop = newheight * dest_bpr;
+  xstop = newwidth * num_comp;   
+  for (y = 0; y < ystop; y += dest_bpr) {
     sx = 0.0f;
-    for (int x = 0; x < xstop; x += num_comp) {
-      int offset = int(sy)*src_bpr + int(sx)*num_comp;
-      for (int i = 0; i < num_comp; i++) dest[x+y+i] = src[offset+i];
+    for (x = 0; x < xstop; x += num_comp) {
+      offset = ((int)sy)*src_bpr + ((int)sx)*num_comp;
+      for (i = 0; i < num_comp; i++) dest[x+y+i] = src[offset+i];
       sx += dx;
     }
     sy += dy;
@@ -266,14 +271,14 @@ simage_resize(unsigned char *src, int width,
  * a helpful function
  */
 static int 
-cnt_bits(int val, int &highbit)
+cnt_bits(int val, int * highbit)
 {
   int cnt = 0;
-  highbit = 0;
+  *highbit = 0;
   while (val) {
     if (val & 1) cnt++;
     val>>=1;
-    highbit++;
+    *highbit++;
   }
   return cnt;  
 }
@@ -282,7 +287,7 @@ int
 simage_next_power_of_two(int val)
 {
   int highbit;
-  if (cnt_bits(val, highbit) > 1) {
+  if (cnt_bits(val, &highbit) > 1) {
     return 1<<highbit;
   }
   return val;  

@@ -344,12 +344,12 @@ rgbImageLoad(const char *fileName, RGBImageRec *final)
 }
 
 int 
-simage_rgb_identify(const char *,
+simage_rgb_identify(const char * ptr,
 		     const unsigned char *header,
 		     int headerlen)
 {
-  if (headerlen < 2) return 0;
   static unsigned char rgbcmp[] = {0x01, 0xda};
+  if (headerlen < 2) return 0;
   if (memcmp((const void*)header, 
 	     (const void*)rgbcmp, 2) == 0) return 1;
   return 0;
@@ -361,10 +361,11 @@ simage_rgb_load(const char *filename,
 		int *height,
 		int *numComponents)
 {
-  rgberror = ERR_NO_ERROR; /* clear error flag */
-
   unsigned char *buffer = NULL;
   RGBImageRec image;
+
+  rgberror = ERR_NO_ERROR; /* clear error flag */
+
   if (filename) {
     if (rgbImageLoad(filename, &image)) {
       *width = image.sizeX;

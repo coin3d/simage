@@ -1,7 +1,3 @@
-#include "config.h"
-
-#ifdef HAVE_LIBPNG
-
 /*
  * Based heavily on example code in libpng. Some bugs fixed though.
  */
@@ -12,9 +8,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-extern "C" {
 #include <png.h>
-}
 
 #define ERR_NO_ERROR 0
 #define ERR_OPEN     1
@@ -23,20 +17,20 @@ extern "C" {
 
 static int pngerror = ERR_NO_ERROR;
 
-// my setjmp buffer
+/* my setjmp buffer */
 static jmp_buf setjmp_buffer;
 
-// called my libpng
+/* called my libpng */
 static void 
-warn_callback(png_structp, png_const_charp)
+warn_callback(png_structp ps, png_const_charp pc)
 {
-  //FIXME: notify?
+  /*FIXME: notify? */
 }
 
 static void 
-err_callback(png_structp, png_const_charp)
+err_callback(png_structp ps, png_const_charp pc)
 {
-  // FIXME: store error message?
+  /* FIXME: store error message? */
   longjmp(setjmp_buffer, 1);
 }
 
@@ -59,12 +53,12 @@ simage_png_error(char * buffer, int buflen)
 }
 
 int 
-simage_png_identify(const char *,
-		     const unsigned char *header,
-		     int headerlen)
+simage_png_identify(const char * ptr,
+		    const unsigned char *header,
+		    int headerlen)
 {
-  if (headerlen < 8) return 0;
   static unsigned char pngcmp[] = {0x89, 'P', 'N', 'G', 0xd, 0xa, 0x1a, 0xa};
+  if (headerlen < 8) return 0;
   if (memcmp((const void*)header, 
 	     (const void*)pngcmp, 8) == 0) return 1;
   return 0;
@@ -82,6 +76,11 @@ simage_png_load(const char *filename,
   
   int bit_depth, color_type, interlace_type;
   FILE *fp;
+  unsigned char *buffer;
+  int bytes_per_row;
+  int number_passes;
+  int channels;
+  int format;
 
   if ((fp = fopen(filename, "rb")) == NULL) {
     pngerror = ERR_OPEN;
@@ -120,7 +119,7 @@ simage_png_load(const char *filename,
    * set up your own error handlers in the png_create_read_struct() earlier.
    */
 
-  unsigned char *buffer = NULL;
+  buffer = NULL;
 
   if (setjmp(setjmp_buffer)) {
     pngerror = ERR_PNGLIB;
@@ -189,9 +188,6 @@ simage_png_load(const char *filename,
 
   png_read_update_info(png_ptr, info_ptr);
 
-  int bytes_per_row;
-  int number_passes;
-  int channels;
   number_passes = png_set_interlace_handling(png_ptr);
   channels = png_get_channels(png_ptr, info_ptr);
 
@@ -201,14 +197,14 @@ simage_png_load(const char *filename,
   
   buffer = (unsigned char*) malloc(bytes_per_row*height);
 
-  int format = channels; // this is safer than the above
+  format = channels; /* this is safer than the above */
 
   if (buffer) {
     int pass, y;
     unsigned char *dummytab[1];
     for (pass = 0; pass < number_passes; pass++) {
       for ( y = 0; (uint) y < height; y++ ) {
-	// flips image upside down
+	/* flips image upside down */
 	dummytab[0] = &buffer[bytes_per_row*(height-1-y)];
 	png_read_rows(png_ptr, dummytab, NULL, 1);
       }
@@ -236,5 +232,3 @@ simage_png_load(const char *filename,
   }
   return buffer;
 }
-
-#endif /* HAVE_LIBPNG */

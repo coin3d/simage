@@ -1,6 +1,12 @@
 #ifndef _SIMAGE_PIC_H_
 #define _SIMAGE_PIC_H_
 
+#include <config.h>
+
+#ifndef SIMAGE_PIC_SUPPORT
+#error "This file should not be used under the current configuration!"
+#endif /* !SIMAGE_PIC_SUPPORT */
+
 unsigned char *simage_pic_load(const char *filename,
 				int *width,
 				int *height,

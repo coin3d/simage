@@ -1,7 +1,3 @@
-#include "config.h"
-
-#ifdef HAVE_LIBTIFF
-
 /*
  * based on example code found in libtiff
  * 
@@ -48,15 +44,15 @@ simage_tiff_error(char * buffer, int buflen)
 
 
 static void 
-tiff_error(const char* /*module*/, const char* /*fmt*/, va_list)
+tiff_error(const char* module, const char* fmt, va_list list)
 {
-  // FIXME: store error message ?
+  /* FIXME: store error message ? */
 }
 
 static void 
-tiff_warn(const char * /*module*/, const char * /*fmt*/, va_list)
+tiff_warn(const char * module, const char * fmt, va_list list)
 {
-  // FIXME: notify?
+  /* FIXME: notify? */
 }
 
 static int
@@ -65,13 +61,12 @@ checkcmap(int n, uint16* r, uint16* g, uint16* b)
   while (n-- > 0)
     if (*r++ >= 256 || *g++ >= 256 || *b++ >= 256)
       return (16);
-  // Assuming 8-bit colormap
+  /* Assuming 8-bit colormap */
   return (8);
 }
 
 static void 
-convertrow(unsigned char *ptr,
-	   unsigned char *data, int n, int invert)
+invert_row(unsigned char *ptr, unsigned char *data, int n, int invert)
 {
   while (n--) {
     if (invert) *ptr++ = 255 - *data++;
@@ -81,9 +76,8 @@ convertrow(unsigned char *ptr,
 
 
 static void 
-convertrow(unsigned char *ptr,
-	   unsigned char *data, int n, unsigned short *rmap,
-	   unsigned short *gmap, unsigned short *bmap)
+remap_row(unsigned char *ptr, unsigned char *data, int n,
+	  unsigned short *rmap, unsigned short *gmap, unsigned short *bmap)
 {
   unsigned int ix;
   while (n--) {
@@ -95,7 +89,7 @@ convertrow(unsigned char *ptr,
 }
 
 static void 
-convertrow(unsigned char *ptr, unsigned char *data, int n)
+copy_row(unsigned char *ptr, unsigned char *data, int n)
 {
   while (n--) {
     *ptr++ = *data++;
@@ -105,9 +99,9 @@ convertrow(unsigned char *ptr, unsigned char *data, int n)
 }
 
 static void 
-convertrow(unsigned char *ptr, 
-	   unsigned char *red, unsigned char *blue, 
-	   unsigned char *green, int n)
+interleave_row(unsigned char *ptr,
+	       unsigned char *red, unsigned char *blue, unsigned char *green,
+	       int n)
 {
   while (n--) {
     *ptr++ = *red++;
@@ -117,19 +111,20 @@ convertrow(unsigned char *ptr,
 }
 
 int 
-simage_tiff_identify(const char *,
-		      const unsigned char *header,
-		      int headerlen)
+simage_tiff_identify(const char *ptr,
+		     const unsigned char *header,
+		     int headerlen)
 {
-  if (headerlen < 6) return 0;
   static unsigned char tifcmp[] = {0x4d, 0x4d, 0x0, 0x2a, 0, 0};
   static unsigned char tifcmp2[] = {0x49, 0x49, 0x2a, 0}; 
+
+  if (headerlen < 6) return 0;
   if (memcmp((const void*)header, (const void*)tifcmp, 6) == 0) return 1;
   if (memcmp((const void*)header, (const void*)tifcmp2, 4) == 0) return 1;
   return 0;
 }
 
-// useful defines (undef'ed below)
+/* useful defines (undef'ed below) */
 #define	CVT(x)		(((x) * 255L) / ((1L<<16)-1))
 #define	pack(a,b)	((a)<<8 | (b))
 
@@ -143,6 +138,20 @@ simage_tiff_load(const char *filename,
   uint16 samplesperpixel;
   uint16 bitspersample;
   uint16 photometric;
+  uint32 w, h;
+  uint16 config;
+  uint16* red;
+  uint16* green;
+  uint16* blue;
+  unsigned char *inbuf = NULL;
+  tsize_t rowsize;
+  uint32 row;
+  int format;
+  unsigned char *buffer;
+  int width;
+  int height;
+  unsigned char *currPtr;
+
 
   TIFFSetErrorHandler(tiff_error);
   TIFFSetWarningHandler(tiff_warn);
@@ -156,7 +165,7 @@ simage_tiff_load(const char *filename,
     if (photometric != PHOTOMETRIC_RGB && photometric != PHOTOMETRIC_PALETTE &&
 	photometric != PHOTOMETRIC_MINISWHITE && 
 	photometric != PHOTOMETRIC_MINISBLACK) {
-      //Bad photometric; can only handle Grayscale, RGB and Palette images :-(
+      /*Bad photometric; can only handle Grayscale, RGB and Palette images :-( */
       TIFFClose(in);
       tifferror = ERR_UNSUPPORTED;
       return NULL;
@@ -170,7 +179,7 @@ simage_tiff_load(const char *filename,
   
   if (TIFFGetField(in, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel) == 1) {
     if (samplesperpixel != 1 && samplesperpixel != 3) {
-      // Bad samples/pixel
+      /* Bad samples/pixel */
       tifferror = ERR_UNSUPPORTED;
       TIFFClose(in);
       return NULL;
@@ -184,7 +193,7 @@ simage_tiff_load(const char *filename,
 	
   if (TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &bitspersample) == 1) {
     if (bitspersample != 8) {
-      // can only handle 8-bit samples.
+      /* can only handle 8-bit samples. */
       TIFFClose(in);
       tifferror = ERR_UNSUPPORTED;
       return NULL;
@@ -195,16 +204,6 @@ simage_tiff_load(const char *filename,
     TIFFClose(in);
     return NULL;
   }
-
-  uint32 w, h;
-  uint16 config;
-  uint16* red;
-  uint16* green;
-  uint16* blue;
-  unsigned char *inbuf = NULL;
-  tsize_t rowsize;
-  uint32 row;
-  int format;
 
   if (TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &w) != 1 ||
       TIFFGetField(in, TIFFTAG_IMAGELENGTH, &h) != 1 ||
@@ -220,8 +219,7 @@ simage_tiff_load(const char *filename,
   else
     format = 3;
 
-  unsigned char *buffer = (unsigned char*)
-    malloc(w*h*format);
+  buffer = (unsigned char*)malloc(w*h*format);
   
   if (!buffer) {
     tifferror = ERR_MEM;
@@ -229,10 +227,10 @@ simage_tiff_load(const char *filename,
     return NULL;
   }
 
-  int width = w;
-  int height = h;
+  width = w;
+  height = h;
   
-  unsigned char *currPtr = buffer + (h-1)*w*format;
+  currPtr = buffer + (h-1)*w*format;
   
   tifferror = ERR_NO_ERROR;
 
@@ -242,13 +240,13 @@ simage_tiff_load(const char *filename,
   case pack(PHOTOMETRIC_MINISWHITE, PLANARCONFIG_SEPARATE):
   case pack(PHOTOMETRIC_MINISBLACK, PLANARCONFIG_SEPARATE):
 
-    inbuf = new unsigned char[TIFFScanlineSize(in)];
+    inbuf = (unsigned char *)malloc(TIFFScanlineSize(in));
     for (row = 0; row < h; row++) {
       if (TIFFReadScanline(in, inbuf, row, 0) < 0) {
 	tifferror = ERR_READ;
 	break;
       }
-      convertrow(currPtr, inbuf, w, photometric == PHOTOMETRIC_MINISWHITE);  
+      invert_row(currPtr, inbuf, w, photometric == PHOTOMETRIC_MINISWHITE);  
       currPtr -= format*w;
     }
     break;
@@ -257,10 +255,10 @@ simage_tiff_load(const char *filename,
   case pack(PHOTOMETRIC_PALETTE, PLANARCONFIG_SEPARATE):
     if (TIFFGetField(in, TIFFTAG_COLORMAP, &red, &green, &blue) != 1)
       tifferror = ERR_READ;
-    //
-    // Convert 16-bit colormap to 8-bit (unless it looks
-    // like an old-style 8-bit colormap).
-    //
+    /* */
+    /* Convert 16-bit colormap to 8-bit (unless it looks */
+    /* like an old-style 8-bit colormap). */
+    /* */
     if (!tifferror && checkcmap(1<<bitspersample, red, green, blue) == 16) {
       int i;
       for (i = (1<<bitspersample)-1; i >= 0; i--) {
@@ -270,40 +268,41 @@ simage_tiff_load(const char *filename,
       }
     }
 
-    inbuf = new unsigned char[TIFFScanlineSize(in)];
+    inbuf = (unsigned char *)malloc(TIFFScanlineSize(in));
     for (row = 0; row < h; row++) {
       if (TIFFReadScanline(in, inbuf, row, 0) < 0) {
 	tifferror = ERR_READ;
 	break;
       }
-      convertrow(currPtr, inbuf, w, red, green, blue);
+      remap_row(currPtr, inbuf, w, red, green, blue);
       currPtr -= format*w;
     }
     break;
 
   case pack(PHOTOMETRIC_RGB, PLANARCONFIG_CONTIG):
-    inbuf = new unsigned char[TIFFScanlineSize(in)];
+    inbuf = (unsigned char *)malloc(TIFFScanlineSize(in));
     for (row = 0; row < h; row++) {
       if (TIFFReadScanline(in, inbuf, row, 0) < 0) {
 	tifferror = ERR_READ;
 	break;
       }
-      convertrow(currPtr, inbuf, w);  
+      copy_row(currPtr, inbuf, w);  
       currPtr -= format*w;
     }
     break;
 
   case pack(PHOTOMETRIC_RGB, PLANARCONFIG_SEPARATE):
     rowsize = TIFFScanlineSize(in);
-    inbuf = new unsigned char[3*rowsize];
+    inbuf = (unsigned char *)malloc(3*rowsize);
     for (row = 0; !tifferror && row < h; row++) {
-      for (int s = 0; s < 3; s++) {
+      int s;
+      for (s = 0; s < 3; s++) {
 	if (TIFFReadScanline(in, inbuf+s*rowsize, row, s) < 0) {
 	  tifferror = ERR_READ; break;
 	}
       }
       if (!tifferror) {
-	convertrow(currPtr, inbuf, inbuf+rowsize, inbuf+2*rowsize, w);
+	interleave_row(currPtr, inbuf, inbuf+rowsize, inbuf+2*rowsize, w);
 	currPtr -= format*w;
       }
     }
@@ -313,7 +312,7 @@ simage_tiff_load(const char *filename,
     break;
   }
   
-  if (inbuf) delete [] inbuf;
+  if (inbuf) free(inbuf);
   TIFFClose(in);
   
   if (tifferror) {
@@ -328,5 +327,3 @@ simage_tiff_load(const char *filename,
 
 #undef CVT
 #undef pack
-
-#endif /* HAVE_LIBTIFF */

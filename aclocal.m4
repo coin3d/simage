@@ -736,3 +736,16 @@ AC_DEFUN(AM_SYS_NM_PARSE, [indir([AC_SYS_NM_PARSE])])dnl
 AC_DEFUN(AM_SYS_SYMBOL_UNDERSCORE, [indir([AC_SYS_SYMBOL_UNDERSCORE])])dnl
 AC_DEFUN(AM_SYS_LIBTOOL_CYGWIN, [indir([AC_SYS_LIBTOOL_CYGWIN])])dnl
 
+# Define a conditional.
+
+AC_DEFUN(AM_CONDITIONAL,
+[AC_SUBST($1_TRUE)
+AC_SUBST($1_FALSE)
+if $2; then
+  $1_TRUE=
+  $1_FALSE='#'
+else
+  $1_TRUE='#'
+  $1_FALSE=
+fi])
+

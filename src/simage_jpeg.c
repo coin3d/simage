@@ -1,7 +1,3 @@
-#include "config.h"
-
-#ifdef HAVE_LIBJPEG
-
 /*
  * Based on example code found in the libjpeg archive
  *
@@ -11,9 +7,7 @@
 
 #include <stdio.h>
 
-extern "C" {
 #include <jpeglib.h>
-}
 
 #include <setjmp.h>
 #include <string.h>
@@ -70,12 +64,12 @@ my_error_exit (j_common_ptr cinfo)
 }
 
 int 
-simage_jpeg_identify(const char *,
-		      const unsigned char *header,
-		      int headerlen)
+simage_jpeg_identify(const char * ptr,
+		     const unsigned char *header,
+		     int headerlen)
 {
-  if (headerlen < 4) return 0;
   static unsigned char jpgcmp[] = {'J', 'F', 'I', 'F' };
+  if (headerlen < 4) return 0;
   if (memcmp((const void*)&header[6], 
 	     (const void*)jpgcmp, 4) == 0) return 1;
   return 0;
@@ -97,8 +91,11 @@ simage_jpeg_load(const char *filename,
 		 int *height_ret,
 		 int *numComponents_ret)
 {
-  jpegerror = ERR_NO_ERROR;
-
+  int width;
+  int height;
+  unsigned char *currPtr;
+  int format;
+  unsigned char *buffer;
   /* This struct contains the JPEG decompression parameters and pointers to
    * working space (which is allocated as needed by the JPEG library).
    */
@@ -113,6 +110,8 @@ simage_jpeg_load(const char *filename,
   JSAMPARRAY rowbuffer;            /* Output row buffer */
   int row_stride;               /* physical row width in output buffer */
 
+  jpegerror = ERR_NO_ERROR;
+
   /* In this example we want to open the input file before doing anything else,
    * so that the setjmp() error recovery below can assume the file is open.
    * VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
@@ -126,7 +125,7 @@ simage_jpeg_load(const char *filename,
 
   /* Step 1: allocate and initialize JPEG decompression object */
 
-  unsigned char *buffer = NULL;
+  buffer = NULL;
 
   /* We set up the normal JPEG error routines, then override error_exit. */
   cinfo.err = jpeg_std_error(&jerr.pub);
@@ -163,13 +162,12 @@ simage_jpeg_load(const char *filename,
    * jpeg_read_header(), so we do nothing here.
    */
 
-  int format;
   /* Step 5: Start decompressor */
   if (cinfo.jpeg_color_space == JCS_GRAYSCALE) {
     format = 1;
     cinfo.out_color_space = JCS_GRAYSCALE;
   }
-  else { // use rgb
+  else { /* use rgb */
     format = 3;
     cinfo.out_color_space = JCS_RGB;
   }
@@ -190,9 +188,8 @@ simage_jpeg_load(const char *filename,
   /* Make a one-row-high sample array that will go away when done with image */
   rowbuffer = (*cinfo.mem->alloc_sarray)
     ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
-  int width = cinfo.output_width;
-  int height = cinfo.output_height;
-  unsigned char *currPtr;
+  width = cinfo.output_width;
+  height = cinfo.output_height;
   buffer = currPtr = (unsigned char*) 
     malloc(width*height*cinfo.output_components);
   
@@ -251,5 +248,3 @@ simage_jpeg_load(const char *filename,
   }
   return buffer;
 }
-
-#endif /* HAVE_LIBJPEG */

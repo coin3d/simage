@@ -1,5 +1,12 @@
 /* config.h.in.  Generated automatically from configure.in by autoheader.  */
 
+#undef SIMAGE_JPEG_SUPPORT
+#undef SIMAGE_TIFF_SUPPORT
+#undef SIMAGE_PNG_SUPPORT
+#undef SIMAGE_TGA_SUPPORT
+#undef SIMAGE_RGB_SUPPORT
+#undef SIMAGE_PIC_SUPPORT
+
 /* Define if you have the jpeg library (-ljpeg).  */
 #undef HAVE_LIBJPEG
 
