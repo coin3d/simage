@@ -19495,6 +19495,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 # **************************************************************************
 # Check if qimage support is wanted (and if so, available)
 
+echo "PRE LIBS: $LIBS";
 sim_ac_qimage_support=false
 if $sim_ac_qimage_support_wanted; then
 
@@ -20228,17 +20229,34 @@ echo "${ECHO_T}ok" >&6
     ;;
   esac
 
+  # We should only *test* availability, not mutate the LIBS/CPPFLAGS
+  # variables ourselves inside this macro. 20041021 larsa
+  CPPFLAGS=$sim_ac_save_cppflags
+  LDFLAGS=$sim_ac_save_ldflags
+  LIBS=$sim_ac_save_libs
   if test ! x"$sim_ac_qt_libs" = xUNRESOLVED; then
     sim_ac_qt_avail=yes
-    CPPFLAGS="$sim_ac_qt_cppflags $sim_ac_save_cppflags"
-    LIBS="$sim_ac_qt_libs $sim_ac_save_libs"
+    #CPPFLAGS="$sim_ac_qt_cppflags $sim_ac_save_cppflags"
+    #LIBS="$sim_ac_qt_libs $sim_ac_save_libs"
 
     SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_qt_cppflags"
     SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_qt_ldflags"
     SIMAGE_EXTRA_LIBS="$sim_ac_qt_libs $SIMAGE_EXTRA_LIBS"
     CPPFLAGS="$CPPFLAGS $sim_ac_qt_cppflags"
-    LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
-    LIBS="$sim_ac_qt_libs $LIBS"
+    # this is probably bogus - it's whether Qt is static or dynamic that's the
+    # real issue, or?  20041021 larsa
+    if $SIMAGE_STATIC; then
+      if $BUILD_WITH_MSVC; then
+	echo "LIBS: $LIBS";
+        :
+      else
+        LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
+        LIBS="$sim_ac_qt_libs $LIBS"
+      fi
+    else
+      LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
+      LIBS="$sim_ac_qt_libs $LIBS"
+    fi
     sim_ac_qimage_support=true
 
   else
@@ -20246,9 +20264,6 @@ echo "${ECHO_T}ok" >&6
       { echo "$as_me:$LINENO: WARNING: QTDIR environment variable not set -- this might be an indication of a problem" >&5
 echo "$as_me: WARNING: QTDIR environment variable not set -- this might be an indication of a problem" >&2;}
     fi
-    CPPFLAGS=$sim_ac_save_cppflags
-    LDFLAGS=$sim_ac_save_ldflags
-    LIBS=$sim_ac_save_libs
 
     { echo "$as_me:$LINENO: WARNING: can't compile and link against Qt development kit" >&5
 echo "$as_me: WARNING: can't compile and link against Qt development kit" >&2;}

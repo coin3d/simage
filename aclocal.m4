@@ -7836,18 +7836,20 @@ recommend you to upgrade.])
     ;;
   esac
 
+  # We should only *test* availability, not mutate the LIBS/CPPFLAGS
+  # variables ourselves inside this macro. 20041021 larsa
+  CPPFLAGS=$sim_ac_save_cppflags
+  LDFLAGS=$sim_ac_save_ldflags
+  LIBS=$sim_ac_save_libs
   if test ! x"$sim_ac_qt_libs" = xUNRESOLVED; then
     sim_ac_qt_avail=yes
-    CPPFLAGS="$sim_ac_qt_cppflags $sim_ac_save_cppflags"
-    LIBS="$sim_ac_qt_libs $sim_ac_save_libs"
+    #CPPFLAGS="$sim_ac_qt_cppflags $sim_ac_save_cppflags"
+    #LIBS="$sim_ac_qt_libs $sim_ac_save_libs"
     $1
   else
     if test -z "$QTDIR"; then
       AC_MSG_WARN([QTDIR environment variable not set -- this might be an indication of a problem])
     fi
-    CPPFLAGS=$sim_ac_save_cppflags
-    LDFLAGS=$sim_ac_save_ldflags
-    LIBS=$sim_ac_save_libs
     $2
   fi
 fi
