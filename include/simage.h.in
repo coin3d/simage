@@ -93,13 +93,13 @@
 
 /* Enable to generate SIMAGE.DLL (under Win32). */
 #ifdef SIMAGE_MAKE_DLL
-#define SIMAGE_DLL_EXPORT __declspec(dllexport)
+#define SIMAGE_DLL_API __declspec(dllexport)
 #else
 #ifdef SIMAGE_DLL
-#define SIMAGE_DLL_EXPORT __declspec(dllimport)
+#define SIMAGE_DLL_API __declspec(dllimport)
 #else
 /* Empty define to avoid errors when _not_ compiling as a DLL. */
-#define SIMAGE_DLL_EXPORT
+#define SIMAGE_DLL_API
 #endif
 #endif /* !SIMAGE_MAKE_DLL */
 
@@ -109,31 +109,31 @@ extern "C" {
 #endif
 
   /* run-time version checking */
-  SIMAGE_DLL_EXPORT void simage_version(int * major, int * minor, int * micro);
+  SIMAGE_DLL_API void simage_version(int * major, int * minor, int * micro);
 
   /* check if image file format is supported */
-  SIMAGE_DLL_EXPORT int simage_check_supported(const char * filename);
+  SIMAGE_DLL_API int simage_check_supported(const char * filename);
 
   /* reading and parsing image files */
   /* returned image buffer must be freed by simage_free_image() */
-  SIMAGE_DLL_EXPORT unsigned char * simage_read_image(const char * filename,
+  SIMAGE_DLL_API unsigned char * simage_read_image(const char * filename,
                                                       int * w, int * h,
                                                       int * numcomponents);
 
   /* check this if simage_read_image returns NULL or simage_write_image returns 0 */
-  SIMAGE_DLL_EXPORT const char * simage_get_last_error(void);
+  SIMAGE_DLL_API const char * simage_get_last_error(void);
 
   /* free resources allocated by either simage_read_image() or
      simage_resize() (Windows goes berzerk if you call free() from the
      client application) */
-  SIMAGE_DLL_EXPORT void simage_free_image(unsigned char * imagedata);
+  SIMAGE_DLL_API void simage_free_image(unsigned char * imagedata);
   
   /* convenience function */
-  SIMAGE_DLL_EXPORT int simage_next_power_of_two(int val);
+  SIMAGE_DLL_API int simage_next_power_of_two(int val);
 
   /* scale the input image and return a new image with the given dimensions */
   /* returned image buffer must be freed by simage_free_image() */
-  SIMAGE_DLL_EXPORT unsigned char * simage_resize(unsigned char * imagedata,
+  SIMAGE_DLL_API unsigned char * simage_resize(unsigned char * imagedata,
                                                   int width, int height,
                                                   int numcomponents,
                                                   int newwidth, int newheight);
@@ -150,9 +150,9 @@ extern "C" {
     int (*error_func)(char * textbuffer, int bufferlen);
   };
 
-  SIMAGE_DLL_EXPORT void * simage_add_loader(const struct simage_plugin * l,
+  SIMAGE_DLL_API void * simage_add_loader(const struct simage_plugin * l,
                                              int addbefore);
-  SIMAGE_DLL_EXPORT void simage_remove_loader(void * handle);
+  SIMAGE_DLL_API void simage_remove_loader(void * handle);
 
 
   /*****************************************************************/
@@ -160,15 +160,15 @@ extern "C" {
   /*****************************************************************/
   
   /* check if export is available for a filetype. Returns 1 if supported, 0 otherwise */
-  SIMAGE_DLL_EXPORT int simage_check_save_supported(const char * filenameextension);
+  SIMAGE_DLL_API int simage_check_save_supported(const char * filenameextension);
   
   /* save image. use simage_check_write_supported first, please */
-  SIMAGE_DLL_EXPORT int simage_save_image(const char * filename,
+  SIMAGE_DLL_API int simage_save_image(const char * filename,
                                           const unsigned char * bytes,
                                           int w, int h, int numcomponents,
                                           const char * filenameextension);
   
-  SIMAGE_DLL_EXPORT void * simage_add_saver(int (*save_func)(const char * name,
+  SIMAGE_DLL_API void * simage_add_saver(int (*save_func)(const char * name,
                                                              const unsigned char * bytes,
                                                              int width, int height, int nc),
                                             int (*error_func)(char * textbuffer, int bufferlen),
@@ -177,12 +177,12 @@ extern "C" {
                                             const char * description,
                                             int addbefore);
   
-  SIMAGE_DLL_EXPORT void simage_remove_saver(void * handle);
-  SIMAGE_DLL_EXPORT int simage_get_num_savers(void);
-  SIMAGE_DLL_EXPORT void * simage_get_saver_handle(int idx);
-  SIMAGE_DLL_EXPORT const char * simage_get_saver_extensions(void * handle);
-  SIMAGE_DLL_EXPORT const char * simage_get_saver_fullname(void * handle);
-  SIMAGE_DLL_EXPORT const char * simage_get_saver_description(void * handle);
+  SIMAGE_DLL_API void simage_remove_saver(void * handle);
+  SIMAGE_DLL_API int simage_get_num_savers(void);
+  SIMAGE_DLL_API void * simage_get_saver_handle(int idx);
+  SIMAGE_DLL_API const char * simage_get_saver_extensions(void * handle);
+  SIMAGE_DLL_API const char * simage_get_saver_fullname(void * handle);
+  SIMAGE_DLL_API const char * simage_get_saver_description(void * handle);
 
 
   /*****************************************************************/
