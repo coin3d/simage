@@ -1315,7 +1315,7 @@ true)
   sim_ac_libungif_save_LDFLAGS=$LDFLAGS
   sim_ac_libungif_save_LIBS=$LIBS
   sim_ac_libungif_debug=false
-  echo "$CPPFLAGS $CFLAGS $CXXFLAGS" | egrep -q -- "-g\\>" &&
+  test -n "`echo -- $CPPFLAGS $CFLAGS $CXXFLAGS | grep -- '-g\\>'`" &&
     sim_ac_libungif_debug=true
   test -z "$sim_ac_libungif_path" -a x"$prefix" != xNONE &&
     sim_ac_libungif_path=$prefix
@@ -1515,7 +1515,7 @@ true)
   sim_ac_libjpeg_save_LDFLAGS=$LDFLAGS
   sim_ac_libjpeg_save_LIBS=$LIBS
   sim_ac_libjpeg_debug=false
-  echo "$CPPFLAGS $CFLAGS $CXXFLAGS" | egrep -q -- "-g\\>" &&
+  test -n "`echo -- $CPPFLAGS $CFLAGS $CXXFLAGS | grep -- '-g\\>'`" &&
     sim_ac_libjpeg_debug=true
   test -z "$sim_ac_libjpeg_path" -a x"$prefix" != xNONE &&
     sim_ac_libjpeg_path=$prefix
@@ -1619,7 +1619,7 @@ true)
   sim_ac_libzlib_save_LDFLAGS=$LDFLAGS
   sim_ac_libzlib_save_LIBS=$LIBS
   sim_ac_libzlib_debug=false
-  echo "$CPPFLAGS $CFLAGS $CXXFLAGS" | egrep -q -- "-g\\>" &&
+  test -n "`echo -- $CPPFLAGS $CFLAGS $CXXFLAGS | grep -- '-g\\>'`" &&
     sim_ac_libzlib_debug=true
   test -z "$sim_ac_libzlib_path" -a x"$prefix" != xNONE &&
     sim_ac_libzlib_path=$prefix
@@ -1740,7 +1740,7 @@ true)
   sim_ac_libpng_save_LDFLAGS=$LDFLAGS
   sim_ac_libpng_save_LIBS=$LIBS
   sim_ac_libpng_debug=false
-  echo "$CPPFLAGS $CFLAGS $CXXFLAGS" | egrep -q -- "-g\\>" &&
+  test -n "`echo -- $CPPFLAGS $CFLAGS $CXXFLAGS | grep -- '-g\\>'`" &&
     sim_ac_libpng_debug=true
   test -z "$sim_ac_libpng_path" -a x"$prefix" != xNONE &&
     sim_ac_libpng_path=$prefix
@@ -1859,7 +1859,7 @@ true)
   sim_ac_libtiff_save_LDFLAGS=$LDFLAGS
   sim_ac_libtiff_save_LIBS=$LIBS
   sim_ac_libtiff_debug=false
-  echo "$CPPFLAGS $CFLAGS $CXXFLAGS" | egrep -q -- "-g\\>" &&
+  test -n "`echo -- $CPPFLAGS $CFLAGS $CXXFLAGS | grep -- '-g\\>'`" &&
     sim_ac_libtiff_debug=true
   test -z "$sim_ac_libtiff_path" -a x"$prefix" != xNONE &&
     sim_ac_libtiff_path=$prefix
