@@ -13,9 +13,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#ifndef __APPLE__
-#include <malloc.h>
-#endif
+#include <stdlib.h>
 #include <math.h>
 #include <assert.h>
 
