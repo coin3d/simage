@@ -5,3 +5,5 @@ config.log
 config.status
 stamp-h
 libtool
+stuff
+ChangeLog.bak
