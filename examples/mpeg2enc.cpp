@@ -134,6 +134,7 @@ main(int argc, char ** argv)
 
   s_params * params = s_params_create();
   s_params_set(params, 
+               "mime-type", S_STRING_PARAM_TYPE, "video/mpeg",
                "width", S_INTEGER_PARAM_TYPE, WIDTH,
                "height", S_INTEGER_PARAM_TYPE, HEIGHT,
 
