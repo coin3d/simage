@@ -47,7 +47,9 @@ simage_rgb_error(char * buffer, int buflen)
   case ERR_SIZEZ:
     strncpy(buffer, "RGB loader: Unsupported zsize", buflen);
     break;
-  } 
+  case ERR_OPEN_WRITE:
+    strncpy(buffer, "RGB loader: Error opening file for writing", buflen);
+  }
   return rgberror;
 }
 
