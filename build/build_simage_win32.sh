@@ -586,32 +586,32 @@ for SIMAGE_SOUND in yes no; do
 
     cd $SIMAGE_CONFIGURE/simage/$SIMAGE_SOUND_DIRNAME/$SIMAGE_CRT
 
-  if test -e "config.status"; then
-    echo "[SIMAGE]         Rechecking existing configuration in simage/$SIMAGE_SOUND_DIRNAME/$SIMAGE_CRT"
-    ./config.status --recheck && ./config.status
-  else
-    echo "[SIMAGE]         Configuring from scratch in simage/$SIMAGE_SOUND_DIRNAME/$SIMAGE_CRT"
+    if test -e "config.status"; then
+      echo "[SIMAGE]         Rechecking existing configuration in simage/$SIMAGE_SOUND_DIRNAME/$SIMAGE_CRT"
+      ./config.status --recheck && ./config.status
+    else
+      echo "[SIMAGE]         Configuring from scratch in simage/$SIMAGE_SOUND_DIRNAME/$SIMAGE_CRT"
 
-    SIMAGE_EXTRAFLAGS1=""
-    if test "X$SIMAGE_CRT" = "Xmd"; then
-      SIMAGE_EXTRAFLAGS1="--disable-debug --disable-symbols"
-    elif test "X$SIMAGE_CRT" = "Xmt"; then
-      SIMAGE_EXTRAFLAGS1="--disable-debug --disable-symbols"
+      SIMAGE_EXTRAFLAGS1=""
+      if test "X$SIMAGE_CRT" = "Xmd"; then
+        SIMAGE_EXTRAFLAGS1="--disable-debug --disable-symbols"
+      elif test "X$SIMAGE_CRT" = "Xmt"; then
+        SIMAGE_EXTRAFLAGS1="--disable-debug --disable-symbols"
+      fi
+
+      SIMAGE_EXTRAFLAGS2=""
+      if test "X$SIMAGE_SOUND" = "Xyes"; then
+        SIMAGE_EXTRAFLAGS2="--with-oggvorbis=$SIMAGE_SDK/oggvorbis/$SIMAGE_CRT/ --with-libsndfile=$SIMAGE_SDK/libsndfile/$SIMAGE_CRT"
+      fi
+
+      $SIMAGE_CHECKOUT/simage/configure --with-jpeg=$SIMAGE_SDK/libjpeg/$SIMAGE_CRT --with-zlib=$SIMAGE_SDK/zlib/$SIMAGE_CRT --with-png=$SIMAGE_SDK/libpng/$SIMAGE_CRT --with-tiff=$SIMAGE_SDK/libtiff/$SIMAGE_CRT --with-pic --with-rgb --with-targa --with-avienc --enable-dependency-tracking --with-msvcrt=$SIMAGE_CRT --with-suffix=_$SIMAGE_SOUND_NAME$SIMAGE_CRT --with-alternate=$SIMAGE_SOUND_NAME$SIMAGE_CRT --prefix=$SIMAGE_INSTALL --enable-static $SIMAGE_EXTRAFLAGS1 $SIMAGE_EXTRAFLAGS2
+
     fi
 
-    SIMAGE_EXTRAFLAGS2=""
-    if test "X$SIMAGE_SOUND" = "Xyes"; then
-      SIMAGE_EXTRAFLAGS2="--with-oggvorbis=$SIMAGE_SDK/oggvorbis/$SIMAGE_CRT/ --with-libsndfile=$SIMAGE_SDK/libsndfile/$SIMAGE_CRT"
-    fi
+    echo "[SIMAGE]         Making install in simage/$SIMAGE_CRT"
+    make install
 
-    $SIMAGE_CHECKOUT/simage/configure --with-jpeg=$SIMAGE_SDK/libjpeg/$SIMAGE_CRT --with-zlib=$SIMAGE_SDK/zlib/$SIMAGE_CRT --with-png=$SIMAGE_SDK/libpng/$SIMAGE_CRT --with-tiff=$SIMAGE_SDK/libtiff/$SIMAGE_CRT --with-pic --with-rgb --with-targa --with-avienc --enable-dependency-tracking --with-msvcrt=$SIMAGE_CRT --with-suffix=_$SIMAGE_SOUND_NAME$SIMAGE_CRT --with-alternate=$SIMAGE_SOUND_NAME$SIMAGE_CRT --prefix=$SIMAGE_INSTALL --enable-static $SIMAGE_EXTRAFLAGS1 $SIMAGE_EXTRAFLAGS2
-
-  fi
-
-  echo "[SIMAGE]         Making install in simage/$SIMAGE_CRT"
-  make install
-
-done # for SIMAGE_CRT
+  done # for SIMAGE_CRT
 
 done # for SIMAGE_SOUND
 
