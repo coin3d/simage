@@ -81,6 +81,37 @@ simage_png_identify(const char * ptr,
   return 0;
 }
 
+/* our method that reads from a FILE* and fills up the buffer that
+   libpng wants when parsing a PNG file */
+static void
+user_read_cb(png_structp png_ptr, png_bytep data, png_uint_32 length)
+{
+  int readlen = fread(data, 1, length, (FILE *)png_get_io_ptr(png_ptr));
+  if (readlen != length) {
+    /* FIXME: then what? png_error()? 20020821 mortene */
+  }
+}
+
+/* our method that write compressed png image data to a FILE* */
+static void
+user_write_cb(png_structp png_ptr, png_bytep data, png_uint_32 length)
+{
+  int writelen = fwrite(data, 1, length, (FILE *)png_get_io_ptr(png_ptr));
+  if (writelen != length) {
+    /* FIXME: then what? png_error()? 20020821 mortene */
+  }
+}
+
+/* our method that flushes written compressed png image data */
+static void
+user_flush_cb(png_structp png_ptr)
+{
+  int err = fflush((FILE *)png_get_io_ptr(png_ptr));
+  if (err != 0) {
+    /* FIXME: then what? png_error()? 20020821 mortene */
+  }
+}
+
 unsigned char *
 simage_png_load(const char *filename,
 		 int *width_ret,
@@ -149,8 +180,10 @@ simage_png_load(const char *filename,
     return NULL;
   }
   
-  /* Set up the input control if you are using standard C streams */
-  png_init_io(png_ptr, fp);
+  /*  we're not using png_init_io(), as we don't want to pass a FILE*
+      into libpng, in case it's an MSWindows DLL with a different CRT
+      (C run-time library) */
+  png_set_read_fn(png_ptr, (void *)fp, (png_rw_ptr)user_read_cb);
 
   /* The call to png_read_info() gives us all of the information from the
    * PNG file before the first IDAT (image data chunk).  REQUIRED
@@ -297,8 +330,12 @@ simage_png_save(const char *filename,
     pngerror = ERR_PNGLIB_WRITE;
     return 0;
   }
-  /* set up the output control if you are using standard C streams */
-  png_init_io(png_ptr, fp);
+
+  /*  we're not using png_init_io(), as we don't want to pass a FILE*
+      into libpng, in case it's an MSWindows DLL with a different CRT
+      (C run-time library) */
+  png_set_write_fn(png_ptr, (void *)fp, (png_rw_ptr)user_write_cb,
+                   (png_flush_ptr)user_flush_cb);
   
   /* Set the image information here.  Width and height are up to 2^31,
    * bit_depth is one of 1, 2, 4, 8, or 16, but valid values also depend on
