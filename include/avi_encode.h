@@ -19,3 +19,4 @@ int avi_end_encode(void *handle);
 
 
 #endif /* AVI_ENCODE_H_ */
+

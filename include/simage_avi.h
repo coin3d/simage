@@ -14,3 +14,4 @@ int avienc_movie_put(s_movie * movie, s_image * image, s_params * params);
 void avienc_movie_close(s_movie * movie);
 
 #endif /* SIMAGE_AVI_H */
+
