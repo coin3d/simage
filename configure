@@ -2363,7 +2363,7 @@ if test x"$with_zlib" != xno; then
   fi
 
   if test x"$sim_ac_linking_style" = xmswin; then
-    sim_ac_zlib_libs=z.lib
+    sim_ac_zlib_libs=zlib.lib
   else
     sim_ac_zlib_libs="-lz"
   fi
