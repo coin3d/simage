@@ -379,7 +379,16 @@ SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LIBS, $SIMAGE_EXTRA_LIBS)
 
 if $simage_build_with_msvc; then
   CPPFLAGS="-DSIMAGE_MAKE_DLL $CPPFLAGS"
-  SIMAGE_EXTRA_LIBS="-lsimage0 $SIMAGE_EXTRA_LIBS"
+
+  # We use a version suffix on the .dll-file, so several incompatible
+  # (major) versions can be installed on a system.
+  SIMAGE_EXTRA_LIBS="-lsimage$SIMAGE_MAJOR_VERSION $SIMAGE_EXTRA_LIBS"
+
+  # BTW, when linking DLLs, the 3rd-party .lib files will be
+  # linked into the .dll file. I believe it is still advisable to
+  # list all libs used upon `simage-config --libs`, as we can then
+  # also use them from "parent" code (remember that their interfaces
+  # is not exposed from the DLL) without any fuss.
 else
   SIMAGE_EXTRA_LIBS="-lsimage $SIMAGE_EXTRA_LIBS"
 fi
