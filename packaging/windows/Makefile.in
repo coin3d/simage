@@ -146,14 +146,14 @@ $(project).nsi: heading.nsi headerlist.nsi middle.nsi sourcelist.nsi bfheader.ns
 
 # **************************************************************************
 
-3rdparty/dist :
+3rdparty :
 	@if test -d 3rdparty; then :; else mkdir 3rdparty; fi
 	builddir=`pwd`; \
 	cd $(top_srcdir)/build; \
 	MAKEFLAGS=""; \
 	$(top_srcdir)/build/build_simage_libs_win32.sh $$builddir/3rdparty
 
-build-shared-release/src/Inventor/Win/$(project)$(major).dll: 3rdparty/dist $(Project)-$(VERSION)
+build-shared-release/src/Inventor/Win/$(project)$(major).dll: 3rdparty $(Project)-$(VERSION)
 	@if test -d build-shared-release; then :; else mkdir build-shared-release; fi
 	builddir=`pwd`; \
 	cd build-shared-release; \
@@ -179,7 +179,7 @@ build-shared-release/src/Inventor/Win/$(project)$(major).dll: 3rdparty/dist $(Pr
 
 shared-release: build-shared-release/src/Inventor/Win/$(project)$(major).dll
 
-build-shared-debug/src/Inventor/Win/$(project)$(major)d.dll: 3rdparty/dist $(Project)-$(VERSION)
+build-shared-debug/src/Inventor/Win/$(project)$(major)d.dll: 3rdparty $(Project)-$(VERSION)
 	@if test -d build-shared-debug; then :; else mkdir build-shared-debug; fi
 	builddir=`pwd`; \
 	cd build-shared-debug; \
@@ -253,7 +253,7 @@ static-debug: build-static-debug/src/Inventor/Win/$(project)$(major)d.dll
 
 buildfiles: build-files/$(project)$(major).dsp
 
-build-files/$(project)$(major).dsp: $(Project)-$(VERSION)
+build-files/$(project)$(major).dsp: $(Project)-$(VERSION) 3rdparty
 	@if test -d build-files; then :; else mkdir build-files; fi
 	@if test -e build-files/$(project)$(major).dsp; then \
 	rm build-files/$(project)$(major).*; fi
@@ -271,16 +271,18 @@ build-files/$(project)$(major).dsp: $(Project)-$(VERSION)
 	  --enable-msvcdsp; \
 	$(MAKE) clean && $(MAKE); \
 	wbuilddir=`cygpath -w $$builddir | sed -e 's%\\\\%\\\\\\\\%g'`; \
+	version=`echo "@VERSION@" | sed -e 's%\.%\\\.%g'`; \
 	cp $(project)$(major).dsp $(project)$(major).dsp.orig; \
 	cat $(project)$(major).dsp.orig | \
 	  sed -e "s%$$wbuilddir%\$$\(COIN3DDIR\)%g" \
 	      -e "s%\"\.\\\\include\"%\"\.\"%g" \
 	      -e "s%\\\\3rdparty\\\\dist\\\\%\\\\3rdparty\\\\%g" \
-	      -e "s%\.\.\\\\source\\\\simage-2\.0\.0a%\.\.\\\\\.\.\\\\source\\\\simage-2%g" \
+	      -e "s%\.\.\\\\source\\\\simage-$$version%\.\.\\\\\.\.\\\\source\\\\simage-$(major)%g" \
 	  > $(project)$(major).dsp; \
 	rm $(project)$(major).dsp.orig
 
 
-.PHONY: shared-release shared-debug static-release static-debug buildfiles
+.PHONY: shared-release shared-debug static-release static-debug buildfiles \
+	3rdparty
 
 # **************************************************************************
