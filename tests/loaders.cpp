@@ -21,14 +21,13 @@ main(int argc, char ** argv)
       int w, h, comp;
       unsigned char * buffer = simage_read_image(filename, &w, &h, &comp);
       if (!buffer) {
-	char errbuffer[256];
 	(void)fprintf(stdout, "\t** couldn't load file: \"%s\"\n",
-		      simage_get_last_error(errbuffer, 255));
+		      simage_get_last_error());
       }
       else {
 	(void)fprintf(stdout, "\twidth: %d, height: %d, components: %d\n",
 		      w, h, comp);
-	free(buffer);
+  	free(buffer);
       }
     }
     (void)fprintf(stdout, "\n");

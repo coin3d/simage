@@ -54,25 +54,37 @@
  *   need to resize your image to be able to use it in an OpenGL app.
  */  
 
+/* Enable to generate SIMAGE.DLL (under Win32). */
+#ifdef SIMAGE_MAKE_DLL
+#define SIMAGE_DLL_EXPORT __declspec(dllexport)
+#endif /* !SIMAGE_MAKE_DLL */
+
+/* Empty define to avoid errors when _not_ compiling as a DLL. */
+#ifndef SIMAGE_DLL_EXPORT
+#define SIMAGE_DLL_EXPORT
+#endif /* !SIMAGE_DLL_EXPORT */
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
   /* user interface */
-  unsigned char * simage_read_image(const char * filename,
-                                    int * width, int * height,
-                                    int * numComponents);
-  int simage_check_supported(const char * filename);
+  SIMAGE_DLL_EXPORT unsigned char * simage_read_image(const char * filename,
+						      int * w, int * h,
+						      int * numComponents);
+  SIMAGE_DLL_EXPORT int simage_check_supported(const char * filename);
 
   /* check this if simage_read_image returns NULL */
-  char * simage_get_last_error(char * buffer, int buffersize);
+  SIMAGE_DLL_EXPORT const char * simage_get_last_error(void);
 
   /* convenience functions */
-  unsigned char * simage_resize(unsigned char * imagedata, int width,
-                                int height, int numComponents,
-                                int newwidth, int newheight);
+  SIMAGE_DLL_EXPORT unsigned char * simage_resize(unsigned char * imagedata,
+						  int width, int height,
+						  int numComponents,
+						  int newwidth, int newheight);
   
-  int simage_next_power_of_two(int val);
+  SIMAGE_DLL_EXPORT int simage_next_power_of_two(int val);
 
 
   /* plugin interface */
@@ -88,9 +100,9 @@ extern "C" {
     int (*error_func)(char * textbuffer, int bufferlen);
   };
   
-  void * simage_add_plugin_loader(const struct simage_plugin * plugin,
-				 int addbefore);
-  void simage_remove_plugin_loader(void * handle);
+  SIMAGE_DLL_EXPORT void * simage_add_plugin_loader(const struct simage_plugin * plugin,
+						    int addbefore);
+  SIMAGE_DLL_EXPORT void simage_remove_plugin_loader(void * handle);
   
 #ifdef __cplusplus
 }

@@ -1,14 +1,11 @@
-/*
- * simage.cpp
- */
-
-#include <config.h>
-
-#include <simage.h>
-
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif /* HAVE_CONFIG_H */
+#include <simage.h>
 
 struct _loader_data
 {
@@ -209,11 +206,10 @@ simage_read_image(const char *filename,
   }
 }
 
-char *
-simage_get_last_error(char * buf, int bufsize)
+const char *
+simage_get_last_error(void)
 {
-  strncpy(buf, simage_error_msg, bufsize);
-  return buf;
+  return simage_error_msg;
 }
 
 void 
