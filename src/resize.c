@@ -502,8 +502,8 @@ simage_resize(unsigned char * src, int width,
   srcimg = new_image(width, height, num_comp, src);
   dstimg = new_image(newwidth, newheight, num_comp, NULL);
 
-  //  zoom(dstimg, srcimg, Mitchell_filter, Mitchell_support);
-  zoom(dstimg, srcimg, filter, filter_support);
+  /* Mitchell filter has the best quality */
+  zoom(dstimg, srcimg, Mitchell_filter, Mitchell_support);
 
   dstdata = dstimg->data;
   free(srcimg);
