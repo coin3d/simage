@@ -150,6 +150,15 @@ find_saver(const char * filenameextension)
   return NULL;
 }
 
+static const char jpegext[] = "jpg,jpeg";
+static const char jpegfull[] = "The Independent JPEG Group file format";
+static const char pngext[] = "png";
+static const char pngfull[] = "The PNG file format";
+static const char tiffext[] = "tiff,tif";
+static const char tifffull[] = "The Tag Image File Format";
+static const char rgbext[] = "rgb,rgba,bw.inta,int";
+static const char rgbfull[] ="The SGI RGB file format";
+
 static void
 add_internal_savers(void)
 {
@@ -160,8 +169,8 @@ add_internal_savers(void)
     add_saver(&jpeg_saver, 
               simage_jpeg_save,
               simage_jpeg_error,
-              "jpg,jpeg",
-              "The Independent JPEG Group file format", 
+              jpegext,
+              jpegfull,
               NULL,
               1, 0);
 #endif /* HAVE_JPEGLIB */
@@ -169,8 +178,8 @@ add_internal_savers(void)
     add_saver(&png_saver, 
               simage_png_save,
               simage_png_error,
-              "png",
-              "The PNG file format",
+              pngext,
+              pngfull,
               NULL,
               1, 0);
 #endif /* HAVE_PNGLIB */
@@ -178,8 +187,8 @@ add_internal_savers(void)
     add_saver(&tiff_saver, 
               simage_tiff_save,
               simage_tiff_error,
-              "tiff,tif",
-              "The Tag Image File Format",
+              tiffext,
+              tifffull,
               NULL,
               1, 0);
 #endif /* HAVE_TIFFLIB */
@@ -187,8 +196,8 @@ add_internal_savers(void)
     add_saver(&rgb_saver, 
               simage_rgb_save,
               simage_rgb_error,
-              "rgb,rgba,bw,inta,int",
-              "The SGI RGB file format.",
+              rgbext,
+              rgbfull,
               NULL,
               1, 0);
 #endif /* SIMAGE_RGB_SUPPORT */
