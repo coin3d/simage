@@ -22,6 +22,7 @@ EXTRA_DIST = \
 	cfg/ltconfig \
 	cfg/wrapmsvc.exe \
 	cfg/gendsp.sh \
+	cfg/errors.txt \
 	build/simage.spec.in \
 	docs/announcement-1_6_0.txt \
 	docs/announcement-1_6_1.txt \
