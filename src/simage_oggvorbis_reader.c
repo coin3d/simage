@@ -94,11 +94,14 @@ static int
 oggvorbis_reader_read(oggvorbis_reader_context *context, 
                       char *buffer, int size)
 {
+  int readsize;
+  int numread;
+  int bigEndian;
+
   union {
     int testWord;
     char testByte[4];
   } endianTest;
-  int bigEndian;
 
   endianTest.testWord = 1;
   if (endianTest.testByte[0] == 1) {
@@ -107,8 +110,6 @@ oggvorbis_reader_read(oggvorbis_reader_context *context,
     bigEndian = 1; // big endian
   }
 
-  int readsize;
-  int numread;
 
   readsize = 0;
   numread = 0;
