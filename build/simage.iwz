@@ -36,8 +36,7 @@ PACKLIST.EXE Ver=3.00.060
 Version=2.12
 DevTool=Generic Windows
 Platform=Win32
-DisksBuilt=1
-DisksDir=simage\120MB\
+DisksDir=simage\650MB\
 TabsVisit=1111111111111111100011
 LangNum=451
 LangDir=LANG\ENG\
@@ -60,34 +59,20 @@ Silent=1
 SmsMode=0
 
 [Types]
-Types=3
-Type1Components=3
-Type1Name=Custom
-Type1ComponentList=1 2 3 
-Type2Components=3
-Type2Name=Typical
-Type2ComponentList=1 2 3 
-Type3Components=2
-Type3Name=Compact
-Type3ComponentList=1 2 
+Types=1
+Type1Components=1
+Type1Name=Complete
+Type1ComponentList=1 
 
 [Components]
-Components=3
-Component1Groups=1
-Component1Name=Application Files
-Component1Description=Application files needed to run the application
-Component1GroupList=1 
-Component2Groups=0
-Component2Name=Help and Tutorial Files
-Component2Description=Help and tutorial needed for online help
-Component2GroupList=
-Component3Groups=0
-Component3Name=Sample Files
-Component3Description=Sample data files
-Component3GroupList=
+Components=1
+Component1Groups=2
+Component1Name=Library SDK
+Component1Description=Execution environment and development
+Component1GroupList=1 2 
 
 [Groups]
-Groups=1
+Groups=2
 Group1Size=392876
 Group1Files=2
 Group1Name=libs
@@ -96,65 +81,31 @@ Group1Update=0
 Group1TargetOS=-1
 Group1File1=C:\home\install\lib\simage0.lib
 Group1File2=C:\home\install\lib\simage0.dll
+Group2Size=5263
+Group2Files=1
+Group2Name=include
+Group2Dir=<INSTALLDIR>
+Group2Update=0
+Group2TargetOS=-1
+Group2File1=C:\home\install\include\simage.h
 
 [Sequence]
 DestinationLocationDir=<ProgramFilesDir>\SIM\simage
 DatabaseLocationDir=<INSTALLDIR>\data
 SelectProgramFolderName=simage
-WelcomeMessage=1
-WelcomeMessageFile=
-UserInformation=1
 DestinationLocation=1
-SetupType=1
-CustomSetup=1
-CustomSetupGroupSel=1
-SelectProgramFolder=1
 BeginFileTransfer=1
 ProgressBar=1
-Billboards=1
-BillboardsFile=C:\PROGRA~1\INSTAL~1\INSTAL~1.12\Redist\
 SetupComplete=1
 SetupCompleteExec=
 SetupCompleteExecParam=
 SetupCompleteExecReadme=
 
-[RegEntries]
-Reg1Path=HKEY_CLASSES_ROOT
-Reg1Val1Type=0
-Reg1Val1Name=(Default)
-Reg1Val1Data=(value not set)
-Reg1Vals=1
-Reg2Path=HKEY_CURRENT_USER
-Reg2Val1Type=0
-Reg2Val1Name=(Default)
-Reg2Val1Data=(value not set)
-Reg2Vals=1
-Reg3Path=HKEY_LOCAL_MACHINE
-Reg3Val1Type=0
-Reg3Val1Name=(Default)
-Reg3Val1Data=(value not set)
-Reg3Vals=1
-Reg4Path=HKEY_USERS
-Reg4Val1Type=0
-Reg4Val1Name=(Default)
-Reg4Val1Data=(value not set)
-Reg4Vals=1
-Reg5Path=HKEY_CURRENT_CONFIG
-Reg5Val1Type=0
-Reg5Val1Name=(Default)
-Reg5Val1Data=(value not set)
-Reg5Vals=1
-Reg6Path=HKEY_DYN_DATA
-Reg6Val1Type=0
-Reg6Val1Name=(Default)
-Reg6Val1Data=(value not set)
-Reg6Vals=1
-Regs=6
-
-[Registry]
-
 [VisualBasic]
 PRJFile=
+
+[Disk1 Files]
+AutoRun=1
 
 [SysIniFiles]
 File1=WIN.INI
