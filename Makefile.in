@@ -123,10 +123,6 @@ dist_m4data_DATA = cfg/m4/simage.m4
 cfgdatadir = $(datadir)/Coin/conf
 cfgdata_DATA = simage-@CONFIG@.cfg
 
-noinst_SCRIPTS = \
-	cfg/m4/msvccc
-
-
 EXTRA_DIST = \
 	simage.cfg.in \
 	cfg/depcomp \
@@ -136,12 +132,17 @@ EXTRA_DIST = \
 	build/simage.spec.in \
 	README.WIN32
 
+
+DISTCLEANFILES = \
+	libtool \
+	simage-@CONFIG@.cfg
+
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/cfg/mkinstalldirs
 CONFIG_HEADER = config.h $(top_builddir)/include/simage.h
 CONFIG_CLEAN_FILES = build/simage.spec
-SCRIPTS = $(dist_bin_SCRIPTS) $(noinst_SCRIPTS)
+SCRIPTS = $(dist_bin_SCRIPTS)
 
 DIST_SOURCES =
 DATA = $(cfgdata_DATA) $(dist_m4data_DATA)
@@ -476,6 +477,7 @@ clean-generic:
 distclean-generic:
 	-rm -f Makefile $(CONFIG_CLEAN_FILES)
 	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"

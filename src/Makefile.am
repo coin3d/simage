@@ -20,6 +20,7 @@ SIMAGESOURCES = \
 	simage12.c \
 	movie.c \
 	params.c \
+	$(top_srcdir)/include/simage_private.h \
 	$(JPEGSOURCES) \
 	$(UNGIFSOURCES) \
 	$(PNGSOURCES) \

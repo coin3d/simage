@@ -136,6 +136,10 @@ win_srcdir = @win_srcdir@
 @HAVE_GUILE_TRUE@bin_SCRIPTS = \
 @HAVE_GUILE_TRUE@	simage-convert.scm
 
+
+@HAVE_GUILE_TRUE@EXTRA_DIST = \
+@HAVE_GUILE_TRUE@	simage-convert.scm
+
 subdir = guile
 mkinstalldirs = $(SHELL) $(top_srcdir)/cfg/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h $(top_builddir)/include/simage.h

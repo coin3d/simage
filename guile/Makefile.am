@@ -21,6 +21,9 @@ libguilesimageinc_HEADERS = \
 
 bin_SCRIPTS = \
 	simage-convert.scm
+
+EXTRA_DIST = \
+	simage-convert.scm
 endif
 
 # EOF **********************************************************************

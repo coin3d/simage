@@ -16,9 +16,6 @@ dist_m4data_DATA = cfg/m4/simage.m4
 cfgdatadir = $(datadir)/Coin/conf
 cfgdata_DATA = simage-@CONFIG@.cfg
 
-noinst_SCRIPTS = \
-	cfg/m4/msvccc
-
 EXTRA_DIST = \
 	simage.cfg.in \
 	cfg/depcomp \
@@ -27,6 +24,10 @@ EXTRA_DIST = \
 	cfg/m4/wrapmsvc.exe \
 	build/simage.spec.in \
 	README.WIN32
+
+DISTCLEANFILES = \
+	libtool \
+	simage-@CONFIG@.cfg
 
 simage-@CONFIG@.cfg: config.status $(srcdir)/simage.cfg.in
 	@$(SHELL) config.status --file=$@:simage.cfg.in
