@@ -38,7 +38,7 @@ int
 mpeg2enc_movie_create(const char * filename, s_movie * movie, s_params * params)
 {
   void * handle;
-  const char * statfile;
+  const char * paramfile;
   void * cb0, *cb1, *cb2;
   void * cbdata;
   int w, h, numframes;
@@ -46,13 +46,13 @@ mpeg2enc_movie_create(const char * filename, s_movie * movie, s_params * params)
   w = h = 0;
   numframes = 0;
   
-  statfile = NULL;
+  paramfile = NULL;
   cb0 = NULL;
   cb1 = NULL;
   cb2 = NULL;
 
   s_params_get(params, 
-               "statfile", S_STRING_PARAM_TYPE, &statfile, NULL);
+               "parameter file", S_STRING_PARAM_TYPE, &paramfile, NULL);
 
   s_params_get(params, 
                "error callback", S_FUNCTION_PARAM_TYPE, &cb0, NULL);
@@ -77,7 +77,7 @@ mpeg2enc_movie_create(const char * filename, s_movie * movie, s_params * params)
 
 
   handle = SimpegWrite_begin_encode(filename, 
-                                    statfile, 
+                                    paramfile, 
                                     (SimpegWrite_error_cb) cb0, 
                                     (SimpegWrite_warning_cb) cb1, 
                                     (SimpegWrite_progress_cb) cb2,

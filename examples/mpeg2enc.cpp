@@ -82,6 +82,11 @@ main(
                "progress callback", S_FUNCTION_PARAM_TYPE, progress_cb,
                /* use to specify userdata for all callbacks */
                "callback userdata", S_POINTER_PARAM_TYPE, NULL,
+
+               /* use to specify a parameter file */
+               /* "parameter file", S_STRING_PARAM_TYPE, "ntsc_coin.par", */
+
+               /* NULL means no more params */
                NULL);
                
   s_movie * movie = s_movie_create(argv[1], params);
