@@ -1898,7 +1898,7 @@ exec 5>>./config.log
 
 
 
-SIMAGE_EXTRA_CFLAGS=
+SIMAGE_EXTRA_CPPFLAGS=
 SIMAGE_EXTRA_LDFLAGS=
 SIMAGE_EXTRA_LIBS=
 
@@ -2038,16 +2038,16 @@ sim_cv_func_jpegdev_avail=
 
 if ! test x"$with_jpeg" = xno; then
   if ! test x"$with_jpeg" = xyes; then
-    sim_ac_jpegdev_cflags="-I${with_jpeg}/include"
+    sim_ac_jpegdev_cppflags="-I${with_jpeg}/include"
     sim_ac_jpegdev_ldflags="-L${with_jpeg}/lib"
   fi
   sim_ac_jpegdev_libs="-ljpeg"
 
-  sim_ac_save_cflags=$CFLAGS
+  sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
   sim_ac_save_libs=$LIBS
 
-  CFLAGS="$CFLAGS $sim_ac_jpegdev_cflags"
+  CPPFLAGS="$CPPFLAGS $sim_ac_jpegdev_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_jpegdev_ldflags"
   LIBS="$sim_ac_jpegdev_libs $LIBS"
 
@@ -2079,7 +2079,7 @@ fi
 echo "$ac_t""$sim_cv_lib_jpegdev_avail" 1>&6
 
   if test x"$sim_cv_lib_jpegdev_avail" = xno; then
-    CFLAGS=$sim_ac_save_cflags
+    CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
   fi
@@ -2089,7 +2089,7 @@ echo "$ac_t""$sim_cv_lib_jpegdev_avail" 1>&6
 #define HAVE_JPEGLIB 1
 EOF
 
-                   SIMAGE_EXTRA_CFLAGS="$SIMAGE_EXTRA_CFLAGS $sim_ac_jpegdev_cflags"
+                   SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_jpegdev_cppflags"
                    SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_jpegdev_ldflags"
                    SIMAGE_EXTRA_LIBS="$sim_ac_jpegdev_libs $SIMAGE_EXTRA_LIBS"
   else
@@ -2127,16 +2127,16 @@ sim_cv_func_tiffdev_avail=
 
 if ! test x"$with_tiff" = xno; then
   if ! test x"$with_tiff" = xyes; then
-    sim_ac_tiffdev_cflags="-I${with_tiff}/include"
+    sim_ac_tiffdev_cppflags="-I${with_tiff}/include"
     sim_ac_tiffdev_ldflags="-L${with_tiff}/lib"
   fi
   sim_ac_tiffdev_libs="-ltiff"
 
-  sim_ac_save_cflags=$CFLAGS
+  sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
   sim_ac_save_libs=$LIBS
 
-  CFLAGS="$CFLAGS $sim_ac_tiffdev_cflags"
+  CPPFLAGS="$CPPFLAGS $sim_ac_tiffdev_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_tiffdev_ldflags"
   LIBS="$sim_ac_tiffdev_libs $LIBS"
 
@@ -2167,7 +2167,7 @@ fi
 echo "$ac_t""$sim_cv_lib_tiffdev_avail" 1>&6
 
   if test x"$sim_cv_lib_tiffdev_avail" = xno; then
-    CFLAGS=$sim_ac_save_cflags
+    CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
   fi
@@ -2177,7 +2177,7 @@ echo "$ac_t""$sim_cv_lib_tiffdev_avail" 1>&6
 #define HAVE_TIFFLIB 1
 EOF
 
-                   SIMAGE_EXTRA_CFLAGS="$SIMAGE_EXTRA_CFLAGS $sim_ac_tiffdev_cflags"
+                   SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_tiffdev_cppflags"
                    SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_tiffdev_ldflags"
                    SIMAGE_EXTRA_LIBS="$sim_ac_tiffdev_libs $SIMAGE_EXTRA_LIBS"
   else
@@ -2219,16 +2219,16 @@ sim_cv_func_zlib_avail=
 
 if ! test x"$with_zlib" = xno; then
   if ! test x"$with_zlib" = xyes; then
-    sim_ac_zlib_cflags="-I${with_zlib}/include"
+    sim_ac_zlib_cppflags="-I${with_zlib}/include"
     sim_ac_zlib_ldflags="-L${with_zlib}/lib"
   fi
   sim_ac_zlib_libs="-lz"
 
-  sim_ac_save_cflags=$CFLAGS
+  sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
   sim_ac_save_libs=$LIBS
 
-  CFLAGS="$CFLAGS $sim_ac_zlib_cflags"
+  CPPFLAGS="$CPPFLAGS $sim_ac_zlib_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_zlib_ldflags"
   LIBS="$sim_ac_zlib_libs $LIBS"
 
@@ -2259,14 +2259,14 @@ fi
 echo "$ac_t""$sim_cv_lib_zlib_avail" 1>&6
 
   if test x"$sim_cv_lib_zlib_avail" = xno; then
-    CFLAGS=$sim_ac_save_cflags
+    CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
   fi
 
   if test x"$sim_cv_lib_zlib_avail" = xyes; then
       simage_ac_zlib=yes
-                  SIMAGE_EXTRA_CFLAGS="$SIMAGE_EXTRA_CFLAGS $sim_ac_zlib_cflags"
+                  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_zlib_cppflags"
                   SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_zlib_ldflags"
                   SIMAGE_EXTRA_LIBS="$sim_ac_zlib_libs $SIMAGE_EXTRA_LIBS"
   else
@@ -2292,16 +2292,16 @@ sim_cv_func_pngdev_avail=
 
 if ! test x"$with_png" = xno; then
   if ! test x"$with_png" = xyes; then
-    sim_ac_pngdev_cflags="-I${with_png}/include"
+    sim_ac_pngdev_cppflags="-I${with_png}/include"
     sim_ac_pngdev_ldflags="-L${with_png}/lib"
   fi
   sim_ac_pngdev_libs="-lpng"
 
-  sim_ac_save_cflags=$CFLAGS
+  sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
   sim_ac_save_libs=$LIBS
 
-  CFLAGS="$CFLAGS $sim_ac_pngdev_cflags"
+  CPPFLAGS="$CPPFLAGS $sim_ac_pngdev_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_pngdev_ldflags"
   LIBS="$sim_ac_pngdev_libs $LIBS"
 
@@ -2332,7 +2332,7 @@ fi
 echo "$ac_t""$sim_cv_lib_pngdev_avail" 1>&6
 
   if test x"$sim_cv_lib_pngdev_avail" = xno; then
-    CFLAGS=$sim_ac_save_cflags
+    CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
   fi
@@ -2343,7 +2343,7 @@ echo "$ac_t""$sim_cv_lib_pngdev_avail" 1>&6
 #define HAVE_PNGLIB 1
 EOF
 
-                      SIMAGE_EXTRA_CFLAGS="$SIMAGE_EXTRA_CFLAGS $sim_ac_pngdev_cflags"
+                      SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_pngdev_cppflags"
                       SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_pngdev_ldflags"
                       SIMAGE_EXTRA_LIBS="$sim_ac_pngdev_libs $SIMAGE_EXTRA_LIBS"
   else
@@ -2694,7 +2694,7 @@ s%@build_os@%$build_os%;t t
 s%@RANLIB@%$RANLIB%;t t
 s%@LN_S@%$LN_S%;t t
 s%@LIBTOOL@%$LIBTOOL%;t t
-s%@SIMAGE_EXTRA_CFLAGS@%$SIMAGE_EXTRA_CFLAGS%;t t
+s%@SIMAGE_EXTRA_CPPFLAGS@%$SIMAGE_EXTRA_CPPFLAGS%;t t
 s%@SIMAGE_EXTRA_LDFLAGS@%$SIMAGE_EXTRA_LDFLAGS%;t t
 s%@SIMAGE_EXTRA_LIBS@%$SIMAGE_EXTRA_LIBS%;t t
 s%@SIMAGE_JPEG_SUPPORT_TRUE@%$SIMAGE_JPEG_SUPPORT_TRUE%;t t

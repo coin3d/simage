@@ -845,12 +845,12 @@ dnl
 dnl  Try to find the JPEG development system. If it is found, these
 dnl  shell variables are set:
 dnl
-dnl    $sim_ac_jpegdev_cflags   (extra flags the compiler needs for jpeg lib)
+dnl    $sim_ac_jpegdev_cppflags (extra flags the compiler needs for jpeg lib)
 dnl    $sim_ac_jpegdev_ldflags  (extra flags the linker needs for jpeg lib)
 dnl    $sim_ac_jpegdev_libs     (link libraries the linker needs for jpeg lib)
 dnl
-dnl  The CFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-dnl  In addition, the variable $sim_cv_lib_jpegdev_avail is set to eiter
+dnl  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
+dnl  In addition, the variable $sim_cv_lib_jpegdev_avail is set to either
 dnl  "yes" (jpeg development system found) or "no" (not found).
 dnl
 dnl
@@ -863,7 +863,7 @@ dnl
 
 AC_DEFUN(SIM_CHECK_JPEGLIB,[
 dnl Autoconf is a developer tool, so don't bother to support older versions.
-AC_PREREQ([2.13])
+AC_PREREQ([2.14.1])
 
 AC_ARG_WITH(jpeg, AC_HELP_STRING([--with-jpeg=DIR], [include support for JPEG images [default=yes]]), , [with_jpeg=yes])
 
@@ -871,16 +871,16 @@ sim_cv_func_jpegdev_avail=
 
 if ! test x"$with_jpeg" = xno; then
   if ! test x"$with_jpeg" = xyes; then
-    sim_ac_jpegdev_cflags="-I${with_jpeg}/include"
+    sim_ac_jpegdev_cppflags="-I${with_jpeg}/include"
     sim_ac_jpegdev_ldflags="-L${with_jpeg}/lib"
   fi
   sim_ac_jpegdev_libs="-ljpeg"
 
-  sim_ac_save_cflags=$CFLAGS
+  sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
   sim_ac_save_libs=$LIBS
 
-  CFLAGS="$CFLAGS $sim_ac_jpegdev_cflags"
+  CPPFLAGS="$CPPFLAGS $sim_ac_jpegdev_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_jpegdev_ldflags"
   LIBS="$sim_ac_jpegdev_libs $LIBS"
 
@@ -893,7 +893,7 @@ if ! test x"$with_jpeg" = xno; then
                  sim_cv_lib_jpegdev_avail=no)])
 
   if test x"$sim_cv_lib_jpegdev_avail" = xno; then
-    CFLAGS=$sim_ac_save_cflags
+    CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
   fi
@@ -912,12 +912,12 @@ dnl
 dnl  Try to find the TIFF development system. If it is found, these
 dnl  shell variables are set:
 dnl
-dnl    $sim_ac_tiffdev_cflags   (extra flags the compiler needs for tiff lib)
+dnl    $sim_ac_tiffdev_cppflags (extra flags the compiler needs for tiff lib)
 dnl    $sim_ac_tiffdev_ldflags  (extra flags the linker needs for tiff lib)
 dnl    $sim_ac_tiffdev_libs     (link libraries the linker needs for tiff lib)
 dnl
-dnl  The CFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-dnl  In addition, the variable $sim_cv_lib_tiffdev_avail is set to eiter
+dnl  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
+dnl  In addition, the variable $sim_cv_lib_tiffdev_avail is set to either
 dnl  "yes" (tiff development system found) or "no" (not found).
 dnl
 dnl
@@ -930,7 +930,7 @@ dnl
 
 AC_DEFUN(SIM_CHECK_TIFFLIB,[
 dnl Autoconf is a developer tool, so don't bother to support older versions.
-AC_PREREQ([2.13])
+AC_PREREQ([2.14.1])
 
 AC_ARG_WITH(tiff, AC_HELP_STRING([--with-tiff=DIR], [include support for TIFF images [default=yes]]), , [with_tiff=yes])
 
@@ -938,16 +938,16 @@ sim_cv_func_tiffdev_avail=
 
 if ! test x"$with_tiff" = xno; then
   if ! test x"$with_tiff" = xyes; then
-    sim_ac_tiffdev_cflags="-I${with_tiff}/include"
+    sim_ac_tiffdev_cppflags="-I${with_tiff}/include"
     sim_ac_tiffdev_ldflags="-L${with_tiff}/lib"
   fi
   sim_ac_tiffdev_libs="-ltiff"
 
-  sim_ac_save_cflags=$CFLAGS
+  sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
   sim_ac_save_libs=$LIBS
 
-  CFLAGS="$CFLAGS $sim_ac_tiffdev_cflags"
+  CPPFLAGS="$CPPFLAGS $sim_ac_tiffdev_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_tiffdev_ldflags"
   LIBS="$sim_ac_tiffdev_libs $LIBS"
 
@@ -959,7 +959,7 @@ if ! test x"$with_tiff" = xno; then
                  sim_cv_lib_tiffdev_avail=no)])
 
   if test x"$sim_cv_lib_tiffdev_avail" = xno; then
-    CFLAGS=$sim_ac_save_cflags
+    CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
   fi
@@ -978,12 +978,12 @@ dnl
 dnl  Try to find the ZLIB development system. If it is found, these
 dnl  shell variables are set:
 dnl
-dnl    $sim_ac_zlib_cflags   (extra flags the compiler needs for zlib)
+dnl    $sim_ac_zlib_cppflags (extra flags the compiler needs for zlib)
 dnl    $sim_ac_zlib_ldflags  (extra flags the linker needs for zlib)
 dnl    $sim_ac_zlib_libs     (link libraries the linker needs for zlib)
 dnl
-dnl  The CFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-dnl  In addition, the variable $sim_cv_lib_zlib_avail is set to eiter
+dnl  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
+dnl  In addition, the variable $sim_cv_lib_zlib_avail is set to either
 dnl  "yes" (zlib development system found) or "no" (not found).
 dnl
 dnl
@@ -996,7 +996,7 @@ dnl
 
 AC_DEFUN(SIM_CHECK_ZLIB,[
 dnl Autoconf is a developer tool, so don't bother to support older versions.
-AC_PREREQ([2.13])
+AC_PREREQ([2.14.1])
 
 AC_ARG_WITH(zlib, AC_HELP_STRING([--with-zlib=DIR], [zlib installation directory]), , [with_zlib=yes])
 
@@ -1004,16 +1004,16 @@ sim_cv_func_zlib_avail=
 
 if ! test x"$with_zlib" = xno; then
   if ! test x"$with_zlib" = xyes; then
-    sim_ac_zlib_cflags="-I${with_zlib}/include"
+    sim_ac_zlib_cppflags="-I${with_zlib}/include"
     sim_ac_zlib_ldflags="-L${with_zlib}/lib"
   fi
   sim_ac_zlib_libs="-lz"
 
-  sim_ac_save_cflags=$CFLAGS
+  sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
   sim_ac_save_libs=$LIBS
 
-  CFLAGS="$CFLAGS $sim_ac_zlib_cflags"
+  CPPFLAGS="$CPPFLAGS $sim_ac_zlib_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_zlib_ldflags"
   LIBS="$sim_ac_zlib_libs $LIBS"
 
@@ -1025,7 +1025,7 @@ if ! test x"$with_zlib" = xno; then
                  sim_cv_lib_zlib_avail=no)])
 
   if test x"$sim_cv_lib_zlib_avail" = xno; then
-    CFLAGS=$sim_ac_save_cflags
+    CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
   fi
@@ -1044,12 +1044,12 @@ dnl
 dnl  Try to find the PNG development system. If it is found, these
 dnl  shell variables are set:
 dnl
-dnl    $sim_ac_pngdev_cflags   (extra flags the compiler needs for png lib)
+dnl    $sim_ac_pngdev_cppflags (extra flags the compiler needs for png lib)
 dnl    $sim_ac_pngdev_ldflags  (extra flags the linker needs for png lib)
 dnl    $sim_ac_pngdev_libs     (link libraries the linker needs for png lib)
 dnl
-dnl  The CFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-dnl  In addition, the variable $sim_cv_lib_pngdev_avail is set to eiter
+dnl  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
+dnl  In addition, the variable $sim_cv_lib_pngdev_avail is set to either
 dnl  "yes" (png development system found) or "no" (not found).
 dnl
 dnl
@@ -1062,7 +1062,7 @@ dnl
 
 AC_DEFUN(SIM_CHECK_PNGLIB,[
 dnl Autoconf is a developer tool, so don't bother to support older versions.
-AC_PREREQ([2.13])
+AC_PREREQ([2.14.1])
 
 AC_ARG_WITH(png, AC_HELP_STRING([--with-png=DIR], [include support for PNG images [default=yes]]), , [with_png=yes])
 
@@ -1070,16 +1070,16 @@ sim_cv_func_pngdev_avail=
 
 if ! test x"$with_png" = xno; then
   if ! test x"$with_png" = xyes; then
-    sim_ac_pngdev_cflags="-I${with_png}/include"
+    sim_ac_pngdev_cppflags="-I${with_png}/include"
     sim_ac_pngdev_ldflags="-L${with_png}/lib"
   fi
   sim_ac_pngdev_libs="-lpng"
 
-  sim_ac_save_cflags=$CFLAGS
+  sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
   sim_ac_save_libs=$LIBS
 
-  CFLAGS="$CFLAGS $sim_ac_pngdev_cflags"
+  CPPFLAGS="$CPPFLAGS $sim_ac_pngdev_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_pngdev_ldflags"
   LIBS="$sim_ac_pngdev_libs $LIBS"
 
@@ -1091,7 +1091,7 @@ if ! test x"$with_png" = xno; then
                  sim_cv_lib_pngdev_avail=no)])
 
   if test x"$sim_cv_lib_pngdev_avail" = xno; then
-    CFLAGS=$sim_ac_save_cflags
+    CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
   fi

@@ -9,7 +9,7 @@ cat <<EOF
     Usage: simage-config [OPTIONS]
     Options:
             [--version]
-            [--cflags]
+            [--cppflags]
             [--ldflags]
             [--libs]
 EOF
@@ -28,8 +28,8 @@ while test $# -gt 0; do
     --version)
       echo @SIMAGE_VERSION@
       ;;
-    --cflags)
-      echo -I@prefix@@includedir@ @SIMAGE_EXTRA_CFLAGS@
+    --cppflags)
+      echo -I@prefix@@includedir@ @SIMAGE_EXTRA_CPPFLAGS@
       ;;
     --ldflags)
       echo -L@prefix@@libdir@ @SIMAGE_EXTRA_LDFLAGS@
