@@ -8,11 +8,22 @@ else
 QIMAGESOURCES =
 endif
 
+if SIMAGE_QUICKTIME_SUPPORT
+QUICKTIMESOURCES = simage_quicktime.cpp $(top_srcdir)/include/simage_quicktime.h
+JPEGSOURCES = 
+UNGIFSOURCES = 
+TIFFSOURCES = 
+PNGSOURCES = 
+TGASOURCES = 
+else
+QUICKTIMESOURCES =
 JPEGSOURCES = simage_jpeg.c $(top_srcdir)/include/simage_jpeg.h
 UNGIFSOURCES = simage_gif.c $(top_srcdir)/include/simage_gif.h
 TIFFSOURCES = simage_tiff.c $(top_srcdir)/include/simage_tiff.h
 PNGSOURCES = simage_png.c $(top_srcdir)/include/simage_png.h
 TGASOURCES = simage_tga.c $(top_srcdir)/include/simage_tga.h
+endif
+
 RGBSOURCES = simage_rgb.c $(top_srcdir)/include/simage_rgb.h
 PICSOURCES = simage_pic.c $(top_srcdir)/include/simage_pic.h
 XWDSOURCES = simage_xwd.c $(top_srcdir)/include/simage_xwd.h
@@ -45,6 +56,7 @@ SIMAGESOURCES = \
 	$(XWDSOURCES) \
 	$(EPSSOURCES) \
 	$(QIMAGESOURCES) \
+	$(QUICKTIMESOURCES) \
         $(AVISOURCES) \
         $(OGGVORBISSOURCES) \
         $(LIBSNDFILESOURCES)
