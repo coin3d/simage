@@ -212,7 +212,7 @@ AM_CONDITIONAL(SIMAGE_PNG_SUPPORT, test x"$simage_ac_pnglib" = xyes)
 AC_ARG_WITH(
   targa,
   AC_HELP_STRING([--with-targa],
-                 [include support for Targa images [default=yes]]),
+                 [include support for Targa images [[default=yes]]]),
 	[case "${withval}" in
 		yes) want_tga=true ;;
 		no)  want_tga=false ;;
@@ -231,7 +231,7 @@ fi
 AC_ARG_WITH(
   rgb,
   AC_HELP_STRING([--with-rgb],
-                 [include support for SGI RGB images [default=yes]]),
+                 [include support for SGI RGB images [[default=yes]]]),
   [case "${withval}" in
     yes) want_rgb=true ;;
     no)  want_rgb=false ;;
@@ -249,7 +249,7 @@ fi
 
 AC_ARG_WITH(
   pic,
-  AC_HELP_STRING([--with-pic], [include support for PIC images [default=yes]]),
+  AC_HELP_STRING([--with-pic], [include support for PIC images [[default=yes]]]),
   [case "${withval}" in
       yes) want_pic=true ;;
       no)  want_pic=false ;;

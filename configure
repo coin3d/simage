@@ -561,15 +561,15 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-gnu-ld           assume the C compiler uses GNU ld default=no
-  --with-ungif=PATH     enable use of libungif
+  --with-ungif=PATH       enable use of libungif
   --with-x                use the X Window System
-  --with-jpeg=DIR         include support for JPEG images default=yes
-  --with-tiff=DIR         include support for TIFF images default=yes
+  --with-jpeg=DIR         include support for JPEG images [default=yes]
+  --with-tiff=DIR         include support for TIFF images [default=yes]
   --with-zlib=DIR         zlib installation directory
-  --with-png=DIR          include support for PNG images default=yes
-  --with-targa            include support for Targa images default=yes
-  --with-rgb              include support for SGI RGB images default=yes
-  --with-pic              include support for PIC images default=yes
+  --with-png=DIR          include support for PNG images [default=yes]
+  --with-targa            include support for Targa images [default=yes]
+  --with-rgb              include support for SGI RGB images [default=yes]
+  --with-pic              include support for PIC images [default=yes]
 
 Some influential environment variables:
   CC          C compiler command

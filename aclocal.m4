@@ -1068,7 +1068,7 @@ sim_ac_libungif_extrapath=
 
 AC_ARG_WITH(
   [ungif],
-  AC_HELP_STRING([--with-ungif[=PATH]], [enable use of libungif]),
+  AC_HELP_STRING([--with-ungif=PATH], [enable use of libungif]),
   [case $withval in
   no)  sim_ac_want_libungif=false ;;
   yes) sim_ac_want_libungif=true ;;
@@ -1564,7 +1564,7 @@ AC_DEFUN([SIM_AC_CHECK_JPEGLIB], [
 AC_ARG_WITH(
   [jpeg],
   AC_HELP_STRING([--with-jpeg=DIR],
-                 [include support for JPEG images [default=yes]]),
+                 [include support for JPEG images [[default=yes]]]),
   [],
   [with_jpeg=yes])
 
@@ -1629,7 +1629,7 @@ AC_DEFUN([SIM_AC_CHECK_TIFFLIB], [
 AC_ARG_WITH(
   [tiff],
   AC_HELP_STRING([--with-tiff=DIR],
-                 [include support for TIFF images [default=yes]]),
+                 [include support for TIFF images [[default=yes]]]),
   [],
   [with_tiff=yes])
 
@@ -1791,7 +1791,7 @@ AC_DEFUN([SIM_AC_CHECK_PNGLIB], [
 AC_ARG_WITH(
   [png],
   AC_HELP_STRING([--with-png=DIR],
-                 [include support for PNG images [default=yes]]),
+                 [include support for PNG images [[default=yes]]]),
   [],
   [with_png=yes])
 
