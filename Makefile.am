@@ -25,7 +25,7 @@ EXTRA_DIST = \
 	build/simage.spec.in \
 	src/simage_jpeg_reader.icc \
 	src/simage_jpeg_writer.icc \
-	readme_win32.txt
+	README.WIN32
 
 DISTCLEANFILES = \
 	libtool \
