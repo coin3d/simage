@@ -1,52 +1,67 @@
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/nodes/SoDirectionalLight.h>
-#include <Inventor/nodes/SoPerspectiveCamera.h>
-#include <Inventor/nodes/SoMaterial.h>
-#include <Inventor/nodes/SoCone.h>
-
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/Qt/SoQtRenderArea.h>
-#include <Inventor/sensors/SoTimerSensor.h>
-
+#include <Inventor/SoInteraction.h>
 #include <Inventor/SoOffscreenRenderer.h>
+#include <Inventor/nodekits/SoNodeKit.h>
+#include <Inventor/nodes/SoCone.h>
+#include <Inventor/nodes/SoDirectionalLight.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoPerspectiveCamera.h>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/sensors/SoTimerSensor.h>
 
 #include <simage.h>
 #include <stdlib.h>
 #include <stdio.h>
 
+
 static void
 error_cb(void * userdata, const char *text)
 {
-  (void)fprintf(stderr, "c2m Error  : %s\n", text);
+  (void)fprintf(stderr, "Error: %s\n", text);
   (void)fflush(stderr);
 }
 
 static void
 warning_cb(void * userdata, const char *text)
 {
-  (void)fprintf(stderr, "c2m Warning: %s\n", text);
+  (void)fprintf(stderr, "Warning: %s\n", text);
   (void)fflush(stderr);
 }
 
 static int
 progress_cb(void * userdata, float sub, int current_frame, int num_frames)
 {
-  (void)fprintf(stdout, "c2m Progress: sub: %3.0f, curr: %d, tot:%d\n",
-                sub * 100.0, current_frame, num_frames);
+  char buffer[256];
+
+  int logframes = (int)log10(num_frames) + 1;
+  (void)sprintf(buffer, "\rwriting frame: %%%dd / %%%dd  -- %%03.1f%%%%  ",
+                logframes, logframes);
+
+  (void)fprintf(stdout, buffer, current_frame + 1, num_frames, sub * 100.0);
   (void)fflush(stdout);
   return 1;
+}
+
+static void
+print_usage(const char * appname)
+{
+  (void)fprintf(stderr, "\n\tUsage: %s <moviefile>\n\n", appname);
 }
 
 int
 main(int argc, char ** argv)
 {
+  if (argc != 2) {
+    print_usage(argc == 1 ? argv[0] : "mpeg2enc");
+    exit(1);
+  }
+
   const int WIDTH = 640;
   const int HEIGHT = 480;
   const int NUMFRAMES = 30;
 
-  QWidget * window = SoQt::init( argv[0] );
-  if ( window == NULL )
-    return -1;
+  SoDB::init();
+  SoNodeKit::init();
+  SoInteraction::init();
 
   SoSeparator * root = new SoSeparator;
   root->ref();
@@ -103,7 +118,10 @@ main(int argc, char ** argv)
                NULL);
                
   s_movie * movie = s_movie_create(argv[1], params);
-  assert(movie);
+  if (movie == NULL) {
+    error_cb(NULL, "could not create movie file");
+    exit(1);
+  }
 
   s_image * image = NULL;
 
@@ -120,7 +138,7 @@ main(int argc, char ** argv)
 
     /* just save jpeg images for debugging */
     char fname[256];
-    sprintf(fname, "renderarea%0d.jpg", i+10);
+    sprintf(fname, "renderarea%0d.jpg", i);
     SbBool ret = renderer->writeToFile(fname, "jpg");
 
     if (image == NULL) {
@@ -128,10 +146,12 @@ main(int argc, char ** argv)
     }
     else s_image_set(image, WIDTH, HEIGHT, 3, renderer->getBuffer(), 0);
     s_movie_put_image(movie, image, NULL);
-  };
+  }
   
   if (image) s_image_destroy(image);    
   s_movie_close(movie);
   s_movie_destroy(movie);
+
+  (void)fprintf(stdout, "\n");
   return 0;
 }
