@@ -41,7 +41,7 @@
  * simage_resize(imagedata, width, height, numComponents,
  *               newwidth, newheight)
  *
- *   A convenience function you may use to resize an image for you.
+ *   A convenience function that can be used to resize an image.
  *   Since OpenGL textures must have width and height equal to 2^n,
  *   this is often needed. A pointer to the new image data is returned. 
  *   imagedata is not freed. BTW: If you need a high quality resize 
@@ -59,19 +59,18 @@ extern "C" {
 #endif
 
   /* user interface */
-  unsigned char *simage_read_image(const char *filename,
-				   int *width, int *height,
-				   int *numComponents);
-  int simage_check_supported(const char *filename);
-  
-  char *simage_get_last_error(char *buffer, int buffersize);
-  void simage_clear_error();
+  unsigned char * simage_read_image(const char * filename,
+                                    int * width, int * height,
+                                    int * numComponents);
+  int simage_check_supported(const char * filename);
 
+  /* check this if simage_read_image returns NULL */
+  char * simage_get_last_error(char * buffer, int buffersize);
 
   /* convenience functions */
-  unsigned char *simage_resize(unsigned char *imagedata, int width,
-			       int height, int numComponents,
-			       int newwidth, int newheight);
+  unsigned char * simage_resize(unsigned char * imagedata, int width,
+                                int height, int numComponents,
+                                int newwidth, int newheight);
   
   int simage_next_power_of_two(int val);
 
@@ -79,19 +78,19 @@ extern "C" {
   /* plugin interface */
   struct simage_plugin 
   {
-    unsigned char *(*load_func)(const char*,
-				int *width,
-				int *height,
-				int *num_components);
-    int (*identify_func)(const char *filename,
-			 const unsigned char *header,
+    unsigned char *(*load_func)(const char *,
+				int * width,
+				int * height,
+				int * num_components);
+    int (*identify_func)(const char * filename,
+			 const unsigned char * header,
 			 int headerlen);
-    int (*error_func)(char *textbuffer, int bufferlen);
+    int (*error_func)(char * textbuffer, int bufferlen);
   };
   
-  void *simage_add_plugin_loader(const struct simage_plugin *plugin,
+  void * simage_add_plugin_loader(const struct simage_plugin * plugin,
 				 int addbefore);
-  void simage_remove_plugin_loader(void *handle);
+  void simage_remove_plugin_loader(void * handle);
   
 #ifdef __cplusplus
 }

@@ -178,7 +178,9 @@ add_internal_loaders()
   }
 }
 
-static loader_data * prevloader = NULL;
+
+#define SIMAGE_ERROR_BUFSIZE 512
+static char simage_error_msg[SIMAGE_ERROR_BUFSIZE+1];
 
 unsigned char *
 simage_read_image(const char *filename,
@@ -187,22 +189,35 @@ simage_read_image(const char *filename,
 {
   loader_data *loader;
 
+  simage_error_msg[0] = 0; /* clear error msg */
   add_internal_loaders();  
 
   loader = find_loader(filename);
-  prevloader = loader;
 
-  if (loader) return loader->funcs.load_func(filename, width, 
-					     height, numComponents);
-  else return NULL;
+  if (loader) {
+    unsigned char * data = 
+      loader->funcs.load_func(filename, width,
+                              height, numComponents);
+    if (data == NULL) {
+      (void) loader->funcs.error_func(simage_error_msg, SIMAGE_ERROR_BUFSIZE);
+    }
+    return data;
+  }
+  else {
+    strcpy(simage_error_msg, "Unsupported image format.");
+    return NULL;
+  }
 }
 
 char *
 simage_get_last_error(char * buf, int bufsize)
 {
-  if (prevloader) prevloader->funcs.error_func(buf, bufsize);
+  strncpy(buf, simage_error_msg, bufsize);
   return buf;
 }
+
+void 
+simage_clear_error(void);
 
 int 
 simage_check_supported(const char *filename)
