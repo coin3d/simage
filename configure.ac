@@ -62,8 +62,8 @@ true | yes) SIMAGE_STATIC=true
 esac
 
 case $enable_shared in
-true | yes) SIMAGE_SHARED=true ;;
-*)          SIMAGE_SHARED=false ;;
+true | yes) SIMAGE_STATIC=false ;;
+*)          SIMAGE_STATIC=true ;;
 esac
 
 # **************************************************************************
@@ -690,8 +690,6 @@ CPP_AC_SEARCH_ORDER_FILTER(SIMAGE_EXTRA_CPPFLAGS, $SIMAGE_EXTRA_CPPFLAGS)
 
 LIBFLAGS=
 
-# AC_SUBST(SIMAGE_STATIC)
-# AC_SUBST(SIMAGE_SHARED)
 AC_SUBST([LIBFLAGS], [])
 
 AM_CONDITIONAL(BUILD_WITH_MSVC, $BUILD_WITH_MSVC)
