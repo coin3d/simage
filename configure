@@ -1654,7 +1654,7 @@ fi;
 
 BUILD_WITH_MSVC=false
 if $sim_ac_try_msvc; then
-  sim_ac_wrapmsvc=`cd $srcdir; pwd`/cfg/m4/wrapmsvc.exe
+  sim_ac_wrapmsvc=`cd $srcdir; pwd`/cfg/wrapmsvc.exe
   if test -z "$CC" -a -z "$CXX" && $sim_ac_wrapmsvc >/dev/null 2>&1; then
 
 
@@ -1668,7 +1668,7 @@ if $sim_ac_try_msvc; then
 echo >&2 ""
 
 
-: ${sim_ac_message_file=$ac_aux_dir/m4/errors.txt}
+: ${sim_ac_message_file=$ac_aux_dir/errors.txt}
 if test -f $sim_ac_message_file; then
   sim_ac_message="`sed -n -e '/^!no-msvc++$/,/^!/ { /^!/ d; p; }' <$sim_ac_message_file`"
   if test x"$sim_ac_message" = x""; then
@@ -1747,7 +1747,7 @@ if test "${with_msvcrt+set}" = set; then
 echo >&2 ""
 
 
-: ${sim_ac_message_file=$ac_aux_dir/m4/errors.txt}
+: ${sim_ac_message_file=$ac_aux_dir/errors.txt}
 if test -f $sim_ac_message_file; then
   sim_ac_message="`sed -n -e '/^!invalid-msvcrt$/,/^!/ { /^!/ d; p; }' <$sim_ac_message_file`"
   if test x"$sim_ac_message" = x""; then
@@ -9082,7 +9082,7 @@ echo "${ECHO_T}$sim_ac_qt_version" >&6
 echo >&2 ""
 
 
-: ${sim_ac_message_file=$ac_aux_dir/m4/errors.txt}
+: ${sim_ac_message_file=$ac_aux_dir/errors.txt}
 if test -f $sim_ac_message_file; then
   sim_ac_message="`sed -n -e '/^!too-old-qt$/,/^!/ { /^!/ d; p; }' <$sim_ac_message_file`"
   if test x"$sim_ac_message" = x""; then
@@ -9167,7 +9167,7 @@ cat conftest.$ac_ext >&5
 echo >&2 ""
 
 
-: ${sim_ac_message_file=$ac_aux_dir/m4/errors.txt}
+: ${sim_ac_message_file=$ac_aux_dir/errors.txt}
 if test -f $sim_ac_message_file; then
   sim_ac_message="`sed -n -e '/^!x11-qt-on-mac$/,/^!/ { /^!/ d; p; }' <$sim_ac_message_file`"
   if test x"$sim_ac_message" = x""; then
@@ -9319,9 +9319,13 @@ echo $ECHO_N "checking for Qt library devkit... $ECHO_C" >&6
       ## * "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32": should cover
       ##   static linking on Win32 platforms
       ##
-      ## * "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32":
+      ## * "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32 -lws2_32":
       ##   added for the benefit of the Qt 3.0.0 Evaluation Version
       ##   (update: "advapi32.lib" seems to be a new dependency for Qt 3.1.0)
+      ##   (update: "ws2_32.lib" seems to be a new dependency for Qt 3.1.2)
+      ##
+      ## * "-lqt-mt-eval": the Qt/Mac evaluation version
+
 
       sim_ac_qt_suffix=
       if $sim_ac_qt_debug; then
@@ -9340,12 +9344,13 @@ echo $ECHO_N "checking for Qt library devkit... $ECHO_C" >&6
             "-lqt-gl" \
             "-lqt-mt" \
             "-lqt" \
-            "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32" \
+            "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32 -lws2_32" \
             "-lqt-mt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
             "-lqt-mt${sim_ac_qt_version}nc${sim_ac_qt_suffix} -lqtmain -lgdi32" \
             "-lqt -lqtmain -lgdi32" \
             "-lqt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
-            "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32"
+            "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32" \
+            "-lqt-mt-eval"
         do
           if test "x$sim_ac_qt_libs" = "xUNRESOLVED"; then
             CPPFLAGS="$sim_ac_qt_incflags $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"

@@ -1,130 +1,19 @@
-#! /bin/sh
-#
-# Script to generate configure and build files for simage source hierarchy.
-# 
-# Authors:
-#   Morten Eriksen, <mortene@sim.no>.
-#   Lars J. Aas, <larsa@sim.no>.
-#
+#!/bin/sh
 
-PROJECT=simage
+cat <<EOF
 
-wd=`echo $0 | sed 's,[^\\/]*$,,g'`;
-cd $wd
-if test ! -f bootstrap; then
-  echo "unexpected problem with your shell - bailing out"
-  exit 1
-fi
+Error: to bootstrap, invoke the script simacros/bin/bootstrap.
 
-libtoolize=false
+The simacros CVS module can be fetched by doing:
 
-AUTOCONF_VER=2.5
-AUTOMAKE_VER=1.5
-LIBTOOL_VER=1.4.2
+   \$ export CVSROOT=:pserver:cvs@cvs.coin3d.org:/export/cvsroot
+   \$ cvs login
+   [password is 'cvs']
+   \$ cvs checkout simacros
 
-MACRODIR=cfg/m4
-AUTOMAKE_ADD=
 
-if test x"$1" = x"--clean"; then
-  rm -f config.h.in configure stamp-h*
-  ( cd cfg
-     rm -f config.guess config.sub ltmain.sh ltconfig depcomp install-sh \
-           missing mkinstalldirs ltcf-*.sh )
-  find . -name Makefile.in | xargs rm -f
-  exit
-elif test x"$1" = x"--add"; then
-  AUTOMAKE_ADD="--add-missing --foreign --copy"
-  libtoolize=true
-fi
+Exiting..
 
-echo "Checking installed configuration tools..."
+EOF
 
-if test -z "`autoconf --version | grep \" $AUTOCONF_VER\" 2> /dev/null`"; then
-  cat <<END
-
-  You must have autoconf version $AUTOCONF_VER installed to generate the
-  configure script and Makefile templates for $PROJECT.
-
-  Autoconf $AUTOCONF_VER is the CVS development version of Autoconf, which you
-  can retrieve from here:
-
-    :pserver:anoncvs@subversions.gnu.org:/cvs (no password, module "autoconf")
-END
-  DIE=true
-fi
-
-if test -z "`automake --version | grep \" $AUTOMAKE_VER\" 2> /dev/null`"; then
-  cat <<END
-
-  You must have automake version $AUTOMAKE_VER installed to generate the
-  configure script and Makefile templates for $PROJECT.
-
-  Automake $AUTOMAKE_VER is the CVS developmentn version of Automake, which you
-  can retrieve from here:
-
-    :pserver:anoncvs@anoncvs.cygnus.com:/cvs/automake (no password, module automake)
-END
-    DIE=true
-fi
-
-if test -z "`libtool --version | egrep \"$LIBTOOL_VER\" 2> /dev/null`"; then
-  cat <<END
-
-  You must have libtool version $LIBTOOL_VER installed to generate the
-  configure script and Makefile templates for $PROJECT.  You can fetch it from
-  here:
-
-    ftp://ftp.gnu.org/pub/libtool/libtool-${LIBTOOL_VER}.tar.gz
-END
-    DIE=true
-fi
-
-# The separate $MACRODIR module was added late in the project, and
-# since we need to do a cvs checkout to obtain it (cvs update won't do
-# with modules), we run this check.
-
-if test ! -d $MACRODIR; then
-  cvs -z3 checkout -P simage-macros
-  if test ! -d $MACRODIR; then
-    cat <<END
-
-  Couldn't fetch $MACRODIR module!
-
-  Directory ``$MACRODIR'' (a separate CVS module) seems to be missing.
-  You probably checked out $PROJECT before ``$MACRODIR'' was added.
-  Run 'cvs -d :pserver:cvs@cvs.sim.no:/export/cvsroot co simage-macros'
-  to try again.
-END
-    DIE=true
-  fi
-fi
-
-# abnormal exit?
-${DIE=false} && echo "" && exit 1
-
-if $libtoolize; then
-  libtoolize --copy --force
-  ( cd cfg
-    test -f ltmain.sh.diff && patch -p0 < ltmain.sh.diff
-    test -f ltconfig.diff && patch -p0 < ltconfig.diff )
-fi
-
-# generate aclocal.m4
-echo "Running aclocal..."
-aclocal -I $MACRODIR
-
-# generate configure
-echo "Running autoconf..."
-autoconf
-
-# generate config.h.in
-echo "Running autoheader..."
-autoheader
-
-# generate Makefile.in templates
-echo "Running automake..."
-( automake $AUTOMAKE_ADD 3>&1 1>&2 2>&3 | \
-  grep -v 'not a standard library name' ) 3>&1 1>&2 2>&3
-
-echo "Done."
-
+exit 1

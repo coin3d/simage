@@ -102,6 +102,7 @@ SIMAGE_VERSION = @SIMAGE_VERSION@
 STRIP = @STRIP@
 SUFFIX = @SUFFIX@
 VERSION = @VERSION@
+ac_compiler_gnu = @ac_compiler_gnu@
 am__include = @am__include@
 am__quote = @am__quote@
 install_sh = @install_sh@
@@ -161,7 +162,7 @@ DIST_COMMON = README $(dist_bin_SCRIPTS) $(dist_m4data_DATA) \
 	aclocal.m4 cfg/README cfg/config.guess cfg/config.sub \
 	cfg/depcomp cfg/install-sh cfg/ltconfig cfg/ltmain.sh \
 	cfg/missing cfg/mkinstalldirs config.h.in configure \
-	configure.in
+	configure.ac
 DIST_SUBDIRS = mpeg2enc src guile
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -176,7 +177,7 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  Makefile
 Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
@@ -186,10 +187,10 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 
 $(top_builddir)/config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
-$(srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(srcdir)/configure.in $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
+$(srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(srcdir)/configure.ac $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
 	cd $(srcdir) && $(AUTOCONF)
 
-$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ configure.in 
+$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ configure.ac 
 	cd $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 config.h: stamp-h1
 	@if test ! -f $@; then \
@@ -208,7 +209,7 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/./stamp-h1.in
 		rm -f $(srcdir)/./stamp-h1.in; \
 		$(MAKE) $(srcdir)/./stamp-h1.in; \
 	else :; fi
-$(srcdir)/./stamp-h1.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+$(srcdir)/./stamp-h1.in: $(top_srcdir)/configure.ac $(ACLOCAL_M4) 
 	@rm -f $(srcdir)/./stamp-h1.in $(srcdir)/./stamp-h1.inT
 	@echo timestamp > $(srcdir)/./stamp-h1.inT 2> /dev/null
 	cd $(top_srcdir) && $(AUTOHEADER)
@@ -230,7 +231,7 @@ $(srcdir)/./include/simage.h.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/./include/stam
 		rm -f $(srcdir)/./include/stamp-h2.in; \
 		$(MAKE) $(srcdir)/./include/stamp-h2.in; \
 	else :; fi
-$(srcdir)/./include/stamp-h2.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+$(srcdir)/./include/stamp-h2.in: $(top_srcdir)/configure.ac $(ACLOCAL_M4) 
 	@rm -f $(srcdir)/./include/stamp-h2.in $(srcdir)/./include/stamp-h2.inT
 	@echo timestamp > $(srcdir)/./include/stamp-h2.inT 2> /dev/null
 	cd $(top_srcdir) && $(AUTOHEADER)

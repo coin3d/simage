@@ -165,7 +165,7 @@ AC_REQUIRE([SIM_AC_MSVC_DISABLE_OPTION])
 
 BUILD_WITH_MSVC=false
 if $sim_ac_try_msvc; then
-  sim_ac_wrapmsvc=`cd $srcdir; pwd`/cfg/m4/wrapmsvc.exe
+  sim_ac_wrapmsvc=`cd $srcdir; pwd`/cfg/wrapmsvc.exe
   if test -z "$CC" -a -z "$CXX" && $sim_ac_wrapmsvc >/dev/null 2>&1; then
     m4_ifdef([$0_VISITED],
       [AC_FATAL([Macro $0 invoked multiple times])])
@@ -271,7 +271,7 @@ sim_ac_message_file=$1
 ]) # SIM_AC_ERROR_MESSAGE_FILE
 
 AC_DEFUN([SIM_AC_ONE_MESSAGE], [
-: ${sim_ac_message_file=$ac_aux_dir/m4/errors.txt}
+: ${sim_ac_message_file=$ac_aux_dir/errors.txt}
 if test -f $sim_ac_message_file; then
   sim_ac_message="`sed -n -e '/^!$1$/,/^!/ { /^!/ d; p; }' <$sim_ac_message_file`"
   if test x"$sim_ac_message" = x""; then
@@ -395,6 +395,51 @@ case "x$am_cv_prog_cc_stdc" in
   *) CC="$CC $am_cv_prog_cc_stdc" ;;
 esac
 ])
+
+# **************************************************************************
+# Usage:
+#   SIM_AC_CHECK_FINK ([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#
+# Description:
+#   This macro checks for the availability of the Fink system. Fink is 
+#   dpkg-based distribution of UNIX tools for Mac OS X that installs
+#   libraries and headers into /sw.
+#
+# Autoconf Variables:
+#     $sim_ac_fink_avail       true | false
+#     $sim_ac_fink_cppflags    (extra flags the preprocessor needs)
+#     $sim_ac_fink_ldflags     (extra flags the linker needs)
+#
+# CPPFLAGS and LDFLAGS will also be set accordingly.
+#
+# Authors:
+#   Karin Kosina <kyrah@sim.no>
+#
+
+AC_DEFUN([SIM_AC_CHECK_FINK], [
+sim_ac_have_fink=false
+AC_MSG_CHECKING([if fink is available])
+if test -d /sw/include && test -d /sw/lib; then
+  AC_MSG_RESULT([yes])
+  sim_ac_have_fink=true
+  sim_ac_fink_cppflags="-I/sw/include"
+  sim_ac_fink_ldflags="-L/sw/lib"
+  CPPFLAGS="$CPPFLAGS $sim_ac_fink_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_fink_ldflags"
+else 
+  AC_MSG_RESULT([no])
+  sim_ac_fink_cppflags=
+  sim_ac_fink_ldflags=
+fi
+
+if $sim_ac_have_fink; then
+  ifelse([$1], , :, [$1])
+else
+  ifelse([$2], , :, [$2])
+fi
+
+]) # SIM_AC_CHECK_FINK
+
 
 # Do all the work for Automake.  This macro actually does too much --
 # some checks are only needed if your package does certain things.
@@ -4718,12 +4763,20 @@ if test x"$with_qt" != xno; then
   sim_ac_qglobal=false
   SIM_AC_CHECK_HEADER_SILENT([qglobal.h],
     [sim_ac_qglobal=true],
-    # Debian Linux has the Qt-dev installation headers in a separate subdir.
+    # Debian Linux and Darwin fink have the Qt-dev installation headers in 
+    #a separate subdir.
     [sim_ac_debian_qtheaders=/usr/include/qt
      if test -d $sim_ac_debian_qtheaders; then
        sim_ac_qt_incflags="-I$sim_ac_debian_qtheaders $sim_ac_qt_incflags"
        CPPFLAGS="-I$sim_ac_debian_qtheaders $CPPFLAGS"
        SIM_AC_CHECK_HEADER_SILENT([qglobal.h], [sim_ac_qglobal=true])
+     else
+     sim_ac_fink_qtheaders=/sw/include/qt
+     if test -d $sim_ac_fink_qtheaders; then
+       sim_ac_qt_incflags="-I$sim_ac_fink_qtheaders $sim_ac_qt_incflags"
+       CPPFLAGS="-I$sim_ac_fink_qtheaders $CPPFLAGS"
+       SIM_AC_CHECK_HEADER_SILENT([qglobal.h], [sim_ac_qglobal=true])
+     fi
      fi])
 
   if $sim_ac_qglobal; then
@@ -4767,12 +4820,14 @@ known to contain some serious bugs on MacOS X. We strongly recommend you to
 upgrade. (See $srcdir/README.MAC for details.)])
     fi
 
-  # Qt/X11 is currently not supported on Mac OS X.
+    if test x"$sim_ac_want_x11" = xno; then   
+    # Qt/X11 needs X11, which you need to enable by --enable-x11
     AC_TRY_LINK([#include <qapplication.h>],
                 [#if defined(__APPLE__) && defined(Q_WS_X11)
                  #error blah!
                  #endif],[],
                 [SIM_AC_ERROR([x11-qt-on-mac])])
+    fi
     ;;
   esac
 
@@ -4855,9 +4910,13 @@ recommend you to upgrade.])
       ## * "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32": should cover
       ##   static linking on Win32 platforms
       ##
-      ## * "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32":
+      ## * "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32 -lws2_32":
       ##   added for the benefit of the Qt 3.0.0 Evaluation Version
       ##   (update: "advapi32.lib" seems to be a new dependency for Qt 3.1.0)
+      ##   (update: "ws2_32.lib" seems to be a new dependency for Qt 3.1.2)
+      ##
+      ## * "-lqt-mt-eval": the Qt/Mac evaluation version
+
 
       sim_ac_qt_suffix=
       if $sim_ac_qt_debug; then
@@ -4876,12 +4935,13 @@ recommend you to upgrade.])
             "-lqt-gl" \
             "-lqt-mt" \
             "-lqt" \
-            "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32" \
+            "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32 -lws2_32" \
             "-lqt-mt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
             "-lqt-mt${sim_ac_qt_version}nc${sim_ac_qt_suffix} -lqtmain -lgdi32" \
             "-lqt -lqtmain -lgdi32" \
             "-lqt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
-            "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32"
+            "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32" \
+            "-lqt-mt-eval"
         do
           if test "x$sim_ac_qt_libs" = "xUNRESOLVED"; then
             CPPFLAGS="$sim_ac_qt_incflags $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"
@@ -5933,7 +5993,9 @@ if test x"$with_pthread" != xno; then
 
   # FIXME: should investigate and document the exact meaning of
   # the _REENTRANT flag. larsa's commit message mentions
-  # "glibc-doc/FAQ.threads.html".
+  # "glibc-doc/FAQ.threads.html". Also, kintel points to the
+  # comp.programming.thrads FAQ, which has an entry on the
+  # _REENTRANT define.
   #
   # Preferably, it should only be set up when really needed
   # (as detected by some other configure check).
