@@ -62,20 +62,20 @@ simage_qimage_load(const char * filename,
       return NULL;
     }
 
-    unsigned char * dst = buffer;
     QRgb * bits = (QRgb*) image.bits();
     for (int y = 0; y < h; y++) {
+      unsigned char * line = &buffer[c*w*(h-(y+1))];
       for (int x = 0; x < w; x++) {
-        *dst++ = qRed(*bits);
-        *dst++ = qGreen(*bits);
-        *dst++ = qBlue(*bits);
+        *line++ = qRed(*bits);
+        *line++ = qGreen(*bits);
+        *line++ = qBlue(*bits);
         if (c == 4) {
-          *dst++ = qAlpha(*bits);
+          *line++ = qAlpha(*bits);
         }
         bits++;
       }
     }
-
+    
     *width_ret = w;
     *height_ret = h;
     *numComponents_ret = c;
@@ -159,6 +159,8 @@ simage_qimage_save(const char * filename,
   QRgb * bits = (QRgb*) image.bits();
   
   for (int y = 0; y < height; y++) {
+    const unsigned char * line = 
+      &bytes[width*numcomponents*(height-(y+1))];
     for (int x = 0; x < width; x++) {
       switch (numcomponents) {
       default:
