@@ -465,13 +465,13 @@ AC_SUBST(LDFLAGS)
 # Section related to building with MS Visual C++ on Windows
 
 case $enable_static in
-yes) SIMAGE_STATIC=true;;
-*)   SIMAGE_STATIC=false;;
+true | yes)  SIMAGE_STATIC=true;;
+*)           SIMAGE_STATIC=false;;
 esac
 
 case $enable_shared in
-yes) SIMAGE_SHARED=true;;
-*)   SIMAGE_SHARED=false;;
+true | yes)  SIMAGE_SHARED=true;;
+*)           SIMAGE_SHARED=false;;
 esac
 
 LIBFLAGS=
@@ -500,11 +500,14 @@ if $BUILD_WITH_MSVC; then
     SIMAGE_EXTRA_LIBS=
   else
     LIBFLAGS="-DLL /INCREMENTAL:NO"
-    if test x"$enable_debug" = xno; then
+    case $enable_debug in
+    no | false)
       LIBFLAGS="$LIBFLAGS /RELEASE"
-    else
-      LIBFLAGS="$LIBFLAGS /DEBUG /PDB:$debugfile"
-    fi
+      ;;
+    *)
+      LIBFLAGS="$LIBFLAGS /DEBUG /PDB:simage$SIMAGE_MAJOR_VERSION$SUFFIX.pdb"
+      ;;
+    esac
     LIBFLAGS="$LIBFLAGS /OUT:simage$SIMAGE_MAJOR_VERSION$SUFFIX.dll"
   fi
 

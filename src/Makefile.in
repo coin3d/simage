@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4c from Makefile.am
+# Makefile.in generated automatically by automake 1.4e from Makefile.am
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -76,6 +76,8 @@ DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSUFFIX = @DSUFFIX@
 INSTALL_HEADER = @INSTALL_HEADER@
+INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+INSTALL_STRIP_PROGRAM_ENV = @INSTALL_STRIP_PROGRAM_ENV@
 LDFLAGS = @LDFLAGS@
 LIBFLAGS = @LIBFLAGS@
 LIBTOOL = @LIBTOOL@
@@ -97,6 +99,7 @@ SIMAGE_MAJOR_VERSION = @SIMAGE_MAJOR_VERSION@
 SIMAGE_MICRO_VERSION = @SIMAGE_MICRO_VERSION@
 SIMAGE_MINOR_VERSION = @SIMAGE_MINOR_VERSION@
 SIMAGE_VERSION = @SIMAGE_VERSION@
+STRIP = @STRIP@
 SUFFIX = @SUFFIX@
 VERSION = @VERSION@
 _am_include = @_am_include@
@@ -1034,7 +1037,7 @@ GZIP_ENV = --best
 SOURCES = $(libsimage@SUFFIX@_la_SOURCES) $(EXTRA_libsimage@SUFFIX@_la_SOURCES)
 OBJECTS = $(am_libsimage@SUFFIX@_la_OBJECTS)
 
-all: all-redirect
+all: all-am
 .SUFFIXES:
 .SUFFIXES: .c .h .lo .o
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
@@ -1042,7 +1045,7 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configur
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
-	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= CONFIG_LINKS= CONFIG_COMMANDS= $(SHELL) ./config.status
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
 
 
 mostlyclean-libLTLIBRARIES:
@@ -1203,9 +1206,9 @@ uninstall-am: uninstall-libLTLIBRARIES \
 		uninstall-libsimage@SUFFIX@incHEADERS uninstall-local
 uninstall: uninstall-am
 all-am: Makefile $(LTLIBRARIES) $(HEADERS) all-local
-all-redirect: all-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+	  INSTALL_PROGRAM_ENV='$(INSTALL_STRIP_PROGRAM_ENV)' install
 installdirs:
 	$(mkinstalldirs)  $(DESTDIR)$(libdir) \
 		$(DESTDIR)$(libsimage@SUFFIX@incdir)
@@ -1244,12 +1247,12 @@ mostlyclean: mostlyclean-am
 mostlyclean-am: mostlyclean-compile mostlyclean-generic \
 	mostlyclean-libLTLIBRARIES mostlyclean-libtool
 
-.PHONY: all all-am all-local all-redirect check check-am clean \
-	clean-generic clean-libLTLIBRARIES clean-libtool distclean \
-	distclean-compile distclean-depend distclean-generic \
-	distclean-libLTLIBRARIES distclean-libtool distclean-tags \
-	distdir dvi dvi-am info info-am install install-am install-data \
-	install-data-am install-data-local install-exec install-exec-am \
+.PHONY: all all-am all-local check check-am clean clean-generic \
+	clean-libLTLIBRARIES clean-libtool distclean distclean-compile \
+	distclean-depend distclean-generic distclean-libLTLIBRARIES \
+	distclean-libtool distclean-tags distdir dvi dvi-am info \
+	info-am install install-am install-data install-data-am \
+	install-data-local install-exec install-exec-am \
 	install-exec-local install-libLTLIBRARIES \
 	install-libsimage@SUFFIX@incHEADERS install-strip installcheck \
 	installcheck-am installdirs maintainer-clean \
@@ -1292,16 +1295,20 @@ install-exec-local:
 
 install-data-local:
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
-	if test -s "$$basename.lib"; then \
-	  $(mkinstalldirs) "$(DESTDIR)$(libdir)"; \
-	  echo " $(INSTALL_DATA)" "$$basename.lib" "$(DESTDIR)$(libdir)/$$basename.lib"; \
-	  $(INSTALL_DATA) "$$basename.lib" "$(DESTDIR)$(libdir)/$$basename.lib"; \
-	fi
+	for ext in lib pdb; do \
+	  file="$$basename.$$ext"; \
+	  if test -s "$$file"; then \
+	    $(mkinstalldirs) "$(DESTDIR)$(libdir)"; \
+	    echo " $(INSTALL_DATA)" "$$file" "$(DESTDIR)$(libdir)/$$file"; \
+	    $(INSTALL_DATA) "$$file" "$(DESTDIR)$(libdir)/$$file"; \
+	  fi \
+	done
 
 uninstall-local:
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
 	for file in \
 	  "$(DESTDIR)$(bindir)/$$basename.dll" \
+	  "$(DESTDIR)$(libdir)/$$basename.pdb" \
 	  "$(DESTDIR)$(libdir)/$$basename.lib"; do \
 	  if test -f "$$file"; then \
 	    echo " rm -f" "$$file"; \
