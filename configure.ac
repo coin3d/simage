@@ -758,7 +758,12 @@ else
   # For the build/simage.spec RPM specification file.
   SIM_AC_ISO8601_DATE(simage_configure_date)
   AC_SUBST(simage_configure_date)
-  COIN_COMPILER="$CC"
+
+  # Mac OS X needs to call gcc as g++ when linking C++
+  case $host_os in 
+  darwin*) COIN_COMPILER="$CXX";;
+  *) COIN_COMPILER="$CC";;
+  esac
 fi
 
 AC_SUBST(COIN_COMPILER)
