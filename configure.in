@@ -105,6 +105,20 @@ AM_CONDITIONAL(SIMAGE_JPEG_SUPPORT, test x"$sim_ac_jpegdev_avail" = xyes)
 
 
 dnl *******************************************************************
+dnl * Check if UNGIF support is wanted (and if so, available).
+dnl *******************************************************************
+
+SIM_AC_CHECK_UNGIFLIB([AC_DEFINE(HAVE_UNGIFLIB)
+                       SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_ungifdev_cppflags"
+                       SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_ungifdev_ldflags"
+                       SIMAGE_EXTRA_LIBS="$sim_ac_ungifdev_libs $SIMAGE_EXTRA_LIBS"],
+                      [AC_MSG_WARN(libungif development system not found)])
+
+AM_CONDITIONAL(SIMAGE_UNGIF_SUPPORT, test x"$sim_ac_ungifdev_avail" = xyes)
+
+
+
+dnl *******************************************************************
 dnl * Check if TIFF support is wanted (and if so, available).
 dnl *******************************************************************
 

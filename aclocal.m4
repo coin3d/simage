@@ -839,33 +839,37 @@ else
   $1_FALSE=
 fi])
 
-dnl Usage:
-dnl  SIM_CHECK_JPEGLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-dnl
-dnl  Try to find the JPEG development system. If it is found, these
-dnl  shell variables are set:
-dnl
-dnl    $sim_ac_jpegdev_cppflags (extra flags the compiler needs for jpeg lib)
-dnl    $sim_ac_jpegdev_ldflags  (extra flags the linker needs for jpeg lib)
-dnl    $sim_ac_jpegdev_libs     (link libraries the linker needs for jpeg lib)
-dnl
-dnl  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-dnl  In addition, the variable $sim_ac_jpegdev_avail is set to "yes" if
-dnl  the jpeg development system is found.
-dnl
-dnl
-dnl Author: Morten Eriksen, <mortene@sim.no>.
-dnl
-dnl TODO:
-dnl    * [mortene:20000122] make sure this work on MSWin (with
-dnl      Cygwin installation)
-dnl
+# Usage:
+#  SIM_CHECK_JPEGLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#
+#  Try to find the JPEG development system. If it is found, these
+#  shell variables are set:
+#
+#    $sim_ac_jpegdev_cppflags (extra flags the compiler needs for jpeg lib)
+#    $sim_ac_jpegdev_ldflags  (extra flags the linker needs for jpeg lib)
+#    $sim_ac_jpegdev_libs     (link libraries the linker needs for jpeg lib)
+#
+#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
+#  In addition, the variable $sim_ac_jpegdev_avail is set to "yes" if
+#  the jpeg development system is found.
+#
+#
+# Author: Morten Eriksen, <mortene@sim.no>.
+#
+# TODO:
+#    * [mortene:20000122] make sure this work on MSWin (with
+#      Cygwin installation)
+#
 
-AC_DEFUN(SIM_CHECK_JPEGLIB,[
-dnl Autoconf is a developer tool, so don't bother to support older versions.
+AC_DEFUN([SIM_CHECK_JPEGLIB], [
 AC_PREREQ([2.14.1])
 
-AC_ARG_WITH(jpeg, AC_HELP_STRING([--with-jpeg=DIR], [include support for JPEG images [default=yes]]), , [with_jpeg=yes])
+AC_ARG_WITH(
+  [jpeg],
+  AC_HELP_STRING([--with-jpeg=DIR],
+                 [include support for JPEG images [default=yes]]),
+  [],
+  [with_jpeg=yes])
 
 sim_ac_jpegdev_avail=no
 
@@ -889,48 +893,119 @@ if test x"$with_jpeg" != xno; then
     [AC_TRY_LINK([#include <stdio.h>
                   #include <jpeglib.h>],
                  [(void)jpeg_read_header(0L, 0);],
-                 sim_cv_lib_jpegdev_avail=yes,
-                 sim_cv_lib_jpegdev_avail=no)])
+                 [sim_cv_lib_jpegdev_avail=yes],
+                 [sim_cv_lib_jpegdev_avail=no])])
 
   if test x"$sim_cv_lib_jpegdev_avail" = xyes; then
     sim_ac_jpegdev_avail=yes
-    ifelse($1, , :, $1)
+    $1
   else
     CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
-    ifelse($2, , :, $2)
+    $2
   fi
 fi
 ])
 
-dnl Usage:
-dnl  SIM_CHECK_TIFFLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-dnl
-dnl  Try to find the TIFF development system. If it is found, these
-dnl  shell variables are set:
-dnl
-dnl    $sim_ac_tiffdev_cppflags (extra flags the compiler needs for tiff lib)
-dnl    $sim_ac_tiffdev_ldflags  (extra flags the linker needs for tiff lib)
-dnl    $sim_ac_tiffdev_libs     (link libraries the linker needs for tiff lib)
-dnl
-dnl  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-dnl  In addition, the variable $sim_ac_tiffdev_avail is set to "yes" if
-dnl  tiff development system is found.
-dnl
-dnl
-dnl Author: Morten Eriksen, <mortene@sim.no>.
-dnl
-dnl TODO:
-dnl    * [mortene:20000122] make sure this work on MSWin (with
-dnl      Cygwin installation)
-dnl
 
-AC_DEFUN(SIM_CHECK_TIFFLIB,[
-dnl Autoconf is a developer tool, so don't bother to support older versions.
+# Usage:
+#  SIM_AC_CHECK_UNGIFLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#
+#  Try to find the libungif development system. If it is found, these
+#  shell variables are set:
+#
+#    $sim_ac_ungifdev_cppflags (extra flags the compiler needs for ungif lib)
+#    $sim_ac_ungifdev_ldflags  (extra flags the linker needs for ungif lib)
+#    $sim_ac_ungifdev_libs     (link libraries the linker needs for ungif lib)
+#
+#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
+#  In addition, the variable $sim_ac_ungifdev_avail is set to "yes" if
+#  the ungif development system is found.
+#
+#
+# Author: Morten Eriksen, <mortene@sim.no>.
+#
+# TODO:
+#    * [mortene:20000122] make sure this work on MSWin (with
+#      Cygwin installation)
+#
+
+AC_DEFUN([SIM_AC_CHECK_UNGIFLIB], [
+AC_ARG_WITH(
+  [ungif],
+  AC_HELP_STRING([--with-ungif=DIR],
+                 [include support for GIF images [default=yes]]),
+  [],
+  [with_ungif=yes])
+
+sim_ac_ungifdev_avail=no
+
+if test x"$with_ungif" != xno; then
+  if test x"$with_ungif" != xyes; then
+    sim_ac_ungifdev_cppflags="-I${with_ungif}/include"
+    sim_ac_ungifdev_ldflags="-L${with_ungif}/lib"
+  fi
+  sim_ac_ungifdev_libs="-lungif"
+
+  sim_ac_save_cppflags=$CPPFLAGS
+  sim_ac_save_ldflags=$LDFLAGS
+  sim_ac_save_libs=$LIBS
+
+  CPPFLAGS="$CPPFLAGS $sim_ac_ungifdev_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_ungifdev_ldflags"
+  LIBS="$sim_ac_ungifdev_libs $LIBS"
+
+  AC_CACHE_CHECK([whether the libungif development system is available],
+    sim_cv_lib_ungifdev_avail,
+    [AC_TRY_LINK([#include <gif_lib.h>],
+                 [(void)EGifOpenFileName(0L, 0);],
+                 [sim_cv_lib_ungifdev_avail=yes],
+                 [sim_cv_lib_ungifdev_avail=no])])
+
+  if test x"$sim_cv_lib_ungifdev_avail" = xyes; then
+    sim_ac_ungifdev_avail=yes
+    $1
+  else
+    CPPFLAGS=$sim_ac_save_cppflags
+    LDFLAGS=$sim_ac_save_ldflags
+    LIBS=$sim_ac_save_libs
+    $2
+  fi
+fi
+])
+
+# Usage:
+#  SIM_CHECK_TIFFLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#
+# Description:
+#  Try to find the TIFF development system. If it is found, these
+#  shell variables are set:
+#
+#    $sim_ac_tiffdev_cppflags (extra flags the compiler needs for tiff lib)
+#    $sim_ac_tiffdev_ldflags  (extra flags the linker needs for tiff lib)
+#    $sim_ac_tiffdev_libs     (link libraries the linker needs for tiff lib)
+#
+#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
+#  In addition, the variable $sim_ac_tiffdev_avail is set to "yes" if
+#  tiff development system is found.
+#
+# Author: Morten Eriksen, <mortene@sim.no>.
+#
+# TODO:
+#    * [mortene:20000122] make sure this work on MSWin (with
+#      Cygwin installation)
+#
+
+AC_DEFUN([SIM_CHECK_TIFFLIB], [
 AC_PREREQ([2.14.1])
 
-AC_ARG_WITH(tiff, AC_HELP_STRING([--with-tiff=DIR], [include support for TIFF images [default=yes]]), , [with_tiff=yes])
+AC_ARG_WITH(
+  [tiff],
+  AC_HELP_STRING([--with-tiff=DIR],
+                 [include support for TIFF images [default=yes]]),
+  [],
+  [with_tiff=yes])
 
 sim_ac_tiffdev_avail=no
 
@@ -953,48 +1028,53 @@ if test x"$with_tiff" != xno; then
     sim_cv_lib_tiffdev_avail,
     [AC_TRY_LINK([#include <tiffio.h>],
                  [(void)TIFFOpen(0L, 0L);],
-                 sim_cv_lib_tiffdev_avail=yes,
-                 sim_cv_lib_tiffdev_avail=no)])
+                 [sim_cv_lib_tiffdev_avail=yes],
+                 [sim_cv_lib_tiffdev_avail=no])])
 
-  if test x"$sim_cv_lib_tiffdev_avail" = xyes; then
+  if test x"$sim_cv_lib_tiffdev_avail" = x"yes"; then
     sim_ac_tiffdev_avail=yes
-    ifelse($1, , :, $1)
+    $1
   else
     CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
-    ifelse($2, , :, $2)
+    $2
   fi
 fi
 ])
 
-dnl Usage:
-dnl  SIM_CHECK_ZLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-dnl
-dnl  Try to find the ZLIB development system. If it is found, these
-dnl  shell variables are set:
-dnl
-dnl    $sim_ac_zlib_cppflags (extra flags the compiler needs for zlib)
-dnl    $sim_ac_zlib_ldflags  (extra flags the linker needs for zlib)
-dnl    $sim_ac_zlib_libs     (link libraries the linker needs for zlib)
-dnl
-dnl  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-dnl  In addition, the variable $sim_ac_zlib_avail is set to "yes" if the
-dnl  zlib development system is found.
-dnl
-dnl
-dnl Author: Morten Eriksen, <mortene@sim.no>.
-dnl
-dnl TODO:
-dnl    * [mortene:20000122] make sure this work on MSWin (with
-dnl      Cygwin installation)
-dnl
 
-AC_DEFUN(SIM_CHECK_ZLIB,[
-dnl Autoconf is a developer tool, so don't bother to support older versions.
+# Usage:
+#  SIM_CHECK_ZLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#
+#  Try to find the ZLIB development system. If it is found, these
+#  shell variables are set:
+#
+#    $sim_ac_zlib_cppflags (extra flags the compiler needs for zlib)
+#    $sim_ac_zlib_ldflags  (extra flags the linker needs for zlib)
+#    $sim_ac_zlib_libs     (link libraries the linker needs for zlib)
+#
+#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
+#  In addition, the variable $sim_ac_zlib_avail is set to "yes" if the
+#  zlib development system is found.
+#
+#
+# Author: Morten Eriksen, <mortene@sim.no>.
+#
+# TODO:
+#    * [mortene:20000122] make sure this work on MSWin (with
+#      Cygwin installation)
+#
+
+AC_DEFUN([SIM_CHECK_ZLIB], [
 AC_PREREQ([2.14.1])
 
-AC_ARG_WITH(zlib, AC_HELP_STRING([--with-zlib=DIR], [zlib installation directory]), , [with_zlib=yes])
+AC_ARG_WITH(
+  [zlib],
+  AC_HELP_STRING([--with-zlib=DIR],
+                 [zlib installation directory]),
+  [],
+  [with_zlib=yes])
 
 sim_ac_zlib_avail=no
 
@@ -1013,52 +1093,58 @@ if test x"$with_zlib" != xno; then
   LDFLAGS="$LDFLAGS $sim_ac_zlib_ldflags"
   LIBS="$sim_ac_zlib_libs $LIBS"
 
-  AC_CACHE_CHECK([whether the zlib development system is available],
+  AC_CACHE_CHECK(
+    [whether the zlib development system is available],
     sim_cv_lib_zlib_avail,
     [AC_TRY_LINK([#include <zlib.h>],
                  [(void)zlibVersion();],
-                 sim_cv_lib_zlib_avail=yes,
-                 sim_cv_lib_zlib_avail=no)])
+                 [sim_cv_lib_zlib_avail=yes],
+                 [sim_cv_lib_zlib_avail=no])])
 
   if test x"$sim_cv_lib_zlib_avail" = xyes; then
     sim_ac_zlib_avail=yes
-    ifelse($1, , :, $1)
+    $1
   else
     CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
-    ifelse($2, , :, $2)
+    $2
   fi
 fi
 ])
 
-dnl Usage:
-dnl  SIM_CHECK_PNGLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-dnl
-dnl  Try to find the PNG development system. If it is found, these
-dnl  shell variables are set:
-dnl
-dnl    $sim_ac_pngdev_cppflags (extra flags the compiler needs for png lib)
-dnl    $sim_ac_pngdev_ldflags  (extra flags the linker needs for png lib)
-dnl    $sim_ac_pngdev_libs     (link libraries the linker needs for png lib)
-dnl
-dnl  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-dnl  In addition, the variable $sim_ac_pngdev_avail is set to "yes" if the
-dnl  png development system is found.
-dnl
-dnl
-dnl Author: Morten Eriksen, <mortene@sim.no>.
-dnl
-dnl TODO:
-dnl    * [mortene:20000122] make sure this work on MSWin (with
-dnl      Cygwin installation)
-dnl
 
-AC_DEFUN(SIM_CHECK_PNGLIB,[
-dnl Autoconf is a developer tool, so don't bother to support older versions.
+# Usage:
+#   SIM_CHECK_PNGLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#
+# Description:
+#  Try to find the PNG development system. If it is found, these
+#  shell variables are set:
+#
+#    $sim_ac_pngdev_cppflags (extra flags the compiler needs for png lib)
+#    $sim_ac_pngdev_ldflags  (extra flags the linker needs for png lib)
+#    $sim_ac_pngdev_libs     (link libraries the linker needs for png lib)
+#
+#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
+#  In addition, the variable $sim_ac_pngdev_avail is set to "yes" if the
+#  png development system is found.
+#
+# Author: Morten Eriksen, <mortene@sim.no>.
+#
+# TODO:
+#    * [mortene:20000122] make sure this work on MSWin (with
+#      Cygwin installation)
+#
+
+AC_DEFUN([SIM_CHECK_PNGLIB], [
 AC_PREREQ([2.14.1])
 
-AC_ARG_WITH(png, AC_HELP_STRING([--with-png=DIR], [include support for PNG images [default=yes]]), , [with_png=yes])
+AC_ARG_WITH(
+  [png],
+  AC_HELP_STRING([--with-png=DIR],
+                 [include support for PNG images [default=yes]]),
+  [],
+  [with_png=yes])
 
 sim_ac_pngdev_avail=no
 
@@ -1077,36 +1163,42 @@ if test x"$with_png" != xno; then
   LDFLAGS="$LDFLAGS $sim_ac_pngdev_ldflags"
   LIBS="$sim_ac_pngdev_libs $LIBS"
 
-  AC_CACHE_CHECK([whether the libpng development system is available],
+  AC_CACHE_CHECK(
+    [whether the libpng development system is available],
     sim_cv_lib_pngdev_avail,
     [AC_TRY_LINK([#include <png.h>],
                  [(void)png_read_info(0L, 0L);],
-                 sim_cv_lib_pngdev_avail=yes,
-                 sim_cv_lib_pngdev_avail=no)])
+                 [sim_cv_lib_pngdev_avail=yes],
+                 [sim_cv_lib_pngdev_avail=no])])
 
-  if test x"$sim_cv_lib_pngdev_avail" = xyes; then
+  if test x"$sim_cv_lib_pngdev_avail" = x"yes"; then
     sim_ac_pngdev_avail=yes
-    ifelse($1, , :, $1)
+    $1
   else
     CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
-    ifelse($2, , :, $2)
+    $2
   fi
 fi
 ])
 
-dnl  Expand these variables into their correct full directory paths:
-dnl   $prefix  $exec_prefix  $includedir  $libdir
-dnl
-dnl  Author: Morten Eriksen, <mortene@sim.no>.
-dnl
 
-AC_DEFUN(SIM_EXPAND_DIR_VARS,
-[
-test "x$prefix" = xNONE && prefix=$ac_default_prefix
-test "x$exec_prefix" = xNONE && exec_prefix=${prefix}
-includedir=`eval echo $includedir`
-libdir=`eval echo $libdir`
+# Usage:
+#   SIM_EXPAND_DIR_VARS
+#
+# Description:
+#   Expand these variables into their correct full directory paths:
+#    $prefix  $exec_prefix  $includedir  $libdir
+# 
+# Author: Morten Eriksen, <mortene@sim.no>.
+# 
+
+AC_DEFUN([SIM_EXPAND_DIR_VARS], [
+test x"$prefix" = x"NONE" && prefix="$ac_default_prefix"
+test x"$exec_prefix" = x"NONE" && exec_prefix="${prefix}"
+includedir="`eval echo $includedir`"
+libdir="`eval echo $libdir`"
 ])
+
 
