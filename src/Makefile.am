@@ -87,8 +87,13 @@ libsimageinc_HEADERS = \
 ## install-exec-hook knows when to _not_ install the .dll.
 
 simage@SIMAGE_MAJOR_VERSION@.dll: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDENCIES)
-	@rm -f simage@SIMAGE_MAJOR_VERSION@.dll && if test x"`$(CC) 2>/dev/null | egrep '^The Microsoft Visual C\+\+ wrapper'`" = x""; then rm -f simage@SIMAGE_MAJOR_VERSION@.dll; touch simage@SIMAGE_MAJOR_VERSION@.dll; else $(CC) /dll /out:simage@SIMAGE_MAJOR_VERSION@.dll `echo $(libsimage_la_OBJECTS) | sed 's%\.lo%.obj%g'` $(libsimage_la_LIBADD) $(LIBS); fi
-
+	@rm -f simage@SIMAGE_MAJOR_VERSION@.dll && \
+	 if test x"`$(CC) 2>/dev/null | egrep '^The Microsoft Visual C\+\+ wrapper'`" = x""; then \
+	   rm -f simage@SIMAGE_MAJOR_VERSION@.dll; \
+	   touch simage@SIMAGE_MAJOR_VERSION@.dll; \
+	 else \
+	   $(CC) @DLLFLAGS@ /out:simage@SIMAGE_MAJOR_VERSION@.dll `echo $(libsimage_la_OBJECTS) | sed 's%\.lo%.obj%g'` $(libsimage_la_LIBADD) $(LIBS); \
+	 fi
 
 
 ## This hook will be run at the end of a ``make install''.
@@ -102,8 +107,19 @@ install-exec-hook: simage@SIMAGE_MAJOR_VERSION@.dll
 	  for i in simage@SIMAGE_MAJOR_VERSION@.dll simage@SIMAGE_MAJOR_VERSION@.lib; do \
 	    $(INSTALL_DATA) $$i $(DESTDIR)$(libdir)/$$i; \
 	  done; \
-	  if test -s vc60.pdb; then \
+	  if test -s simage@SIMAGE_MAJOR_VERSION@.pdb; then \
 	    echo "Installing simage@SIMAGE_MAJOR_VERSION@.pdb"; \
-	    cp vc60.pdb $(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@.pdb; \
+	    cp simage@SIMAGE_MAJOR_VERSION@.pdb $(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@.pdb; \
 	  fi \
 	fi
+
+# should have been uninstall-hook, but that doesn't work
+uninstall: uninstall-am
+	@for e in dll lib pdb; do \
+	  file="$(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@.$$e"; \
+	  if test -f "$$file"; then \
+	    echo rm -f "$$file"; \
+	    rm -f "$$file"; \
+	  fi \
+	done
+

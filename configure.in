@@ -5,52 +5,18 @@ AC_CONFIG_AUX_DIR(cfg)
 # **************************************************************************
 # Check the CVS repository setup
 
-sim_ac_cvs_syncproblem=false;
-
-sim_ac_macro_dir=`cd ${srcdir}/cfg/m4; pwd`
-
-if test ! -d $sim_ac_macro_dir; then
-  if test "x${with_auto_cvs_update+set}" = "xset"; then
-    echo "Trying to honor the --with-auto-cvs-update option."
-    sim_ac_save_cwd="`pwd`"
-    cd ${srcdir}
-    if test -d cfg/m4 -o ! -f ./CVS/Entries; then
-      AC_MSG_ERROR([something failed horribly - can't do auto-cvs-update])
-    fi
+SIM_AC_CVS_CHANGES([
+  SIM_AC_CVS_CHANGE([
+    rm -rf conf-macros
     cvs co simage-macros
-    cd ${sim_ac_save_cwd}
-    echo "Done.  Proceeding..."
-  fi
-fi
-
-if test ! -d $sim_ac_macro_dir; then
-  cat <<EOF
-
-  You appear to have an old setup of the simage source repository.
-  Parts of it have changed structurally, and you need to do the
-  following in the simage source directory:
-
-    $ rm -rf conf-macros
-    $ cvs co simage-macros
-
-  You can also run configure with the option --with-auto-cvs-update
-  to allow the configure script to try to take care of this.  This
-  option is a bit experimental - use at your own risk.
-EOF
-  sim_ac_cvs_syncproblem=true
-fi
-
-$sim_ac_cvs_syncproblem && echo "" && echo "Aborting..." && exit 1
+  ], [test -d cfg/m4], [test ! -d conf-macros])
+])
 
 # **************************************************************************
 # If the Microsoft Visual C++ cl.exe compiler is available, set us up for
 # compiling with it and to generate an MSWindows .dll file.
 
-simage_build_with_msvc=false
-if test -z "$CC" && $sim_ac_macro_dir/msvccc >/dev/null 2>&1; then
-  CC=$sim_ac_macro_dir/msvccc
-  simage_build_with_msvc=true
-fi
+SIM_AC_MSVC_SUPPORT
 
 # **************************************************************************
 # Check to see if the compiler supports the ANSI standard, and
@@ -418,8 +384,16 @@ SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_CPPFLAGS, -I$includedir $SIMAGE_EXTRA_CPPFLAGS)
 SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LDFLAGS, -L$libdir $SIMAGE_EXTRA_LDFLAGS)
 SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LIBS, $SIMAGE_EXTRA_LIBS)
 
-if $simage_build_with_msvc; then
+if $BUILD_WITH_MSVC; then
   CPPFLAGS="-DSIMAGE_MAKE_DLL $CPPFLAGS"
+
+  # FIXME: only when -g is used...
+  debugfile=`pwd`/src/simage$SIMAGE_MAJOR_VERSION.pdb
+  debugfile=`cygpath -w "$debugfile" | sed 's,\\\\,\\\\\\\\,g'`
+  CFLAGS="/Fd$debugfile $CFLAGS"
+  DLLFLAGS="/dll"
+  DLLFLAGS="$DLLFLAGS /PDB:$debugfile"
+  AC_SUBST(DLLFLAGS)
 
   # We use a version suffix on the .dll-file, so several incompatible
   # (major) versions can be installed on a system.

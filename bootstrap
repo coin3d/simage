@@ -100,6 +100,10 @@ ${DIE=false} && echo "" && exit 1
 echo "Running aclocal..."
 aclocal -I $MACRODIR
 
+# generate configure
+echo "Running autoconf..."
+autoconf
+
 # generate config.h.in
 echo "Running autoheader..."
 autoheader
@@ -107,10 +111,6 @@ autoheader
 # generate Makefile.in templates
 echo "Running automake..."
 automake $AUTOMAKE_ADD
-
-# generate configure
-echo "Running autoconf..."
-autoconf
 
 echo "Done."
 
