@@ -432,11 +432,13 @@ simage_tiff_open(const char * filename,
   od = (simage_tiff_opendata*) malloc(sizeof(simage_tiff_opendata));
   od->in = in;
 
+  /* random access of lines is not be supported for palette images */
   if (TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &od->photometric) == 1) {
-    if (od->photometric != PHOTOMETRIC_RGB && od->photometric != PHOTOMETRIC_PALETTE &&
+    if (od->photometric != PHOTOMETRIC_RGB && 
+        /* od->photometric != PHOTOMETRIC_PALETTE && */
 	od->photometric != PHOTOMETRIC_MINISWHITE && 
 	od->photometric != PHOTOMETRIC_MINISBLACK) {
-      /*Bad photometric; can only handle Grayscale, RGB and Palette images :-( */
+      /* Bad photometric; can only handle Grayscale and RGB images */
       TIFFClose(in);
       tifferror = ERR_UNSUPPORTED;
       free(od);
@@ -580,7 +582,7 @@ simage_tiff_read_line(void * opendata, int y, unsigned char * buf)
   case pack(PHOTOMETRIC_RGB, PLANARCONFIG_SEPARATE):
     for (s = 0; s < od->format; s++) {
       if (TIFFReadScanline(od->in, (tdata_t)(od->inbuf+s*od->rowsize), 
-                           (uint32)row, (tsample_t)s) < 0) {
+                           (uint32)row, (tsample_t)s) < 0) {      
         tifferror = ERR_READ; break;
       }
     }
@@ -592,7 +594,7 @@ simage_tiff_read_line(void * opendata, int y, unsigned char * buf)
   default:
     tifferror = ERR_UNSUPPORTED;
     break;
-  }  
+  }
   return tifferror == ERR_NO_ERROR;
 }
 
