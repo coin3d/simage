@@ -6,10 +6,14 @@
  *
  * A simple library for loading images. This library is designed
  * for loading textures to be used as OpenGL textures. 
- * Only pixel formats directly supported by OpenGL (v1.1) will be 
+ * Only pixel formats directly supported by OpenGL (v1.0) will be 
  * returned. The user is responsible for resizing the texture to
  * a 2^n width/height though.
- * 
+ *
+ * This library does not support the "new" OpenGL v1.1 image
+ * formats. In the future this might be supported though. We still
+ * have some old SGI HW with only OpenGL v1.0 installed...
+ *
  * Usage information:
  *
  * simage_check_supported(filename): 
@@ -29,6 +33,8 @@
  *     3 : RGB data (GL_RGB)
  *     4 : RGB data with alpha component (GL_RGBA)
  *
+ *   Other image formats might be supported in the future. You
+ *   should not assume 1 <= numComponents <= 4 :-)
  *
  * A couple of functions for your convenience:
  *

@@ -1,5 +1,5 @@
 /*
- *
+ * simage.cpp
  */
 
 #include "simage.h"
