@@ -2241,54 +2241,70 @@ SIMAGE_EXTRA_LIBS=$LIBS
 # libtiff and libpng uses math library functions. Important note:
 # configure in Coin depends on this check being made here in simage
 # configure.in.
-
-sim_ac_store_libs=$LIBS
 sim_ac_libm=
 
-echo "configure:2035: checking for math library functions" >&5
-echo $ECHO_N "checking for math library functions... $ECHO_C" >&6
+echo "configure:2034: checking for math functions library" >&5
+echo $ECHO_N "checking for math functions library... $ECHO_C" >&6
 if test "${sim_cv_lib_math+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   sim_cv_lib_math=UNDEFINED
-  # BeOS and Cygwin platforms has implicit math library linking,
+  # BeOS and MSWin platforms has implicit math library linking,
   # and ncr-sysv4.3 might use -lmw (according to AC_CHECK_LIBM in
   # libtool.m4).
   for sim_ac_math_chk in "" -lm -lmw; do
     if test x"$sim_cv_lib_math" = xUNDEFINED; then
+      sim_ac_store_libs=$LIBS
       LIBS="$sim_ac_store_libs $sim_ac_math_chk"
       cat >conftest.$ac_ext <<EOF
 #line 2048 "configure"
 #include "confdefs.h"
 #include <math.h>
+                  #include <stdlib.h>
+                  #include <stdio.h>
 int
 main ()
 {
-fmod(1.0, 1.0); pow(1.0, 1.0); exp(1.0); sin(1.0)
+char s[16];
+                   /*
+                      SGI IRIX MIPSpro compilers may "fold" math
+                      functions with constant arguments already
+                      at compile time.
+
+                      It is also theoretically possible to do this
+                      for atof(), so to be _absolutely_ sure the
+                      math functions aren't replaced by constants at
+                      compile time, we get the arguments from a guaranteed
+                      non-constant source (stdin).
+                   */
+                  fmod(atof(fgets(s,15,stdin)), atof(fgets(s,15,stdin)));
+                  pow(atof(fgets(s,15,stdin)), atof(fgets(s,15,stdin)));
+                  exp(atof(fgets(s,15,stdin)));
+                  sin(atof(fgets(s,15,stdin)))
   ;
   return 0;
 }
 EOF
-if { (eval echo configure:2059: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2075: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   sim_cv_lib_math=$sim_ac_math_chk
 else
   echo "configure: failed program was:" >&5
   cat conftest.$ac_ext >&5
 fi
 rm -f conftest*
+      LIBS=$sim_ac_store_libs
     fi
   done
 
 fi
-echo "configure:2069: result: $sim_cv_lib_math" >&5
+echo "configure:2086: result: $sim_cv_lib_math" >&5
 echo "${ECHO_T}$sim_cv_lib_math" >&6
 
 if test x"$sim_cv_lib_math" != xUNDEFINED; then
   sim_ac_libm=$sim_cv_lib_math
-  LIBS="$sim_ac_libm $sim_ac_store_libs"
+  LIBS="$sim_ac_libm $LIBS"
   SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_libm"
 else
-  LIBS=$sim_ac_store_libs
   { echo "configure: error: could not find a way to use math library" >&2; exit 1; }
 fi
 
@@ -2298,13 +2314,13 @@ fi
 sim_ac_save_ldflags=$LDFLAGS
 LDFLAGS="$LDFLAGS version.lib"
 
-echo "configure:2083: checking if linking should be done \"MSWin-style\"" >&5
+echo "configure:2099: checking if linking should be done \"MSWin-style\"" >&5
 echo $ECHO_N "checking if linking should be done \"MSWin-style\"... $ECHO_C" >&6
 if test "${sim_cv_mswin_linking+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2089 "configure"
+#line 2105 "configure"
 #include "confdefs.h"
 #include <windows.h>
 #include <version.h>
@@ -2316,7 +2332,7 @@ main ()
   return 0;
 }
 EOF
-if { (eval echo configure:2101: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:2117: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; }; then
   sim_cv_mswin_linking=yes
 else
   echo "configure: failed program was:" >&5
@@ -2326,7 +2342,7 @@ fi
 rm -f conftest*
 
 fi
-echo "configure:2110: result: $sim_cv_mswin_linking" >&5
+echo "configure:2126: result: $sim_cv_mswin_linking" >&5
 echo "${ECHO_T}$sim_cv_mswin_linking" >&6
 
 LDFLAGS=$sim_ac_save_ldflags
@@ -2378,13 +2394,13 @@ if test x"$with_jpeg" != xno; then
   LDFLAGS="$LDFLAGS $sim_ac_jpegdev_ldflags"
   LIBS="$sim_ac_jpegdev_libs $LIBS"
 
-  echo "configure:2150: checking whether the libjpeg development system is available" >&5
+  echo "configure:2166: checking whether the libjpeg development system is available" >&5
 echo $ECHO_N "checking whether the libjpeg development system is available... $ECHO_C" >&6
 if test "${sim_cv_lib_jpegdev_avail+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2156 "configure"
+#line 2172 "configure"
 #include "confdefs.h"
 #include <stdio.h>
                   #include <jpeglib.h>
@@ -2396,7 +2412,7 @@ main ()
   return 0;
 }
 EOF
-if { (eval echo configure:2168: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2184: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   sim_cv_lib_jpegdev_avail=yes
 else
   echo "configure: failed program was:" >&5
@@ -2405,7 +2421,7 @@ else
 fi
 rm -f conftest*
 fi
-echo "configure:2177: result: $sim_cv_lib_jpegdev_avail" >&5
+echo "configure:2193: result: $sim_cv_lib_jpegdev_avail" >&5
 echo "${ECHO_T}$sim_cv_lib_jpegdev_avail" >&6
 
   if test x"$sim_cv_lib_jpegdev_avail" = xyes; then
@@ -2469,13 +2485,13 @@ if test x"$with_ungif" != xno; then
   LDFLAGS="$LDFLAGS $sim_ac_ungifdev_ldflags"
   LIBS="$sim_ac_ungifdev_libs $LIBS"
 
-  echo "configure:2226: checking whether the libungif development system is available" >&5
+  echo "configure:2242: checking whether the libungif development system is available" >&5
 echo $ECHO_N "checking whether the libungif development system is available... $ECHO_C" >&6
 if test "${sim_cv_lib_ungifdev_avail+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2232 "configure"
+#line 2248 "configure"
 #include "confdefs.h"
 #include <gif_lib.h>
 int
@@ -2486,7 +2502,7 @@ main ()
   return 0;
 }
 EOF
-if { (eval echo configure:2243: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2259: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   sim_cv_lib_ungifdev_avail=yes
 else
   echo "configure: failed program was:" >&5
@@ -2495,7 +2511,7 @@ else
 fi
 rm -f conftest*
 fi
-echo "configure:2252: result: $sim_cv_lib_ungifdev_avail" >&5
+echo "configure:2268: result: $sim_cv_lib_ungifdev_avail" >&5
 echo "${ECHO_T}$sim_cv_lib_ungifdev_avail" >&6
 
   if test x"$sim_cv_lib_ungifdev_avail" = xyes; then
@@ -2559,13 +2575,13 @@ if test x"$with_tiff" != xno; then
   LDFLAGS="$LDFLAGS $sim_ac_tiffdev_ldflags"
   LIBS="$sim_ac_tiffdev_libs $LIBS"
 
-  echo "configure:2301: checking whether the libtiff development system is available" >&5
+  echo "configure:2317: checking whether the libtiff development system is available" >&5
 echo $ECHO_N "checking whether the libtiff development system is available... $ECHO_C" >&6
 if test "${sim_cv_lib_tiffdev_avail+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2307 "configure"
+#line 2323 "configure"
 #include "confdefs.h"
 #include <tiffio.h>
 int
@@ -2576,7 +2592,7 @@ main ()
   return 0;
 }
 EOF
-if { (eval echo configure:2318: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2334: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   sim_cv_lib_tiffdev_avail=yes
 else
   echo "configure: failed program was:" >&5
@@ -2585,7 +2601,7 @@ else
 fi
 rm -f conftest*
 fi
-echo "configure:2327: result: $sim_cv_lib_tiffdev_avail" >&5
+echo "configure:2343: result: $sim_cv_lib_tiffdev_avail" >&5
 echo "${ECHO_T}$sim_cv_lib_tiffdev_avail" >&6
 
   if test x"$sim_cv_lib_tiffdev_avail" = x"yes"; then
@@ -2658,13 +2674,13 @@ if test x"$with_zlib" != xno; then
   LDFLAGS="$LDFLAGS $sim_ac_zlib_ldflags"
   LIBS="$sim_ac_zlib_libs $LIBS"
 
-  echo "configure:2381: checking whether the zlib development system is available" >&5
+  echo "configure:2397: checking whether the zlib development system is available" >&5
 echo $ECHO_N "checking whether the zlib development system is available... $ECHO_C" >&6
 if test "${sim_cv_lib_zlib_avail+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2387 "configure"
+#line 2403 "configure"
 #include "confdefs.h"
 #include <zlib.h>
 int
@@ -2675,7 +2691,7 @@ main ()
   return 0;
 }
 EOF
-if { (eval echo configure:2398: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2414: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   sim_cv_lib_zlib_avail=yes
 else
   echo "configure: failed program was:" >&5
@@ -2684,7 +2700,7 @@ else
 fi
 rm -f conftest*
 fi
-echo "configure:2407: result: $sim_cv_lib_zlib_avail" >&5
+echo "configure:2423: result: $sim_cv_lib_zlib_avail" >&5
 echo "${ECHO_T}$sim_cv_lib_zlib_avail" >&6
 
   if test x"$sim_cv_lib_zlib_avail" = xyes; then
@@ -2736,13 +2752,13 @@ if test x"$with_png" != xno; then
   LDFLAGS="$LDFLAGS $sim_ac_pngdev_ldflags"
   LIBS="$sim_ac_pngdev_libs $LIBS"
 
-  echo "configure:2445: checking whether the libpng development system is available" >&5
+  echo "configure:2461: checking whether the libpng development system is available" >&5
 echo $ECHO_N "checking whether the libpng development system is available... $ECHO_C" >&6
 if test "${sim_cv_lib_pngdev_avail+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2451 "configure"
+#line 2467 "configure"
 #include "confdefs.h"
 #include <png.h>
 int
@@ -2753,7 +2769,7 @@ main ()
   return 0;
 }
 EOF
-if { (eval echo configure:2462: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2478: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   sim_cv_lib_pngdev_avail=yes
 else
   echo "configure: failed program was:" >&5
@@ -2762,7 +2778,7 @@ else
 fi
 rm -f conftest*
 fi
-echo "configure:2471: result: $sim_cv_lib_pngdev_avail" >&5
+echo "configure:2487: result: $sim_cv_lib_pngdev_avail" >&5
 echo "${ECHO_T}$sim_cv_lib_pngdev_avail" >&6
 
   if test x"$sim_cv_lib_pngdev_avail" = x"yes"; then
