@@ -1,3 +1,11 @@
+/*
+  Note 20020923 thammer:
+  movie.c should probably be rewritten to use stream.c. 
+  If you are considering modifying movie.c, please discuss it
+  with coin@sim.no first.
+
+ */
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

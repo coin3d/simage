@@ -9,9 +9,13 @@
 #include <simage_private.h>
 #include <string.h>
 
-#ifdef SIMAGE_OGGVORBIS_READ_SUPPORT
-#include "simage_oggvorbis_read.h"
-#endif /* SIMAGE_OGGVORBIS_READ_SUPPORT */
+#ifdef SIMAGE_OGGVORBIS_SUPPORT
+#include "simage_oggvorbis.h"
+#endif /* SIMAGE_OGGVORBIS_SUPPORT */
+
+#ifdef SIMAGE_LIBSNDFILE_SUPPORT
+#include "simage_libsndfile.h"
+#endif /* SIMAGE_LIBSNDFILE_SUPPORT */
 
 struct simage_stream_s {
   char * filename;
@@ -23,6 +27,7 @@ struct simage_stream_s {
   s_stream_close_func * close;
   
   s_params * params;
+  void *context;
 };
 
 struct simage_stream_importer {
@@ -51,7 +56,16 @@ add_internal_importers(void)
 {
   static int first = 1;
   if (first) {
-    /* none yet */
+#ifdef SIMAGE_OGGVORBIS_SUPPORT
+    s_stream_importer_add(oggvorbis_reader_stream_open,
+                          oggvorbis_reader_stream_get, 
+                          oggvorbis_reader_stream_close);
+#endif
+#ifdef SIMAGE_LIBSNDFILE_SUPPORT
+    s_stream_importer_add(libsndfile_stream_open,
+                          libsndfile_stream_get, 
+                          libsndfile_stream_close);
+#endif
     first = 0;
   }                
 }
@@ -61,28 +75,25 @@ add_internal_exporters(void)
 {
   static int first = 1;
   if (first) {    
-#ifdef SIMAGE_OGGVORBIS_READ_SUPPORT
-    s_stream_exporter_add(oggvorbis_reader_stream_create,
-                          oggvorbis_reader_stream_put,
-                          oggvorbis_reader_stream_close);
-#endif
+    /* none yet */
    first = 0;
   }
 }
 
 s_stream * 
-s_stream_open(const char * filename)
+s_stream_open(const char * filename, s_params * params)
 {
   struct simage_stream_importer * imp;
   s_stream * stream = (s_stream*) malloc(sizeof(s_stream));
   stream->params = NULL;
   stream->filename = NULL;
+  stream->context = NULL;
 
   add_internal_importers();
 
   imp = importers;
   while (imp) {
-    if (imp->open(filename, stream)) break;
+    if (imp->open(filename, stream, params)) break;
     imp = imp->next;
   }
   if (imp == NULL) {
@@ -106,6 +117,7 @@ s_stream_create(const char * filename, s_params * params /* | NULL */)
   s_stream * stream = (s_stream*) malloc(sizeof(s_stream));
   stream->params = NULL;
   stream->filename = NULL;
+  stream->context = NULL;
   
   add_internal_exporters();
 
@@ -128,10 +140,10 @@ s_stream_create(const char * filename, s_params * params /* | NULL */)
 }
 
 void * 
-s_stream_get_buffer(s_stream * stream, void * prealloc,
+s_stream_get_buffer(s_stream * stream, void * buffer,
                            int *size, s_params * params)
 {
-  return stream->get(stream, prealloc, size, params);
+  return stream->get(stream, buffer, size, params);
 }
 
 int 
@@ -162,6 +174,18 @@ s_stream_params(s_stream * stream)
     stream->params = s_params_create();
   }
   return stream->params;
+}
+
+void *
+s_stream_context_get(s_stream *stream)
+{
+  return stream->context;
+}
+
+void 
+s_stream_context_set(s_stream *stream, void *context)
+{
+  stream->context = context;
 }
 
 void 
