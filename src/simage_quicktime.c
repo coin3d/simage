@@ -139,16 +139,11 @@ create_file(const char * filename, FSSpec * fss)
   UniChar * ustr;
   int e = noErr;
   CFIndex len;
-
   char fullpath [MAXPATHLEN];
-  char * img_filename;  // the actual filename
-  char * img_path;      // the path to the image file
 
   realpath(filename, fullpath);
   e = FSPathMakeRef((char *)dirname(fullpath), &path, false);
-  if (e != noErr) {
-    return 0;
-  } 
+  if (e != noErr) return 0;
 
   // convert char * to UniChar *
   cfstr = CFStringCreateWithCString(0, basename(fullpath), 
