@@ -1,5 +1,10 @@
 #! /bin/sh
 
+if test $# = 0; then
+  echo "The Microsoft Visual C++ wrapper, version 0.1."
+  exit 0;
+fi
+
 # XXX debug
 echo >> msvc.txt
 date +%H:%M:%S >> msvc.txt
@@ -15,16 +20,33 @@ msvc_tool=
 for msvc_option in $@
 do
   case $msvc_option in
+  -link | -LINK | /link | /LINK)
+    # FIXME: assert msvc_tool="". 20001018 mortene.
+    msvc_tool=lib.exe
+    options="$options /link"
+    ;;
+
+    # This need to be kept before the -D* match to avoid -DLL being
+    # interpreted as "set preprocessor define LL".
+  -dll | -DLL | /dll | /DLL)
+    # FIXME: assert that msvc_tool="". 20001018 mortene.
+    msvc_tool=link.exe
+    options="$options /dll"
+    ;;
+
   -E) # Run preprocessor
     options="$options /E"
     ;;
+
   -D*) # Preprocessor define.
     options="$options /`echo $msvc_option | sed s%^.%%`"
     ;;
+
   -c) # Compile objectfile
     c_is_used=true
     options="$options /c"
     ;;
+
   -o) # Name object- or executable file
     if $c_is_used; then
       options="$options /Fo" # name object file
@@ -34,53 +56,51 @@ do
     # FIXME: couldn't we just "shift in" the object file? 20001018 mortene.
     next_is_object=true
     ;;
+
   *.c) # C file
     basename_source=`basename $msvc_option`
     sourcefile_name=`cygpath -w $msvc_option`
     options="$options /Tc$sourcefile_name" # force compilation as C
     ;;
+
   *.cpp | *.cxx | *.c++ | *.cc) # C++ file
     basename_source=`basename $msvc_option`
     sourcefile_name=`cygpath -w $msvc_option`
     options="$options /Tp$sourcefile_name" # force compilation as C++
     ;;
+
   -I*)
     inc_path=`echo $msvc_option | sed 's%^..%%'`
     options="$options /I`cygpath -w $inc_path`"
     ;;
+
   -L*)
     ld_path=`echo $msvc_option | sed 's%^..%%'`
-    # FIXME: /L is not the correct option, I think. 20001018 mortene.
-    options="$options /L`cygpath -w $ld_path`"
+    options="$options /LIBPATH:`cygpath -w $ld_path`"
     ;;
+
   -l*)
     base_libname=`echo $msvc_option | sed 's%^..%%'`
     options="$options $base_libname.lib"
     ;;
-  -link | -LINK | /link | /LINK)
-    # FIXME: assert msvc_tool="". 20001018 mortene.
-    # FIXME: is this correct or should it be lib.exe? 20001018 mortene.
-    msvc_tool=lib.exe
-    ;;
-  -dll | /dll | /DLL)
-    # FIXME: "-DLL" has a different semantic, should we warn? 20001018 mortene.
-    # FIXME: assert that msvc_tool="". 20001018 mortene.
-    msvc_tool=link.exe
-    ;;
 
   /OUT:* | /out:*)
-    # FIXME: collect pass-through options somehow? 20001018 mortene.
+    # FIXME: collect all pass-through options under the same case?
+    # 20001018 mortene.
     options="$options $msvc_option"
     ;;
 
   -* | /*)
-    echo "ERROR: unknown option \"$msvc_option\""
+    echo "msvccc error: unknown option \"$msvc_option\"" >&2
     exit 1
     ;;
 
   *) # Regular disk files (sourcecode files, object files, library files, ..)
-    # FIXME: follow file links as lib.exe at least doesn't handle them.
-    # 20001018 mortene.
+    # Follow file links as the MSVC++ tools doesn't grok them.
+    if test -L $msvc_option; then
+      msvc_option=`ls -l $msvc_option | sed "s%^.*${msvc_option} -> %%"`
+    fi
+
     if $next_is_object; then
       options="$options$msvc_option"
       next_is_object=false
