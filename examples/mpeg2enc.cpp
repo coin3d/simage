@@ -160,7 +160,7 @@ main(int argc, char ** argv)
                /* NULL means no more params */
                NULL);
                
-  s_movie * movie = s_movie_create(MPEGOUT, params);
+  s_movie * movie = s_movie_create(MPGOUT, params);
   if (movie == NULL) {
     error_cb(NULL, "could not create movie file");
     exit(1);
