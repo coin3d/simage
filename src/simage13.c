@@ -38,7 +38,7 @@ unsigned char * simage_resize3d(unsigned char *src,
     for (y = 0; y < ystop; y += dest_bpr) {
       sx = 0.0f;
       for (x = 0; x < xstop; x += nc) {
-        offset = ((int)sz)*src_bpl * ((int)sy)*src_bpr + ((int)sx)*nc;
+        offset = ((int)sz)*src_bpl + ((int)sy)*src_bpr + ((int)sx)*nc;
         for (i = 0; i < nc; i++) dest[x+y+z+i] = src[offset+i];
         sx += dx;
       }
