@@ -145,14 +145,28 @@ $(project).nsi: heading.nsi headerlist.nsi middle.nsi sourcelist.nsi bfheader.ns
 
 # **************************************************************************
 
-build-shared-release/src/Inventor/Win/$(project)$(major).dll: $(Project)-$(VERSION)
+3rdpartylibs/dist :
+	@if test -d 3rdpartylibs; then :; else mkdir 3rdpartylibs; fi
+	builddir=`pwd`; \
+	cd $(top_srcdir)/build; \
+	MAKEFLAGS=""; \
+	$(top_srcdir)/build/build_simage_libs_win32.sh $$builddir/3rdpartylibs
+
+build-shared-release/src/Inventor/Win/$(project)$(major).dll: 3rdpartylibs/dist $(Project)-$(VERSION)
 	@if test -d build-shared-release; then :; else mkdir build-shared-release; fi
+	builddir=`pwd`; \
 	cd build-shared-release; \
 	../$(Project)-$(VERSION)/configure \
 	  CFLAGS="$(OPTCFLAGS) $(DLLCFLAGS)" \
 	  CXXFLAGS="$(OPTCFLAGS) $(DLLCFLAGS)" \
 	  $(CONFIGUREOPTIONS) \
 	  $(BUILDOPTIONS) \
+	  --with-ungif="$$builddir/3rdpartylibs/dist/libungif/$(libc)" \
+	  --with-jpeg="$$builddir/3rdpartylibs/dist/libjpeg/$(libc)" \
+	  --with-zlib="$$builddir/3rdpartylibs/dist/zlib/$(libc)" \
+	  --with-png="$$builddir/3rdpartylibs/dist/libpng/$(libc)" \
+	  --with-tiff="$$builddir/3rdpartylibs/dist/libtiff/$(libc)" \
+	  --with-pic --with-rgb --with-targa --with-avienc \
 	  --disable-debug \
 	  --disable-symbols \
 	  --with-msvcrt=$(libc) \
@@ -164,14 +178,21 @@ build-shared-release/src/Inventor/Win/$(project)$(major).dll: $(Project)-$(VERSI
 
 shared-release: build-shared-release/src/Inventor/Win/$(project)$(major).dll
 
-build-shared-debug/src/Inventor/Win/$(project)$(major)d.dll: $(Project)-$(VERSION)
+build-shared-debug/src/Inventor/Win/$(project)$(major)d.dll: 3rdpartylibs/dist $(Project)-$(VERSION)
 	@if test -d build-shared-debug; then :; else mkdir build-shared-debug; fi
+	builddir=`pwd`; \
 	cd build-shared-debug; \
 	../$(Project)-$(VERSION)/configure \
 	  CFLAGS="$(DBGCFLAGS)" \
 	  CXXFLAGS="$(DBGCFLAGS)" \
 	  $(CONFIGUREOPTIONS) \
 	  $(BUILDOPTIONS) \
+	  --with-ungif="$$builddir/3rdpartylibs/dist/libungif/$(libc)d" \
+	  --with-jpeg="$$builddir/3rdpartylibs/dist/libjpeg/$(libc)d" \
+	  --with-zlib="$$builddir/3rdpartylibs/dist/zlib/$(libc)d" \
+	  --with-png="$$builddir/3rdpartylibs/dist/libpng/$(libc)d" \
+	  --with-tiff="$$builddir/3rdpartylibs/dist/libtiff/$(libc)d" \
+	  --with-pic --with-rgb --with-targa --with-avienc \
 	  --enable-debug \
 	  --enable-symbols \
 	  --with-msvcrt=$(libc)d \
