@@ -94,8 +94,8 @@ s_image_data(s_image * image)
         (void) image->openfuncs.read_line_func(image->opendata, i, 
                                                image->data+image->width*image->components);
       }
-      return image->data;
     }
+    return image->data;
   }
   return NULL;
 }
