@@ -53,26 +53,37 @@ simage_qimage_load(const char * filename,
   if (image.load(filename)) {
     int w = image.width();
     int h = image.height();
-    image = image.convertDepth(32);
-    int c = image.hasAlphaBuffer() ? 4 : 3;
+    // Keep in 8-bits mode if that was what we read
+    int c;
+    if (image.depth() == 8 && image.isGrayscale()) 
+      c = 1;
+    else {
+      image = image.convertDepth(32);
+      int c = image.hasAlphaBuffer() ? 4 : 3;
+    }
 
-    unsigned char * buffer = (unsigned char*) malloc(w*h*c);
+    unsigned char *buffer = (unsigned char *)malloc(w*h*c);
     if (buffer == NULL) {
       qimageerror = ERR_MEM;
       return NULL;
     }
 
-    QRgb * bits = (QRgb*) image.bits();
-    for (int y = 0; y < h; y++) {
-      unsigned char * line = &buffer[c*w*(h-(y+1))];
-      for (int x = 0; x < w; x++) {
-        *line++ = qRed(*bits);
-        *line++ = qGreen(*bits);
-        *line++ = qBlue(*bits);
-        if (c == 4) {
-          *line++ = qAlpha(*bits);
+    if (c == 1) {
+      memcpy(buffer,image.bits(),w*h*c);
+    }
+    else { // (c == 3 || c == 4)
+      QRgb * bits = (QRgb*) image.bits();
+      for (int y = 0; y < h; y++) {
+        unsigned char * line = &buffer[c*w*(h-(y+1))];
+        for (int x = 0; x < w; x++) {
+          *line++ = qRed(*bits);
+          *line++ = qGreen(*bits);
+          *line++ = qBlue(*bits);
+          if (c == 4) {
+            *line++ = qAlpha(*bits);
+          }
+          bits++;
         }
-        bits++;
       }
     }
     
