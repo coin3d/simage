@@ -178,6 +178,8 @@ add_internal_loaders()
   }
 }
 
+static loader_data * prevloader = NULL;
+
 unsigned char *
 simage_read_image(const char *filename,
 		   int *width, int *height,
@@ -188,10 +190,17 @@ simage_read_image(const char *filename,
   add_internal_loaders();  
 
   loader = find_loader(filename);
+  prevloader = loader;
 
   if (loader) return loader->funcs.load_func(filename, width, 
 					     height, numComponents);
   else return NULL;
+}
+
+char *
+simage_get_last_error(char * buf, int bufsize)
+{
+  if (prevloader) prevloader->funcs.error_func(buf, bufsize);
 }
 
 int 
