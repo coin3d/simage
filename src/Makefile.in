@@ -1131,15 +1131,14 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 #### Additional "native" Make rules #########################################
 
-simage.dll: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDENCIES)
-	@rm -f simage.dll && if test x"`$(CC) 2>/dev/null | egrep '^The Microsoft Visual C\+\+ wrapper'`" = x""; then rm -f simage.dll; touch simage.dll; else $(CC) /dll `echo $(libsimage_la_OBJECTS) | sed 's%\.lo%.obj%g'` $(libsimage_la_LIBADD) $(LIBS); fi
+simage@SIMAGE_MAJOR_VERSION@.dll: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDENCIES)
+	@rm -f simage@SIMAGE_MAJOR_VERSION@.dll && if test x"`$(CC) 2>/dev/null | egrep '^The Microsoft Visual C\+\+ wrapper'`" = x""; then rm -f simage@SIMAGE_MAJOR_VERSION@.dll; touch simage@SIMAGE_MAJOR_VERSION@.dll; else $(CC) /dll /out:simage@SIMAGE_MAJOR_VERSION@.dll `echo $(libsimage_la_OBJECTS) | sed 's%\.lo%.obj%g'` $(libsimage_la_LIBADD) $(LIBS); fi
 
-install-exec-hook: simage.dll
-	@if test -s simage.dll; then \
+install-exec-hook: simage@SIMAGE_MAJOR_VERSION@.dll
+	@if test -s simage@SIMAGE_MAJOR_VERSION@.dll; then \
 	  echo "Installing simage@SIMAGE_MAJOR_VERSION@.dll"; \
-	  for i in dll lib; do \
-	    $(INSTALL_DATA) simage.$$i \
-	      $(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@.$$i; \
+	  for i in simage@SIMAGE_MAJOR_VERSION@.dll simage@SIMAGE_MAJOR_VERSION@.lib; do \
+	    $(INSTALL_DATA) $$i $(DESTDIR)$(libdir)/$$i; \
 	  done \
 	fi
 
