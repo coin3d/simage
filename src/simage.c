@@ -323,9 +323,9 @@ simage_next_power_of_two(int val)
 void
 simage_version(int * major, int * minor, int * micro)
 {
-  *major = SIMAGE_MAJOR_VERSION;
-  *minor = SIMAGE_MINOR_VERSION;
-  *micro = SIMAGE_MICRO_VERSION;
+  if ( major != NULL ) *major = SIMAGE_MAJOR_VERSION;
+  if ( minor != NULL ) *minor = SIMAGE_MINOR_VERSION;
+  if ( micro != NULL ) *micro = SIMAGE_MICRO_VERSION;
 }
 
 void
