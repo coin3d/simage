@@ -165,19 +165,19 @@ simage_qimage_save(const char * filename,
       switch (numcomponents) {
       default:
       case 1:
-        *bits++ = qRgb(bytes[0], bytes[0], bytes[0]);
+        *bits++ = qRgb(line[0], line[0], line[0]);
         break;
       case 2:
-        *bits++ = qRgba(bytes[0], bytes[0], bytes[0], bytes[1]);
+        *bits++ = qRgba(line[0], line[0], line[0], line[1]);
         break;
       case 3:
-        *bits++ = qRgb(bytes[0], bytes[1], bytes[2]);
+        *bits++ = qRgb(line[0], line[1], line[2]);
         break;
       case 4:
-        *bits++ = qRgba(bytes[0], bytes[1], bytes[2], bytes[3]);
+        *bits++ = qRgba(line[0], line[1], line[2], line[3]);
         break;
       }
-      bytes += numcomponents;
+      line += numcomponents;
     }
   }
   bool ret = image.save(QString(filename), ext);
