@@ -122,7 +122,7 @@ $(project)_build.txt: buildfiles
 	(cd build-files; \
 	echo "./$(project)$(major).dsp"; \
 	echo "./$(project)$(major).dsw"; \
-	find . -type f -name "*.h" ) > $(project)_build.txt
+	echo "./config.h" ) > $(project)_build.txt
 
 uninstall.nsi: Makefile
 	( cd $(sdk_prefix); \
@@ -146,14 +146,14 @@ $(project).nsi: heading.nsi headerlist.nsi middle.nsi sourcelist.nsi bfheader.ns
 
 # **************************************************************************
 
-3rdpartylibs/dist :
-	@if test -d 3rdpartylibs; then :; else mkdir 3rdpartylibs; fi
+3rdparty/dist :
+	@if test -d 3rdparty; then :; else mkdir 3rdparty; fi
 	builddir=`pwd`; \
 	cd $(top_srcdir)/build; \
 	MAKEFLAGS=""; \
-	$(top_srcdir)/build/build_simage_libs_win32.sh $$builddir/3rdpartylibs
+	$(top_srcdir)/build/build_simage_libs_win32.sh $$builddir/3rdparty
 
-build-shared-release/src/Inventor/Win/$(project)$(major).dll: 3rdpartylibs/dist $(Project)-$(VERSION)
+build-shared-release/src/Inventor/Win/$(project)$(major).dll: 3rdparty/dist $(Project)-$(VERSION)
 	@if test -d build-shared-release; then :; else mkdir build-shared-release; fi
 	builddir=`pwd`; \
 	cd build-shared-release; \
@@ -162,11 +162,11 @@ build-shared-release/src/Inventor/Win/$(project)$(major).dll: 3rdpartylibs/dist 
 	  CXXFLAGS="$(OPTCFLAGS) $(DLLCFLAGS)" \
 	  $(CONFIGUREOPTIONS) \
 	  $(BUILDOPTIONS) \
-	  --with-ungif="$$builddir/3rdpartylibs/dist/libungif/$(libc)" \
-	  --with-jpeg="$$builddir/3rdpartylibs/dist/libjpeg/$(libc)" \
-	  --with-zlib="$$builddir/3rdpartylibs/dist/zlib/$(libc)" \
-	  --with-png="$$builddir/3rdpartylibs/dist/libpng/$(libc)" \
-	  --with-tiff="$$builddir/3rdpartylibs/dist/libtiff/$(libc)" \
+	  --with-ungif="$$builddir/3rdparty/dist/libungif/$(libc)" \
+	  --with-jpeg="$$builddir/3rdparty/dist/libjpeg/$(libc)" \
+	  --with-zlib="$$builddir/3rdparty/dist/zlib/$(libc)" \
+	  --with-png="$$builddir/3rdparty/dist/libpng/$(libc)" \
+	  --with-tiff="$$builddir/3rdparty/dist/libtiff/$(libc)" \
 	  --with-pic --with-rgb --with-targa --with-avienc \
 	  --disable-debug \
 	  --disable-symbols \
@@ -179,7 +179,7 @@ build-shared-release/src/Inventor/Win/$(project)$(major).dll: 3rdpartylibs/dist 
 
 shared-release: build-shared-release/src/Inventor/Win/$(project)$(major).dll
 
-build-shared-debug/src/Inventor/Win/$(project)$(major)d.dll: 3rdpartylibs/dist $(Project)-$(VERSION)
+build-shared-debug/src/Inventor/Win/$(project)$(major)d.dll: 3rdparty/dist $(Project)-$(VERSION)
 	@if test -d build-shared-debug; then :; else mkdir build-shared-debug; fi
 	builddir=`pwd`; \
 	cd build-shared-debug; \
@@ -188,11 +188,11 @@ build-shared-debug/src/Inventor/Win/$(project)$(major)d.dll: 3rdpartylibs/dist $
 	  CXXFLAGS="$(DBGCFLAGS)" \
 	  $(CONFIGUREOPTIONS) \
 	  $(BUILDOPTIONS) \
-	  --with-ungif="$$builddir/3rdpartylibs/dist/libungif/$(libc)d" \
-	  --with-jpeg="$$builddir/3rdpartylibs/dist/libjpeg/$(libc)d" \
-	  --with-zlib="$$builddir/3rdpartylibs/dist/zlib/$(libc)d" \
-	  --with-png="$$builddir/3rdpartylibs/dist/libpng/$(libc)d" \
-	  --with-tiff="$$builddir/3rdpartylibs/dist/libtiff/$(libc)d" \
+	  --with-ungif="$$builddir/3rdparty/dist/libungif/$(libc)d" \
+	  --with-jpeg="$$builddir/3rdparty/dist/libjpeg/$(libc)d" \
+	  --with-zlib="$$builddir/3rdparty/dist/zlib/$(libc)d" \
+	  --with-png="$$builddir/3rdparty/dist/libpng/$(libc)d" \
+	  --with-tiff="$$builddir/3rdparty/dist/libtiff/$(libc)d" \
 	  --with-pic --with-rgb --with-targa --with-avienc \
 	  --enable-debug \
 	  --enable-symbols \
@@ -257,12 +257,29 @@ build-files/$(project)$(major).dsp: $(Project)-$(VERSION)
 	@if test -d build-files; then :; else mkdir build-files; fi
 	@if test -e build-files/$(project)$(major).dsp; then \
 	rm build-files/$(project)$(major).*; fi
+	builddir=`pwd`; \
 	cd build-files; \
 	../$(Project)-$(VERSION)/configure \
 	  $(CONFIGUREOPTIONS) \
 	  $(BUILDOPTIONS) \
+	  --with-ungif="$$builddir/3rdparty/dist/libungif/$(libc)" \
+	  --with-jpeg="$$builddir/3rdparty/dist/libjpeg/$(libc)" \
+	  --with-zlib="$$builddir/3rdparty/dist/zlib/$(libc)" \
+	  --with-png="$$builddir/3rdparty/dist/libpng/$(libc)" \
+	  --with-tiff="$$builddir/3rdparty/dist/libtiff/$(libc)" \
+	  --with-msvcrt=$(libc) \
 	  --enable-msvcdsp; \
-	$(MAKE) clean && $(MAKE)
+	$(MAKE) clean && $(MAKE); \
+	wbuilddir=`cygpath -w $$builddir | sed -e 's%\\\\%\\\\\\\\%g'`; \
+	cp $(project)$(major).dsp $(project)$(major).dsp.orig; \
+	cat $(project)$(major).dsp.orig | \
+	  sed -e "s%$$wbuilddir%\$$\(COIN3DDIR\)%g" \
+	      -e "s%\"\.\\\\include\"%\"\.\"%g" \
+	      -e "s%\\\\3rdparty\\\\dist\\\\%\\\\3rdparty\\\\%g" \
+	      -e "s%\.\.\\\\source\\\\simage-2\.0\.0a%\.\.\\\\\.\.\\\\source\\\\simage-2%g" \
+	  > $(project)$(major).dsp; \
+	rm $(project)$(major).dsp.orig
+
 
 .PHONY: shared-release shared-debug static-release static-debug buildfiles
 
