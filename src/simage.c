@@ -201,6 +201,7 @@ char *
 simage_get_last_error(char * buf, int bufsize)
 {
   if (prevloader) prevloader->funcs.error_func(buf, bufsize);
+  return buf;
 }
 
 int 
