@@ -203,7 +203,7 @@ simage_png_load(const char *filename,
     int pass, y;
     unsigned char *dummytab[1];
     for (pass = 0; pass < number_passes; pass++) {
-      for ( y = 0; (uint) y < height; y++ ) {
+      for ( y = 0; (unsigned int) y < height; y++ ) {
 	/* flips image upside down */
 	dummytab[0] = &buffer[bytes_per_row*(height-1-y)];
 	png_read_rows(png_ptr, dummytab, NULL, 1);
