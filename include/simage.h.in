@@ -147,6 +147,9 @@
                image */
 #define SIMAGE_VERSION_1_5
 
+/* version 1.6 added API for reading images line-by-line */
+#define SIMAGE_VERSION_1_6
+
 /* These are available for adding or omitting features based on simage
  * version numbers in "client" sources. NB: they are automatically
  * synchronized with the settings in configure.in when configure is
