@@ -724,6 +724,7 @@ else
 fi
 
 AC_SUBST(COIN_COMPILER)
+AC_SUBST([ac_compiler_gnu])
 
 # **************************************************************************
 

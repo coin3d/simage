@@ -7,3 +7,4 @@ cflags="@SIMAGE_EXTRA_CFLAGS@"
 ldflags="@SIMAGE_EXTRA_LDFLAGS@"
 libs="@SIMAGE_EXTRA_LIBS@"
 compiler="@COIN_COMPILER@"
+compiler_is_gcc=@ac_compiler_gnu@
