@@ -99,6 +99,12 @@ simage_strcasecmp(const char * str1, const char * str2)
  * if the saver should be added at the beginning or at the
  * end of the linked list. useful if a user program finds
  * a bug in this library (simply use addbefore) 
+ *
+ * Note: The actual significance of is_internal is that memory is
+ * allocated for the "non internal" loaders (currently QImage and 
+ * QuickTime), while the other (internal) ones are static structs. The
+ * is_internal flag is used to determine whether the memory for the
+ * loader should be freed at cleanup. 
  */
 
 static void
