@@ -256,6 +256,7 @@ simage_png_save(const char *filename,
   /* open the file */
   fp = fopen(filename, "wb");
   if (fp == NULL) {
+    pngerror = ERR_OPEN_WRITE;
     return 0;
   }
   
