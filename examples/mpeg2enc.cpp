@@ -20,6 +20,7 @@
 #include <simage.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 
 static void
@@ -53,20 +54,52 @@ progress_cb(void * userdata, float sub, int current_frame, int num_frames)
 static void
 print_usage(const char * appname)
 {
-  (void)fprintf(stderr, "\n\tUsage: %s <moviefile>\n\n", appname);
+  (void)fprintf(stderr, "\n\tUsage: %s [options] <moviefile>\n\n", appname);
+  (void)fprintf(stderr, "\t\t--width     <xsize> \n");
+  (void)fprintf(stderr, "\t\t--height    <ysize> \n");
+  (void)fprintf(stderr, "\t\t--frames    <nr of movie frames> \n");
+  (void)fprintf(stderr, "\n");
+}
+
+static SbBool
+optcmp(const char * arg, const char * optionname)
+{
+  return ((strncmp(arg, "--", 2) == 0) &&
+          (strcmp(&arg[2], optionname) == 0));
 }
 
 int
 main(int argc, char ** argv)
 {
-  if (argc != 2) {
-    print_usage(argc == 1 ? argv[0] : "mpeg2enc");
-    exit(1);
+  int WIDTH = 640;
+  int HEIGHT = 480;
+  int NUMFRAMES = 20;
+  char * APPNAME = (argc >= 1) ? argv[0] : NULL;
+  char * MPGOUT = NULL;
+
+  int optidx;
+  for (optidx=1; optidx < argc - 1; optidx++) {
+    if (optcmp(argv[optidx], "width")) { WIDTH = atoi(argv[++optidx]); }
+    else if (optcmp(argv[optidx], "height")) { HEIGHT = atoi(argv[++optidx]); }
+    else if (optcmp(argv[optidx], "frames")) { NUMFRAMES = atoi(argv[++optidx]); }
+    else {
+      (void)fprintf(stderr, "Error: unknown option '%s'\n", argv[optidx]);
+    }
   }
 
-  const int WIDTH = 640;
-  const int HEIGHT = 480;
-  const int NUMFRAMES = 30;
+  if (optidx < argc) {
+    if (strncmp("--", argv[optidx], 2) == 0) {
+      (void)fprintf(stderr, "Error: unknown option '%s'\n", argv[optidx]);
+    }
+    else {
+      MPGOUT = argv[optidx];
+    }
+  }
+
+  if (MPGOUT == NULL) {
+    print_usage(APPNAME == NULL ? "mpeg2enc" : APPNAME);
+    exit(1);
+  }
 
   SoDB::init();
   SoNodeKit::init();
@@ -106,7 +139,7 @@ main(int argc, char ** argv)
                "callback userdata", S_POINTER_PARAM_TYPE, NULL,
 
                /* use to encode as mpeg1 instead of mpeg2 */
-               /* "mpeg1", S_BOOL_PARAM_TYPE, 1, */
+               "mpeg1", S_BOOL_PARAM_TYPE, 1,
 
                /* use to specify a parameter file */
                "parameter file", S_STRING_PARAM_TYPE, "ntsc_coin.par",
