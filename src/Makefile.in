@@ -890,7 +890,7 @@ all: all-redirect
 .SUFFIXES:
 .SUFFIXES: .c .h .lo .o
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --foreign src/Makefile
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
@@ -1054,6 +1054,8 @@ check: check-am
 installcheck-am:
 installcheck: installcheck-am
 install-exec-am: install-libLTLIBRARIES
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
 install-exec: install-exec-am
 
 install-data-am: install-libsimageincHEADERS
@@ -1124,6 +1126,18 @@ uninstall-am uninstall all-redirect all-am all install-strip \
 installdirs mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
+
+simage.dll: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDENCIES)
+	@rm -f simage.dll && if test x"`$(CC) 2>/dev/null | egrep '^The Microsoft Visual C\+\+ wrapper'`" = x""; then rm -f simage.dll; touch simage.dll; else $(CC) /dll `echo $(libsimage_la_OBJECTS) | sed 's%\.lo%.obj%g'` $(libsimage_la_LIBADD) $(LIBS); fi
+
+install-exec-hook: simage.dll
+	@if test -s simage.dll; then \
+	  echo "Installing simage@SIMAGE_MAJOR_VERSION@.dll"; \
+	  for i in dll lib; do \
+	    $(INSTALL_DATA) simage.$$i \
+	      $(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@.$$i; \
+	  done \
+	fi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

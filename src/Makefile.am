@@ -73,3 +73,17 @@ libsimage_la_LDFLAGS = \
 
 libsimageinc_HEADERS = \
 	$(top_srcdir)/include/simage.h
+
+## For linking up a .DLL on MSWindows with MSVC++.
+simage.dll: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDENCIES)
+	@rm -f simage.dll && if test x"`$(CC) 2>/dev/null | egrep '^The Microsoft Visual C\+\+ wrapper'`" = x""; then rm -f simage.dll; touch simage.dll; else $(CC) /dll `echo $(libsimage_la_OBJECTS) | sed 's%\.lo%.obj%g'` $(libsimage_la_LIBADD) $(LIBS); fi
+
+## This hook will be run at the end of a ``make install''.
+install-exec-hook: simage.dll
+	@if test -s simage.dll; then \
+	  echo "Installing simage@SIMAGE_MAJOR_VERSION@.dll"; \
+	  for i in dll lib; do \
+	    $(INSTALL_DATA) simage.$$i \
+	      $(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@.$$i; \
+	  done \
+	fi
