@@ -3,6 +3,46 @@ AC_INIT(include/simage.h)
 AC_CONFIG_AUX_DIR(cfg)
 
 # **************************************************************************
+# Check the CVS repository setup
+
+sim_ac_cvs_syncproblem=false;
+
+sim_ac_macro_dir=${srcdir}/cfg/m4
+
+if test ! -d $sim_ac_macro_dir; then
+  if test "x${with_auto_cvs_update+set}" = "xset"; then
+    echo "Trying to honor the --with-auto-cvs-update option."
+    sim_ac_save_cwd="`pwd`"
+    cd ${srcdir}
+    if test -d cfg/m4 -o ! -f ./CVS/Entries; then
+      AC_MSG_ERROR([something failed horribly - can't do auto-cvs-update])
+    fi
+    cvs co simage-macros
+    cd ${sim_ac_save_cwd}
+    echo "Done.  Proceeding..."
+  fi
+fi
+
+if test ! -d $sim_ac_macro_dir; then
+  cat <<EOF
+
+  You appear to have an old setup of the simage source repository.
+  Parts of it have changed structurally, and you need to do the
+  following in the simage source directory:
+
+    $ rm -rf conf-macros
+    $ cvs co simage-macros
+
+  You can also run configure with the option --with-auto-cvs-update
+  to allow the configure script to try to take care of this.  This
+  option is a bit experimental - use at your own risk.
+EOF
+  sim_ac_cvs_syncproblem=true
+fi
+
+$sim_ac_cvs_syncproblem && echo "" && echo "Aborting..." && exit 1
+
+# **************************************************************************
 # Check to see if the compiler supports the ANSI standard, and
 # automatically add the necessary options if the compiler defaults
 # to K&R C. If no ANSI mode is available, terminate.
