@@ -17,6 +17,12 @@
 #include <math.h>
 #include <assert.h>
 
+/* Need to include this so the compiler knows that the simage_resize()
+   method should be defined with __declspec(dllexport) under
+   MSWindows. */
+#include <simage.h>
+
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif /* !M_PI */
