@@ -232,7 +232,7 @@ extern "C" {
                                            s_movie_close_func * close);
 
   enum {
-    S_PARAM_END = NULL,
+    S_PARAM_END = 0,
     S_INTEGER_PARAM_TYPE,
     S_BOOL_PARAM_TYPE = S_INTEGER_PARAM_TYPE,
     S_FLOAT_PARAM_TYPE,
