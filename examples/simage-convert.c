@@ -129,8 +129,10 @@ int main(int argc, char ** argv)
     h = newh;
   }
 
+  
+
   fprintf(stderr,"save image '%s'...", outfile);
-  ret = simage_save_image(argv[2], buf, w, h, nc, "jpg");
+  ret = simage_save_image(argv[2], buf, w, h, nc, ext);
   simage_free_image(buf);
   if (ret != 1) {
     fprintf(stderr,"error: %s\n", simage_get_last_error());
