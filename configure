@@ -3389,25 +3389,39 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
 # **************************************************************************
-# Check to see if fink is installed on the system, so that the additional
-# libs and headers that are installed through fink can be found and used
-# from simage.
+# Check to see if fink is installed on the system
 
-case $host_os in
-darwin*)
-  echo "$as_me:$LINENO: checking if fink is available" >&5
+
+sim_ac_have_fink=false
+echo "$as_me:$LINENO: checking if fink is available" >&5
 echo $ECHO_N "checking if fink is available... $ECHO_C" >&6
-  fink_avail="no"
-  if test -d /sw/include && test -d /sw/lib; then
-    fink_avail="yes"
-    CFLAGS="$CFLAGS -I/sw/include"
-    CPPFLAGS="$CPPFLAGS -I/sw/include"
-    LDFLAGS="$LDFLAGS -L/sw/lib"
-  fi
-  echo "$as_me:$LINENO: result: $fink_avail" >&5
-echo "${ECHO_T}$fink_avail" >&6
-  ;;
-esac
+if test -d /sw/include && test -d /sw/lib; then
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+  sim_ac_have_fink=true
+  sim_ac_fink_cppflags="-I/sw/include"
+  sim_ac_fink_ldflags="-L/sw/lib"
+  CPPFLAGS="$CPPFLAGS $sim_ac_fink_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_fink_ldflags"
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+  sim_ac_fink_cppflags=
+  sim_ac_fink_ldflags=
+fi
+
+if $sim_ac_have_fink; then
+
+  CFLAGS="$CFLAGS -I/sw/include" # CPPFLAGS are set in macro, but we need CFLAGS too
+  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_fink_cppflags"
+  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_fink_ldflags"
+
+else
+  :
+fi
+
+
+
 
 sim_ac_qimage_support=false
 # Check whether --enable-qimage or --disable-qimage was given.
@@ -5272,7 +5286,7 @@ test "x$enable_libtool_lock" != xno && enable_libtool_lock=yes
 case $host in
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5275 "configure"' > conftest.$ac_ext
+  echo '#line 5289 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -5808,7 +5822,7 @@ chmod -w .
 save_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -o out/conftest2.$ac_objext"
 compiler_c_o=no
-if { (eval echo configure:5811: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>out/conftest.err; } && test -s out/conftest2.$ac_objext; then
+if { (eval echo configure:5825: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>out/conftest.err; } && test -s out/conftest2.$ac_objext; then
   # The compiler can only warn and ignore the option if not recognized
   # So say no if there are warnings
   if test -s out/conftest.err; then
@@ -7602,7 +7616,7 @@ else
     lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 7605 "configure"
+#line 7619 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -7700,7 +7714,7 @@ else
     lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 7703 "configure"
+#line 7717 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -8945,7 +8959,8 @@ rm -f conftest.err conftest.$ac_ext
 if test $ac_cv_header_qglobal_h = yes; then
   sim_ac_qglobal=true
 else
-  # Debian Linux has the Qt-dev installation headers in a separate subdir.
+  # Debian Linux and Darwin fink have the Qt-dev installation headers in
+    #a separate subdir.
     sim_ac_debian_qtheaders=/usr/include/qt
      if test -d $sim_ac_debian_qtheaders; then
        sim_ac_qt_incflags="-I$sim_ac_debian_qtheaders $sim_ac_qt_incflags"
@@ -8986,6 +9001,48 @@ fi
 
 
 
+     else
+     sim_ac_fink_qtheaders=/sw/include/qt
+     if test -d $sim_ac_fink_qtheaders; then
+       sim_ac_qt_incflags="-I$sim_ac_fink_qtheaders $sim_ac_qt_incflags"
+       CPPFLAGS="-I$sim_ac_fink_qtheaders $CPPFLAGS"
+
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <qglobal.h>
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+  ac_status=$?
+  egrep -v '^ *\+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null; then
+  if test -s conftest.err; then
+    ac_cpp_err=$ac_cxx_preproc_warn_flag
+  else
+    ac_cpp_err=
+  fi
+else
+  ac_cpp_err=yes
+fi
+if test -z "$ac_cpp_err"; then
+  ac_cv_header_qglobal_h=yes
+else
+  echo "$as_me: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  ac_cv_header_qglobal_h=no
+fi
+rm -f conftest.err conftest.$ac_ext
+if test $ac_cv_header_qglobal_h = yes; then
+  sim_ac_qglobal=true
+fi
+
+
+
+     fi
      fi
 fi
 
@@ -9068,7 +9125,8 @@ fi
 
     fi
 
-  # Qt/X11 is currently not supported on Mac OS X.
+    if test x"$sim_ac_want_x11" = xno; then
+    # Qt/X11 needs X11, which you need to enable by --enable-x11
     cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 #include "confdefs.h"
@@ -9134,6 +9192,7 @@ echo "$as_me: error: aborting" >&2;}
 
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+    fi
     ;;
   esac
 
@@ -11964,6 +12023,7 @@ fi
 
 
 
+
 # **************************************************************************
 
 
@@ -12647,6 +12707,7 @@ s,@win_libdir@,$win_libdir,;t t
 s,@win_srcdir@,$win_srcdir,;t t
 s,@simage_configure_date@,$simage_configure_date,;t t
 s,@COIN_COMPILER@,$COIN_COMPILER,;t t
+s,@ac_compiler_gnu@,$ac_compiler_gnu,;t t
 CEOF
 
 _ACEOF
