@@ -4420,7 +4420,7 @@ fi
 # check if we are compiling with debug symbols
 
 SIMAGE_DEBUG_BUILD=false
-echo "$CPPFLAGS $CFLAGS $CXXFLAGS" | egrep -q -- "-g\\>" &&
+test -n "`echo -- $CPPFLAGS $CFLAGS $CXXFLAGS | grep -- '-g\\>'`" &&
   SIMAGE_DEBUG_BUILD=true
 
 if $SIMAGE_DEBUG_BUILD; then
