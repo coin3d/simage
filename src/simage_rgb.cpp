@@ -1,26 +1,51 @@
 #include "simage_rgb.h"
 
 /*
- * This code is by David Blythe, SGI <blythe@sgi.com>
- * some minor bugfixes only
+ * This loader is based on code by Mark J. Kilgard. The original source
+ * was not public domain, but was Copyright 1994, 1995, 1996 by 
+ * Mark J. Kilgard. It was freely distributable without licensing fees, 
+ * and was provided without guarantee or warrantee expressed or implied.
+ * Some bugfixes and modifications by pederb
  */
 
 #include <stdio.h>
 #include <stdlib.h> 
 #include <string.h>
 #ifdef _WIN32
-#include <windows.h> /* (sigh) */
+#include <windows.h> /* sigh */
 #endif
 
 #include <assert.h>
 
-int 
-simage_rgb_error(char * /*buffer*/, int /*buflen*/)
-{
-  assert(0 && "FIXME: Not implemented");
-  return 0;
-}
 
+#define ERR_NO_ERROR          0
+#define ERR_OPEN              1
+#define ERR_READ              2
+#define ERR_MEM               3
+#define ERR_SIZEZ             4
+
+static int rgberror = ERR_NO_ERROR;
+
+
+int 
+simage_rgb_error(char * buffer, int buflen)
+{
+  switch (rgberror) {
+  case ERR_OPEN:
+    strncpy(buffer, "RGB loader: Error opening file", buflen);
+    break;
+  case ERR_READ:
+    strncpy(buffer, "RGB loader: Error reading file", buflen);
+    break;
+  case ERR_MEM:
+    strncpy(buffer, "RGB loader: Out of memory error", buflen);
+    break;
+  case ERR_SIZEZ:
+    strncpy(buffer, "RGB loader: Unsupported zsize", buflen);
+    break;
+  } 
+  return rgberror;
+}
 
 typedef struct {
   int sizeX, sizeY, sizeZ;
@@ -28,24 +53,26 @@ typedef struct {
 } RGBImageRec;
 
 typedef struct _rawImageRec {
-    unsigned short imagic;
-    unsigned short type;
-    unsigned short dim;
-    unsigned short sizeX, sizeY, sizeZ;
-    unsigned long min, max;
-    unsigned long wasteBytes;
-    char name[80];
-    unsigned long colorMap;
-    FILE *file;
-    unsigned char *tmp, *tmpR, *tmpG, *tmpB, *tmpA;
-    unsigned long rleEnd;
-    unsigned int *rowStart;
-    int *rowSize;
+  unsigned short imagic;
+  unsigned short type;
+  unsigned short dim;
+  unsigned short sizeX, sizeY, sizeZ;
+  unsigned long min, max;
+  unsigned long wasteBytes;
+  char name[80];
+  unsigned long colorMap;
+  FILE *file;
+  unsigned char *tmp, *tmpR, *tmpG, *tmpB, *tmpA;
+  unsigned long rleEnd;
+  unsigned int *rowStart;
+  int *rowSize;
+  unsigned int tmpAllocSize;
 } rawImageRec;
 
 /************************************************************************/
 
-static void ConvertShort(unsigned short *array, long length)
+static void 
+ConvertShort(unsigned short *array, long length)
 {
   unsigned long b1, b2;
   unsigned char *ptr;
@@ -58,7 +85,8 @@ static void ConvertShort(unsigned short *array, long length)
   }
 }
 
-static void ConvertLong(unsigned int *array, long length)
+static void 
+ConvertLong(unsigned int *array, long length)
 {
   unsigned long b1, b2, b3, b4;
   unsigned char *ptr;
@@ -73,7 +101,8 @@ static void ConvertLong(unsigned int *array, long length)
   }
 }
 
-static rawImageRec *RawImageOpen(const char *fileName)
+static rawImageRec *
+RawImageOpen(const char *fileName)
 {
   union {
     int testWord;
@@ -92,10 +121,12 @@ static rawImageRec *RawImageOpen(const char *fileName)
   
   raw = (rawImageRec *) malloc(sizeof(rawImageRec));
   if (raw == NULL) {
+    rgberror = ERR_MEM;
     return NULL;
   }
   
   if ((raw->file = fopen(fileName, "rb")) == NULL) {
+    rgberror = ERR_OPEN;
     free(raw);
     return NULL;
   }
@@ -105,42 +136,65 @@ static rawImageRec *RawImageOpen(const char *fileName)
   if (swapFlag) {
     ConvertShort(&raw->imagic, 6);
   }
+
+  /* only 1-4 bpp is supported */
+  if (raw->sizeZ < 1 || raw->sizeZ > 4) {
+    rgberror = ERR_SIZEZ;
+    fclose(raw->file);
+    free(raw);
+    return NULL;
+  }
   
-  raw->tmp =  (unsigned char *)malloc(raw->sizeX*256);
-  raw->tmpR = (unsigned char *)malloc(raw->sizeX*256);
-  raw->tmpG = (unsigned char *)malloc(raw->sizeX*256);
-  raw->tmpB = (unsigned char *)malloc(raw->sizeX*256);
-  raw->tmpA = (unsigned char *)malloc(raw->sizeX*256);
+  /* just in case a rle-row is bigger than an uncompressed row */
+  raw->tmpAllocSize = raw->sizeX * 2; /* just mul by 2 to avoid reallocs*/
+  raw->tmp =  (unsigned char *)malloc(raw->tmpAllocSize);
+  
+  raw->tmpR = (unsigned char *)malloc(raw->sizeX);
+  raw->tmpG = (unsigned char *)malloc(raw->sizeX);
+  raw->tmpB = (unsigned char *)malloc(raw->sizeX);
+  raw->tmpA = (unsigned char *)malloc(raw->sizeX);
   if (raw->tmp == NULL || raw->tmpR == NULL || raw->tmpG == NULL ||
       raw->tmpB == NULL || raw->tmpA == NULL) {
+    rgberror = ERR_MEM;
+    fclose(raw->file);
+    free(raw);
     return NULL;
   }
   raw->rowStart = NULL;
-    raw->rowSize = NULL;
-
-    if ((raw->type & 0xFF00) == 0x0100) {
-	x = raw->sizeY * raw->sizeZ * sizeof(unsigned int);
-	raw->rowStart = (unsigned int *)malloc(x);
-	raw->rowSize = (int *)malloc(x);
-	if (raw->rowStart == NULL || raw->rowSize == NULL) {
-	    return NULL;
-	}
-	raw->rleEnd = 512 + (2 * x);
-	fseek(raw->file, 512, SEEK_SET);
-	fread(raw->rowStart, 1, x, raw->file);
-	fread(raw->rowSize, 1, x, raw->file);
-	if (swapFlag) {
-	    ConvertLong(raw->rowStart, x/sizeof(unsigned int));
-	    ConvertLong((unsigned int *)raw->rowSize, x/sizeof(int));
-	}
+  raw->rowSize = NULL;
+  
+  if ((raw->type & 0xFF00) == 0x0100) {
+    x = raw->sizeY * raw->sizeZ * sizeof(unsigned int);
+    raw->rowStart = (unsigned int *)malloc(x);
+    raw->rowSize = (int *)malloc(x);
+    if (raw->rowStart == NULL || raw->rowSize == NULL) {
+      rgberror = ERR_MEM;
+      free(raw->tmp);
+      free(raw->tmpR);
+      free(raw->tmpG);
+      free(raw->tmpB);
+      free(raw->tmpA);
+      fclose(raw->file);
+      free(raw);
+      return NULL;
     }
-    return raw;
+    raw->rleEnd = 512 + (2 * x);
+    fseek(raw->file, 512, SEEK_SET);
+    fread(raw->rowStart, 1, x, raw->file);
+    fread(raw->rowSize, 1, x, raw->file);
+    if (swapFlag) {
+      ConvertLong(raw->rowStart, x/sizeof(unsigned int));
+      ConvertLong((unsigned int *)raw->rowSize, x/sizeof(int));
+    }
+  }
+  return raw;
 }
 
-static void RawImageClose(rawImageRec *raw)
+static void 
+RawImageClose(rawImageRec *raw)
 {
   fclose(raw->file);
-  free(raw->tmp);
+  if (raw->tmp) free(raw->tmp);
   free(raw->tmpR);
   free(raw->tmpG);
   free(raw->tmpB);
@@ -150,43 +204,71 @@ static void RawImageClose(rawImageRec *raw)
   free(raw);
 }
 
-static void RawImageGetRow(rawImageRec *raw, unsigned char *buf, int y, int z)
+static int 
+RawImageGetRow(rawImageRec *raw, unsigned char *buf, int y, int z)
 {
   unsigned char *iPtr, *oPtr, pixel;
   int count;
-
+  unsigned int rowsize;
+  
   if ((raw->type & 0xFF00) == 0x0100) {
-    fseek(raw->file, raw->rowStart[y+z*raw->sizeY], SEEK_SET);
-    fread(raw->tmp, 1, (unsigned int)raw->rowSize[y+z*raw->sizeY],
-	  raw->file);
+    if (fseek(raw->file, raw->rowStart[y+z*raw->sizeY], SEEK_SET) != 0) {
+      rgberror = ERR_READ;
+      return 0;
+    }
+
+    /* testing just in case, will probably never happen */
+    rowsize = (unsigned int) raw->rowSize[y+z*raw->sizeY];
+    if (rowsize > raw->tmpAllocSize) {
+      free(raw->tmp);
+      raw->tmpAllocSize = rowsize;
+      raw->tmp = (unsigned char*) malloc(raw->tmpAllocSize);
+      if (raw->tmp == NULL) {
+	rgberror = ERR_MEM;
+	return 0;
+      }
+    }
+    
+    if (fread(raw->tmp, 1, rowsize, raw->file) != rowsize) {
+      rgberror = ERR_READ;
+      return 0;
+    }
     
     iPtr = raw->tmp;
     oPtr = buf;
+    
+    /* FIXME: check if oPtr > buf + raw->sizeX */
     while (1) {
       pixel = *iPtr++;
       count = (int)(pixel & 0x7F);
       if (!count) {
-	return;
+	return 1;
       }
       if (pixel & 0x80) {
 	while (count--) {
 	  *oPtr++ = *iPtr++;
 	}
-      } else {
+      } 
+      else {
 	pixel = *iPtr++;
 	while (count--) {
 	  *oPtr++ = pixel;
 	}
       }
     }
-  } else {
-    fseek(raw->file, 512+(y*raw->sizeX)+(z*raw->sizeX*raw->sizeY),
-	  SEEK_SET);
-    fread(buf, 1, raw->sizeX, raw->file);
   }
+  else {
+    if (fseek(raw->file, 512+(y*raw->sizeX)+(z*raw->sizeX*raw->sizeY),
+	      SEEK_SET) != 0 ||
+	fread(buf, 1, raw->sizeX, raw->file) != raw->sizeX) {
+      rgberror = ERR_READ;
+      return 0;
+    }
+  }
+  return 1;
 }
 
-static void 
+static int 
 RawImageGetData(rawImageRec *raw, RGBImageRec *final)
 {
   unsigned char *ptr;
@@ -195,14 +277,17 @@ RawImageGetData(rawImageRec *raw, RGBImageRec *final)
   final->data = (unsigned char*) 
     malloc(raw->sizeX*raw->sizeY*raw->sizeZ);
   if (final->data == NULL) {
-    return;
+    rgberror = ERR_MEM;
+    return 0;
   }
   
   ptr = final->data;
   if (raw->sizeZ <= 2) {
     for (i = 0; i < raw->sizeY; i++) {
-      RawImageGetRow(raw, raw->tmpR, i ,0);
-      if (raw->sizeZ == 2) RawImageGetRow(raw, raw->tmpA, i, 1);
+      if (!RawImageGetRow(raw, raw->tmpR, i ,0)) return 0;
+      if (raw->sizeZ == 2) {
+	if (!RawImageGetRow(raw, raw->tmpA, i, 1)) return 0;
+      }
       for (j = 0; j < raw->sizeX; j++) {
 	*ptr++ = *(raw->tmpR + j);
 	if (raw->sizeZ==2) *ptr++ = *(raw->tmpA + j);
@@ -211,10 +296,12 @@ RawImageGetData(rawImageRec *raw, RGBImageRec *final)
   }
   else {
     for (i = 0; i < raw->sizeY; i++) {
-      RawImageGetRow(raw, raw->tmpR, i, 0);
-      RawImageGetRow(raw, raw->tmpG, i, 1);
-      RawImageGetRow(raw, raw->tmpB, i, 2);
-      if (raw->sizeZ == 4) RawImageGetRow(raw, raw->tmpA, i, 3);
+      if (!RawImageGetRow(raw, raw->tmpR, i, 0)) return 0;
+      if (!RawImageGetRow(raw, raw->tmpG, i, 1)) return 0;
+      if (!RawImageGetRow(raw, raw->tmpB, i, 2)) return 0;
+      if (raw->sizeZ == 4) {
+	if (!RawImageGetRow(raw, raw->tmpA, i, 3)) return 0;
+      }
       for (j = 0; j < raw->sizeX; j++) {
 	*ptr++ = *(raw->tmpR + j);
 	*ptr++ = *(raw->tmpG + j);
@@ -223,13 +310,15 @@ RawImageGetData(rawImageRec *raw, RGBImageRec *final)
       }
     }
   }
+  return 1;
 }
 
 static RGBImageRec *
-rgbImageLoad(const char *fileName, RGBImageRec *final )
+rgbImageLoad(const char *fileName, RGBImageRec *final)
 {
   rawImageRec *raw;
-  
+  int ret;
+
   raw = RawImageOpen(fileName);
   if (raw == NULL) {
     return NULL;
@@ -239,14 +328,20 @@ rgbImageLoad(const char *fileName, RGBImageRec *final )
   final->sizeY = raw->sizeY;
   final->sizeZ = raw->sizeZ;
 
-  RawImageGetData(raw, final);
+  ret = RawImageGetData(raw, final);
+
   RawImageClose(raw);
 
-  if (final->data)
+  if (final->data && ret)
     return final;
+  
+  /* loading failed for some reason */
+  if (final->data) {
+    free(final->data);
+    final->data = NULL; 
+  }
   return NULL;
 }
-
 
 int 
 simage_rgb_identify(const char *,
@@ -262,10 +357,12 @@ simage_rgb_identify(const char *,
 
 unsigned char * 
 simage_rgb_load(const char *filename,
-		 int *width,
-		 int *height,
-		 int *numComponents)
+		int *width,
+		int *height,
+		int *numComponents)
 {
+  rgberror = ERR_NO_ERROR; /* clear error flag */
+
   unsigned char *buffer = NULL;
   RGBImageRec image;
   if (filename) {

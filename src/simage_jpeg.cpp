@@ -16,11 +16,28 @@ extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 
+#define ERR_NO_ERROR 0
+#define ERR_OPEN     1
+#define ERR_MEM      2
+#define ERR_JPEGLIB  3
+
+static int jpegerror = ERR_NO_ERROR;
+
 int
-simage_jpeg_error(char * /*buffer*/, int /*buflen*/)
+simage_jpeg_error(char * buffer, int buflen)
 {
-  assert(0 && "FIXME: Not implemented");
-  return 0;
+  switch (jpegerror) {
+  case ERR_OPEN:
+    strncpy(buffer, "JPEG loader: Error opening file", buflen);
+    break;
+  case ERR_MEM:
+    strncpy(buffer, "JPEG loader: Out of memory error", buflen);
+    break;
+  case ERR_JPEGLIB:
+    strncpy(buffer, "JPEG loader: Illegal jpeg file", buflen);
+    break;
+  }
+  return jpegerror;
 }
 
 struct my_error_mgr {
@@ -40,7 +57,9 @@ my_error_exit (j_common_ptr cinfo)
 
   /* Always display the message. */
   /* We could postpone this until after returning, if we chose. */
-  (*cinfo->err->output_message) (cinfo);
+  /*(*cinfo->err->output_message) (cinfo);*/
+
+  /* FIXME: get error messahe from jpeglib */
 
   /* Return control to the setjmp point */
   longjmp(myerr->setjmp_buffer, 1);
@@ -74,6 +93,8 @@ simage_jpeg_load(const char *filename,
 		 int *height_ret,
 		 int *numComponents_ret)
 {
+  jpegerror = ERR_NO_ERROR;
+
   /* This struct contains the JPEG decompression parameters and pointers to
    * working space (which is allocated as needed by the JPEG library).
    */
@@ -95,7 +116,7 @@ simage_jpeg_load(const char *filename,
    */
 
   if ((infile = fopen(filename, "rb")) == NULL) {
-    // fprintf(stderr, "can't open %s\n", filename);
+    jpegerror = ERR_OPEN;
     return NULL;
   }
 
@@ -111,9 +132,10 @@ simage_jpeg_load(const char *filename,
     /* If we get here, the JPEG code has signaled an error.
      * We need to clean up the JPEG object, close the input file, and return.
      */
+    jpegerror = ERR_JPEGLIB;
     jpeg_destroy_decompress(&cinfo);
     fclose(infile);
-    delete [] buffer;
+    if (buffer) free(buffer);
     return NULL;
   }
   /* Now we can initialize the JPEG decompression object. */
@@ -170,8 +192,6 @@ simage_jpeg_load(const char *filename,
   buffer = currPtr = (unsigned char*) 
     malloc(width*height*cinfo.output_components);
   
-  if (!buffer) return NULL; /* FIXME: should do some cleanup... */
-  
   /* Step 6: while (scan lines remain to be read) */
   /*           jpeg_read_scanlines(...); */
 
@@ -180,18 +200,19 @@ simage_jpeg_load(const char *filename,
    */
   
   /* flip image upside down */
-  currPtr = buffer + row_stride * (cinfo.output_height-1);  
-  
-  while (cinfo.output_scanline < cinfo.output_height) {
-    /* jpeg_read_scanlines expects an array of pointers to scanlines.
-     * Here the array is only one element long, but you could ask for
-     * more than one scanline at a time if that's more convenient.
-     */
-    (void) jpeg_read_scanlines(&cinfo, rowbuffer, 1);
-    /* Assume put_scanline_someplace wants a pointer and sample count. */
-    currPtr = copyScanline(currPtr, rowbuffer[0], row_stride);
+  if (buffer) {
+    currPtr = buffer + row_stride * (cinfo.output_height-1);  
+    
+    while (cinfo.output_scanline < cinfo.output_height) {
+      /* jpeg_read_scanlines expects an array of pointers to scanlines.
+       * Here the array is only one element long, but you could ask for
+       * more than one scanline at a time if that's more convenient.
+       */
+      (void) jpeg_read_scanlines(&cinfo, rowbuffer, 1);
+      /* Assume put_scanline_someplace wants a pointer and sample count. */
+      currPtr = copyScanline(currPtr, rowbuffer[0], row_stride);
+    }
   }
-
   /* Step 7: Finish decompression */
 
   (void) jpeg_finish_decompress(&cinfo);
@@ -216,9 +237,14 @@ simage_jpeg_load(const char *filename,
    */
 
   /* And we're done! */
-  *width_ret = width;
-  *height_ret = height;
-  *numComponents_ret = format;
+  if (buffer) {
+    *width_ret = width;
+    *height_ret = height;
+    *numComponents_ret = format;
+  }
+  else {
+    jpegerror = ERR_MEM;
+  }
   return buffer;
 }
 

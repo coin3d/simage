@@ -13,24 +13,46 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#define ERR_NO_ERROR    0
+#define ERR_OPEN        1
+#define ERR_READ        2
+#define ERR_MEM         3
+#define ERR_UNSUPPORTED 4
+#define ERR_TIFFLIB     5
+
+static int tifferror = ERR_NO_ERROR;
+
 int
-simage_tiff_error(char * /*buffer*/, int /*buflen*/)
+simage_tiff_error(char * buffer, int buflen)
 {
-  assert(0 && "FIXME: Not implemented");
-  return 0;
+  switch (tifferror) {
+  case ERR_OPEN:
+    strncpy(buffer, "TIFF loader: Error opening file", buflen);
+    break;
+  case ERR_MEM:
+    strncpy(buffer, "TIFF loader: Out of memory error", buflen);
+    break;
+  case ERR_UNSUPPORTED:
+    strncpy(buffer, "TIFF loader: Unsupported image type", buflen);
+    break;    
+  case ERR_TIFFLIB:
+    strncpy(buffer, "TIFF loader: Illegal tiff file", buflen);
+    break;
+  }
+  return tifferror;
 }
 
 
 static void 
 tiff_error(const char* /*module*/, const char* /*fmt*/, va_list)
 {
-  // FIXME: notify
+  // FIXME: store error message ?
 }
 
 static void 
 tiff_warn(const char * /*module*/, const char * /*fmt*/, va_list)
 {
-  // FIXME: notify
+  // FIXME: notify?
 }
 
 static int
@@ -122,18 +144,22 @@ simage_tiff_load(const char *filename,
   TIFFSetWarningHandler(tiff_warn);
   
   in = TIFFOpen(filename, "r");
-  if (in == NULL) return NULL;
-  
+  if (in == NULL) {
+    tifferror = ERR_OPEN;
+    return NULL;
+  }  
   if (TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &photometric) == 1) {
     if (photometric != PHOTOMETRIC_RGB && photometric != PHOTOMETRIC_PALETTE &&
 	photometric != PHOTOMETRIC_MINISWHITE && 
 	photometric != PHOTOMETRIC_MINISBLACK) {
       //Bad photometric; can only handle Grayscale, RGB and Palette images :-(
       TIFFClose(in);
+      tifferror = ERR_UNSUPPORTED;
       return NULL;
     }
   }
   else {
+    tifferror = ERR_READ;
     TIFFClose(in);
     return NULL;
   }
@@ -141,11 +167,13 @@ simage_tiff_load(const char *filename,
   if (TIFFGetField(in, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel) == 1) {
     if (samplesperpixel != 1 && samplesperpixel != 3) {
       // Bad samples/pixel
+      tifferror = ERR_UNSUPPORTED;
       TIFFClose(in);
       return NULL;
     }
   }
   else {
+    tifferror = ERR_READ;
     TIFFClose(in);
     return NULL;
   }
@@ -154,10 +182,12 @@ simage_tiff_load(const char *filename,
     if (bitspersample != 8) {
       // can only handle 8-bit samples.
       TIFFClose(in);
+      tifferror = ERR_UNSUPPORTED;
       return NULL;
     }
   }
   else {
+    tifferror = ERR_READ;
     TIFFClose(in);
     return NULL;
   }
@@ -170,13 +200,13 @@ simage_tiff_load(const char *filename,
   unsigned char *inbuf = NULL;
   tsize_t rowsize;
   uint32 row;
-  int ok = 1;
   int format;
 
   if (TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &w) != 1 ||
       TIFFGetField(in, TIFFTAG_IMAGELENGTH, &h) != 1 ||
       TIFFGetField(in, TIFFTAG_PLANARCONFIG, &config) != 1) {
     TIFFClose(in);
+    tifferror = ERR_READ;
     return NULL;
   }
   
@@ -188,14 +218,19 @@ simage_tiff_load(const char *filename,
 
   unsigned char *buffer = (unsigned char*)
     malloc(w*h*format);
+  
   if (!buffer) {
+    tifferror = ERR_MEM;
     TIFFClose(in);
     return NULL;
   }
+
   int width = w;
   int height = h;
   
   unsigned char *currPtr = buffer + (h-1)*w*format;
+  
+  tifferror = ERR_NO_ERROR;
 
   switch (pack(photometric, config)) {
   case pack(PHOTOMETRIC_MINISWHITE, PLANARCONFIG_CONTIG):
@@ -206,7 +241,7 @@ simage_tiff_load(const char *filename,
     inbuf = new unsigned char[TIFFScanlineSize(in)];
     for (row = 0; row < h; row++) {
       if (TIFFReadScanline(in, inbuf, row, 0) < 0) {
-	ok = 0;
+	tifferror = ERR_READ;
 	break;
       }
       convertrow(currPtr, inbuf, w, photometric == PHOTOMETRIC_MINISWHITE);  
@@ -214,17 +249,15 @@ simage_tiff_load(const char *filename,
     }
     break;
     
-
-
   case pack(PHOTOMETRIC_PALETTE, PLANARCONFIG_CONTIG):
   case pack(PHOTOMETRIC_PALETTE, PLANARCONFIG_SEPARATE):
     if (TIFFGetField(in, TIFFTAG_COLORMAP, &red, &green, &blue) != 1)
-      ok = 0;
+      tifferror = ERR_READ;
     //
     // Convert 16-bit colormap to 8-bit (unless it looks
     // like an old-style 8-bit colormap).
     //
-    if (ok && checkcmap(1<<bitspersample, red, green, blue) == 16) {
+    if (!tifferror && checkcmap(1<<bitspersample, red, green, blue) == 16) {
       int i;
       for (i = (1<<bitspersample)-1; i >= 0; i--) {
 	red[i] = CVT(red[i]);
@@ -236,7 +269,7 @@ simage_tiff_load(const char *filename,
     inbuf = new unsigned char[TIFFScanlineSize(in)];
     for (row = 0; row < h; row++) {
       if (TIFFReadScanline(in, inbuf, row, 0) < 0) {
-	ok = 0;
+	tifferror = ERR_READ;
 	break;
       }
       convertrow(currPtr, inbuf, w, red, green, blue);
@@ -248,7 +281,7 @@ simage_tiff_load(const char *filename,
     inbuf = new unsigned char[TIFFScanlineSize(in)];
     for (row = 0; row < h; row++) {
       if (TIFFReadScanline(in, inbuf, row, 0) < 0) {
-	ok = 0;
+	tifferror = ERR_READ;
 	break;
       }
       convertrow(currPtr, inbuf, w);  
@@ -259,28 +292,28 @@ simage_tiff_load(const char *filename,
   case pack(PHOTOMETRIC_RGB, PLANARCONFIG_SEPARATE):
     rowsize = TIFFScanlineSize(in);
     inbuf = new unsigned char[3*rowsize];
-    for (row = 0; ok && row < h; row++) {
+    for (row = 0; !tifferror && row < h; row++) {
       for (int s = 0; s < 3; s++) {
 	if (TIFFReadScanline(in, inbuf+s*rowsize, row, s) < 0) {
-	  ok = 0; break;
+	  tifferror = ERR_READ; break;
 	}
       }
-      if (ok) {
+      if (!tifferror) {
 	convertrow(currPtr, inbuf, inbuf+rowsize, inbuf+2*rowsize, w);
 	currPtr -= format*w;
       }
     }
     break;
   default:
-    ok = 0;
+    tifferror = ERR_UNSUPPORTED;
     break;
   }
   
   if (inbuf) delete [] inbuf;
   TIFFClose(in);
   
-  if (!ok) {
-    delete [] buffer;
+  if (tifferror) {
+    if (buffer) free(buffer);
     return NULL;
   }
   *width_ret = width;

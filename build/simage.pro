@@ -1,3 +1,3 @@
 TARGET	    =   simage_debug
-CONFIG      +=	debug staticlib
+CONFIG      +=	debug sharedlib
 OBJECTS_DIR =   objects

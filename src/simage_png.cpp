@@ -12,6 +12,13 @@ extern "C" {
 #include <png.h>
 }
 
+#define ERR_NO_ERROR 0
+#define ERR_OPEN     1
+#define ERR_MEM      2
+#define ERR_PNGLIB   3
+
+static int pngerror = ERR_NO_ERROR;
+
 // my setjmp buffer
 static jmp_buf setjmp_buffer;
 
@@ -25,15 +32,26 @@ warn_callback(png_structp, png_const_charp)
 static void 
 err_callback(png_structp, png_const_charp)
 {
-  // FIXME: notify
+  // FIXME: store error message?
   longjmp(setjmp_buffer, 1);
 }
 
 int 
-simage_png_error(char * /*buffer*/, int /*buflen*/)
+simage_png_error(char * buffer, int buflen)
 {
-  assert(0 && "FIXME: Not implemented");
-  return 0;
+  switch (pngerror) {
+  case ERR_OPEN:
+    strncpy(buffer, "PNG loader: Error opening file", buflen);
+    break;
+  case ERR_MEM:
+    strncpy(buffer, "PNG loader: Out of memory error", buflen);
+    break;
+  case ERR_PNGLIB:
+    strncpy(buffer, "PNG loader: Illegal png file", buflen);
+    break;
+  }
+  return pngerror;
+
 }
 
 int 
@@ -61,8 +79,10 @@ simage_png_load(const char *filename,
   int bit_depth, color_type, interlace_type;
   FILE *fp;
 
-  if ((fp = fopen(filename, "rb")) == NULL)
-    return 0;
+  if ((fp = fopen(filename, "rb")) == NULL) {
+    pngerror = ERR_OPEN;
+    return NULL;
+  }
 
   /* Create and initialize the png_struct with the desired error handler
    * functions.  If you want to use the default stderr and longjump method,
@@ -77,6 +97,7 @@ simage_png_load(const char *filename,
 				   NULL, err_callback, warn_callback);
   
   if (png_ptr == NULL) {
+    pngerror = ERR_MEM;
     fclose(fp);
     return 0;
   }
@@ -84,6 +105,7 @@ simage_png_load(const char *filename,
   /* Allocate/initialize the memory for image information.  REQUIRED. */
   info_ptr = png_create_info_struct(png_ptr);
   if (info_ptr == NULL) {
+    pngerror = ERR_MEM;
     fclose(fp);
     png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
     return 0;
@@ -97,12 +119,13 @@ simage_png_load(const char *filename,
   unsigned char *buffer = NULL;
 
   if (setjmp(setjmp_buffer)) {
+    pngerror = ERR_PNGLIB;
     /* Free all of the memory associated with the png_ptr and info_ptr */
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
     fclose(fp);
     /* If we get here, we had a problem reading the file */
 
-    delete [] buffer;
+    if (buffer) free(buffer);
     return NULL;
   }
   
@@ -173,6 +196,7 @@ simage_png_load(const char *filename,
   bytes_per_row = png_get_rowbytes(png_ptr, info_ptr);
   
   buffer = (unsigned char*) malloc(bytes_per_row*height);
+
   int format = channels; // this is safer than the above
 
   if (buffer) {
@@ -201,6 +225,10 @@ simage_png_load(const char *filename,
     *width_ret = width;
     *height_ret = height;
     *numComponents_ret = format;
+    pngerror = ERR_NO_ERROR;
+  }
+  else {
+    pngerror = ERR_MEM;
   }
   return buffer;
 }

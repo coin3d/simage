@@ -1,3 +1,8 @@
+/*
+ * A simple TGA loader
+ *
+ */
+
 #include "simage_tga.h"
 #include <stdio.h>
 #include <assert.h>
@@ -13,6 +18,30 @@
 // 10 RLE RGB
 //
 
+
+#define ERR_NO_ERROR     0
+#define ERR_OPEN         1
+#define ERR_READ         2
+#define ERR_MEM          3
+#define ERR_UNSUPPORTED  4
+
+static int tgaerror = ERR_NO_ERROR;
+int
+simage_tga_error(char * buffer, int buflen)
+{
+  switch (tgaerror) {
+  case ERR_OPEN:
+    strncpy(buffer, "TGA loader: Error opening file", buflen);
+    break;
+  case ERR_READ:
+    strncpy(buffer, "TGA loader: Error reading file", buflen);
+    break;
+  case ERR_MEM:
+    strncpy(buffer, "TGA loader: Out of memory error", buflen);
+    break;
+  }
+  return tgaerror;
+}
 
 // TODO:
 // - bottom-up images
@@ -151,25 +180,23 @@ rle_decode(unsigned char *&src,
   }
 }
 
-int
-simage_tga_error(char * /*buffer*/, int /*buflen*/)
-{
-  assert(0 && "FIXME: Not implemented");
-  return 0;
-}
-
 unsigned char *
 simage_tga_load(const char *filename,
 		 int *width_ret,
 		 int *height_ret,
 		 int *numComponents_ret)
 {
-  FILE *fp = fopen(filename, "rb");
-  if (!fp) return NULL;
+  tgaerror = ERR_NO_ERROR; /* clear error */
 
+  FILE *fp = fopen(filename, "rb");
+  if (!fp) {
+    tgaerror = ERR_OPEN;
+    return NULL;
+  }
   unsigned char header[18];
   
   if (fread(header, 1, 18, fp) != 18) {
+    tgaerror = ERR_READ;
     fclose(fp);
     return NULL;
   }
@@ -180,10 +207,16 @@ simage_tga_load(const char *filename,
   int depth = header[16] >> 3;
   int flags = header[17];
   int format;
-  
-  assert(width > 0 && height > 0);
-  assert(width < 4096 && height < 4096);
-  assert(depth >= 2 && depth <= 4);
+
+  /* check for reasonable values in case this is not a tga file */
+  if ((type != 2 && type != 10) ||
+      (width < 0 || width > 4096) ||
+      (height < 0 || height > 4096) ||
+      (depth < 2 || depth > 4)) {
+    tgaerror = ERR_UNSUPPORTED;
+    fclose(fp);
+    return NULL;
+  }
 
   if (header[0]) // skip identification field
     fseek(fp, header[0], SEEK_CUR);
@@ -222,15 +255,19 @@ simage_tga_load(const char *filename,
   case 1: // colormap, uncompressed
     {
       // FIXME: write code
-      // will never get here because simage_tga_identify returns 0
+      // should never get here because simage_tga_identify returns 0
       // for this filetype
-      assert(0); 
+      // I need example files in this format to write the code...
+      tgaerror = ERR_UNSUPPORTED;
     }
     break;
   case 2: // RGB, uncompressed
     {
       for (int y = 0; y < height; y++) {
-	fread(linebuf, 1, width*depth, fp);
+	if (fread(linebuf, 1, width*depth, fp) != (unsigned int)width*depth) {
+	  tgaerror = ERR_READ;
+	  break;
+	}
 	for (int x = 0; x < width; x++) {
 	  convert_data(linebuf, dest, x, depth, format); 
 	}
@@ -241,9 +278,10 @@ simage_tga_load(const char *filename,
   case 9: // colormap, compressed
     {
       // FIXME: write code
-      // will never get here because simage_tga_identify returns 0
+      // should never get here because simage_tga_identify returns 0
       // for this filetype
-      assert(0);
+      // I need example files in this format to write the code...
+      tgaerror = ERR_UNSUPPORTED;
     }
     break;
   case 10: // RGB, compressed
@@ -253,8 +291,15 @@ simage_tga_load(const char *filename,
       int size = ftell(fp) - pos;
       fseek(fp, pos, SEEK_SET);
       unsigned char *buf = new unsigned char[size];
+      if (buf == NULL) {
+	tgaerror = ERR_MEM;
+	break;
+      }
       unsigned char *src = buf;
-      fread(buf, 1, size, fp);
+      if (fread(buf, 1, size, fp) != (unsigned int) size) {
+	tgaerror = ERR_READ;
+	break;
+      }
       for (int y = 0; y < height; y++) {
 	rle_decode(src, linebuf, width*depth, rleRemaining,
 		   rleIsCompressed, rleCurrent, rleEntrySize);
@@ -265,18 +310,20 @@ simage_tga_load(const char *filename,
 	dest += bpr;
       }
       delete [] buf;
-//        SoDebugError::postInfo("simage_tga_load",
-//  			     "post RLE: %p (%p)\n", src, buf+size);
     }
     break;
   default:
-    assert(0);
-    return NULL;
+    tgaerror = ERR_UNSUPPORTED;
   }
   
   delete [] linebuf;
-
   fclose(fp);
+
+  if (tgaerror) {
+    if (buffer) free(buffer);
+    return NULL;
+  }
+
   *width_ret = width;
   *height_ret = height;
   *numComponents_ret = format;
@@ -319,11 +366,3 @@ simage_tga_identify(const char *filename,
   // not a TGA, or not supported type
   return 0;
 }
-
-
-
-
-
-
-
-/* END OF FILE ********************************************************/
