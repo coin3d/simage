@@ -6,13 +6,13 @@
 #   Lars J. Aas <larsa@sim.no>
 
 Name "simage @SIMAGE_VERSION@"
-OutFile "simage-installer.exe"
+OutFile "debug\simage-installer.exe"
 SilentInstall "normal"
 CRCCheck "on"
 UninstallExeName "simage-uninstaller.exe"
 
 LicenseText "Public Domain"
-LicenseData "COPYING.DOS"
+LicenseData "debug\COPYING.DOS"
 
 ComponentText "simage library"
 InstType "Binary SDK"
@@ -21,7 +21,7 @@ InstType "Full"
 
 DirText "Where to install simage"
 InstallDir "D:\Coin3D"
-# InstallDirRegKey coin3d coin path
+InstallDirRegKey HKEY_LOCAL_MACHINE SOFTWARE\Coin3D InstallPath
 
 # **************************************************************************
 Section "Run-Time Library"
@@ -31,7 +31,7 @@ SetCompress auto
 SetOverwrite on
 
 SetOutPath $INSTDIR\lib
-File src\simage@SIMAGE_MAJOR_VERSION@.dll
+File release\src\simage@SIMAGE_MAJOR_VERSION@.dll
 
 # **************************************************************************
 Section "Binary SDK"
@@ -41,15 +41,17 @@ SetCompress auto
 SetOverwrite on
 
 SetOutPath $INSTDIR\bin
-File simage-config
+File release\simage-config
 
 SetOutPath $INSTDIR\include
-File include\simage.h
+File release\include\simage.h
 
 SetOutPath $INSTDIR\lib
-File src\simage@SIMAGE_MAJOR_VERSION@.dll
-File src\simage@SIMAGE_MAJOR_VERSION@.lib
-# File src\simage@SIMAGE_MAJOR_VERSION@.pdb
+File release\src\simage@SIMAGE_MAJOR_VERSION@.dll
+File release\src\simage@SIMAGE_MAJOR_VERSION@.lib
+File debug\src\simage@SIMAGE_MAJOR_VERSION@d.dll
+File debug\src\simage@SIMAGE_MAJOR_VERSION@d.lib
+File debug\src\simage@SIMAGE_MAJOR_VERSION@d.pdb
 # File src\simage@SIMAGE_MAJOR_VERSION@.tds
 
 SetOutPath $INSTDIR\share\aclocal
@@ -121,6 +123,7 @@ File @win_srcdir@\tests\loaders.c
 # **************************************************************************
 Section -post
 
+WriteRegStr HKEY_LOCAL_MACHINE SOFTWARE\Coin3D InstallPath "$INSTDIR"
 Exec '"explorer" "$INSTDIR\"'
 
 # **************************************************************************
@@ -129,9 +132,13 @@ Section Uninstall
 Delete $INSTDIR\bin\simage-config
 RMDir  $INSTDIR\bin
 Delete $INSTDIR\lib\simage@SIMAGE_MAJOR_VERSION@.dll
+Delete $INSTDIR\lib\simage@SIMAGE_MAJOR_VERSION@d.dll
 Delete $INSTDIR\lib\simage@SIMAGE_MAJOR_VERSION@.lib
+Delete $INSTDIR\lib\simage@SIMAGE_MAJOR_VERSION@d.lib
 Delete $INSTDIR\lib\simage@SIMAGE_MAJOR_VERSION@.pdb
+Delete $INSTDIR\lib\simage@SIMAGE_MAJOR_VERSION@d.pdb
 Delete $INSTDIR\lib\simage@SIMAGE_MAJOR_VERSION@.tds
+Delete $INSTDIR\lib\simage@SIMAGE_MAJOR_VERSION@d.tds
 RMDir  $INSTDIR\lib
 Delete $INSTDIR\include\simage.h
 RMDir  $INSTDIR\include
