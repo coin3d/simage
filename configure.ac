@@ -150,9 +150,9 @@ AM_MAINTAINER_MODE
 case $host_os in
 darwin* ) 
   sim_ac_macosx=true 
-  # Check for Mac OS 10.2 or 10.3
+  # Check for Mac OS 10.2 or later
   case $host_os in
-  darwin[[67]].* ) 
+  darwin[[678]].* ) 
     sim_ac_macosx_10_2ff=true 
     ;;
   * )         
@@ -160,8 +160,10 @@ darwin* )
     ;;
   esac
   ;;
-  * ) 
-  sim_ac_macosx=false ;;
+* ) 
+  sim_ac_macosx=false 
+  sim_ac_macosx_10_2ff=false
+  ;;
 esac
 
 # Initialize libtool
@@ -770,17 +772,11 @@ else
   SIM_AC_ISO8601_DATE(simage_configure_date)
   AC_SUBST(simage_configure_date)
 
-
   # Mac OS X needs to call gcc as g++ when linking C++
   case $host_os in 
   darwin*) COIN_COMPILER="$CXX";;
   *) COIN_COMPILER="$CC";;
   esac
-
-  if test x"$sim_ac_macosx_10_2ff" = x"true"; then
-    # No undefined symbols allowed in two-level namespace shared libs.
-    LDFLAGS="$LDFLAGS -no-undefined"
-  fi
 
 fi
 
