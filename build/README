@@ -15,3 +15,18 @@ simage.iwz.in
         A self-extracting executable SETUPEX.EXE with the
         InstallShield install should then be available under
         [simage_builddir]/build/simage/.
+
+build_simage_win32.sh
+
+        Builds simage for the Win32 platform in different
+        configurations. All dependant libraries will be downloaded
+        using wget.
+
+        * Requires cygwin and wget. 
+        * Run from the command line in any directory.
+
+        This script is used by Systems In Motion when creating binary
+        releases of simage, and is probably of little use to most
+        simage users. If you want to configure and build simage yourself,
+        please read the INSTALL file in the simage root directory for 
+        instructions.

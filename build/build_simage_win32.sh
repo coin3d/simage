@@ -1,18 +1,11 @@
 #!/bin/bash
 
-# usage: build_simage_win32.sh <u|nu> <r|nr>
-#  u (default) is for doing a cvs update of simage
-# nu is for no update
-#  r (default) is for rebuilding (rechecking) simage
-# nr is for no rechecking
-
 # This script will download, (cvs) checkout and build simage
 # from scratch, including all dependent libraries.
 
 # Before running this script, please
 # - install cygwin, including wget
 # - make sure you've done cvs login to cvs.coin3d.org
-# - set the environment variables described below
 
 # ToDo:
 #
@@ -591,23 +584,17 @@ echo "[SIMAGE]      libsndfile verified OK"
 
 # cvs update simage
 
-if ! test "X$1" = "Xnu"; then
-
-  if ! test -d $SIMAGE_CHECKOUT/simage; then
-    echo "[SIMAGE]      Checking out simage from scratch"
-    cd $SIMAGE_CHECKOUT
-    cvs -z3 -d:pserver:cvs@cvs.coin3d.org:/export/cvsroot co simage
-  else
-    echo "[SIMAGE]      Updating simage"
-    cd $SIMAGE_CHECKOUT/simage
-    cvs -z3 update -dP
-  fi
-
-fi # update simage
+if ! test -d $SIMAGE_CHECKOUT/simage; then
+  echo "[SIMAGE]      Checking out simage from scratch"
+  cd $SIMAGE_CHECKOUT
+  cvs -z3 -d:pserver:cvs@cvs.coin3d.org:/export/cvsroot co simage
+else
+  echo "[SIMAGE]      Updating simage"
+  cd $SIMAGE_CHECKOUT/simage
+  cvs -z3 update -dP
+fi
 
 # configure and make simage
-
-if ! test "X$2" = "Xnr"; then
 
 echo "[SIMAGE]      Configuring simage"
 
@@ -668,8 +655,6 @@ for SIMAGE_SOUND in yes no; do
   done # for SIMAGE_CRT
 
 done # for SIMAGE_SOUND
-
-fi # make simage
 
 echo "[SIMAGE]   All systems ready to go"
 
