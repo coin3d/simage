@@ -153,6 +153,8 @@ libguilesimage_la_LIBADD =
 libguilesimage_la_OBJECTS = $(am_libguilesimage_la_OBJECTS)
 SCRIPTS = $(bin_SCRIPTS)
 
+depcomp = $(SHELL) $(top_srcdir)/cfg/depcomp
+@AMDEP_TRUE@DEP_FILES = $(DEPDIR)/guilesimage.Plo
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
@@ -172,8 +174,6 @@ DATA = $(dist_guilesimagemodule_DATA)
 
 HEADERS = $(libguilesimageinc_HEADERS)
 
-depcomp = $(SHELL) $(top_srcdir)/cfg/depcomp
-@AMDEP_TRUE@DEP_FILES = $(DEPDIR)/guilesimage.Plo
 DIST_COMMON = $(dist_guilesimagemodule_DATA) \
 	$(libguilesimageinc_HEADERS) Makefile.am Makefile.in
 SOURCES = $(libguilesimage_la_SOURCES)
@@ -235,6 +235,32 @@ uninstall-binSCRIPTS:
 	  echo " rm -f $(DESTDIR)$(bindir)/$$f"; \
 	  rm -f $(DESTDIR)$(bindir)/$$f; \
 	done
+
+@AMDEP_TRUE@@_am_include@ @_am_quote@$(DEPDIR)/guilesimage.Plo@_am_quote@
+
+distclean-depend:
+	-rm -rf $(DEPDIR)
+
+CCDEPMODE = @CCDEPMODE@
+
+.c.o:
+	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(COMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
+
+.c.lo:
+	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
+	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
+
+.c.obj:
+	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(COMPILE) -c -o $@ `cygpath -w $<`
+
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -316,32 +342,6 @@ GTAGS:
 
 distclean-tags:
 	-rm -f TAGS ID
-
-@AMDEP_TRUE@@_am_include@ @_am_quote@$(DEPDIR)/guilesimage.Plo@_am_quote@
-
-distclean-depend:
-	-rm -rf $(DEPDIR)
-
-CCDEPMODE = @CCDEPMODE@
-
-.c.o:
-	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
-
-.c.lo:
-	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
-	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
-
-.c.obj:
-	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c -o $@ `cygpath -w $<`
-
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 

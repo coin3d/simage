@@ -1,7 +1,16 @@
 /* config.h.in.  Generated automatically from configure.in by autoheader.  */
 
+/* Define if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Define if you have the <guile/gh.h> header file. */
+#undef HAVE_GUILE_GH_H
+
 /* define to support the jpeg library */
 #undef HAVE_JPEGLIB
+
+/* Define if you have the <libguile.h> header file. */
+#undef HAVE_LIBGUILE_H
 
 /* define for libpng support */
 #undef HAVE_PNGLIB
