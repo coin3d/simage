@@ -154,6 +154,6 @@ s_image_save(const char * filename, s_image * image,
                            image->width,
                            image->height,
                            image->components,
-                           ext+1);
+                           ext);
 }
 
