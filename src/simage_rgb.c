@@ -59,6 +59,15 @@ simage_rgb_load(const char * filename,
   return NULL;
 }
 
+static int
+write_short(FILE * fp, unsigned short val)
+{
+  unsigned char tmp[2];
+  tmp[0] = (unsigned char)(val >> 8);
+  tmp[1] = (unsigned char)(val & 0xff);
+  return fwrite(&tmp, 2, 1, fp);
+}
+
 int 
 simage_rgb_save(const char * filename,
                 const unsigned char * bytes,
