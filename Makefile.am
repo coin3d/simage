@@ -14,6 +14,6 @@ m4data_DATA = cfg/m4/simage.m4
 simage-installer.exe:
 	@sed 's/$$/
 /g' <$(srcdir)/COPYING >COPYING.DOS; \
-	makensis build\\simage.nsi; \
+	( cd ..; makensis debug\\build\\simage.nsi ); \
 	rm COPYING.DOS
 
