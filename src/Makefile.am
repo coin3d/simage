@@ -72,7 +72,8 @@ libsimage@SUFFIX@inc_HEADERS = \
 # conditional to avoid a make warning when it's not in use
 if BUILD_WITH_MSVC
 simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: Makefile \
-  $(simage@SUFFIX@_lib_OBJECTS) $(simage@SUFFIX@_lib_DEPENDENCIES)
+  $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS) \
+  $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_DEPENDENCIES)
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
 	rm -f "$$basename.dll" "$$basename.lib"; \
 	echo "Linking $$basename.lib..."; \
