@@ -340,7 +340,7 @@ simage_png_save(const char *filename,
   text_ptr[2].text = "Image saved using simage.";
   text_ptr[2].compression = PNG_TEXT_COMPRESSION_zTXt;
   png_set_text(png_ptr, info_ptr, text_ptr, 3);
-#endif /* PNG_TEXT_SUPPORTED
+#endif /* PNG_TEXT_SUPPORTED */
 
   /* other optional chunks like cHRM, bKGD, tRNS, tIME, oFFs, pHYs, */
 
