@@ -289,7 +289,7 @@ cnt_bits(int val, int * highbit)
   while (val) {
     if (val & 1) cnt++;
     val>>=1;
-    *highbit++;
+    (*highbit)++;
   }
   return cnt;  
 }
