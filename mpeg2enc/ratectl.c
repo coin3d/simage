@@ -143,12 +143,11 @@ static void calc_actj(simpeg_encode_context * context,
   int i,j,k;
   unsigned char *p;
   double actj,var;
-  int width, height;
+  int width;
   int width2, height2;
 
   width = context->width;
   width2 = context->width2;
-  height = context->height;
   height2 = context->height2;
 
   k = 0;

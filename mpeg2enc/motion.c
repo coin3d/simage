@@ -179,6 +179,7 @@ static void frame_ME(simpeg_encode_context * context,
     {
       dmc = fullsearch(oldorg,oldref,mb,
                        width,i,j,sxf,syf,16,width,height,&imin,&jmin);
+      
       vmc = dist2(oldref+(imin>>1)+width*(jmin>>1),mb,
                   width,imin&1,jmin&1,16);
       mbi->motion_type = MC_FRAME;
@@ -507,9 +508,8 @@ static void field_ME(simpeg_encode_context * context,
   int iminr,jminr,imin8ur,jmin8ur,imin8lr,jmin8lr,dmcfieldr,dmc8r,selr,sel8ur,sel8lr;
   int imins,jmins,ds,imindmv,jmindmv,vmc_dp,dmc_dp;
 
-  int width, height;
+  int width;
   width = context->width;
-  height = context->height;
 
   w2 = width<<1;
 
@@ -1157,11 +1157,10 @@ static void dpfield_estimate(simpeg_encode_context * context,
   int io0,jo0,io,jo,delta_x,delta_y,mvxs,mvys,mvxo0,mvyo0;
   int imino,jmino,imindmv,jmindmv,vmc_dp,local_dist;
 
-  int width, width2, height, height2;
+  int width, width2, height2;
 
   width = context->width;
   width2 = context->width2;
-  height = context->height;
   height2 = context->height2;
 
   /* Calculate Dual Prime distortions for 9 delta candidates */

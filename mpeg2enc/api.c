@@ -5,6 +5,7 @@
 #include <stdarg.h>
 #include <assert.h>
 #include <stdarg.h>
+#include <string.h>
 
 #include "global.h"
 #include "putseq.h"
@@ -247,7 +248,8 @@ SimpegWrite_begin_encode(const char *output_filename,
 
   SimpegWrite_putseq_begin(context);
 
-  context->bufbuf = malloc(sizeof(unsigned char *) * context->M);
+  context->bufbuf = (unsigned char **) 
+    malloc(sizeof(unsigned char *) * context->M);
   for (i=0; i<context->M; i++)
     context->bufbuf[i] = NULL;
 

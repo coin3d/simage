@@ -45,14 +45,13 @@ simpeg_encode_transform(simpeg_encode_context * context,
 {
   int i, j, i1, j1, k, n, cc, offs, lx;
 
-  int width, height;
+  int width;
   int width2, height2;
   int block_count;
   int pict_struct;
   int chroma_format;
   
   width = context->width;
-  height = context->height;
   width2 = context->width2;
   height2 = context->height2;
   block_count = context->block_count;
@@ -127,14 +126,13 @@ simpeg_encode_itransform(simpeg_encode_context * context,
 {
   int i, j, i1, j1, k, n, cc, offs, lx;
 
-  int width, height;
+  int width;
   int width2, height2;
   int block_count;
   int pict_struct;
   int chroma_format;
   
   width = context->width;
-  height = context->height;
   width2 = context->width2;
   height2 = context->height2;
   block_count = context->block_count;
@@ -247,19 +245,13 @@ simpeg_encode_dct_type_estimation(simpeg_encode_context * context,
   int i, j, i0, j0, k, offs, s0, s1, sq0, sq1, s01;
   double d, r;
 
-  int width, height;
-  int width2, height2;
-  int block_count;
+  int width;
+  int height2;
   int pict_struct;
-  int chroma_format;
   
   width = context->width;
-  height = context->height;
-  width2 = context->width2;
   height2 = context->height2;
-  block_count = context->block_count;
   pict_struct = context->pict_struct;
-  chroma_format = context->chroma_format;
 
   k = 0;
 
