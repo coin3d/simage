@@ -9355,7 +9355,7 @@ echo "$as_me:$LINENO: checking for QuickTime framework" >&5
 echo $ECHO_N "checking for QuickTime framework... $ECHO_C" >&6
 $sim_ac_have_quicktime && break
 sim_ac_quicktime_save_LIBS=$LIBS
-sim_ac_quicktime_libs="-framework QuickTime -framework CoreServices"
+sim_ac_quicktime_libs="-Wl,-framework,QuickTime -Wl,-framework,CoreServices"
 LIBS="$sim_ac_quicktime_libs $LIBS"
 cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"

@@ -6051,7 +6051,7 @@ AC_DEFUN([SIM_AC_HAVE_QUICKTIME_IFELSE],
 AC_MSG_CHECKING([for QuickTime framework])
 $sim_ac_have_quicktime && break
 sim_ac_quicktime_save_LIBS=$LIBS
-sim_ac_quicktime_libs="-framework QuickTime -framework CoreServices"
+sim_ac_quicktime_libs="-Wl,-framework,QuickTime -Wl,-framework,CoreServices"
 LIBS="$sim_ac_quicktime_libs $LIBS"
 AC_TRY_LINK(
   [#include <QuickTime/QuickTimeComponents.h>],
