@@ -53,17 +53,24 @@ get_importer(const char * filename, GraphicsImportComponent * c)
   FSSpec fss;
   FSRef path;
   FSRef file;
-  char cwd [MAXPATHLEN];
+  char fullpath [MAXPATHLEN];
+  char * img_filename;  // the actual filename
+  char * img_path;      // the path to the image file
   CFStringRef cfstr;
   UniChar * ustr;
   int len;
   int e = noErr;
 
-  getcwd(cwd, MAXPATHLEN);
-  FSPathMakeRef(cwd, &path, false);
+  realpath(filename, fullpath);
+  
+  img_filename = (char *) basename(fullpath);
+  img_path = (char *) dirname(fullpath);
+
+  FSPathMakeRef(img_path, &path, false);
 
   // convert char * to UniChar *
-  cfstr = CFStringCreateWithCString(0, filename, CFStringGetSystemEncoding());
+  cfstr = CFStringCreateWithCString(0, img_filename, 
+          CFStringGetSystemEncoding());
   len = CFStringGetLength(cfstr);
   ustr = malloc(len * sizeof(UniChar)); 
   CFStringGetCharacters(cfstr, CFRangeMake(0, len), ustr); 
@@ -134,19 +141,29 @@ create_file(const char * filename, FSSpec * fss)
 {
   FSRef path;
   FSRef file;
-  char cwd [MAXPATHLEN];
   CFStringRef cfstr;
   UniChar * ustr;
   int e = noErr;
   CFIndex len;
 
-  getcwd(cwd, MAXPATHLEN);
-  e = FSPathMakeRef(cwd, &path, false);
-  if (e != noErr) return 0;
+  char fullpath [MAXPATHLEN];
+  char * img_filename;  // the actual filename
+  char * img_path;      // the path to the image file
+
+  realpath(filename, fullpath);
+  
+  img_filename = (char *) basename(fullpath);
+  img_path = (char *) dirname(fullpath);
+
+  e = FSPathMakeRef(img_path, &path, false);
+  if (e != noErr) {
+    return 0;
+  } 
 
   // convert char * to UniChar *
-  cfstr = CFStringCreateWithCString(0, filename, CFStringGetSystemEncoding());
-  CFStringGetLength(cfstr);
+  cfstr = CFStringCreateWithCString(0, img_filename, 
+          CFStringGetSystemEncoding());
+  len = CFStringGetLength(cfstr);
   ustr = malloc(len * sizeof(UniChar)); 
   CFStringGetCharacters(cfstr, CFRangeMake(0, len), ustr); 
 
