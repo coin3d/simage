@@ -1,4 +1,5 @@
-/*
+/***************************************************************************
+ * guilesimage.h
  * Written by Lars J. Aas <larsa@coin3d.org>.
  * This file is in the Public Domain.
  */

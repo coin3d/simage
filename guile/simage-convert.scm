@@ -16,7 +16,7 @@ exec guile -e main -s $0 $@
 (define *input* '())
 (define *output* '())
 
-(define *task* '()) ; 'resize | 'scale | 'exit | 'fail
+(define *task* '()) ; 'copy | 'resize | 'scale | 'exit | 'fail
 
 (define (simage-convert-usage)
   (display "Usage: simage-convert [options] <infile> <outfile>\n")
@@ -65,7 +65,7 @@ exec guile -e main -s $0 $@
                   ((eq? new-height -1)
                     (set! new-height (round (* height (/ new-width width))))))
             (set! scaled (simage-resize image new-width new-height))
-            (display (format "old: ~A\nnew: ~A\n" image scaled))
+            ; (display (format "old: ~A\nnew: ~A\n" image scaled))
             (if (not (simage-save scaled *output* (extension-of *output*)))
                 (display (format "error: \"~A\"\n"
                                  (simage-get-last-error))))))))
@@ -87,8 +87,23 @@ exec guile -e main -s $0 $@
                  (new-height (* *scale-y* height))
                  (scaled     '()))
             (set! scaled (simage-resize image new-width new-height))
-            (display (format "old: ~A\nnew: ~A\n" image scaled))
+            ; (display (format "old: ~A\nnew: ~A\n" image scaled))
             (if (not (simage-save scaled *output* (extension-of *output*)))
+                (display (format "error: \"~A\"\n"
+                                 (simage-get-last-error))))))))
+
+(define (simage-copy-task)
+  (cond ((eq? *input* '())
+          (display "error: no input\n"))
+        ((eq? *output* '())
+          (display "error: no output\n"))
+        ((not (simage-load-supported? *input*))
+          (display "error: not supported input format\n"))
+        ((not (simage-save-supported? (extension-of *output*)))
+          (display "error: not supported output format\n"))
+        (else
+          (let ((image (simage-load *input*)))
+            (if (not (simage-save image *output* (extension-of *output*)))
                 (display (format "error: \"~A\"\n"
                                  (simage-get-last-error))))))))
 
@@ -130,7 +145,8 @@ exec guile -e main -s $0 $@
           (if (= (length args) 2)
               (begin
                 (set! *input* (car args))
-                (set! *output* (cadr args)))
+                (set! *output* (cadr args))
+                (if (eq? *task* '()) (set! *task* 'copy)))
               (begin
                 (set! *task* 'exit)
                 (display "error: wrong number of arguments\n"))))))
@@ -139,6 +155,7 @@ exec guile -e main -s $0 $@
   (parse-args (cdr args))
   (cond ((eq? *task* 'exit)   0)
         ((eq? *task* 'fail)   -1)
+        ((eq? *task* 'copy)   (simage-copy-task))
         ((eq? *task* 'resize) (simage-resize-task))
         ((eq? *task* 'scale)  (simage-scale-task))
         (else

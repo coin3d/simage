@@ -1,22 +1,23 @@
-/* ********************************************************************** */
-/*
+/* *************************************************************************
+ * guilesimage.c
+ * Written by Lars J. Aas <larsa@coin3d.org>.
  * This file is in the Public Domain.
  */
 
-#include <dlfcn.h>
-
 #include <guilesimage.h>
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <guile/gh.h>
 #include <libguile.h>
 
-/* ********************************************************************** */
-
-/* in case the API can't be made 100% functional */
-/* static SCM scm_values; */
-/* scm_values = scm_make_permanent( scm_lookup( "values" ) ); */
+#ifdef HAVE_DLFCN_H
+#include <dlfcn.h>
+#endif
 
 /* ********************************************************************** */
+/* prototypes from simage.h */
 
 static void (*simage_version)(int *, int *, int *);
 static int (*simage_check_supported)(char *);
@@ -28,6 +29,7 @@ static unsigned char * (*simage_resize)( unsigned char *, int, int, int, int, in
 static void (*simage_free_image)(unsigned char * imagedata);
 
 /* ********************************************************************** */
+/* the "simage-image" smob */
 
 static long simage_image_smob_type = 0;
 
@@ -79,6 +81,7 @@ scimage_image_print(
 } /* scimage_image_print() */
 
 /* ********************************************************************** */
+/* guile hooks */
 
 /*/ (simage-version-major)
  *
@@ -253,6 +256,7 @@ scimage_save(
 } /* scimage_save() */
 
 /* ********************************************************************** */
+/* guile hooks operating on the simage-image struct */
 
 /*/ (simage-image-width image)
  *
@@ -303,6 +307,7 @@ scimage_image_components(
 } /* scimage_image_components() */
 
 /* ********************************************************************** */
+/* init-function for binding the functions to the Guile environment */
 
 /*/
  *
@@ -347,7 +352,7 @@ guilesimage_init(
 
   scm_make_gsubr( "simage-image-width", 1, 0, 0, scimage_image_width );
   scm_make_gsubr( "simage-image-height", 1, 0, 0, scimage_image_height );
-  scm_make_gsubr( "simage-image-components", 1, 0, 0, scimage_image_components );
+  scm_make_gsubr( "simage-image-components", 1, 0, 0,scimage_image_components );
 } /* guilesimage_init() */
 
 /* EOF ****************************************************************** */
