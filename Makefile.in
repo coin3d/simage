@@ -120,7 +120,7 @@ SUBDIRS = $(MPEG2ENCDIR) src guile
 dist_bin_SCRIPTS = simage-config
 
 m4datadir = $(datadir)/aclocal
-dist_m4data_DATA = cfg/m4/simage.m4
+dist_m4data_DATA = cfg/simage.m4
 
 cfgdatadir = $(datadir)/Coin/conf
 cfgdata_DATA = simage-@CONFIG@.cfg
@@ -129,8 +129,7 @@ EXTRA_DIST = \
 	simage.cfg.in \
 	cfg/depcomp \
 	cfg/ltconfig \
-	cfg/m4/wrapmsvc.cpp \
-	cfg/m4/wrapmsvc.exe \
+	cfg/wrapmsvc.exe \
 	build/simage.spec.in \
 	src/simage_jpeg_reader.icc \
 	src/simage_jpeg_writer.icc \
@@ -401,7 +400,7 @@ GZIP_ENV = --best
 distdir: $(DISTFILES)
 	-chmod -R a+w $(distdir) >/dev/null 2>&1; rm -rf $(distdir)
 	mkdir $(distdir)
-	$(mkinstalldirs) $(distdir)/./include $(distdir)/build $(distdir)/cfg $(distdir)/cfg/m4 $(distdir)/src
+	$(mkinstalldirs) $(distdir)/./include $(distdir)/build $(distdir)/cfg $(distdir)/src
 	@for file in $(DISTFILES); do \
 	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
 	  dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \
@@ -568,13 +567,13 @@ uninstall-info: uninstall-info-recursive
 simage-@CONFIG@.cfg: config.status $(srcdir)/simage.cfg.in
 	@$(SHELL) config.status --file=$@:simage.cfg.in
 
-install-exec-local: $(srcdir)/cfg/m4/wrapmsvc.exe
+install-exec-local: $(srcdir)/cfg/wrapmsvc.exe
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	@if @BUILD_WITH_MSVC@; then \
 	  p=wrapmsvc.exe; \
-	  echo " $(INSTALL_PROGRAM) $(srcdir)/cfg/m4/$$p $(DESTDIR)$(bindir)/$$p"; \
-	  $(INSTALL_PROGRAM) $(srcdir)/cfg/m4/$$p $(DESTDIR)$(bindir)/$$p; \
+	  echo " $(INSTALL_PROGRAM) $(srcdir)/cfg/$$p $(DESTDIR)$(bindir)/$$p"; \
+	  $(INSTALL_PROGRAM) $(srcdir)/cfg/$$p $(DESTDIR)$(bindir)/$$p; \
 	fi
 
 # **************************************************************************
