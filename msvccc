@@ -16,6 +16,7 @@ next_is_object=false
 # FIXME: handle multiple sourcefiles. 20001009 mortene.
 basename_source=
 msvc_tool=
+save_lib="$LIB"
 
 for msvc_option in $@
 do
@@ -76,7 +77,12 @@ do
 
   -L*)
     ld_path=`echo $msvc_option | sed 's%^..%%'`
-    options="$options /LIBPATH:`cygpath -w $ld_path`"
+    ld_path=`cygpath -w "$ld_path"`
+    if test x"$LIB" = x; then
+      LIB="$ld_path"
+    else
+      LIB="${ld_path}\;$LIB"
+    fi
     ;;
 
   -l*)
@@ -96,10 +102,9 @@ do
     ;;
 
   *) # Regular disk files (sourcecode files, object files, library files, ..)
+
     # Follow file links as the MSVC++ tools doesn't grok them.
-    if test -L $msvc_option; then
-      msvc_option=`ls -l $msvc_option | sed "s%^.*${msvc_option} -> %%"`
-    fi
+    test -L $msvc_option && msvc_option=`cygpath -w $msvc_option`
 
     if $next_is_object; then
       options="$options$msvc_option"
@@ -122,7 +127,9 @@ $msvc_tool $options >$stdout 2>$stderr
 exit_code=$?
 grep -v "^$basename_source\$" < $stdout
 grep -v "^$basename_source\$" >&2 < $stderr
+
 rm -f $stdout
 rm -f $stderr
+LIB="$save_lib"
 
 exit $exit_code
