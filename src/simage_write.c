@@ -101,9 +101,9 @@ add_saver(saver_data * saver,
 {
   assert(saver);
   saver->save_func = save_func;
-  saver->extensions = safe_strdup(extensions);
-  saver->fullname = safe_strdup(fullname);
-  saver->description = safe_strdup(description);
+  saver->extensions = is_internal ? (char*) extensions : safe_strdup(extensions);
+  saver->fullname = is_internal ? (char*) fullname : safe_strdup(fullname);
+  saver->description = is_internal ? (char*) description : safe_strdup(description);
   saver->error_func = error_func;
   saver->is_internal = is_internal;
   saver->next = NULL;
@@ -150,13 +150,14 @@ find_saver(const char * filenameextension)
   return NULL;
 }
 
-static const char jpegext[] = "jpg,jpeg";
+/* don't const the ext-strings, they are modified in find_saver */
+static char jpegext[] = "jpg,jpeg";
 static const char jpegfull[] = "The Independent JPEG Group file format";
-static const char pngext[] = "png";
+static char pngext[] = "png";
 static const char pngfull[] = "The PNG file format";
-static const char tiffext[] = "tiff,tif";
+static char tiffext[] = "tiff,tif";
 static const char tifffull[] = "The Tag Image File Format";
-static const char rgbext[] = "rgb,rgba,bw.inta,int";
+static char rgbext[] = "rgb,rgba,bw.inta,int";
 static const char rgbfull[] ="The SGI RGB file format";
 
 static void
