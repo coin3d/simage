@@ -1,0 +1,16 @@
+<html>
+<head>
+<title>SDK Notes: simage-@VERSION@</title>
+</head>
+<body>
+<h1 align=center>SDK Notes: simage-@VERSION@</h1>
+<hr>
+<h2>Feature Notes:</h2>
+<ul>
+<li>simage API HTML Documentation:
+  <a href="simage/index.html">off-line</a> (if installed), or
+  <a href="http://doc.coin3d.org/simage/">on-line</a>
+</ul>
+<hr>
+</body>
+</html>
