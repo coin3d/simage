@@ -274,15 +274,17 @@ build-files/$(project)$(major).dsp: $(Project)-$(VERSION) 3rdparty
 	version=`echo "@VERSION@" | sed -e 's%\.%\\\.%g'`; \
 	cp $(project)$(major).dsp $(project)$(major).dsp.orig; \
 	cat $(project)$(major).dsp.orig | \
-	  sed -e "s%$$wbuilddir%\$$\(COIN3DDIR\)%g" \
-	      -e "s%/out:\"%/out:\"\.\.\\\\\.\.\\\\bin\\\\%g" \
-	      -e "s%$(project)$(major)d\.dll\"%$(project)$(major)d\.dll\" /pdb:\"\.\.\\\\\.\.\\\\bin\\\\$(project)$(major)d.pdb%g" \
+	  sed -e "s%$$wbuilddir%\.\.\\\\\.\.%g" \
 	      -e "s%\"\.\\\\include\"%\"\.\"%g" \
 	      -e "s%\\\\3rdparty\\\\dist\\\\%\\\\3rdparty\\\\%g" \
 	      -e "s%\.\.\\\\source\\\\simage-$$version%\.\.\\\\\.\.\\\\source\\\\simage-$(major)%g" \
+	      -e "s%/out:\"%/out:\"\.\.\\\\\.\.\\\\bin\\\\%g" \
+	      -e "s%$(project)$(major)d\.dll\"%$(project)$(major)d\.dll\" /pdb:\"\.\.\\\\\.\.\\\\bin\\\\$(project)$(major)d.pdb\" /implib:\"\.\.\\\\\.\.\\\\lib\\\\$(project)$(major)d.lib\"%g" \
+	      -e "s%$(project)$(major)\.dll\"%$(project)$(major)\.dll\" /implib:\"\.\.\\\\\.\.\\\\lib\\\\$(project)$(major).lib\"%g" \
+	      -e "/\/D \"_DEBUG\"/ s%\\\\md\\\\%\\\\mdd\\\\%g" \
+	      -e "/debug/ s%\\\\md\\\\%\\\\mdd\\\\%g" \
 	  > $(project)$(major).dsp; \
 	rm $(project)$(major).dsp.orig
-
 
 .PHONY: shared-release shared-debug static-release static-debug buildfiles \
 	3rdparty
