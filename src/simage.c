@@ -206,7 +206,7 @@ simage_add_plugin_loader(const struct simage_plugin *plugin, int addbefore)
   
 {
   add_internal_loaders();
-  return add_loader(malloc(sizeof(loader_data)), 
+  return add_loader((loader_data *)malloc(sizeof(loader_data)), 
 		    plugin->load_func, 
 		    plugin->identify_func,
 		    plugin->error_func,
