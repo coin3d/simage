@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4e from Makefile.am.
+# Makefile.in generated automatically by automake 1.4g from Makefile.am.
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -10,6 +10,10 @@
 # but WITHOUT ANY WARRANTY, to the extent permitted by law; without
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
+
+@SET_MAKE@
+
+# **************************************************************************
 
 SHELL = @SHELL@
 
@@ -31,11 +35,9 @@ infodir = @infodir@
 mandir = @mandir@
 includedir = @includedir@
 oldincludedir = /usr/include
-
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
-
 top_builddir = .
 
 ACLOCAL = @ACLOCAL@
@@ -49,23 +51,18 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_HEADER = $(INSTALL_DATA)
 transform = @program_transform_name@
-
 NORMAL_INSTALL = :
 PRE_INSTALL = :
 POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-
 build_alias = @build_alias@
 build_triplet = @build@
 host_alias = @host_alias@
 host_triplet = @host@
 target_alias = @target_alias@
 target_triplet = @target@
-
-@SET_MAKE@
-AMDEP = @AMDEP@
 AMTAR = @AMTAR@
 AS = @AS@
 AWK = @AWK@
@@ -77,7 +74,6 @@ DLLTOOL = @DLLTOOL@
 DSUFFIX = @DSUFFIX@
 GUILE_PROG = @GUILE_PROG@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-INSTALL_STRIP_PROGRAM_ENV = @INSTALL_STRIP_PROGRAM_ENV@
 LDFLAGS = @LDFLAGS@
 LIBFLAGS = @LIBFLAGS@
 LIBTOOL = @LIBTOOL@
@@ -86,7 +82,6 @@ LT_AGE = @LT_AGE@
 LT_CURRENT = @LT_CURRENT@
 LT_REVISION = @LT_REVISION@
 MAINT = @MAINT@
-MAKEINFO = @MAKEINFO@
 OBJDUMP = @OBJDUMP@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
@@ -99,17 +94,15 @@ SIMAGE_MAJOR_VERSION = @SIMAGE_MAJOR_VERSION@
 SIMAGE_MICRO_VERSION = @SIMAGE_MICRO_VERSION@
 SIMAGE_MINOR_VERSION = @SIMAGE_MINOR_VERSION@
 SIMAGE_VERSION = @SIMAGE_VERSION@
-STRIP = @STRIP@
 SUFFIX = @SUFFIX@
 VERSION = @VERSION@
 _am_include = @_am_include@
+_am_quote = @_am_quote@
 install_sh = @install_sh@
 simage_configure_date = @simage_configure_date@
 win_includedir = @win_includedir@
 win_libdir = @win_libdir@
 win_srcdir = @win_srcdir@
-
-# **************************************************************************
 
 @SIMAGE_MPEG2ENC_SUPPORT_TRUE@MPEG2ENCDIR = mpeg2enc
 @SIMAGE_MPEG2ENC_SUPPORT_FALSE@MPEG2ENCDIR = 
@@ -148,34 +141,37 @@ SCRIPTS = $(dist_bin_SCRIPTS) $(noinst_SCRIPTS)
 DIST_SOURCES =
 DATA = $(cfgdata_DATA) $(dist_m4data_DATA)
 
-DIST_COMMON = README $(dist_bin_SCRIPTS) $(dist_m4data_DATA) \
-./include/simage.h.in ./include/stamp-h2.in ./stamp-h1.in AUTHORS \
-COPYING ChangeLog INSTALL Makefile.am Makefile.in NEWS aclocal.m4 \
-cfg/config.guess cfg/config.sub cfg/install-sh cfg/ltmain.sh \
-cfg/missing cfg/mkinstalldirs config.h.in configure configure.in
 
+RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
+	uninstall-info-recursive all-recursive install-data-recursive \
+	install-exec-recursive installdirs-recursive install-recursive \
+	uninstall-recursive check-recursive installcheck-recursive
+DIST_COMMON = README $(dist_bin_SCRIPTS) $(dist_m4data_DATA) \
+	./include/simage.h.in ./include/stamp-h2.in ./stamp-h1.in \
+	AUTHORS COPYING ChangeLog INSTALL Makefile.am Makefile.in NEWS \
+	aclocal.m4 cfg/config.guess cfg/config.sub cfg/install-sh \
+	cfg/ltmain.sh cfg/missing cfg/mkinstalldirs config.h.in \
+	configure configure.in
 DIST_SUBDIRS = mpeg2enc src guile
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  Makefile
-
 Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && \
 	  CONFIG_HEADERS= CONFIG_LINKS= \
 	  CONFIG_FILES=$@ $(SHELL) ./config.status
-$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ configure.in 
-	cd $(srcdir) && $(ACLOCAL)
 
 config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
 $(srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(srcdir)/configure.in $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
 	cd $(srcdir) && $(AUTOCONF)
 
+$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ configure.in 
+	cd $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 config.h: stamp-h1
 	@if test ! -f $@; then \
 		rm -f stamp-h1; \
@@ -198,7 +194,6 @@ $(srcdir)/./stamp-h1.in: $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	@echo timestamp > $(srcdir)/./stamp-h1.inT 2> /dev/null
 	cd $(top_srcdir) && $(AUTOHEADER)
 	@mv $(srcdir)/./stamp-h1.inT $(srcdir)/./stamp-h1.in
-
 include/simage.h: include/stamp-h2
 	@if test ! -f $@; then \
 		rm -f include/stamp-h2; \
@@ -247,6 +242,7 @@ uninstall-dist_binSCRIPTS:
 	  echo " rm -f $(DESTDIR)$(bindir)/$$f"; \
 	  rm -f $(DESTDIR)$(bindir)/$$f; \
 	done
+uninstall-info-am:
 install-cfgdataDATA: $(cfgdata_DATA)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(cfgdatadir)
@@ -288,10 +284,7 @@ uninstall-dist_m4dataDATA:
 # (1) if the variable is set in `config.status', edit `config.status'
 #     (which will cause the Makefiles to be regenerated when you run `make');
 # (2) otherwise, pass the desired values on the `make' command line.
-all-recursive install-data-recursive install-exec-recursive \
-installdirs-recursive install-recursive uninstall-recursive \
-install-info-recursive uninstall-info-recursive \
-check-recursive installcheck-recursive info-recursive dvi-recursive:
+$(RECURSIVE_TARGETS):
 	@set fnord $(MAKEFLAGS); amf=$$2; \
 	dot_seen=no; \
 	target=`echo $@ | sed s/-recursive//`; \
@@ -356,9 +349,9 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
 	tags=; \
 	here=`pwd`; \
 	list='$(SUBDIRS)'; for subdir in $$list; do \
-   if test "$$subdir" = .; then :; else \
+	  if test "$$subdir" = .; then :; else \
 	    test -f $$subdir/TAGS && tags="$$tags -i $$here/$$subdir/TAGS"; \
-   fi; \
+	  fi; \
 	done; \
 	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
@@ -380,7 +373,8 @@ distclean-tags:
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 top_distdir = .
-distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
+# Avoid unsightly `./'.
+distdir = $(PACKAGE)-$(VERSION)
 
 GZIP_ENV = --best
 
@@ -389,7 +383,11 @@ distdir: $(DISTFILES)
 	mkdir $(distdir)
 	$(mkinstalldirs) $(distdir)/./include $(distdir)/build $(distdir)/cfg $(distdir)/cfg/m4
 	@for file in $(DISTFILES); do \
-	  d=$(srcdir); \
+	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
+	  dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \
+	  if test "$$dir" != "$$file" && test "$$dir" != "."; then \
+	    $(mkinstalldirs) "$(distdir)/$$dir"; \
+	  fi; \
 	  if test -d $$d/$$file; then \
 	    cp -pR $$d/$$file $(distdir) \
 	    || exit 1; \
@@ -420,6 +418,7 @@ distdir: $(DISTFILES)
 dist: distdir
 	$(AMTAR) chof - $(distdir) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
 	-chmod -R a+w $(distdir) >/dev/null 2>&1; rm -rf $(distdir)
+
 # This target untars the dist file and tries a VPATH configuration.  Then
 # it guarantees that the distribution is self-contained by making another
 # tarfile.
@@ -452,7 +451,6 @@ distcheck: dist
 check-am: all-am
 check: check-recursive
 all-am: Makefile $(SCRIPTS) $(DATA) config.h
-
 installdirs: installdirs-recursive
 installdirs-am:
 	$(mkinstalldirs) $(DESTDIR)$(bindir) $(DESTDIR)$(cfgdatadir) $(DESTDIR)$(m4datadir)
@@ -466,39 +464,36 @@ install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 
 installcheck: installcheck-recursive
-
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
-	  INSTALL_PROGRAM_ENV='$(INSTALL_STRIP_PROGRAM_ENV)' install
-
+	  `test -z '$(STRIP)' || \
+	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
 mostlyclean-generic:
 
 clean-generic:
 
 distclean-generic:
-	-rm -f Makefile $(CONFIG_CLEAN_FILES)
-	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	-rm -f Makefile $(CONFIG_CLEAN_FILES) stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-rm -f Makefile.in
 clean: clean-recursive
 
 clean-am: clean-generic mostlyclean-am
 
-dist-all: dist
-
+dist-all: distdir
+	$(AMTAR) chof - $(distdir) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
+	-chmod -R a+w $(distdir) >/dev/null 2>&1; rm -rf $(distdir)
 distclean: distclean-recursive
-	-rm -f config.status
-
+	-rm -f config.status config.cache config.log
 distclean-am: clean-am distclean-generic distclean-hdr distclean-tags
 
-dvi:
+dvi: dvi-recursive
 
 dvi-am:
 
-info:
+info: info-recursive
 
 info-am:
 
@@ -507,14 +502,13 @@ install-data-am: install-cfgdataDATA install-dist_binSCRIPTS \
 
 install-exec-am:
 
-install-info:
+install-info: install-info-recursive
 
 install-man:
 
 installcheck-am:
 
 maintainer-clean: maintainer-clean-recursive
-	-rm -f config.status
 
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -523,9 +517,11 @@ mostlyclean: mostlyclean-recursive
 mostlyclean-am: mostlyclean-generic
 
 uninstall-am: uninstall-cfgdataDATA uninstall-dist_binSCRIPTS \
-	uninstall-dist_m4dataDATA
+	uninstall-dist_m4dataDATA uninstall-info-am
 
-.PHONY: all all-am all-recursive check check-am check-recursive clean \
+uninstall-info: uninstall-info-recursive
+
+.PHONY: $(RECURSIVE_TARGETS) all all-am check check-am clean \
 	clean-generic clean-recursive dist dist-all distcheck distclean \
 	distclean-generic distclean-hdr distclean-recursive \
 	distclean-tags distdir dvi dvi-am dvi-recursive info info-am \
@@ -533,20 +529,19 @@ uninstall-am: uninstall-cfgdataDATA uninstall-dist_binSCRIPTS \
 	install-data install-data-am install-data-recursive \
 	install-dist_binSCRIPTS install-dist_m4dataDATA install-exec \
 	install-exec-am install-exec-recursive install-info \
-	install-info-recursive install-man install-recursive \
-	install-strip installcheck installcheck-am \
-	installcheck-recursive installdirs installdirs-am \
-	installdirs-recursive maintainer-clean maintainer-clean-generic \
+	install-info-am install-info-recursive install-man \
+	install-recursive install-strip installcheck installcheck-am \
+	installdirs installdirs-am installdirs-recursive \
+	maintainer-clean maintainer-clean-generic \
 	maintainer-clean-recursive mostlyclean mostlyclean-generic \
 	mostlyclean-recursive tags tags-recursive uninstall \
 	uninstall-am uninstall-cfgdataDATA uninstall-dist_binSCRIPTS \
-	uninstall-dist_m4dataDATA uninstall-info-recursive \
-	uninstall-recursive
+	uninstall-dist_m4dataDATA uninstall-info-am \
+	uninstall-info-recursive uninstall-recursive
 
 
 simage-@CONFIG@.cfg: config.status $(srcdir)/simage.cfg.in
 	@$(SHELL) config.status --file=$@:simage.cfg.in
-
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
