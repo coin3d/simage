@@ -7,6 +7,7 @@
 #endif /* HAVE_CONFIG_H */
 #include <simage.h>
 #include <string.h>
+#include <ctype.h>
 
 struct _saver_data
 {
@@ -49,7 +50,7 @@ safe_strdup(const char * str)
 {
   char * newstr = NULL;
   if (str != NULL) {
-    newstr = malloc(strlen(str) + 1);
+    newstr = (char *) malloc(strlen(str) + 1);
     strcpy(newstr, str);
   }
   return newstr;
