@@ -73,8 +73,6 @@ fill_input_buffer(j_decompress_ptr cinfo)
   input_source_mgr * src = (input_source_mgr *) cinfo->src;
   size_t nbytes = fread(src->buffer, 1, CHUNK_SIZE, src->infile);
 
-  printf("fill\n");
-
   if (nbytes <= 0) {
     if (src->start_of_file)	/* Treat empty input file as fatal error */
       ERREXIT(cinfo, JERR_INPUT_EMPTY);
