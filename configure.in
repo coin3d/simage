@@ -262,6 +262,8 @@ AC_ARG_WITH(
   [CONFIG=$withval],
   [CONFIG=default])
 
+AC_SUBST(CONFIG)
+
 AC_ARG_WITH(
   [suffix],
   [AC_HELP_STRING([--with-suffix=string],
@@ -270,7 +272,6 @@ AC_ARG_WITH(
   [SUFFIX=])
 
 AC_SUBST(SUFFIX)
-AC_SUBST(CONFIG)
 
 # **************************************************************************
 # Check if UNGIF support is wanted (and if so, available).
@@ -498,7 +499,6 @@ AC_OUTPUT([
 	Makefile
 	src/Makefile
 	build/simage.spec
-	simage.cfg
 ])
 
 SIM_AC_CONFIGURATION_SUMMARY

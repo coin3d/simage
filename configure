@@ -4599,7 +4599,7 @@ fi
 
 # **************************************************************************
 
-ac_config_files="$ac_config_files Makefile src/Makefile build/simage.spec simage.cfg"
+ac_config_files="$ac_config_files Makefile src/Makefile build/simage.spec"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -4892,19 +4892,18 @@ Try \`$0 --help' for more information." >&2;}
   'Makefile' ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   'src/Makefile' ) CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
   'build/simage.spec' ) CONFIG_FILES="$CONFIG_FILES build/simage.spec" ;;
-  'simage.cfg' ) CONFIG_FILES="$CONFIG_FILES simage.cfg" ;;
   'default-1' ) CONFIG_COMMANDS="$CONFIG_COMMANDS default-1" ;;
   'default-2' ) CONFIG_COMMANDS="$CONFIG_COMMANDS default-2" ;;
   'config.h' ) CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
   'include/simage.h' ) CONFIG_HEADERS="$CONFIG_HEADERS include/simage.h" ;;
 
   # This is an error.
-  -*) { { echo "$as_me:4902: error: unrecognized option: $1
+  -*) { { echo "$as_me:4901: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&2;}
    { (exit 1); exit 1; }; } ;;
-  *) { { echo "$as_me:4907: error: invalid argument: $1" >&5
+  *) { { echo "$as_me:4906: error: invalid argument: $1" >&5
 echo "$as_me: error: invalid argument: $1" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -5062,8 +5061,8 @@ s,@SIMAGE_EXTRA_CPPFLAGS@,$SIMAGE_EXTRA_CPPFLAGS,;t t
 s,@SIMAGE_EXTRA_LDFLAGS@,$SIMAGE_EXTRA_LDFLAGS,;t t
 s,@SIMAGE_EXTRA_LIBS@,$SIMAGE_EXTRA_LIBS,;t t
 s,@DSUFFIX@,$DSUFFIX,;t t
-s,@SUFFIX@,$SUFFIX,;t t
 s,@CONFIG@,$CONFIG,;t t
+s,@SUFFIX@,$SUFFIX,;t t
 s,@SIMAGE_UNGIF_SUPPORT_TRUE@,$SIMAGE_UNGIF_SUPPORT_TRUE,;t t
 s,@SIMAGE_UNGIF_SUPPORT_FALSE@,$SIMAGE_UNGIF_SUPPORT_FALSE,;t t
 s,@SIMAGE_JPEG_SUPPORT_TRUE@,$SIMAGE_JPEG_SUPPORT_TRUE,;t t
@@ -5200,7 +5199,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:5203: creating $ac_file" >&5
+    { echo "$as_me:5202: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -5218,7 +5217,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]* | ?:[\\/]*)
          # Absolute
-         test -f "$f" || { { echo "$as_me:5221: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:5220: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -5231,7 +5230,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:5234: error: cannot find input file: $f" >&5
+           { { echo "$as_me:5233: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -5292,7 +5291,7 @@ for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
   * )   ac_file_in=$ac_file.in ;;
   esac
 
-  test x"$ac_file" != x- && { echo "$as_me:5295: creating $ac_file" >&5
+  test x"$ac_file" != x- && { echo "$as_me:5294: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
 
   # First look for the input files in the build tree, otherwise in the
@@ -5303,7 +5302,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]* | ?:[\\/]*)
          # Absolute
-         test -f "$f" || { { echo "$as_me:5306: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:5305: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -5316,7 +5315,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:5319: error: cannot find input file: $f" >&5
+           { { echo "$as_me:5318: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -5433,7 +5432,7 @@ cat >>$CONFIG_STATUS <<\EOF
   rm -f $tmp/in
   if test x"$ac_file" != x-; then
     if cmp -s $ac_file $tmp/config.h 2>/dev/null; then
-      { echo "$as_me:5436: $ac_file is unchanged" >&5
+      { echo "$as_me:5435: $ac_file is unchanged" >&5
 echo "$as_me: $ac_file is unchanged" >&6;}
     else
       ac_dir=`$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \

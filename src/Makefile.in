@@ -1142,15 +1142,15 @@ distclean-generic distclean-generic distclean-hdr \
 distclean-libLTLIBRARIES distclean-libtool distclean-recursive \
 distclean-tags distclean-tags distdir distdir dvi dvi dvi-am dvi-am \
 dvi-recursive info info info-am info-am info-recursive install install \
-install-am install-am install-binSCRIPTS install-data install-data \
-install-data-am install-data-am install-data-recursive install-exec \
-install-exec install-exec-am install-exec-am install-exec-recursive \
-install-libLTLIBRARIES install-libsimage@SUFFIX@incHEADERS \
-install-m4dataDATA install-recursive install-strip install-strip \
-installcheck installcheck installcheck-am installcheck-am \
-installcheck-recursive installdirs installdirs installdirs-am \
-installdirs-recursive maintainer-clean maintainer-clean \
-maintainer-clean-compile maintainer-clean-depend \
+install-am install-am install-binSCRIPTS install-cfgdataDATA \
+install-data install-data install-data-am install-data-am \
+install-data-recursive install-exec install-exec install-exec-am \
+install-exec-am install-exec-recursive install-libLTLIBRARIES \
+install-libsimage@SUFFIX@incHEADERS install-m4dataDATA \
+install-recursive install-strip install-strip installcheck installcheck \
+installcheck-am installcheck-am installcheck-recursive installdirs \
+installdirs installdirs-am installdirs-recursive maintainer-clean \
+maintainer-clean maintainer-clean-compile maintainer-clean-depend \
 maintainer-clean-generic maintainer-clean-generic maintainer-clean-hdr \
 maintainer-clean-libLTLIBRARIES maintainer-clean-libtool \
 maintainer-clean-recursive maintainer-clean-tags maintainer-clean-tags \
@@ -1159,8 +1159,9 @@ mostlyclean-generic mostlyclean-generic mostlyclean-hdr \
 mostlyclean-libLTLIBRARIES mostlyclean-libtool mostlyclean-recursive \
 mostlyclean-tags mostlyclean-tags tags tags tags-recursive uninstall \
 uninstall uninstall-am uninstall-am uninstall-binSCRIPTS \
-uninstall-libLTLIBRARIES uninstall-libsimage@SUFFIX@incHEADERS \
-uninstall-m4dataDATA uninstall-recursive
+uninstall-cfgdataDATA uninstall-libLTLIBRARIES \
+uninstall-libsimage@SUFFIX@incHEADERS uninstall-m4dataDATA \
+uninstall-recursive
 
 
 # **************************************************************************

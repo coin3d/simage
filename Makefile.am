@@ -3,16 +3,15 @@
 SUBDIRS = src
 
 bin_SCRIPTS = simage-config
-BUILT_SOURCES = simage.cfg
 
 EXTRA_DIST = $(m4data_DATA)
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = cfg/m4/simage.m4
 
-install-exec-hook: simage.cfg
-	@target=simage-@CONFIG@.cfg; \
-	echo "Installing $$target"; \
-	$(mkinstalldirs) $(DESTDIR)$(datadir)/Coin/conf && \
-	  $(INSTALL_DATA) simage.cfg $(DESTDIR)$(datadir)/Coin/conf/$$target;
+cfgdatadir = $(datadir)/Coin/conf
+cfgdata_DATA = simage-@CONFIG@.cfg
+
+simage-@CONFIG@.cfg: $(top_srcdir)/simage.cfg.in
+	@./config.status --file=$@:simage.cfg.in
 
