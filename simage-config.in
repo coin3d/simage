@@ -1,48 +1,41 @@
-#!/bin/sh
+#! /bin/sh
+# **************************************************************************
+# simage-config -- a utility for retrieving configuration information about
+# the installed simage library.
 
-###### SUBROUTINES ########################################################
+me=`echo $0 | sed 's,^.*[/\\],,g'`
 
-usage()
-{
-cat <<EOF
-Usage: simage-config [OPTIONS]
+usage="\
+Usage: $me [OPTIONS]
 Options:
   --cppflags
   --ldflags
   --libs
   --version
-  --usage | --help
-EOF
-  exit $1
-}
+  --usage | --help"
 
+version="@SIMAGE_VERSION@"
 
-###### MAIN ###############################################################
+# NOTE: If the first argument is changed in the following variables, it is
+# also necessary to update configure.in, since that argument is shifted off.
 
-while test $# -gt 0; do
+cppflags="-I@includedir@ @SIMAGE_EXTRA_CPPFLAGS@"
+ldflags="-L@libdir@ @SIMAGE_EXTRA_LDFLAGS@"
+libs="@SIMAGE_LIBNAME@ @SIMAGE_EXTRA_LIBS@"
+
+while test $# -gt 0
+do
   case $1 in
-    --cppflags)
-      # NOTE: If the first includedir argument is changed in the future,
-      # we need to update configure.in as well, since the argument is
-      # shifted off.
-      echo -I@includedir@ @SIMAGE_EXTRA_CPPFLAGS@
-      ;;
-    --ldflags)
-      echo -L@libdir@ @SIMAGE_EXTRA_LDFLAGS@
-      ;;
-    --libs)
-      echo @SIMAGE_LIBNAME@ @SIMAGE_EXTRA_LIBS@
-      ;;
-    --version)
-      echo @SIMAGE_VERSION@
-      ;;
-    --help | --usage)
-      usage 0
-      ;;
-    *)
-      echo "Unknown option: \"$1\""
-      usage 1 1>&2
-      ;;
+  --help | --usage)  echo "$usage"    ;;
+  --version)         echo "$version"  ;;
+  --cppflags)        echo "$cppflags" ;;
+  --ldflags)         echo "$ldflags"  ;;
+  --libs)            echo "$libs"     ;;
+  *)
+    echo "$me: Invalid option: \"$1\""
+    echo "$usage" >&2
+    exit 1
+    ;;
   esac
   shift
 done
