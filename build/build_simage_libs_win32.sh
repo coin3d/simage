@@ -216,6 +216,7 @@ if ! test -d $SIMAGELIBS_BUILD/libjpeg; then
     cp $SIMAGELIBS_BUILD/libjpeg/$SIMAGELIBS_CRT/jpeglib.h $SIMAGELIBS_BUILD/libjpeg/$SIMAGELIBS_CRT/include
     cp $SIMAGELIBS_BUILD/libjpeg/$SIMAGELIBS_CRT/jconfig.h $SIMAGELIBS_BUILD/libjpeg/$SIMAGELIBS_CRT/include
     cp $SIMAGELIBS_BUILD/libjpeg/$SIMAGELIBS_CRT/jmorecfg.h $SIMAGELIBS_BUILD/libjpeg/$SIMAGELIBS_CRT/include
+    cp $SIMAGELIBS_BUILD/libjpeg/$SIMAGELIBS_CRT/jerror.h $SIMAGELIBS_BUILD/libjpeg/$SIMAGELIBS_CRT/include
     set_simage_param_crt
     cat $SIMAGELIBS_BUILD/libjpeg/$SIMAGELIBS_CRT/makefile.vc | sed -e "s/CFLAGS= /CFLAGS= -$SIMAGELIBS_PARAMCRT /g" | sed -e 's/RM= del/RM= rm -f/g' > $SIMAGELIBS_BUILD/libjpeg/$SIMAGELIBS_CRT/makefile.vc_$SIMAGELIBS_CRT
   done
@@ -393,6 +394,8 @@ if ! test -d $SIMAGELIBS_BUILD/libtiff; then
   echo "[SIMAGELIBS]         Modifying libtiff configuration and make files"
   for SIMAGELIBS_CRT in $SIMAGELIBS_CRT_LIST; do
     cp $SIMAGELIBS_BUILD/libtiff/$SIMAGELIBS_CRT/tiff.h $SIMAGELIBS_BUILD/libtiff/$SIMAGELIBS_CRT/include
+    cp $SIMAGELIBS_BUILD/libtiff/$SIMAGELIBS_CRT/tiffio.h $SIMAGELIBS_BUILD/libtiff/$SIMAGELIBS_CRT/include
+    cp $SIMAGELIBS_BUILD/libtiff/$SIMAGELIBS_CRT/tiffvers.h $SIMAGELIBS_BUILD/libtiff/$SIMAGELIBS_CRT/include
     set_simage_param_crt
     cat $SIMAGELIBS_BUILD/libtiff/$SIMAGELIBS_CRT/makefile.vc | sed -e "s/CFLAGS  = /CFLAGS  = -$SIMAGELIBS_PARAMCRT /g" > $SIMAGELIBS_BUILD/libtiff/$SIMAGELIBS_CRT/makefile.vc_$SIMAGELIBS_CRT
   done
