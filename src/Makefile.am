@@ -13,6 +13,12 @@ else
 JPEGSOURCES =
 endif
 
+if SIMAGE_UNGIF_SUPPORT
+UNGIFSOURCES = simage_gif.c simage_gif.h
+else
+UNGIFSOURCES =
+endif
+
 if SIMAGE_TIFF_SUPPORT
 TIFFSOURCES = simage_tiff.c simage_tiff.h
 else
@@ -45,7 +51,7 @@ endif
 
 libsimage_la_SOURCES = \
 	simage.c simage.h \
-	$(JPEGSOURCES) $(PNGSOURCES) $(TIFFSOURCES) \
+	$(JPEGSOURCES) $(UNGIFSOURCES) $(PNGSOURCES) $(TIFFSOURCES) \
 	$(TGASOURCES) $(RGBSOURCES) $(PICSOURCES)
 
 
