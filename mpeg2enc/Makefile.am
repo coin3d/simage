@@ -45,10 +45,8 @@ mpeg2enc_lst_SOURCES = \
 
 mpeg2enc.lst: Makefile $(mpeg2enc_lst_OBJECTS)
 	@echo "Linking mpeg2enc.lst..."; \
-	echo $(CC) /LST:mpeg2enc.lst \
-	  $(mpeg2enc_lst_OBJECTS); \
-	$(CC) /LST:mpeg2enc.lst \
-	  $(mpeg2enc_lst_OBJECTS);
+	rm -f $@; \
+	for i in $(mpeg2enc_lst_OBJECTS); do echo $$i >>$@; done
 endif
 
 # EOF **********************************************************************

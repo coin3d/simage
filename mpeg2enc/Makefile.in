@@ -438,10 +438,8 @@ mostlyclean-am: mostlyclean-compile mostlyclean-generic \
 
 @BUILD_WITH_MSVC_TRUE@mpeg2enc.lst: Makefile $(mpeg2enc_lst_OBJECTS)
 @BUILD_WITH_MSVC_TRUE@	@echo "Linking mpeg2enc.lst..."; \
-@BUILD_WITH_MSVC_TRUE@	echo $(CC) /LST:mpeg2enc.lst \
-@BUILD_WITH_MSVC_TRUE@	  $(mpeg2enc_lst_OBJECTS); \
-@BUILD_WITH_MSVC_TRUE@	$(CC) /LST:mpeg2enc.lst \
-@BUILD_WITH_MSVC_TRUE@	  $(mpeg2enc_lst_OBJECTS);
+@BUILD_WITH_MSVC_TRUE@	rm -f $@; \
+@BUILD_WITH_MSVC_TRUE@	for i in $(mpeg2enc_lst_OBJECTS); do echo $$i >>$@; done
 
 # EOF **********************************************************************
 
