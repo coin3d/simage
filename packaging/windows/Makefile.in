@@ -32,7 +32,7 @@ DLLCFLAGS = /GD
 CONFIGUREOPTIONS =
 BUILDOPTIONS = --disable-dependency-tracking
 
-BUILDS = # buildfiles shared-release # shared-debug # static-release static-debug
+BUILDS = buildfiles shared-release shared-debug # static-release static-debug
 
 # **************************************************************************
 
@@ -48,7 +48,8 @@ LICENSE.TXT:
 
 # FIXME: use full makensis path (and support spaces in the path)...
 # something like ac_subst $(sim_ac_makensis_exe)
-# $(project)-v$(VERSION)-install.exe: $(project).nsi LICENSE.TXT $(project)-sdk.html
+
+# FIXME: add simage-sdk.html. 2003-11-19 thammer.
 
 $(project)-v$(VERSION)-install.exe: $(project).nsi LICENSE.TXT
 	makensis $(project).nsi
@@ -67,9 +68,9 @@ cat Makefile.org | sed -e 's/$$(AMTAR) chof - $$(distdir) | GZIP=$$(GZIP_ENV) gz
            $(MAKE) dist; mv $(Project)-$(VERSION).tar.gz windows/; \
         )
 
-headerlist.nsi: simage_include.txt Makefile
+headerlist.nsi: $(project)_include.txt Makefile
 	winpath=`CYGWIN= cygpath -w "$(sdk_prefix)"`; \
-	( prevdir=; for path in `cat simage_include.txt`; do \
+	( prevdir=; for path in `cat $(project)_include.txt`; do \
 	  dir=`echo $$path | sed 's/\/[^\/]*$$//'`; \
 	  if test x"$$dir" != x"$$prevdir"; then \
 	    prevdir=$$dir; \
@@ -80,13 +81,13 @@ headerlist.nsi: simage_include.txt Makefile
 	  fi; \
 	done ) >headerlist.nsi
 
-simage_include.txt: Makefile
+$(project)_include.txt: Makefile
 	(cd $(sdk_prefix); \
 	find include -type f -name *.h) \
-	  > simage_include.txt
+	  > $(project)_include.txt
 
-sourcelist.nsi: simage_source.txt Makefile
-	( prevdir=""; for path in `cat simage_source.txt`; do \
+sourcelist.nsi: $(project)_source.txt Makefile
+	( prevdir=""; for path in `cat $(project)_source.txt`; do \
 	  dir=`echo $$path | sed 's/\/[^\/]*$$//'`; \
 	  if test x"$$dir" != x"$$prevdir"; then \
 	    prevdir=$$dir; \
@@ -97,12 +98,12 @@ sourcelist.nsi: simage_source.txt Makefile
 	  fi; \
 	done ) >sourcelist.nsi
 
-simage_source.txt: $(Project)-$(VERSION) Makefile
+$(project)_source.txt: $(Project)-$(VERSION) Makefile
 	find $(Project)-$(VERSION) -type f \
-	  > simage_source.txt
+	  > $(project)_source.txt
 
-buildfileslist.nsi: simage_build.txt Makefile
-	( prevdir=; cd build-files; for path in ./$(project)$(major).* `cat simage_build.txt`; do \
+buildfileslist.nsi: $(project)_build.txt Makefile
+	( prevdir=; for path in ./$(project)$(major).* `cat $(project)_build.txt`; do \
 	  dir=`echo $$path | sed 's/\/[^\/]*$$//'`; \
 	  if test x"$$dir" != x"$$prevdir"; then \
 	    prevdir=$$dir; \
@@ -117,10 +118,10 @@ buildfileslist.nsi: simage_build.txt Makefile
 	  fi; \
 	done ) >buildfileslist.nsi
 
-simage_build.txt: buildfiles
+$(project)_build.txt: buildfiles
 	(cd build-files; \
 	find . -type f -name "*.h" -o -name "*.cpp" -o -name "*.c" \
-	       -o -name "*.ih" -o -name "*.icc") > simage_build.txt
+	       -o -name "*.ih" -o -name "*.icc") > $(project)_build.txt
 
 uninstall.nsi: Makefile
 	( cd $(sdk_prefix); \
@@ -232,6 +233,8 @@ buildfiles: build-files/$(project)$(major).dsp
 
 build-files/$(project)$(major).dsp: $(Project)-$(VERSION)
 	@if test -d build-files; then :; else mkdir build-files; fi
+	@if test -e build-files/$(project)$(major).dsp; then \
+	rm build-files/$(project)$(major).*; fi
 	cd build-files; \
 	../$(Project)-$(VERSION)/configure \
 	  $(CONFIGUREOPTIONS) \
