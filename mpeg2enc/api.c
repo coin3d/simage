@@ -9,6 +9,7 @@
 
 #include "global.h"
 #include "putseq.h"
+#include <simage_private.h>
 
 static int 
 SimpegWrite_encode(const char * output_filename,

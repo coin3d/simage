@@ -233,8 +233,6 @@ extern "C" {
                                            s_movie_put_func * put,
                                            s_movie_close_func * close);
   
-  SIMAGE_DLL_API s_params * s_movie_params(s_movie * movie);
-
   enum {
     S_INTEGER_PARAM_TYPE,
     S_BOOL_PARAM_TYPE = S_INTEGER_PARAM_TYPE,

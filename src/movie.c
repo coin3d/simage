@@ -6,6 +6,7 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 #include <simage.h>
+#include <simage_private.h>
 #include <string.h>
 
 #ifdef SIMAGE_MPEG2ENC_SUPPORT
