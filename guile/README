@@ -1,0 +1,30 @@
+ABOUT
+=====
+This directory contains a binding between simage and Guile, and an example
+Guile script that will convert images between different formats and shapes.
+See simage.scm for the available Guile functions.
+
+SAMPLE
+======
+
+(use-modules (coin simage))
+
+(let ((image (make-simage-image 256 256)))
+  (let outer ((y 0))
+    (let inner ((x 0))
+      (simage-image-set-pixel! image x y (make-simage-pixel x y 0))
+      (if (< x 255) (inner (+ x 1))))
+    (if (< y 255) (outer (+ y 1))))
+  (simage-save image "output.png" "png"))
+
+AUTHORS
+=======
+Lars J. Aas <larsa@coin3d.org>
+
+ChangeLog
+=========
+
+2001-05-07  Lars J. Aas <larsa@sim.no>
+
+	* Commited Guile binding to CVS.
+
