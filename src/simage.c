@@ -6,6 +6,7 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 #include <simage.h>
+#include <string.h>
 
 struct _loader_data
 {
