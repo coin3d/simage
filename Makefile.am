@@ -10,3 +10,7 @@ EXTRA_DIST = cfg/m4/simage.m4
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = cfg/m4/simage.m4
+
+simage-installer.exe:
+	makensis build\\simage.nsi
+

@@ -6,13 +6,13 @@
 #   Lars J. Aas <larsa@sim.no>
 
 Name "simage @SIMAGE_VERSION@"
-OutFile "simage.exe"
+OutFile "simage-installer.exe"
 SilentInstall "normal"
 CRCCheck "on"
 UninstallExeName "simage-uninstaller.exe"
 
-# LicenseText "GNU Lesser General Public License"
-# LicenseData LGPL.txt
+LicenseText "Public Domain"
+LicenseData COPYING.DOS
 
 ComponentText "simage library"
 InstType "Binary SDK"
@@ -120,7 +120,6 @@ Exec '"explorer" "$INSTDIR\"'
 # **************************************************************************
 Section Uninstall
 
-Delete $INSTDIR\simage-uninstaller.exe
 Delete $INSTDIR\bin\simage-config
 Delete $INSTDIR\lib\simage@SIMAGE_MAJOR_VERSION@.dll
 Delete $INSTDIR\lib\simage@SIMAGE_MAJOR_VERSION@.lib
@@ -145,6 +144,7 @@ RMDir $INSTDIR\source\simage-@SIMAGE_VERSION@\src
 RMDir $INSTDIR\source\simage-@SIMAGE_VERSION@\tests
 RMDir $INSTDIR\source\simage-@SIMAGE_VERSION@
 RMDir $INSTDIR\source
+Delete $INSTDIR\simage-uninstaller.exe
 RMDir $INSTDIR
 
 # EOF **********************************************************************

@@ -434,4 +434,7 @@ AC_OUTPUT([
 	chmod a+x simage-config
 ])
 
+sed 's/$/
+/g' < $srcdir/COPYING > COPYING.DOS
+
 # **************************************************************************

@@ -5180,4 +5180,7 @@ ac_clean_files=$ac_clean_files_save
 
 test "$no_create" = yes || $SHELL $CONFIG_STATUS || { (exit 1); exit; }
 
+sed 's/$/
+/g' < $srcdir/COPYING > COPYING.DOS
+
 # **************************************************************************
