@@ -208,7 +208,7 @@ simage_png_load(const char *filename,
 
   format = channels;
 
-  row_pointers = malloc(height*sizeof(png_bytep));
+  row_pointers = (png_bytepp) malloc(height*sizeof(png_bytep));
   for (y = 0; y < height; y++) {
     row_pointers[height-y-1] = buffer + y*bytes_per_row;
   }
