@@ -116,27 +116,11 @@ extern "C" {
   /* reading and parsing image files */
   /* returned image buffer must be freed by simage_free_image() */
   SIMAGE_DLL_EXPORT unsigned char * simage_read_image(const char * filename,
-						      int * w, int * h,
-						      int * numcomponents);
+                                                      int * w, int * h,
+                                                      int * numcomponents);
 
-  /* check if export is available for a filetype. Returns 1 if supported, 0 otherwise */
-  SIMAGE_DLL_EXPORT int simage_check_save_supported(const char * filenameextension);
-  
-  /* save image. use simage_check_write_supported first, please */
-  SIMAGE_DLL_EXPORT int simage_save_image(const char * filename,
-                                          const unsigned char * bytes,
-                                          int w, int h, int numcomponents,
-                                          const char * filenameextension);
-  
   /* check this if simage_read_image returns NULL or simage_write_image returns 0 */
   SIMAGE_DLL_EXPORT const char * simage_get_last_error(void);
-
-  /* scale the input image and return a new image with the given dimensions */
-  /* returned image buffer must be freed by simage_free_image() */
-  SIMAGE_DLL_EXPORT unsigned char * simage_resize(unsigned char * imagedata,
-						  int width, int height,
-						  int numcomponents,
-						  int newwidth, int newheight);
 
   /* free resources allocated by either simage_read_image() or
      simage_resize() (Windows goes berzerk if you call free() from the
@@ -146,6 +130,12 @@ extern "C" {
   /* convenience function */
   SIMAGE_DLL_EXPORT int simage_next_power_of_two(int val);
 
+  /* scale the input image and return a new image with the given dimensions */
+  /* returned image buffer must be freed by simage_free_image() */
+  SIMAGE_DLL_EXPORT unsigned char * simage_resize(unsigned char * imagedata,
+                                                  int width, int height,
+                                                  int numcomponents,
+                                                  int newwidth, int newheight);
 
   /* use the plugin interface described below for extending simage to
      handle more file formats */
@@ -153,15 +143,29 @@ extern "C" {
   struct simage_plugin 
   {
     unsigned char *(*load_func)(const char * name, int * width, int * height,
-				int * numcomponents);
+                                int * numcomponents);
     int (*identify_func)(const char * filename,
-			 const unsigned char * header, int headerlen);
+                         const unsigned char * header, int headerlen);
     int (*error_func)(char * textbuffer, int bufferlen);
   };
 
   SIMAGE_DLL_EXPORT void * simage_add_loader(const struct simage_plugin * l,
                                              int addbefore);
   SIMAGE_DLL_EXPORT void simage_remove_loader(void * handle);
+
+
+  /*****************************************************************/
+  /**** NOTE: new methods for simage version 1.1 *******************/
+  /*****************************************************************/
+  
+  /* check if export is available for a filetype. Returns 1 if supported, 0 otherwise */
+  SIMAGE_DLL_EXPORT int simage_check_save_supported(const char * filenameextension);
+  
+  /* save image. use simage_check_write_supported first, please */
+  SIMAGE_DLL_EXPORT int simage_save_image(const char * filename,
+                                          const unsigned char * bytes,
+                                          int w, int h, int numcomponents,
+                                          const char * filenameextension);
   
   SIMAGE_DLL_EXPORT void * simage_add_saver(int (*save_func)(const char * name,
                                                              const unsigned char * bytes,
@@ -178,6 +182,13 @@ extern "C" {
   SIMAGE_DLL_EXPORT const char * simage_get_saver_extensions(void * handle);
   SIMAGE_DLL_EXPORT const char * simage_get_saver_fullname(void * handle);
   SIMAGE_DLL_EXPORT const char * simage_get_saver_description(void * handle);
+
+
+  /*****************************************************************/
+  /**** NOTE: new methods for simage version 1.2 *******************/
+  /*****************************************************************/
+
+  /* (none yet) */
 
 #ifdef __cplusplus
 }
