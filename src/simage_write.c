@@ -62,6 +62,24 @@ safe_strfree(char * str)
 }
 
 /*
+ * use this instead of strcasecmp, which doesn't exist on Win32
+ * FIXME: replace with a configure test? pederb, 2001-02-07
+ */
+static int
+simage_strcasecmp(const char * str1, const char * str2)
+{
+  if (str1 == NULL && str2 != NULL) return 1;
+  if (str1 != NULL && str2 == NULL) return -1;
+  while (*str1 && *str2) {
+    int tst = tolower(*str1) - tolower(*str2);
+    if (tst) return tst;
+    str1++;
+    str2++;
+  }
+  return *str1 - *str2;
+}
+
+/*
  * internal function which adds a saver to the list of savers
  * returns a void pointer to the saver. addbefore specifies
  * if the saver should be added at the beginning or at the
@@ -119,13 +137,13 @@ find_saver(const char * filenameextension)
       int cmp;
       /* modify string while comparing. string is a copy so it should be safe */
       *str = 0;
-      cmp = strcasecmp(ext, filenameextension);
+      cmp = simage_strcasecmp(ext, filenameextension);
       *str = ',';
       if (cmp == 0) return saver;
       ext = str + 1;
       str = strchr(ext, ',');
     }
-    if (!strcasecmp(ext, filenameextension)) return saver;
+    if (!simage_strcasecmp(ext, filenameextension)) return saver;
     saver = saver->next;
   }
   return NULL;
