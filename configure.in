@@ -419,13 +419,16 @@ else
   AC_SUBST(simage_configure_date)
 fi
 
+simage_srcdir_dos=`cygpath -w "$srcdir"`
+AC_SUBST(simage_srcdir_dos)
+
 # **************************************************************************
 
 AC_OUTPUT([
 	Makefile
 	src/Makefile
 	build/simage.spec
-	build/simage.iwz
+	build/simage.nsi
 	simage-config
 ], [
 	chmod a+x simage-config

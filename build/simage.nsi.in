@@ -1,0 +1,150 @@
+# **************************************************************************
+# SuperPIMP (NSIS) Configuration File for the simage installer.
+# See http://www.nullsoft.com/free/nsis/ for SuperPIMP information.
+# **************************************************************************
+# Written by:
+#   Lars J. Aas <larsa@sim.no>
+
+Name "simage @SIMAGE_VERSION@"
+OutFile "simage.exe"
+SilentInstall "normal"
+CRCCheck "on"
+UninstallExeName "simage-uninstaller.exe"
+
+# LicenseText "GNU Lesser General Public License"
+# LicenseData LGPL.txt
+
+ComponentText "simage library"
+InstType "Binary SDK"
+InstType "Run-Time Only"
+InstType "Full"
+
+DirText "Where to install simage"
+InstallDir "D:\Coin3D"
+# InstallDirRegKey coin3d simage installdir
+
+# **************************************************************************
+Section "Run-Time Library"
+SectionIn 1,2,3
+
+SetCompress auto
+SetOverwrite on
+
+SetOutPath $INSTDIR\lib
+File src\simage@SIMAGE_MAJOR_VERSION@.dll
+
+# **************************************************************************
+Section "Binary SDK"
+SectionIn 1,3
+
+SetCompress auto
+SetOverwrite on
+
+SetOutPath $INSTDIR\lib
+File src\simage@SIMAGE_MAJOR_VERSION@.dll
+File src\simage@SIMAGE_MAJOR_VERSION@.lib
+# File src\simage@SIMAGE_MAJOR_VERSION@.pdb
+# File src\simage@SIMAGE_MAJOR_VERSION@.tds
+
+SetOutPath $INSTDIR\include
+File include\simage.h
+
+SetOutPath $INSTDIR\bin
+File simage-config
+
+# **************************************************************************
+Section "Source Code"
+SectionIn 3
+
+SetCompress auto
+SetOverwrite on
+
+SetOutPath $INSTDIR\source\simage-@SIMAGE_VERSION@
+File @simage_srcdir_dos@\AUTHORS
+File @simage_srcdir_dos@\COPYING
+File @simage_srcdir_dos@\ChangeLog
+File @simage_srcdir_dos@\ChangeLog.sh
+File @simage_srcdir_dos@\INSTALL
+File @simage_srcdir_dos@\Makefile.am
+File @simage_srcdir_dos@\Makefile.in
+File @simage_srcdir_dos@\NEWS
+File @simage_srcdir_dos@\README
+File @simage_srcdir_dos@\README.WIN32
+File @simage_srcdir_dos@\aclocal.m4
+File @simage_srcdir_dos@\bootstrap
+File @simage_srcdir_dos@\config.h.in
+File @simage_srcdir_dos@\configure
+File @simage_srcdir_dos@\configure.in
+File @simage_srcdir_dos@\simage-config.in
+SetOutPath $INSTDIR\source\simage-@SIMAGE_VERSION@\build
+File @simage_srcdir_dos@\build\README
+File @simage_srcdir_dos@\build\simage.nsi.in
+File @simage_srcdir_dos@\build\simage.spec.in
+SetOutPath $INSTDIR\source\simage-@SIMAGE_VERSION@\cfg
+File @simage_srcdir_dos@\cfg\README
+File @simage_srcdir_dos@\cfg\config.guess
+File @simage_srcdir_dos@\cfg\config.sub
+File @simage_srcdir_dos@\cfg\depcomp
+File @simage_srcdir_dos@\cfg\install-sh
+File @simage_srcdir_dos@\cfg\ltconfig
+File @simage_srcdir_dos@\cfg\ltmain.sh
+File @simage_srcdir_dos@\cfg\missing
+File @simage_srcdir_dos@\cfg\mkinstalldirs
+SetOutPath $INSTDIR\source\simage-@SIMAGE_VERSION@\cfg\m4
+File @simage_srcdir_dos@\cfg\m4\ChangeLog
+File @simage_srcdir_dos@\cfg\m4\ChangeLog.sh
+File @simage_srcdir_dos@\cfg\m4\README
+File @simage_srcdir_dos@\cfg\m4\TODO
+File @simage_srcdir_dos@\cfg\m4\*.m4
+File @simage_srcdir_dos@\cfg\m4\msvccc
+File @simage_srcdir_dos@\cfg\m4\cl-opts.txt
+SetOutPath $INSTDIR\source\simage-@SIMAGE_VERSION@\include
+File @simage_srcdir_dos@\include\simage.h.in
+File @simage_srcdir_dos@\include\*.h
+SetOutPath $INSTDIR\source\simage-@SIMAGE_VERSION@\src
+File @simage_srcdir_dos@\src\Makefile.*
+File @simage_srcdir_dos@\src\*.c
+SetOutPath $INSTDIR\source\simage-@SIMAGE_VERSION@\tests
+File @simage_srcdir_dos@\tests\img.*
+File @simage_srcdir_dos@\tests\loaders.c
+
+# **************************************************************************
+# Section "Extra Libraries"
+
+
+# **************************************************************************
+Section -post
+
+Exec '"explorer" "$INSTDIR\"'
+
+# **************************************************************************
+Section Uninstall
+
+Delete $INSTDIR\simage-uninstaller.exe
+Delete $INSTDIR\bin\simage-config
+Delete $INSTDIR\lib\simage@SIMAGE_MAJOR_VERSION@.dll
+Delete $INSTDIR\lib\simage@SIMAGE_MAJOR_VERSION@.lib
+Delete $INSTDIR\lib\simage@SIMAGE_MAJOR_VERSION@.pdb
+Delete $INSTDIR\lib\simage@SIMAGE_MAJOR_VERSION@.tds
+Delete $INSTDIR\include\simage.h
+Delete $INSTDIR\source\simage-@SIMAGE_VERSION@\build\*
+Delete $INSTDIR\source\simage-@SIMAGE_VERSION@\cfg\m4\*
+Delete $INSTDIR\source\simage-@SIMAGE_VERSION@\cfg\*
+Delete $INSTDIR\source\simage-@SIMAGE_VERSION@\include\*
+Delete $INSTDIR\source\simage-@SIMAGE_VERSION@\src\*
+Delete $INSTDIR\source\simage-@SIMAGE_VERSION@\tests\*
+Delete $INSTDIR\source\simage-@SIMAGE_VERSION@\*
+RMDir $INSTDIR\bin
+RMDir $INSTDIR\lib
+RMDir $INSTDIR\include
+RMDir $INSTDIR\source\simage-@SIMAGE_VERSION@\build
+RMDir $INSTDIR\source\simage-@SIMAGE_VERSION@\cfg\m4
+RMDir $INSTDIR\source\simage-@SIMAGE_VERSION@\cfg
+RMDir $INSTDIR\source\simage-@SIMAGE_VERSION@\include
+RMDir $INSTDIR\source\simage-@SIMAGE_VERSION@\src
+RMDir $INSTDIR\source\simage-@SIMAGE_VERSION@\tests
+RMDir $INSTDIR\source\simage-@SIMAGE_VERSION@
+RMDir $INSTDIR\source
+RMDir $INSTDIR
+
+# EOF **********************************************************************
