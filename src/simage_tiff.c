@@ -413,7 +413,6 @@ simage_tiff_open(const char * filename,
                  int * height,
                  int * numcomponents)
 {
-  int i;
   TIFF * in;
   simage_tiff_opendata * od;
 
