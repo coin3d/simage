@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.5 from Makefile.am.
+# Makefile.in generated automatically by automake 1.4s from Makefile.am.
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -145,7 +145,6 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 libguilesimage_la_LDFLAGS =
 libguilesimage_la_LIBADD =
 @HAVE_GUILE_TRUE@am_libguilesimage_la_OBJECTS = guilesimage.lo
-@HAVE_GUILE_FALSE@am_libguilesimage_la_OBJECTS =
 libguilesimage_la_OBJECTS = $(am_libguilesimage_la_OBJECTS)
 SCRIPTS = $(bin_SCRIPTS)
 

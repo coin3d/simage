@@ -1,4 +1,4 @@
-# aclocal.m4 generated automatically by aclocal 1.5
+# aclocal.m4 generated automatically by aclocal 1.4s
 
 # Copyright 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -465,7 +465,6 @@ fi
 # configured tree to be moved without reconfiguration.
 
 AC_DEFUN([AM_AUX_DIR_EXPAND], [
-# expand $ac_aux_dir to an absolute path
 if test "${CDPATH+set}" = set; then
   CDPATH=${ZSH_VERSION+.}:   # as recommended in autoconf.texi
 fi

@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.5 from Makefile.am.
+# Makefile.in generated automatically by automake 1.4s from Makefile.am.
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -156,26 +156,19 @@ LIBRARIES = $(noinst_LIBRARIES)
 
 mpeg2enc_lst_AR = $(AR) cru
 mpeg2enc_lst_LIBADD =
-@BUILD_WITH_MSVC_TRUE@am_mpeg2enc_lst_OBJECTS = api.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@	conform.$(OBJEXT) fdctref.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@	idct.$(OBJEXT) motion.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@	predict.$(OBJEXT) putbits.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@	puthdr.$(OBJEXT) putmpg.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@	putpic.$(OBJEXT) putseq.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@	putvlc.$(OBJEXT) quantize.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@	ratectl.$(OBJEXT) readpic.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@	stats.$(OBJEXT) transfrm.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@	writepic.$(OBJEXT)
-@BUILD_WITH_MSVC_FALSE@am_mpeg2enc_lst_OBJECTS =
+am__objects_1 = api.$(OBJEXT) conform.$(OBJEXT) fdctref.$(OBJEXT) \
+	idct.$(OBJEXT) motion.$(OBJEXT) predict.$(OBJEXT) \
+	putbits.$(OBJEXT) puthdr.$(OBJEXT) putmpg.$(OBJEXT) \
+	putpic.$(OBJEXT) putseq.$(OBJEXT) putvlc.$(OBJEXT) \
+	quantize.$(OBJEXT) ratectl.$(OBJEXT) readpic.$(OBJEXT) \
+	stats.$(OBJEXT) transfrm.$(OBJEXT) writepic.$(OBJEXT)
+@BUILD_WITH_MSVC_TRUE@am_mpeg2enc_lst_OBJECTS = $(am__objects_1)
 mpeg2enc_lst_OBJECTS = $(am_mpeg2enc_lst_OBJECTS)
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 
 libmpeg2enc_la_LDFLAGS =
 libmpeg2enc_la_LIBADD =
-am_libmpeg2enc_la_OBJECTS = api.lo conform.lo fdctref.lo idct.lo \
-	motion.lo predict.lo putbits.lo puthdr.lo putmpg.lo putpic.lo \
-	putseq.lo putvlc.lo quantize.lo ratectl.lo readpic.lo stats.lo \
-	transfrm.lo writepic.lo
+am_libmpeg2enc_la_OBJECTS = $(am__objects_1)
 libmpeg2enc_la_OBJECTS = $(am_libmpeg2enc_la_OBJECTS)
 
 DEFS = @DEFS@
