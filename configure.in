@@ -456,6 +456,32 @@ AC_SUBST(SIMAGE_DEBUG_BUILD)
 AM_CONDITIONAL(SIMAGE_DEBUG_BUILD, $SIMAGE_DEBUG_BUILD)
 
 # **************************************************************************
+# simage module for Guile
+
+AC_CHECK_HEADERS([dlfcn.h],
+  [sim_ac_have_dlfcn_h=true],
+  [sim_ac_have_dlfcn_h=false])
+
+HAVE_GUILE=false
+if $sim_ac_have_dlfcn_h; then
+  AC_PATH_PROG(GUILE_PROG, guile, false)
+  if $GUILE_PROG -c "(quit)"; then
+    AC_CHECK_HEADERS([libguile.h guile/gh.h],
+      [sim_ac_have_guile_sdk=true],
+      [sim_ac_have_guile_sdk=false])
+    if $sim_ac_have_guile_sdk; then
+      HAVE_GUILE=true
+    fi
+  fi
+fi
+if $HAVE_GUILE; then
+  SIM_AC_CONFIGURATION_SETTING([Guile module], [Build])
+else
+  SIM_AC_CONFIGURATION_SETTING([Guile module], [Ignore])
+fi
+AM_CONDITIONAL(HAVE_GUILE, $HAVE_GUILE)
+
+# **************************************************************************
 # Remove redundant options from environment variable option lists.
 
 SIM_AC_UNIQIFY_LIST(CPPFLAGS, $CPPFLAGS)
@@ -557,6 +583,7 @@ AM_CONFIG_HEADER([config.h include/simage.h])
 AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
+	guile/Makefile
 	build/simage.spec
 ])
 

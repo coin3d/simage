@@ -1,6 +1,6 @@
 # **************************************************************************
 
-SUBDIRS = src
+SUBDIRS = src guile
 
 dist_bin_SCRIPTS = simage-config
 
