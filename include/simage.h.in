@@ -33,8 +33,17 @@
  *     3 : RGB data (GL_RGB)
  *     4 : RGB data with alpha component (GL_RGBA)
  *
- *   Other image formats might be supported in the future. You
- *   should not assume 1 <= numComponents <= 4 :-)
+ * int simage_check_save_supported(const char * filenameextension)
+ *    
+ *   Returns 1 if a saver of type filenameextension is added. The
+ *   built-in savers are jpg/jpeg, png, tif/tiff and rgb.
+ *
+ * int simage_save_image(const char * filename,
+ *                       const unsigned char * bytes,
+ *                       int w, int h, int numcomponents,
+ *                       const char * filenameextension)
+ *
+ *   Saves image in the format specified in filenameextension.
  *
  * A couple of functions for your convenience:
  *
@@ -150,21 +159,23 @@ extern "C" {
   SIMAGE_DLL_EXPORT void * simage_add_loader(const struct simage_plugin * l,
                                              int addbefore);
   SIMAGE_DLL_EXPORT void simage_remove_loader(void * handle);
-
-
-  struct simage_save_plugin
-  {
-    int (*save_func)(const char * name, const unsigned char * bytes,
-                     int width, int height, int numcomponents);
-    int (*error_func)(char * textbuffer, int bufferlen);
-    char filenameextension[32];
-  };
   
-  SIMAGE_DLL_EXPORT void * simage_add_saver(const struct simage_save_plugin * s,
+  SIMAGE_DLL_EXPORT void * simage_add_saver(int (*save_func)(const char * name,
+                                                             const unsigned char * bytes,
+                                                             int width, int height, int nc),
+                                            int (*error_func)(char * textbuffer, int bufferlen),
+                                            const char * extensions,
+                                            const char * fullname,
+                                            const char * description,
                                             int addbefore);
   
   SIMAGE_DLL_EXPORT void simage_remove_saver(void * handle);
-  
+  SIMAGE_DLL_EXPORT int simage_get_num_savers(void);
+  SIMAGE_DLL_EXPORT void * simage_get_saver_handle(int idx);
+  SIMAGE_DLL_EXPORT const char * simage_get_saver_extensions(void * handle);
+  SIMAGE_DLL_EXPORT const char * simage_get_saver_fullname(void * handle);
+  SIMAGE_DLL_EXPORT const char * simage_get_saver_description(void * handle);
+
 #ifdef __cplusplus
 }
 #endif

@@ -48,6 +48,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_FLAG =
+INSTALL_HEADER = $(INSTALL_DATA)
 transform = @program_transform_name@
 
 NORMAL_INSTALL = :
@@ -65,6 +66,7 @@ host_triplet = @host@
 target_alias = @target_alias@
 target_triplet = @target@
 AMDEP = @AMDEP@
+AMINCLUDE = @AMINCLUDE@
 AMTAR = @AMTAR@
 AS = @AS@
 AWK = @AWK@
@@ -1016,11 +1018,11 @@ $(EXTRA_libsimage@SUFFIX@_la_SOURCES)
 HEADERS =  $(libsimage@SUFFIX@inc_HEADERS)
 
 depcomp = $(SHELL) $(top_srcdir)/cfg/depcomp
-DEP_FILES =  @AMDEP@ $(DEPDIR)/simage.Plo $(DEPDIR)/simage_gif.Plo \
-$(DEPDIR)/simage_jpeg.Plo $(DEPDIR)/simage_pic.Plo \
-$(DEPDIR)/simage_png.Plo $(DEPDIR)/simage_rgb.Plo \
-$(DEPDIR)/simage_tga.Plo $(DEPDIR)/simage_tiff.Plo \
-$(DEPDIR)/simage_write.Plo
+@AMDEP@DEP_FILES =  $(DEPDIR)/simage.Plo $(DEPDIR)/simage_gif.Plo \
+@AMDEP@$(DEPDIR)/simage_jpeg.Plo $(DEPDIR)/simage_pic.Plo \
+@AMDEP@$(DEPDIR)/simage_png.Plo $(DEPDIR)/simage_rgb.Plo \
+@AMDEP@$(DEPDIR)/simage_tga.Plo $(DEPDIR)/simage_tiff.Plo \
+@AMDEP@$(DEPDIR)/simage_write.Plo
 DIST_COMMON =  $(libsimage@SUFFIX@inc_HEADERS) Makefile.am Makefile.in
 
 
@@ -1038,17 +1040,20 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configur
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
-	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= CONFIG_LINKS= CONFIG_COMMANDS= $(SHELL) ./config.status
 
 
 mostlyclean-libLTLIBRARIES:
+
 
 clean-libLTLIBRARIES:
 	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
 
 distclean-libLTLIBRARIES:
 
+
 maintainer-clean-libLTLIBRARIES:
+
 
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
@@ -1070,12 +1075,8 @@ uninstall-libLTLIBRARIES:
 mostlyclean-compile:
 	-rm -f *.o core *.core
 
-clean-compile:
-
 distclean-compile:
 	-rm -f *.tab.c
-
-maintainer-clean-compile:
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -1084,8 +1085,7 @@ clean-libtool:
 	-rm -rf .libs _libs
 
 distclean-libtool:
-
-maintainer-clean-libtool:
+	-rm -f libtool
 
 libsimage@SUFFIX@.la: $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_DEPENDENCIES)
 	$(LINK) -rpath $(libdir) $(libsimage@SUFFIX@_la_LDFLAGS) $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_LIBADD) $(LIBS)
@@ -1097,8 +1097,8 @@ install-libsimage@SUFFIX@incHEADERS: $(libsimage@SUFFIX@inc_HEADERS)
 	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
 	  f="`echo $$p | sed -e 's|^.*/||'`"; \
 	  if cmp -s $$d$$p $(DESTDIR)$(libsimage@SUFFIX@incdir)/$$f; then :; else \
-	    echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimage@SUFFIX@incdir)/$$f"; \
-	    $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimage@SUFFIX@incdir)/$$f; \
+	    echo " $(INSTALL_HEADER) $$d$$p $(DESTDIR)$(libsimage@SUFFIX@incdir)/$$f"; \
+	    $(INSTALL_HEADER) $$d$$p $(DESTDIR)$(libsimage@SUFFIX@incdir)/$$f; \
 	  fi; \
 	done
 
@@ -1112,6 +1112,7 @@ uninstall-libsimage@SUFFIX@incHEADERS:
 
 tags: TAGS
 
+
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
@@ -1121,7 +1122,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	       END { for (i in files) print i; }'`; \
 	mkid -fID $$unique $(LISP)
 
-TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+TAGS: $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
@@ -1139,43 +1140,33 @@ GTAGS:
 	  && cd $(top_srcdir) \
 	  && gtags -i $$here
 
-mostlyclean-tags:
-
-clean-tags:
-
 distclean-tags:
 	-rm -f TAGS ID
 
-maintainer-clean-tags:
-
-@AMDEP@include $(DEPDIR)/simage.Plo
-@AMDEP@include $(DEPDIR)/simage_gif.Plo
-@AMDEP@include $(DEPDIR)/simage_jpeg.Plo
-@AMDEP@include $(DEPDIR)/simage_pic.Plo
-@AMDEP@include $(DEPDIR)/simage_png.Plo
-@AMDEP@include $(DEPDIR)/simage_rgb.Plo
-@AMDEP@include $(DEPDIR)/simage_tga.Plo
-@AMDEP@include $(DEPDIR)/simage_tiff.Plo
-@AMDEP@include $(DEPDIR)/simage_write.Plo
-
-mostlyclean-depend:
-
-clean-depend:
+@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage.Plo
+@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage_gif.Plo
+@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage_jpeg.Plo
+@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage_pic.Plo
+@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage_png.Plo
+@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage_rgb.Plo
+@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage_tga.Plo
+@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage_tiff.Plo
+@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage_write.Plo
 
 distclean-depend:
 	-rm -rf $(DEPDIR)
 
-maintainer-clean-depend:
-
 @AMDEP@CCDEPMODE = @CCDEPMODE@
 
 .c.o:
+
 @AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
 @AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(COMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
 
 .c.lo:
+
 @AMDEP@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
 @AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
@@ -1183,6 +1174,7 @@ maintainer-clean-depend:
 
 
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
 
 distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
@@ -1229,70 +1221,52 @@ installdirs:
 
 mostlyclean-generic:
 
+
 clean-generic:
+
 
 distclean-generic:
 	-rm -f Makefile $(CONFIG_CLEAN_FILES)
 	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
+	@echo "This command is intended for maintainers to use"
+	@echo "it deletes files that may require special tools to rebuild."
 	-rm -f Makefile.in
-mostlyclean-am:  mostlyclean-libLTLIBRARIES mostlyclean-compile \
-		mostlyclean-libtool mostlyclean-tags mostlyclean-depend \
-		mostlyclean-generic
-
-mostlyclean: mostlyclean-am
-
-clean-am:  clean-libLTLIBRARIES clean-compile clean-libtool clean-tags \
-		clean-depend clean-generic mostlyclean-am
-
 clean: clean-am
 
-distclean-am:  distclean-libLTLIBRARIES distclean-compile \
-		distclean-libtool distclean-tags distclean-depend \
-		distclean-generic clean-am
-	-rm -f libtool
+clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
+	mostlyclean-am
 
 distclean: distclean-am
 
-maintainer-clean-am:  maintainer-clean-libLTLIBRARIES \
-		maintainer-clean-compile maintainer-clean-libtool \
-		maintainer-clean-tags maintainer-clean-depend \
-		maintainer-clean-generic distclean-am
-	@echo "This command is intended for maintainers to use;"
-	@echo "it deletes files that may require special tools to rebuild."
+distclean-am: clean-am distclean-compile distclean-depend \
+	distclean-generic distclean-libLTLIBRARIES distclean-libtool \
+	distclean-tags
 
 maintainer-clean: maintainer-clean-am
 
-.PHONY:  all all all-am all-am all-recursive all-recursive-am \
-all-redirect all-redirect check check check-am check-am check-recursive \
-clean clean clean-compile clean-depend clean-generic clean-generic \
-clean-hdr clean-libLTLIBRARIES clean-libtool clean-recursive clean-tags \
-clean-tags distclean distclean distclean-compile distclean-depend \
-distclean-generic distclean-generic distclean-hdr \
-distclean-libLTLIBRARIES distclean-libtool distclean-recursive \
-distclean-tags distclean-tags distdir distdir dvi dvi dvi-am dvi-am \
-dvi-recursive info info info-am info-am info-recursive install install \
-install-am install-am install-binSCRIPTS install-cfgdataDATA \
-install-data install-data install-data-am install-data-am \
-install-data-recursive install-exec install-exec install-exec-am \
-install-exec-am install-exec-recursive install-libLTLIBRARIES \
-install-libsimage@SUFFIX@incHEADERS install-m4dataDATA \
-install-recursive install-strip install-strip installcheck installcheck \
-installcheck-am installcheck-am installcheck-recursive installdirs \
-installdirs installdirs-am installdirs-recursive maintainer-clean \
-maintainer-clean maintainer-clean-compile maintainer-clean-depend \
-maintainer-clean-generic maintainer-clean-generic maintainer-clean-hdr \
-maintainer-clean-libLTLIBRARIES maintainer-clean-libtool \
-maintainer-clean-recursive maintainer-clean-tags maintainer-clean-tags \
-mostlyclean mostlyclean mostlyclean-compile mostlyclean-depend \
-mostlyclean-generic mostlyclean-generic mostlyclean-hdr \
-mostlyclean-libLTLIBRARIES mostlyclean-libtool mostlyclean-recursive \
-mostlyclean-tags mostlyclean-tags tags tags tags-recursive uninstall \
-uninstall uninstall-am uninstall-am uninstall-binSCRIPTS \
-uninstall-cfgdataDATA uninstall-libLTLIBRARIES \
-uninstall-libsimage@SUFFIX@incHEADERS uninstall-m4dataDATA \
-uninstall-recursive
+maintainer-clean-am: distclean-am maintainer-clean-generic \
+	maintainer-clean-libLTLIBRARIES
+
+mostlyclean: mostlyclean-am
+
+mostlyclean-am: mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libLTLIBRARIES mostlyclean-libtool
+
+.PHONY: all all-am all-redirect check check-am clean clean-generic \
+	clean-libLTLIBRARIES clean-libtool distclean distclean-compile \
+	distclean-depend distclean-generic distclean-libLTLIBRARIES \
+	distclean-libtool distclean-tags distdir dvi dvi-am info \
+	info-am install install-am install-data install-data-am \
+	install-exec install-exec-am install-libLTLIBRARIES \
+	install-libsimage@SUFFIX@incHEADERS install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic maintainer-clean-libLTLIBRARIES \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libLTLIBRARIES mostlyclean-libtool tags uninstall \
+	uninstall-am uninstall-libLTLIBRARIES \
+	uninstall-libsimage@SUFFIX@incHEADERS
 
 
 # **************************************************************************
@@ -1333,3 +1307,4 @@ uninstall: uninstall-am
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
+

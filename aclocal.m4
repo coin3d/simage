@@ -479,14 +479,30 @@ depcpp="$CXXCPP"],
 depcc="$$1"
 depcpp=""])
 
+AC_REQUIRE([AM_MAKE_INCLUDE])
+
 AC_CACHE_CHECK([dependency style of $depcc],
                [am_cv_$1_dependencies_compiler_type],
 [if test -z "$AMDEP"; then
-  echo '#include "conftest.h"' > conftest.c
-  echo 'int i;' > conftest.h
+  # We make a subdir and do the tests there.  Otherwise we can end up
+  # making bogus files that we don't know about and never remove.  For
+  # instance it was reported that on HP-UX the gcc test will end up
+  # making a dummy file named `D' -- because `-MD' means `put the output
+  # in D'.
+  mkdir confdir
+  # Copy depcomp to subdir because otherwise we won't find it if we're
+  # using a relative directory.
+  cp "$am_depcomp" confdir
+  cd confdir
 
   am_cv_$1_dependencies_compiler_type=none
-  for depmode in `sed -n ['s/^#*\([a-zA-Z0-9]*\))$/\1/p'] < "$am_depcomp"`; do
+  for depmode in `sed -n ['s/^#*\([a-zA-Z0-9]*\))$/\1/p'] < "./depcomp"`; do
+    # We need to recreate these files for each test, as the compiler may
+    # overwrite some of them when testing with obscure command lines.
+    # This happens at least with the AIX C compiler.
+    echo '#include "conftest.h"' > conftest.c
+    echo 'int i;' > conftest.h
+
     case "$depmode" in
     nosideeffect)
       # after this tag, mechanisms are not by side-effect, so they'll
@@ -505,14 +521,15 @@ AC_CACHE_CHECK([dependency style of $depcc],
     if depmode="$depmode" \
        source=conftest.c object=conftest.o \
        depfile=conftest.Po tmpdepfile=conftest.TPo \
-       $SHELL $am_depcomp $depcc -c conftest.c -o conftest.o >/dev/null 2>&1 &&
+       $SHELL ./depcomp $depcc -c conftest.c -o conftest.o >/dev/null 2>&1 &&
        grep conftest.h conftest.Po > /dev/null 2>&1; then
       am_cv_$1_dependencies_compiler_type="$depmode"
       break
     fi
   done
 
-  rm -f conftest.*
+  cd ..
+  rm -rf confdir
 else
   am_cv_$1_dependencies_compiler_type=none
 fi
@@ -616,6 +633,31 @@ for mf in $CONFIG_FILES; do
 done
 ], [AMDEP="$AMDEP"
 ac_aux_dir="$ac_aux_dir"])])
+
+# AM_MAKE_INCLUDE()
+# -----------------
+# Check to see how make treats includes.
+AC_DEFUN([AM_MAKE_INCLUDE],
+[am_make=${MAKE-make}
+# BSD make uses .include
+cat > confinc << 'END'
+doit:
+	@echo done
+END
+# If we don't find an include directive, just comment out the code.
+AC_MSG_CHECKING([for style of include used by $am_make])
+AMINCLUDE='#'
+for am_inc in include .include; do
+   echo "$am_inc confinc" > confmf
+   if test "`$am_make -f confmf 2> /dev/null`" = "done"; then
+      AMINCLUDE=$am_inc
+      break
+   fi
+done
+AC_SUBST(AMINCLUDE)
+AC_MSG_RESULT($AMINCLUDE)
+rm -f confinc confmf
+])
 
 # Like AC_CONFIG_HEADER, but automatically create stamp file.
 
