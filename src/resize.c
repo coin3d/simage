@@ -507,8 +507,8 @@ simage_resize(unsigned char * src, int width,
   srcimg = new_image(width, height, num_comp, src);
   dstimg = new_image(newwidth, newheight, num_comp, NULL);
 
-  /* Mitchell filter has the best quality */
-  zoom(dstimg, srcimg, Mitchell_filter, Mitchell_support);
+  /* Using the bell filter as default */
+  zoom(dstimg, srcimg, bell_filter, bell_support);
 
   dstdata = dstimg->data;
   free(srcimg);
