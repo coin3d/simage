@@ -1367,12 +1367,12 @@ static int dist1(unsigned char *blk1, unsigned char *blk2, int lx, int hx,
   int s,v;
 
   s = 0;
+  
   p1 = blk1;
   p2 = blk2;
 
-  if (!hx && !hy)
-    for (j=0; j<h; j++)
-    {
+  if (!hx && !hy) {
+    for (j=0; j<h; j++) {
       if ((v = p1[0]  - p2[0])<0)  v = -v; s+= v;
       if ((v = p1[1]  - p2[1])<0)  v = -v; s+= v;
       if ((v = p1[2]  - p2[2])<0)  v = -v; s+= v;
@@ -1392,15 +1392,14 @@ static int dist1(unsigned char *blk1, unsigned char *blk2, int lx, int hx,
 
       if (s >= distlim)
         break;
-
+      
       p1+= lx;
       p2+= lx;
     }
-  else if (hx && !hy)
-    for (j=0; j<h; j++)
-    {
-      for (i=0; i<16; i++)
-      {
+  }
+  else if (hx && !hy) {
+    for (j=0; j<h; j++) {
+      for (i=0; i<16; i++) {
         v = ((unsigned int)(p1[i]+p1[i+1]+1)>>1) - p2[i];
         if (v>=0)
           s+= v;
@@ -1410,13 +1409,11 @@ static int dist1(unsigned char *blk1, unsigned char *blk2, int lx, int hx,
       p1+= lx;
       p2+= lx;
     }
-  else if (!hx && hy)
-  {
+  }
+  else if (!hx && hy) {
     p1a = p1 + lx;
-    for (j=0; j<h; j++)
-    {
-      for (i=0; i<16; i++)
-      {
+    for (j=0; j<h; j++) {
+      for (i=0; i<16; i++) {
         v = ((unsigned int)(p1[i]+p1a[i]+1)>>1) - p2[i];
         if (v>=0)
           s+= v;
@@ -1428,13 +1425,10 @@ static int dist1(unsigned char *blk1, unsigned char *blk2, int lx, int hx,
       p2+= lx;
     }
   }
-  else /* if (hx && hy) */
-  {
+  else { /* if (hx && hy) */
     p1a = p1 + lx;
-    for (j=0; j<h; j++)
-    {
-      for (i=0; i<16; i++)
-      {
+    for (j=0; j<h; j++) {
+      for (i=0; i<16; i++) {
         v = ((unsigned int)(p1[i]+p1[i+1]+p1a[i]+p1a[i+1]+2)>>2) - p2[i];
         if (v>=0)
           s+= v;

@@ -89,6 +89,18 @@ main(
                /* use to specify a parameter file */
                /* "parameter file", S_STRING_PARAM_TYPE, "ntsc_coin.par", */
 
+               /* use to specify constraints coded parameter constraints for mpeg2 files, 
+                  such as bitrate, sample rate, and maximum allowed motion vector range.
+
+                  Value Meaning         Typical use
+                  ----  --------------- -----------------------------------------------
+                  4     High Level      HDTV production rates: e.g. 1920 x 1080 x 30 Hz
+                  6     High 1440 Level HDTV consumer rates: e.g. 1440 x 960 x 30 Hz
+                  8     Main Level      CCIR 601 rates: e.g. 720 x 480 x 30 Hz
+                  10    Low Level       SIF video rate: e.g. 352 x 240 x 30 Hz
+               */
+               /* "level", S_INTEGER_PARAM_TYPE, 6, */
+
                /* NULL means no more params */
                NULL);
                

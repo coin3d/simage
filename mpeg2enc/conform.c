@@ -271,7 +271,7 @@ simpeg_encode_profile_and_level_checks(simpeg_encode_context * context)
     simpeg_encode_error(context, "Horizontal size is greater than permitted in specified Level");
 
   if (context->vertical_size > maxval->vert_size)
-    simpeg_encode_error(context, "Horizontal size is greater than permitted in specified Level");
+    simpeg_encode_error(context, "Vertical size is greater than permitted in specified Level");
 
   /* Table 8-11 */
   if (context->horizontal_size*context->vertical_size*context->frame_rate > maxval->sample_rate)

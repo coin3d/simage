@@ -27,7 +27,7 @@ SimpegWrite_begin_encode(const char * output_filename,
                          SimpegWrite_warning_cb warning_cb,
                          SimpegWrite_progress_cb progress_cb,
                          void * cbuserdata,
-                         int w, int h, int numframes, int mpeg1); 
+                         int w, int h, int numframes, int mpeg1, int level); 
 
 static int 
 SimpegWrite_encode_bitmap(void * handle, const unsigned char * rgb_buffer);
@@ -45,10 +45,12 @@ mpeg2enc_movie_create(const char * filename, s_movie * movie, s_params * params)
   void * cbdata;
   int w, h, numframes;
   int mpeg1;
+  int level;
 
   w = h = 0;
   numframes = 0;
   mpeg1 = 0;
+  level=0;
 
   paramfile = NULL;
   cb0 = NULL;
@@ -81,6 +83,23 @@ mpeg2enc_movie_create(const char * filename, s_movie * movie, s_params * params)
 
   s_params_get(params,
                "mpeg1", S_BOOL_PARAM_TYPE, &mpeg1, NULL);
+
+  s_params_get(params,
+               "level", S_INTEGER_PARAM_TYPE, &level, NULL);
+
+/* 
+  Level ID
+
+  Specifies coded parameter constraints, such as bitrate, sample rate, and 
+  maximum allowed motion vector range.
+
+  Code  Meaning         Typical use
+  ----  --------------- -----------------------------------------------
+  4     High Level      HDTV production rates: e.g. 1920 x 1080 x 30 Hz
+  6     High 1440 Level HDTV consumer rates: e.g. 1440 x 960 x 30 Hz
+  8     Main Level      CCIR 601 rates: e.g. 720 x 480 x 30 Hz
+  10    Low Level       SIF video rate: e.g. 352 x 240 x 30 Hz
+*/
   
   handle = SimpegWrite_begin_encode(filename, 
                                     paramfile, 
@@ -88,7 +107,7 @@ mpeg2enc_movie_create(const char * filename, s_movie * movie, s_params * params)
                                     (SimpegWrite_warning_cb) cb1, 
                                     (SimpegWrite_progress_cb) cb2,
                                     cbdata,
-                                    w, h, numframes, mpeg1);
+                                    w, h, numframes, mpeg1, level);
   if (handle == NULL) return 0;
   
   s_params_set(s_movie_params(movie), "mpeg2enc handle", S_POINTER_PARAM_TYPE, handle, 0);
@@ -120,7 +139,7 @@ mpeg2enc_movie_close(s_movie * movie)
 static void init(simpeg_encode_context * context);
 static void init_context_data(simpeg_encode_context * context);
 static void readparmfile(simpeg_encode_context * context, const char *fname, 
-                         int w, int h, int numframes, int mpeg1);
+                         int w, int h, int numframes, int mpeg1, int level);
 static void readquantmat(simpeg_encode_context * context);
 static void cleanup(simpeg_encode_context * context);
 
@@ -163,7 +182,7 @@ SimpegWrite_encode(const char *output_filename,
 
 
   /* read parameter file */
-  readparmfile(context, parameter_filename, 0, 0, 0, 0);
+  readparmfile(context, parameter_filename, 0, 0, 0, 0, 0);
 
   /* read quantization matrices */
   readquantmat(context);
@@ -193,7 +212,7 @@ SimpegWrite_begin_encode(const char *output_filename,
                          SimpegWrite_warning_cb warning_cb,
                          SimpegWrite_progress_cb progress_cb,
                          void * cbuserdata,
-                         int w, int h, int numframes, int mpeg1)
+                         int w, int h, int numframes, int mpeg1, int level)
 {
   int i;
   simpeg_encode_context * context;
@@ -224,7 +243,7 @@ SimpegWrite_begin_encode(const char *output_filename,
   context->bufbuf = NULL;
 
   /* read parameter file */
-  readparmfile(context, parameter_filename, w, h, numframes, mpeg1);
+  readparmfile(context, parameter_filename, w, h, numframes, mpeg1, level);
 
   /* read quantization matrices */
   readquantmat(context);
@@ -495,7 +514,7 @@ void simpeg_encode_error(simpeg_encode_context * context, char *text)
 
 static void 
 readparmfile(simpeg_encode_context * context,
-             const char *fname, int width, int height, int numframes, int mpeg1)
+             const char *fname, int width, int height, int numframes, int mpeg1, int level)
 {
   int i;
   int h, m, s, f;
@@ -539,6 +558,7 @@ readparmfile(simpeg_encode_context * context,
     fgets(line,254,fd); sscanf(line,"%d",&context->constrparms);
     fgets(line,254,fd); sscanf(line,"%d",&context->profile);
     fgets(line,254,fd); sscanf(line,"%d",&context->level);
+    if (level>0) context->level = level;
     fgets(line,254,fd); sscanf(line,"%d",&context->prog_seq);
     fgets(line,254,fd); sscanf(line,"%d",&context->chroma_format);
     fgets(line,254,fd); sscanf(line,"%d",&context->video_format);
@@ -657,6 +677,7 @@ readparmfile(simpeg_encode_context * context,
     context->constrparms = 0;
     context->profile = 4;
     context->level = 8;
+    if (level>0) context->level = level;
     context->prog_seq = 1;
     context->chroma_format = 1;
     context->video_format = 2;
@@ -777,6 +798,7 @@ readparmfile(simpeg_encode_context * context,
     context->constrparms = 0;
     context->profile = 4;
     context->level = 8;
+    if (level>0) context->level = level;
     context->prog_seq = 0;
     context->chroma_format = 1;
     context->video_format = 2;
