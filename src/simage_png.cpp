@@ -1,0 +1,206 @@
+/*
+ * Based heavily on example code in libpng. Some bugs fixed though.
+ */
+
+#include "simage_png.h"
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
+#include <stdlib.h>
+
+extern "C" {
+#include <png.h>
+}
+
+// my setjmp buffer
+static jmp_buf setjmp_buffer;
+
+// called my libpng
+static void 
+warn_callback(png_structp, png_const_charp)
+{
+  //FIXME: notify?
+}
+
+static void 
+err_callback(png_structp, png_const_charp)
+{
+  // FIXME: notify
+  longjmp(setjmp_buffer, 1);
+}
+
+int 
+simage_png_error(char * /*buffer*/, int /*buflen*/)
+{
+  assert(0 && "FIXME: Not implemented");
+  return 0;
+}
+
+int 
+simage_png_identify(const char *,
+		     const unsigned char *header,
+		     int headerlen)
+{
+  if (headerlen < 8) return 0;
+  static unsigned char pngcmp[] = {0x89, 'P', 'N', 'G', 0xd, 0xa, 0x1a, 0xa};
+  if (memcmp((const void*)header, 
+	     (const void*)pngcmp, 8) == 0) return 1;
+  return 0;
+}
+
+unsigned char *
+simage_png_load(const char *filename,
+		 int *width_ret,
+		 int *height_ret,
+		 int *numComponents_ret)
+{
+  png_structp png_ptr;
+  png_infop info_ptr;
+  png_uint_32 width, height;
+  
+  int bit_depth, color_type, interlace_type;
+  FILE *fp;
+
+  if ((fp = fopen(filename, "rb")) == NULL)
+    return 0;
+
+  /* Create and initialize the png_struct with the desired error handler
+   * functions.  If you want to use the default stderr and longjump method,
+   * you can supply NULL for the last three parameters.  We also supply the
+   * the compiler header file version, so that we know if the application
+   * was compiled with a compatible version of the library.  REQUIRED
+   */
+  /*png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING,
+      (void *)user_error_ptr, user_error_fn, user_warning_fn);*/
+
+  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING,
+				   NULL, err_callback, warn_callback);
+  
+  if (png_ptr == NULL) {
+    fclose(fp);
+    return 0;
+  }
+
+  /* Allocate/initialize the memory for image information.  REQUIRED. */
+  info_ptr = png_create_info_struct(png_ptr);
+  if (info_ptr == NULL) {
+    fclose(fp);
+    png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
+    return 0;
+  }
+  
+  /* Set error handling if you are using the setjmp/longjmp method (this is
+   * the normal method of doing things with libpng).  REQUIRED unless you
+   * set up your own error handlers in the png_create_read_struct() earlier.
+   */
+
+  unsigned char *buffer = NULL;
+
+  if (setjmp(setjmp_buffer)) {
+    /* Free all of the memory associated with the png_ptr and info_ptr */
+    png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
+    fclose(fp);
+    /* If we get here, we had a problem reading the file */
+
+    delete [] buffer;
+    return NULL;
+  }
+  
+  /* Set up the input control if you are using standard C streams */
+  png_init_io(png_ptr, fp);
+
+  /* The call to png_read_info() gives us all of the information from the
+   * PNG file before the first IDAT (image data chunk).  REQUIRED
+   */
+  png_read_info(png_ptr, info_ptr);
+
+  png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type,
+	       &interlace_type, NULL, NULL);
+
+  /**** Set up the data transformations you want.  Note that these are all
+  **** optional.  Only call them if you want/need them.  Many of the
+  **** transformations only work on specific types of images, and many
+  **** are mutually exclusive.
+  ****/
+
+  /* tell libpng to strip 16 bit/color files down to 8 bits/color */
+  png_set_strip_16(png_ptr);
+
+  /* strip alpha bytes from the input data without combining with th
+   * background (not recommended) */
+  /* png_set_strip_alpha(png_ptr); */
+  
+  /* extract multiple pixels with bit depths of 1, 2, and 4 from a single
+   * byte into separate bytes (useful for paletted and grayscale images).
+   */
+  /* png_set_packing(png_ptr); */
+
+  /* change the order of packed pixels to least significant bit first
+   * (not useful if you are using png_set_packing). */
+  /* png_set_packswap(png_ptr); */
+  
+  /* expand paletted colors into true RGB triplets */
+  if (color_type == PNG_COLOR_TYPE_PALETTE)
+    png_set_expand(png_ptr);
+
+  /* expand grayscale images to the full 8 bits from 1, 2, or 4 bits/pixel */
+  if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+    png_set_expand(png_ptr);
+  
+  /* expand paletted or RGB images with transparency to full alpha channels
+   * so the data will be available as RGBA quartets */
+  if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+    png_set_expand(png_ptr);
+  
+  /* Add filler (or alpha) byte (before/after each RGB triplet) */
+  /* png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER); */
+
+  /* Turn on interlace handling.  REQUIRED if you are not using
+   * png_read_image().  To see how to handle interlacing passes,
+   * see the png_read_row() method below.
+   */
+
+  png_read_update_info(png_ptr, info_ptr);
+
+  int bytes_per_row;
+  int number_passes;
+  int channels;
+  number_passes = png_set_interlace_handling(png_ptr);
+  channels = png_get_channels(png_ptr, info_ptr);
+
+  /* allocate the memory to hold the image using the fields of info_ptr. */
+  
+  bytes_per_row = png_get_rowbytes(png_ptr, info_ptr);
+  
+  buffer = (unsigned char*) malloc(bytes_per_row*height);
+  int format = channels; // this is safer than the above
+
+  if (buffer) {
+    int pass, y;
+    unsigned char *dummytab[1];
+    for (pass = 0; pass < number_passes; pass++) {
+      for ( y = 0; (uint) y < height; y++ ) {
+	// flips image upside down
+	dummytab[0] = &buffer[bytes_per_row*(height-1-y)];
+	png_read_rows(png_ptr, dummytab, NULL, 1);
+      }
+    }
+    
+    /* read rest of file, and get additional chunks in info_ptr - REQUIRED */
+    png_read_end(png_ptr, info_ptr);
+  }
+  
+  /* clean up after the read, and free any memory allocated - REQUIRED */
+  png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
+
+  /* close the file */
+  fclose(fp);
+
+  /* that's it */
+  if (buffer) {
+    *width_ret = width;
+    *height_ret = height;
+    *numComponents_ret = format;
+  }
+  return buffer;
+}
