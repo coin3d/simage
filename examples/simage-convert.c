@@ -14,7 +14,7 @@
 static void 
 usage(const char * argv0)
 {
-  fprintf(stderr, "Usage:\n %s <infile> <outfile> [-newsize <x> <y>] [-scale <xmul> <ymul>] [-alphathreshold <val>] [-addalpha <filename>]\n",argv0);
+  fprintf(stderr, "Usage:\n %s <infile> <outfile> [-newsize <x> <y>] [-scale <xmul> <ymul>] [-alphathreshold <val>] [-addalpha <filename>] [-setundef]\n",argv0);
 }
 
 int main(int argc, char ** argv)
@@ -30,6 +30,7 @@ int main(int argc, char ** argv)
   int ret;
   int alphathreshold = -1;
   int gray = 0;
+  int setundef = 0;
 
   if (argc < 3) {
     usage(argv[0]);
@@ -83,6 +84,10 @@ int main(int argc, char ** argv)
       }
       else if (strcmp(argv[i], "-gray") == 0) {
         gray = 1;
+        i++;
+      }
+      else if (strcmp(argv[i], "-setundef") == 0) {
+        setundef = 1;
         i++;
       }
       else {
@@ -188,6 +193,9 @@ int main(int argc, char ** argv)
     }
   }
 
+/*   if (setundef && nc == 3) { */
+
+/*   } */
 
   if ((nc == 2 || nc == 4) && alphathreshold >= 0 && alphathreshold <= 255) {
     int cnt = 0;
@@ -223,6 +231,28 @@ int main(int argc, char ** argv)
       if (nc == 4) *dst++ = *src++;
     }
     nc = nc == 3 ? 1 : 2;
+  }
+
+  if (setundef && ((nc == 2) || (nc == 4))) {
+    int cnt = 0;
+    unsigned char * p = buf;
+    const int n = w * h;
+    for (i = 0; i < n; i++) {
+      if (nc == 2) {
+        if (p[1] == 0) {
+          p[0] = 0;
+          cnt++;
+        }
+      }
+      else {
+        if (p[3] == 0) {
+          p[0] = p[1] = p[2] = 0;
+          cnt++;
+        }
+      }
+      p += nc;
+    }
+    fprintf(stderr,"undef'ed %d pixels\n", cnt);
   }
 
   fprintf(stderr,"save image '%s'...", outfile);
