@@ -114,7 +114,7 @@ triangle_filter(double t)
 
 #define	bell_support		(1.5)
 
-double
+static double
 bell_filter(double t)		/* box (*) box (*) box */
 {
   if(t < 0) t = -t;
