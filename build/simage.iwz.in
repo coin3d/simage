@@ -75,7 +75,7 @@ Groups=2
 Group1Size=392876
 Group1Files=2
 Group1Name=libs
-Group1Dir=<INSTALLDIR>
+Group1Dir=<INSTALLDIR>\libs
 Group1Update=0
 Group1TargetOS=-1
 Group1File1=@win_libdir@\simage@SIMAGE_MAJOR_VERSION@.lib
@@ -83,15 +83,15 @@ Group1File2=@win_libdir@\simage@SIMAGE_MAJOR_VERSION@.dll
 Group2Size=5263
 Group2Files=1
 Group2Name=include
-Group2Dir=<INSTALLDIR>
+Group2Dir=<INSTALLDIR>\include
 Group2Update=0
 Group2TargetOS=-1
 Group2File1=@win_includedir@\simage.h
 
 [Sequence]
-DestinationLocationDir=<ProgramFilesDir>\SIM\simage
+DestinationLocationDir=<ProgramFilesDir>\SIM\Coin
 DatabaseLocationDir=<INSTALLDIR>\data
-SelectProgramFolderName=simage
+SelectProgramFolderName=Coin
 DestinationLocation=1
 BeginFileTransfer=1
 ProgressBar=1
