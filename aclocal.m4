@@ -868,6 +868,55 @@ else
 fi])
 
 # Usage:
+#   SIM_AC_CHECK_MATHLIB([ACTION-IF-OK[, ACTION-IF-NOT-OK]])
+#
+# Description:
+#   Check if linker needs to explicitly link with the library with
+#   math functions. Sets environment variable $sim_ac_libm to the
+#   necessary linklibrary, plus includes this library in the LIBS
+#   env variable.
+#
+# Notes:
+#   There is a macro AC_CHECK_LIBM in the libtool distribution, but it
+#   does at least not work with SGI MIPSpro CC v7.30.
+#
+# Authors:
+#   Lars Jørgen Aas, <larsa@sim.no>
+#   Morten Eriksen, <mortene@sim.no>
+
+AC_DEFUN([SIM_AC_CHECK_MATHLIB], [
+
+sim_ac_store_libs=$LIBS
+sim_ac_libm=
+
+AC_CACHE_CHECK(
+  [for math library functions],
+  [sim_cv_lib_math],
+  [sim_cv_lib_math=UNDEFINED
+  # BeOS and Cygwin platforms has implicit math library linking,
+  # and ncr-sysv4.3 might use -lmw (according to AC_CHECK_LIBM in
+  # libtool.m4).
+  for sim_ac_math_chk in "" -lm -lmw; do
+    if test x"$sim_cv_lib_math" = xUNDEFINED; then
+      LIBS="$sim_ac_store_libs $sim_ac_math_chk"
+      AC_TRY_LINK([#include <math.h>],
+                  [fmod(1.0, 1.0); pow(1.0, 1.0); exp(1.0); sin(1.0)],
+                  [sim_cv_lib_math=$sim_ac_math_chk])
+    fi
+  done
+  ])
+
+if test $sim_cv_lib_math != UNDEFINED; then
+  LIBS="$sim_ac_libm $sim_ac_store_libs"
+  sim_ac_libm=sim_cv_lib_math
+  $1
+else
+  LIBS=$sim_ac_store_libs
+  $2
+fi
+])
+
+# Usage:
 #   SIM_AC_CHECK_LINKSTYLE
 #
 # Description:

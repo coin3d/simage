@@ -8,12 +8,6 @@
 #undef SIMAGE_RGB_SUPPORT
 #undef SIMAGE_TGA_SUPPORT
 
-/* Define if you have the `m' library (-lm). */
-#undef HAVE_LIBM
-
-/* Define if you have the `mw' library (-lmw). */
-#undef HAVE_LIBMW
-
 /* Name of package */
 #undef PACKAGE
 

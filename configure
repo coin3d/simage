@@ -1901,119 +1901,58 @@ SIMAGE_EXTRA_LIBS=
 
 
 
-LIBM=
-case "$lt_target" in
-*-*-beos* | *-*-cygwin*)
-  # These system don't have libm
-  ;;
-*-ncr-sysv4.3*)
-  echo $ac_n "checking for _mwvalidcheckl in -lmw... $ac_c" 1>&6
-echo "configure:1912: checking for _mwvalidcheckl in -lmw" 1>&5
-if test "${ac_cv_lib_mw__mwvalidcheckl+set}" = set; then
+# libtiff and libpng uses math library functions. Important note:
+# configure in Coin depends on this check being made here in simage
+# configure.in.
+
+
+sim_ac_store_libs=$LIBS
+sim_ac_libm=
+
+echo $ac_n "checking for math library functions... $ac_c" 1>&6
+echo "configure:1914: checking for math library functions" 1>&5
+if test "${sim_cv_lib_math+set}" = set; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
-  ac_save_LIBS="$LIBS"
-LIBS="-lmw  $LIBS"
-cat >conftest.$ac_ext <<EOF
-#line 1919 "configure"
+  sim_cv_lib_math=UNDEFINED
+  # BeOS and Cygwin platforms has implicit math library linking,
+  # and ncr-sysv4.3 might use -lmw (according to AC_CHECK_LIBM in
+  # libtool.m4).
+  for sim_ac_math_chk in "" -lm -lmw; do
+    if test x"$sim_cv_lib_math" = xUNDEFINED; then
+      LIBS="$sim_ac_store_libs $sim_ac_math_chk"
+      cat >conftest.$ac_ext <<EOF
+#line 1926 "configure"
 #include "confdefs.h"
-/* Override any gcc2 internal prototype to avoid an error.  */
-/* We use char because int might match the return type of a gcc2
-    builtin and then its argument prototype would still apply.  */
-char _mwvalidcheckl();
-
+#include <math.h>
 int main() {
-_mwvalidcheckl()
+fmod(1.0, 1.0); pow(1.0, 1.0); exp(1.0); sin(1.0)
 ; return 0; }
 EOF
-if { (eval echo configure:1930: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1933: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
-  ac_cv_lib_mw__mwvalidcheckl=yes
+  sim_cv_lib_math=$sim_ac_math_chk
 else
   echo "configure: failed program was:" >&5
   cat conftest.$ac_ext >&5
-  rm -rf conftest*
-  ac_cv_lib_mw__mwvalidcheckl=no
 fi
 rm -f conftest*
-LIBS="$ac_save_LIBS"
+    fi
+  done
+  
 fi
-echo "$ac_t""$ac_cv_lib_mw__mwvalidcheckl" 1>&6
-if test $ac_cv_lib_mw__mwvalidcheckl = yes; then
-  LIBM="-lmw"
-fi
+echo "$ac_t""$sim_cv_lib_math" 1>&6
 
-  echo $ac_n "checking for main in -lm... $ac_c" 1>&6
-echo "configure:1948: checking for main in -lm" 1>&5
-if test "${ac_cv_lib_m_main+set}" = set; then
-  echo $ac_n "(cached) $ac_c" 1>&6
+if test $sim_cv_lib_math != UNDEFINED; then
+  LIBS="$sim_ac_libm $sim_ac_store_libs"
+  sim_ac_libm=sim_cv_lib_math
+  SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_libm"
 else
-  ac_save_LIBS="$LIBS"
-LIBS="-lm  $LIBS"
-cat >conftest.$ac_ext <<EOF
-#line 1955 "configure"
-#include "confdefs.h"
-
-int main() {
-main()
-; return 0; }
-EOF
-if { (eval echo configure:1962: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
-  rm -rf conftest*
-  ac_cv_lib_m_main=yes
-else
-  echo "configure: failed program was:" >&5
-  cat conftest.$ac_ext >&5
-  rm -rf conftest*
-  ac_cv_lib_m_main=no
-fi
-rm -f conftest*
-LIBS="$ac_save_LIBS"
-fi
-echo "$ac_t""$ac_cv_lib_m_main" 1>&6
-if test $ac_cv_lib_m_main = yes; then
-  LIBM="$LIBM -lm"
+  LIBS=$sim_ac_store_libs
+  { echo "configure: error: could not find a way to use math library" 1>&2; exit 1; }
 fi
 
-  ;;
-*)
-  echo $ac_n "checking for main in -lm... $ac_c" 1>&6
-echo "configure:1982: checking for main in -lm" 1>&5
-if test "${ac_cv_lib_m_main+set}" = set; then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
-  ac_save_LIBS="$LIBS"
-LIBS="-lm  $LIBS"
-cat >conftest.$ac_ext <<EOF
-#line 1989 "configure"
-#include "confdefs.h"
 
-int main() {
-main()
-; return 0; }
-EOF
-if { (eval echo configure:1996: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
-  rm -rf conftest*
-  ac_cv_lib_m_main=yes
-else
-  echo "configure: failed program was:" >&5
-  cat conftest.$ac_ext >&5
-  rm -rf conftest*
-  ac_cv_lib_m_main=no
-fi
-rm -f conftest*
-LIBS="$ac_save_LIBS"
-fi
-echo "$ac_t""$ac_cv_lib_m_main" 1>&6
-if test $ac_cv_lib_m_main = yes; then
-  LIBM="-lm"
-fi
-
-  ;;
-esac
-
-LIBS="$LIBM $LIBS"
-SIMAGE_EXTRA_LIBS="$LIBM $SIMAGE_EXTRA_LIBS"
 
 # Check if linking should be done MSWin-style ("libname.lib") or
 # Unix-style ("-llibname").
@@ -2023,12 +1962,12 @@ sim_ac_save_ldflags=$LDFLAGS
 LDFLAGS="$LDFLAGS version.lib"
 
 echo $ac_n "checking if linking should be done "MSWin-style"... $ac_c" 1>&6
-echo "configure:2027: checking if linking should be done "MSWin-style"" 1>&5
+echo "configure:1966: checking if linking should be done "MSWin-style"" 1>&5
 if test "${sim_cv_mswin_linking+set}" = set; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2032 "configure"
+#line 1971 "configure"
 #include "confdefs.h"
 #include <windows.h>
 #include <version.h>
@@ -2036,7 +1975,7 @@ int main() {
 (void)GetFileVersionInfoSize(0L, 0L);
 ; return 0; }
 EOF
-if { (eval echo configure:2040: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:1979: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   sim_cv_mswin_linking=yes
 else
@@ -2103,12 +2042,12 @@ if test x"$with_jpeg" != xno; then
   LIBS="$sim_ac_jpegdev_libs $LIBS"
 
   echo $ac_n "checking whether the libjpeg development system is available... $ac_c" 1>&6
-echo "configure:2107: checking whether the libjpeg development system is available" 1>&5
+echo "configure:2046: checking whether the libjpeg development system is available" 1>&5
 if test "${sim_cv_lib_jpegdev_avail+set}" = set; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2112 "configure"
+#line 2051 "configure"
 #include "confdefs.h"
 #include <stdio.h>
                   #include <jpeglib.h>
@@ -2116,7 +2055,7 @@ int main() {
 (void)jpeg_read_header(0L, 0);
 ; return 0; }
 EOF
-if { (eval echo configure:2120: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2059: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   sim_cv_lib_jpegdev_avail=yes
 else
@@ -2193,19 +2132,19 @@ if test x"$with_ungif" != xno; then
   LIBS="$sim_ac_ungifdev_libs $LIBS"
 
   echo $ac_n "checking whether the libungif development system is available... $ac_c" 1>&6
-echo "configure:2197: checking whether the libungif development system is available" 1>&5
+echo "configure:2136: checking whether the libungif development system is available" 1>&5
 if test "${sim_cv_lib_ungifdev_avail+set}" = set; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2202 "configure"
+#line 2141 "configure"
 #include "confdefs.h"
 #include <gif_lib.h>
 int main() {
 (void)EGifOpenFileName(0L, 0);
 ; return 0; }
 EOF
-if { (eval echo configure:2209: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2148: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   sim_cv_lib_ungifdev_avail=yes
 else
@@ -2283,19 +2222,19 @@ if test x"$with_tiff" != xno; then
   LIBS="$sim_ac_tiffdev_libs $LIBS"
 
   echo $ac_n "checking whether the libtiff development system is available... $ac_c" 1>&6
-echo "configure:2287: checking whether the libtiff development system is available" 1>&5
+echo "configure:2226: checking whether the libtiff development system is available" 1>&5
 if test "${sim_cv_lib_tiffdev_avail+set}" = set; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2292 "configure"
+#line 2231 "configure"
 #include "confdefs.h"
 #include <tiffio.h>
 int main() {
 (void)TIFFOpen(0L, 0L);
 ; return 0; }
 EOF
-if { (eval echo configure:2299: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2238: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   sim_cv_lib_tiffdev_avail=yes
 else
@@ -2376,19 +2315,19 @@ if test x"$with_zlib" != xno; then
   LIBS="$sim_ac_zlib_libs $LIBS"
 
   echo $ac_n "checking whether the zlib development system is available... $ac_c" 1>&6
-echo "configure:2380: checking whether the zlib development system is available" 1>&5
+echo "configure:2319: checking whether the zlib development system is available" 1>&5
 if test "${sim_cv_lib_zlib_avail+set}" = set; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2385 "configure"
+#line 2324 "configure"
 #include "confdefs.h"
 #include <zlib.h>
 int main() {
 (void)zlibVersion();
 ; return 0; }
 EOF
-if { (eval echo configure:2392: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2331: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   sim_cv_lib_zlib_avail=yes
 else
@@ -2451,19 +2390,19 @@ if test x"$with_png" != xno; then
   LIBS="$sim_ac_pngdev_libs $LIBS"
 
   echo $ac_n "checking whether the libpng development system is available... $ac_c" 1>&6
-echo "configure:2455: checking whether the libpng development system is available" 1>&5
+echo "configure:2394: checking whether the libpng development system is available" 1>&5
 if test "${sim_cv_lib_pngdev_avail+set}" = set; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2460 "configure"
+#line 2399 "configure"
 #include "confdefs.h"
 #include <png.h>
 int main() {
 (void)png_read_info(0L, 0L);
 ; return 0; }
 EOF
-if { (eval echo configure:2467: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2406: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   sim_cv_lib_pngdev_avail=yes
 else
