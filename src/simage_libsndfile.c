@@ -60,10 +60,10 @@ libsndfile_stream_open(const char * filename, s_stream * stream,
   s_stream_context_set(stream, (void *)context);
 
   // FIXME: SF_INFO::frames is of type sf_count_t, which is a 32bit
-  // integer on most platforms, but 64bit on others (like Mac OS X), so 
-  // casting context->sfinfo.frames to int is not totally correct - but
-  // necessary, since we do not have a 64bit s_params type. I don't know
-  // why frames cannot be a simple int anyways - Thomas?
+  // integer in some libsndfile version and 64bit on others (like the 
+  // Mac OS X one), so casting context->sfinfo.frames to int is not 
+  // totally correct - but necessary, since we do not have a 64bit 
+  // s_params type. 
   // 20030108 kyrah
   s_params_set(s_stream_params(stream),
                "samplerate", S_INTEGER_PARAM_TYPE, context->sfinfo.samplerate,
