@@ -115,7 +115,7 @@ int main(int argc, char ** argv)
     neww = (int) (w * xmul); 
     newh = (int) (h * ymul);
   }
-  if (neww > 0 && neww != w && newh != h) {
+  if (neww > 0 && newh > 0 && (neww != w || newh != h)) {
     unsigned char * newbuf;
 
     fprintf(stderr,"resizing image: (%d, %d) to (%d %d)...",
