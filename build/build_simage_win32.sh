@@ -512,7 +512,12 @@ if ! test -d $SIMAGE_SDK/libsndfile; then
     SIMAGE_UPPERPREFIX=`echo $SIMAGE_CRT | tr [:lower:] [:upper:]` 
     SIMAGE_TEMP1=`which cl | sed -e "s/\/bin\/cl$//g" | sed "s/ /\\\\\\ /g"`
     SIMAGE_MSVCDIR=`cygpath -w "$SIMAGE_TEMP1"`
-    cat $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/Makefile.msvc | sed -e "s/MSVCDir=.*/MSVCDir=$SIMAGE_MSVCDIR/g" | sed -e "s/\/MD/\/$SIMAGE_UPPERPREFIX/g" > $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/Makefile.msvc_$SIMAGE_CRT
+    
+    # Note 2003-05-21 thammer: The line below is to be used if
+    # libsndfile is built as a dll.
+    # cat $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/Makefile.msvc | sed -e "s/MSVCDir=.*/MSVCDir=$SIMAGE_MSVCDIR/g" | sed -e "s/\/MD/\/$SIMAGE_UPPERPREFIX/g" > $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/Makefile.msvc_$SIMAGE_CRT
+    
+    cat $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/Makefile.msvc | sed -e "s/MSVCDir=.*/MSVCDir=$SIMAGE_MSVCDIR/g" | sed -e "s/\/MD/\/$SIMAGE_UPPERPREFIX/g" | sed -e "s/DLL_LINK_FLAGS=\/nologo.*$/DLL_LINK_FLAGS=-lib \/nologo/" | sed -e "s/_USRDLL/_LIB/" > $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/Makefile.msvc_$SIMAGE_CRT
   done
 fi
 
@@ -529,7 +534,9 @@ if ! test -e $SIMAGE_SDK/libsndfile/mt/libsndfile.lib; then
   exit;
 fi
 
-cp $SIMAGE_SDK/libsndfile/mt/libsndfile.dll $SIMAGE_INSTALL/bin
+# Note 2003-05-21 thammer: The line below is to be used if
+# libsndfile is built as a dll. Libsndfile is under the LGPL.
+# cp $SIMAGE_SDK/libsndfile/mt/libsndfile.dll $SIMAGE_INSTALL/bin
 
 echo "[SIMAGE]      libsndfile verified OK"
 
