@@ -114,8 +114,9 @@ open_exporter(const char * fext, GraphicsExportComponent * ge)
 static void
 cfstring_append_ostype(CFMutableStringRef str, OSType * t) 
 {
+  char * cstr;
   if (!t) return;
-  char * cstr = malloc(5);
+  cstr = malloc(5);
   memcpy(cstr, t, 4); 
   if (cstr[3] == ' ') cstr[3] = '\0';
   else cstr[4] = '\0';
@@ -137,6 +138,7 @@ create_file(const char * filename, FSSpec * fss)
   CFStringRef cfstr;
   UniChar * ustr;
   int e = noErr;
+  CFIndex len;
 
   getcwd(cwd, MAXPATHLEN);
   e = FSPathMakeRef(cwd, &path, false);
@@ -144,7 +146,7 @@ create_file(const char * filename, FSSpec * fss)
 
   // convert char * to UniChar *
   cfstr = CFStringCreateWithCString(0, filename, CFStringGetSystemEncoding());
-  CFIndex len = CFStringGetLength(cfstr);
+  CFStringGetLength(cfstr);
   ustr = malloc(len * sizeof(UniChar)); 
   CFStringGetCharacters(cfstr, CFRangeMake(0, len), ustr); 
 
