@@ -43,6 +43,8 @@ int main(int argc, char ** argv)
   h = s_image_height(image);
   nc = s_image_components(image);
 
+  fprintf(stderr,"testing file: %s, %d %d %d\n", argv[1], w, h, nc);
+
   row = (char*) malloc(w*nc);
 
   for (i = 0; i < h; i++) {
