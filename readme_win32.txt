@@ -17,7 +17,7 @@ static library instead of as a dll). Alternative 2 is the fastest and
 most convenient way to build simage if the configuration in the
 project file and in the supplied configure.h file is acceptable.
 
-Building simage with cygwin
+Building simage with Cygwin
 ---------------------------
 
 Make sure you have the latest version of Cygwin.
