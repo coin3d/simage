@@ -101,6 +101,11 @@ oggvorbis_reader_read(oggvorbis_reader_context *context,
   numread = 0;
 
   while (readsize<size) {
+    /* FIXME: Check how libvorbisfile handles odd sizes.  The
+       libvorbisfile documentation doesn't say anything about this, so
+       everything might be OK.  
+       2002-01-10 thammer.  
+    */
     numread=ov_read(&context->vorbisfile, 
                     buffer+readsize, 
                     size-readsize, 0, 2, 1, 
