@@ -87,14 +87,14 @@ libsimage@SUFFIX@inc_HEADERS = \
 
 # Rule for linking MSVC++ LIB file.
 simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_DEPENDENCIES)
-	@basename=simage@SIMAGE_MAJOR_VERSION@@SUFFIX@; \
-	rm -f $$basename.dll $$basename.lib; \
+	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
+	rm -f "$$basename.dll" "$$basename.lib"; \
 	if @BUILD_WITH_MSVC@; then \
 	  $(CC) $(LDFLAGS) @LIBFLAGS@ \
 	    `echo $(libsimage@SUFFIX@_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
 	    $(libsimage@SUFFIX@_la_LIBADD) $(LIBS); \
 	else \
-	  touch $$basename.lib $$basename.dll; \
+	  touch "$$basename.dll" "$$basename.lib"; \
 	fi
 
 # **************************************************************************
@@ -110,15 +110,15 @@ install-exec-local:
 	fi
 
 install-data-local:
-	@basename=simage@SIMAGE_MAJOR_VERSION@@SUFFIX@; \
+	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
 	if test -s "$$basename.lib"; then \
 	  $(mkinstalldirs) "$(DESTDIR)$(libdir)"; \
 	  $(INSTALL_DATA) "$$basename.lib" "$(DESTDIR)$(libdir)/$$basename.lib"; \
 	fi
 
 uninstall-local:
-	@basename=simage@SIMAGE_MAJOR_VERSION@@SUFFIX@; \
-	for file in
+	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
+	for file in \
 	  "$(DESTDIR)$(bindir)/$$basename.dll" \
 	  "$(DESTDIR)$(libdir)/$$basename.lib"; do \
 	  if test -f $$file; then \

@@ -96,8 +96,6 @@ SIMAGE_EXTRA_LIBS = @SIMAGE_EXTRA_LIBS@
 SIMAGE_MAJOR_VERSION = @SIMAGE_MAJOR_VERSION@
 SIMAGE_MICRO_VERSION = @SIMAGE_MICRO_VERSION@
 SIMAGE_MINOR_VERSION = @SIMAGE_MINOR_VERSION@
-SIMAGE_SHARED = @SIMAGE_SHARED@
-SIMAGE_STATIC = @SIMAGE_STATIC@
 SIMAGE_VERSION = @SIMAGE_VERSION@
 SUFFIX = @SUFFIX@
 VERSION = @VERSION@
@@ -516,7 +514,7 @@ mostlyclean-am: mostlyclean-generic
 	uninstall-m4dataDATA uninstall-recursive
 
 
-simage-@CONFIG@.cfg: $(srcdir)/simage.cfg.in
+simage-@CONFIG@.cfg: config.status $(srcdir)/simage.cfg.in
 	@$(SHELL) config.status --file=$@:simage.cfg.in
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
