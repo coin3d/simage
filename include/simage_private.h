@@ -24,6 +24,8 @@ extern "C" {
     unsigned char * data;
     /* added for simage 1.6 */
     void * opendata;
+    int oktoreadall;
+    char * openfilename;
     struct simage_open_funcs openfuncs;
   };
   

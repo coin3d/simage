@@ -375,6 +375,9 @@ s_image_open(const char * filename, int oktoreadall)
       image->didalloc = 0;
       image->data = NULL;
       image->opendata = opendata;
+      image->oktoreadall = oktoreadall;
+      image->openfilename = (char*) malloc(strlen(filename)+1);
+      strcpy(image->openfilename, filename);
       memcpy(&image->openfuncs, &loader->openfuncs, sizeof(struct simage_open_funcs));
       return image;
     }
@@ -398,7 +401,27 @@ s_image_read_line(s_image * image,
     return 1;
   }
   else if (image->opendata && image->openfuncs.read_line_func) {
-    return image->openfuncs.read_line_func(image->opendata, line, buf);
+    int ret = image->openfuncs.read_line_func(image->opendata, line, buf);
+    /* for some file formats, the line read order can be important when
+       fetching data from the file. If read-line fails, fall back to 
+       reading the entire image */
+
+    if (!ret && image->oktoreadall && image->openfilename) {
+      /* close old image handle first */
+      image->openfuncs.close_func(image->opendata);
+      image->opendata = NULL;
+      
+      /* just load everything and call function again to read line */
+      image->data = simage_read_image(image->openfilename, 
+                                      &image->width, 
+                                      &image->height, 
+                                      &image->components);
+      
+      if (image->data) {
+        return s_image_read_line(image, line, buf);
+      }
+    }
+    return ret;
   }
   return 0;
 }

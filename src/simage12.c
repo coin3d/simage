@@ -27,6 +27,8 @@ s_image_create(int w, int h, int components,
   
   /* needed for simage 1.6 */
   image->opendata = NULL; 
+  image->oktoreadall = 1;
+  image->openfilename = NULL;
   memset(&image->openfuncs, 0, sizeof(struct simage_open_funcs));
 
   /* return image struct */
@@ -41,6 +43,9 @@ s_image_destroy(s_image * image)
 
     if (image->opendata) {
       image->openfuncs.close_func(image->opendata);
+    }
+    if (image->openfilename) {
+      free((void*) image->openfilename);
     }
     free((void*)image);
   }
@@ -91,8 +96,8 @@ s_image_data(s_image * image)
       image->data = (unsigned char *) malloc(image->width*image->height*image->components);
       image->didalloc = 1;
       for (i = 0; i < image->height; i++) {
-        (void) image->openfuncs.read_line_func(image->opendata, i, 
-                                               image->data+image->width*image->components);
+        (void) s_image_read_line(image, i,
+                                 image->data+image->width*image->components);
       }
     }
     return image->data;
@@ -160,6 +165,8 @@ s_image_load(const char * filename, s_image * prealloc /* | NULL */)
     simage_free_image(data);
   }
   prealloc->order = SIMAGE_ORDER_RGB;
+  prealloc->openfilename = (char*) malloc(strlen(filename) + 1);
+  strcpy(prealloc->openfilename, filename);
   return prealloc;
 }
 
