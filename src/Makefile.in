@@ -535,21 +535,6 @@ maintainer-clean-libtool:
 libsimage.la: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDENCIES)
 	$(LINK) -rpath $(libdir) $(libsimage_la_LDFLAGS) $(libsimage_la_OBJECTS) $(libsimage_la_LIBADD) $(LIBS)
 
-install-libsimageincHEADERS: $(libsimageinc_HEADERS)
-	@$(NORMAL_INSTALL)
-	$(mkinstalldirs) $(DESTDIR)$(libsimageincdir)
-	@list='$(libsimageinc_HEADERS)'; for p in $$list; do \
-	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
-	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimageincdir)/$$p"; \
-	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimageincdir)/$$p; \
-	done
-
-uninstall-libsimageincHEADERS:
-	@$(NORMAL_UNINSTALL)
-	list='$(libsimageinc_HEADERS)'; for p in $$list; do \
-	  rm -f $(DESTDIR)$(libsimageincdir)/$$p; \
-	done
-
 tags: TAGS
 
 ID: $(HEADERS) $(SOURCES) $(LISP)
@@ -671,6 +656,24 @@ all-redirect all-am all installdirs mostlyclean-generic \
 distclean-generic clean-generic maintainer-clean-generic clean \
 mostlyclean distclean maintainer-clean
 
+
+install-libsimageincHEADERS: $(libsimageinc_HEADERS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(libsimageincdir)
+	@list='$(libsimageinc_HEADERS)'; for p in $$list; do \
+	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
+	  f="`echo $$p | sed -e 's|^.*/||'`"; \
+	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimageincdir)/$$f"; \
+	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimageincdir)/$$f; \
+	done
+
+uninstall-libsimageincHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(libsimageinc_HEADERS)'; for p in $$list; do \
+	  f="`echo $$p | sed -e 's|^.*/||'`"; \
+	  echo " rm -f $(DESTDIR)$(libsimageincdir)/$$f"; \
+	  rm -f $(DESTDIR)$(libsimageincdir)/$$f; \
+	done
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
