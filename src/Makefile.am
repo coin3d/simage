@@ -54,6 +54,9 @@ libsimage@SUFFIX@_la_SOURCES = \
 	simage.c \
 	simage_write.c \
 	resize.c \
+	simage12.c \
+	movie.c \
+	params.c \
 	$(JPEGSOURCES) \
 	$(UNGIFSOURCES) \
 	$(PNGSOURCES) \
