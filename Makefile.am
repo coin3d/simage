@@ -21,6 +21,7 @@ EXTRA_DIST = \
 	cfg/depcomp \
 	cfg/ltconfig \
 	cfg/wrapmsvc.exe \
+	cfg/gendsp.sh \
 	build/simage.spec.in \
 	src/simage_jpeg_reader.icc \
 	src/simage_jpeg_writer.icc \
@@ -88,5 +89,23 @@ debian-packages: debian-setup
 	dpkg-buildpackage -b -uc;
 	cd simage1-dev_$(VERSION); \
 	dpkg-buildpackage -b -uc;
+
+# **************************************************************************
+# misc rules for automatic Microsoft Windows packaging.
+# main: `windows-packages'
+
+windows-files:
+	@if test -d windows; then :; else \
+	  echo " mkdir windows"; \
+	  mkdir windows; \
+	fi
+	@for file in $(top_srcdir)/packaging/windows/*.in; do \
+	  basename=`echo $$file | sed 's%^.*/%%g; s%\.in$$%%'`; \
+	  echo " config.status: generating windows/$$basename"; \
+	  ./config.status --file=-:- >"windows/$$basename" <"$$file"; \
+	done
+
+windows-packages: windows-files
+	@( cd windows; $(MAKE) VERSION=$(VERSION) )
 
 # EOF ######################################################################
