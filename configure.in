@@ -439,9 +439,7 @@ AC_ARG_WITH(
 
 AC_MSG_CHECKING([for Video for Windows library])
 AC_TRY_LINK([
-#ifdef HAVE_WINDOWS_H
 #include <windows.h>
-#endif
 #include <vfw.h>
 #pragma comment(lib, "vfw32.lib")
 ], [
@@ -453,6 +451,8 @@ AC_TRY_LINK([
   AC_MSG_RESULT([no])
   if $sim_ac_want_avienc; then
     AC_MSG_WARN([need Video for Windows for avi encoding])
+    SIM_AC_CONFIGURATION_WARNING(
+      [avi encoding has been disabled because of missing Video for Windows library])
     sim_ac_want_avienc=false
   fi
 ])

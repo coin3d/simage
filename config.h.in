@@ -24,8 +24,14 @@
 /* Define if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Define to use the Video for Windows library */
+#undef HAVE_VFW
+
 /* Name of package */
 #undef PACKAGE
+
+/* define to enable avienc support */
+#undef SIMAGE_AVIENC_SUPPORT
 
 /* define to enable eps support */
 #undef SIMAGE_EPS_SUPPORT

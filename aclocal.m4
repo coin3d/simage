@@ -197,14 +197,14 @@ AC_ARG_WITH([msvcrt],
     sim_ac_msvcrt=singlethread-static-debug
     sim_ac_msvcrt_CFLAGS="/MLd"
     sim_ac_msvcrt_CXXFLAGS="/MLd"
-    sim_ac_msvcrt_LIBLDFLAGS="/NODEFAULTLIB:libc"
+    sim_ac_msvcrt_LIBLDFLAGS="/LINK /NODEFAULTLIB:libc"
     sim_ac_msvcrt_LIBLIBS="-llibcd"
     ;;
   multithread-static | mt | /mt | libcmt | libcmt\.lib )
     sim_ac_msvcrt=multithread-static
     sim_ac_msvcrt_CFLAGS="/MT"
     sim_ac_msvcrt_CXXFLAGS="/MT"
-    sim_ac_msvcrt_LIBLDFLAGS="/NODEFAULTLIB:libc"
+    sim_ac_msvcrt_LIBLDFLAGS="/LINK /NODEFAULTLIB:libc"
     sim_ac_msvcrt_LIBLIBS="-llibcmt"
     ;;
   multithread-static-debug | mtd | /mtd | libcmtd | libcmtd\.lib )
@@ -218,14 +218,14 @@ AC_ARG_WITH([msvcrt],
     sim_ac_msvcrt=multithread-dynamic
     sim_ac_msvcrt_CFLAGS=""
     sim_ac_msvcrt_CXXFLAGS=""
-    sim_ac_msvcrt_LIBLDFLAGS="/NODEFAULTLIB:libc"
+    sim_ac_msvcrt_LIBLDFLAGS="/LINK /NODEFAULTLIB:libc"
     sim_ac_msvcrt_LIBLIBS="-lmsvcrt"
     ;;
   multithread-dynamic-debug | mdd | /mdd | msvcrtd | msvcrtd\.lib )
     sim_ac_msvcrt=multithread-dynamic-debug
     sim_ac_msvcrt_CFLAGS="/MDd"
     sim_ac_msvcrt_CXXFLAGS="/MDd"
-    sim_ac_msvcrt_LIBLDFLAGS="/NODEFAULTLIB:libc"
+    sim_ac_msvcrt_LIBLDFLAGS="/LINK /NODEFAULTLIB:libc"
     sim_ac_msvcrt_LIBLIBS="-lmsvcrtd"
     ;;
   *)
@@ -4520,44 +4520,47 @@ fi
 AC_DEFUN([SIM_AC_CHECK_MATHLIB],
 [sim_ac_libm=
 
-AC_CACHE_CHECK(
-  [for math functions library],
-  [sim_cv_lib_math],
-  [sim_cv_lib_math=UNDEFINED
-  # BeOS and MSWin platforms has implicit math library linking,
-  # and ncr-sysv4.3 might use -lmw (according to AC_CHECK_LIBM in
-  # libtool.m4).
-  for sim_ac_math_chk in "" -lm -lmw; do
-    if test x"$sim_cv_lib_math" = xUNDEFINED; then
-      sim_ac_store_libs=$LIBS
-      LIBS="$sim_ac_store_libs $sim_ac_math_chk"
-      AC_TRY_LINK([#include <math.h>
-                  #include <stdlib.h>
-                  #include <stdio.h>],
-                  [char s[16];
-                   /*
-                      SGI IRIX MIPSpro compilers may "fold" math
-                      functions with constant arguments already
-                      at compile time.
+# It is on purpose that we avoid caching, as this macro could be
+# run twice from the same configure-script: once for the C compiler,
+# once for the C++ compiler.
 
-                      It is also theoretically possible to do this
-                      for atof(), so to be _absolutely_ sure the
-                      math functions aren't replaced by constants at
-                      compile time, we get the arguments from a guaranteed
-                      non-constant source (stdin).
-                   */
-                  fmod(atof(fgets(s,15,stdin)), atof(fgets(s,15,stdin)));
-                  pow(atof(fgets(s,15,stdin)), atof(fgets(s,15,stdin)));
-                  exp(atof(fgets(s,15,stdin)));
-                  sin(atof(fgets(s,15,stdin)))],
-                  [sim_cv_lib_math=$sim_ac_math_chk])
-      LIBS=$sim_ac_store_libs
-    fi
-  done
-  ])
+AC_MSG_CHECKING(for math functions library)
 
-if test x"$sim_cv_lib_math" != xUNDEFINED; then
-  sim_ac_libm=$sim_cv_lib_math
+sim_ac_mathlib_test=UNDEFINED
+# BeOS and MSWin platforms has implicit math library linking,
+# and ncr-sysv4.3 might use -lmw (according to AC_CHECK_LIBM in
+# libtool.m4).
+for sim_ac_math_chk in "" -lm -lmw; do
+  if test x"$sim_ac_mathlib_test" = xUNDEFINED; then
+    sim_ac_store_libs=$LIBS
+    LIBS="$sim_ac_store_libs $sim_ac_math_chk"
+    AC_TRY_LINK([#include <math.h>
+                #include <stdlib.h>
+                #include <stdio.h>],
+                [char s[16];
+                 /*
+                    SGI IRIX MIPSpro compilers may "fold" math
+                    functions with constant arguments already
+                    at compile time.
+                     It is also theoretically possible to do this
+                    for atof(), so to be _absolutely_ sure the
+                    math functions aren't replaced by constants at
+                    compile time, we get the arguments from a guaranteed
+                    non-constant source (stdin).
+                 */
+                fmod(atof(fgets(s,15,stdin)), atof(fgets(s,15,stdin)));
+                pow(atof(fgets(s,15,stdin)), atof(fgets(s,15,stdin)));
+                exp(atof(fgets(s,15,stdin)));
+                sin(atof(fgets(s,15,stdin)))],
+                [sim_ac_mathlib_test=$sim_ac_math_chk])
+    LIBS=$sim_ac_store_libs
+  fi
+done
+
+AC_MSG_RESULT($sim_ac_mathlib_test)
+
+if test x"$sim_ac_mathlib_test" != xUNDEFINED; then
+  sim_ac_libm=$sim_ac_mathlib_test
   LIBS="$sim_ac_libm $LIBS"
   $1
 else
@@ -4569,10 +4572,13 @@ fi
 # SIM_AC_MATHLIB_READY_IFELSE( [ACTION-IF-TRUE], [ACTION-IF-FALSE] )
 
 AC_DEFUN([SIM_AC_MATHLIB_READY_IFELSE],
-[AC_CACHE_CHECK(
-  [if mathlib linkage is ready],
-  [sim_cv_mathlib_ready],
-  [AC_TRY_LINK(
+[
+# It is on purpose that we avoid caching, as this macro could be
+# run twice from the same configure-script: once for the C compiler,
+# once for the C++ compiler.
+AC_MSG_CHECKING(if mathlib linkage is ready)
+
+AC_TRY_LINK(
     [#include <math.h>
     #include <stdlib.h>
     #include <stdio.h>],
@@ -4592,9 +4598,12 @@ AC_DEFUN([SIM_AC_MATHLIB_READY_IFELSE],
     printf("> %g\n",pow(atof(fgets(s,15,stdin)), atof(fgets(s,15,stdin))));
     printf("> %g\n",exp(atof(fgets(s,15,stdin))));
     printf("> %g\n",sin(atof(fgets(s,15,stdin))))],
-    [sim_cv_mathlib_ready=true],
-    [sim_cv_mathlib_ready=false])])
-if ${sim_cv_mathlib_ready}; then
+    [sim_ac_mathlib_ready=true],
+    [sim_ac_mathlib_ready=false])
+
+AC_MSG_RESULT($sim_ac_mathlib_ready)
+
+if ${sim_ac_mathlib_ready}; then
   ifelse([$1], , :, [$1])
 else
   ifelse([$2], , :, [$2])
@@ -4677,9 +4686,23 @@ if test x"$with_qt" != xno; then
   sim_ac_save_ldflags=$LDFLAGS
   sim_ac_save_libs=$LIBS
 
+  CPPFLAGS="$sim_ac_qt_incflags $CPPFLAGS"
   LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
 
+  sim_ac_qt_libs=UNRESOLVED
+
   AC_PATH_PROG(MOC, moc, false, $sim_ac_path)
+
+  if test x"$MOC" = x"false"; then
+    AC_MSG_WARN([the ``moc'' Qt pre-processor tool not found])
+  else
+
+  AC_CHECK_HEADER([qglobal.h],
+                  [sim_ac_qglobal=true],
+                  [AC_MSG_WARN([header file qglobal.h not found])
+                   sim_ac_qglobal=false])
+
+  if $sim_ac_qglobal; then
 
   # Find version of the Qt library (MSWindows .dll is named with the
   # version number.)
@@ -4688,11 +4711,24 @@ if test x"$with_qt" != xno; then
 #include <qglobal.h>
 int VerQt = QT_VERSION;
 EOF
-  sim_ac_qt_version=`$CPP $sim_ac_qt_incflags $CPPFLAGS conftest.c | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's%;$%%'`
+  # The " *"-parts of the last sed-expression on the next line are necessary
+  # because at least the Solaris/CC preprocessor adds extra spaces before and
+  # after the trailing semicolon.
+  sim_ac_qt_version=`$CXXCPP $CPPFLAGS conftest.c | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's% *; *$%%'`
+
   rm -f conftest.c
   AC_MSG_RESULT($sim_ac_qt_version)
 
-  sim_ac_qt_libs=UNRESOLVED
+  case $host_os in
+  darwin*)
+    if test $sim_ac_qt_version -lt 302; then
+      SIM_AC_CONFIGURATION_WARNING([The version of Qt you are using is
+known to contain some serious bugs. We strongly recommend you to
+upgrade. (See $srcdir/README.MAC for details.)])
+    fi
+    ;;
+  esac
+
   sim_ac_qt_cppflags=
   if test x"$MOC" != xfalse; then
     # Do not cache the result, as we might need to play tricks with
@@ -4723,10 +4759,28 @@ EOF
     ##
     ## * "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32" should cover static
     ##   linking on Win32 platforms
+    ##
+    ## * "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm"; do
+    ##   added for the benefit of the Qt 3.0.0 Evaliation Version
+    ##
+
+    # FIXME: it would be extremely helpful if one could override the cppflags
+    # and libs-checking with environment variables. Then people wouldn't get
+    # completely stuck when the check fails -- we can just take a look at the
+    # config.log and give them advice on how to proceed with no updates
+    # necessary. 20020311 mortene.
+
+    # FIXME: it should be possible to select whether to use the mt-safe or
+    # the "standard" Qt library if both are installed on the user's system.
+    # 20020311 mortene.
 
     # FIXME: this link test doesn't detect all link problems...
+    # (UPDATE 20020311 mortene: jeez, that was a very helpful FIXME. Lars?)
     for sim_ac_qt_cppflags_loop in "" "-DQT_DLL"; do
-      for sim_ac_qt_libcheck in "-lqt-gl" "-lqt" "-lqt-mt" "-lqt${sim_ac_qt_version} -lqtmain -lgdi32" "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32"; do
+      for sim_ac_qt_libcheck in "-lqt-gl" "-lqt" "-lqt-mt" \
+          "-lqt${sim_ac_qt_version} -lqtmain -lgdi32" \
+          "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32" \
+          "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm"; do
         if test "x$sim_ac_qt_libs" = "xUNRESOLVED"; then
           CPPFLAGS="$sim_ac_qt_incflags $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"
           LIBS="$sim_ac_qt_libcheck $sim_ac_save_libs"
@@ -4757,6 +4811,9 @@ EOF
 
     AC_MSG_RESULT($sim_ac_qt_cppflags $sim_ac_qt_libs)
   fi
+
+  fi # sim_ac_sbbasic = TRUE
+  fi # MOC = false
 
   if test ! x"$sim_ac_qt_libs" = xUNRESOLVED; then
     sim_ac_qt_avail=yes
