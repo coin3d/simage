@@ -72,10 +72,7 @@ decode_row(GifFileType * giffile,
   while (len--) {
     col = *rowdata++;
     cmentry = colormap ? &colormap->Colors[col] : NULL;
-    if (col >= colormapsize) {
-      fprintf(stderr,"GIF index clamped\n");
-      col = 0; /* just in case */
-    }
+    if (col >= colormapsize) col = 0; /* just in case */
     if (cmentry) {
       *ptr++ = cmentry->Red;
       *ptr++ = cmentry->Green;
@@ -117,7 +114,7 @@ simage_gif_load(const char *filename,
     return NULL;
   }
   
-  transparent = -1; /* no transparenct color by default */
+  transparent = -1; /* no transparent color by default */
   
   n = giffile->SHeight * giffile->SWidth;
   buffer = malloc(n * 4);
