@@ -99,13 +99,25 @@ int
 s_image_save(const char * filename, s_image * image,
              s_params * params /* | NULL */)
 {
-  char * ext = (char*) strrchr(filename, '.');
-  if (ext == NULL) return 0;
+  char * ext = NULL;
+  if (params != NULL) {
+    s_params_get(params, S_STRING_PARAM_TYPE, 
+                 "file type", &ext,
+                 S_PARAM_END);
+  }
+  if (ext == NULL) {
+    ext = (char*) strrchr(filename, '.');
+    if (ext == NULL) return 0;
+    
+    /* skip period */
+    ext++;
+  }
   
   return simage_save_image(filename, 
                            image->data, 
                            image->width,
                            image->height,
                            image->numcomponents,
-                           ext);
+                           ext+1);
 }
+
