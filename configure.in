@@ -67,6 +67,8 @@ if test x"$am_cv_prog_cc_stdc" = xno; then
 fi
 
 # **************************************************************************
+# *******  MAKING RELEASES  ************************************************
+# **************************************************************************
 #
 # Library versioning
 # ==================
@@ -127,11 +129,40 @@ fi
 # CVS maintenance
 # ===============
 #
-# (to be written)
+# When making a release from the HEAD branch, increase the MAJOR number
+# and make a new branch as follows (from the HEAD):
+#
+#   $ cd [simage_srcdir_HEADbranch]
+#   $ cvs tag -b simage-MAJOR-0
+#
+# (The explicit mention of "simage" in the branch name is necessary
+# because we also tag this name onto all included CVS modules.)
+#
+# Note that new releases from the HEAD branch should only happen when
+# there has been incompatible interface changes.
+#
+#
+# When adding new functionality while keeping backward ABI compatibility,
+# increase the MINOR number and make a new branch as follows:
+#
+#   $ cd [simage_srcdir_MAJORbranch]
+#   $ cvs tag -b simage-MAJOR-MINOR
+#
+# (Where MINOR>0 always).
+#
+#
+# Bugfix releases should be handled by setting a tag on the
+# simage-MAJOR-MINOR with the latest MAJOR.MINOR.x release,
+# like this:
+#
+#   $ cd [simage_srcdir_MAJORMINORbranch]
+#   $ cvs tag simage-MAJOR-MINOR-MICRO
+#
+# (Where MICRO>0 always).
 #
 # **************************************************************************
-# Binaries
-# ========
+# Distribution binaries
+# =====================
 #
 #  * MSWindows SDK: this is constructed as a self-extracting InstallShield
 #    package. Run ``configure'' and ``make install'' on an MSWin-box with
@@ -143,7 +174,7 @@ fi
 #
 #    A self-extracting executable SETUPEX.EXE with the InstallShield install
 #    should then be available under [simage_builddir]/build/simage/. Move
-#    this to <ftp://ftp.sim.no/pub/coin/bin/simage-sdk-@SIMAGE_VERSION@.exe>.
+#    to <ftp://ftp.sim.no/pub/coin/bin/win32/simage-sdk-@SIMAGE_VERSION@.exe>.
 #
 #  * RPM packages: follow the instructions at the top of the
 #    build/simage.spec.in file, make one package for each major platform
@@ -155,7 +186,11 @@ fi
 # Release history
 # ===============
 #
-# (no official releases yet)
+# Release version     | Libtool version   |                 |
+# (MAJOR.MINOR.MICRO) | (CURRENT.AGE.REV) | CVS Branch name | Tag name
+# --------------------+-------------------+-----------------+-----------------
+#     1.0.0           |     1.0.0         |   simage-1-0    | simage-1-0-0
+#
 #
 # **************************************************************************
 # Footnotes
@@ -173,9 +208,9 @@ fi
 #
 # **************************************************************************
 
-SIMAGE_MAJOR_VERSION=0
-SIMAGE_MINOR_VERSION=9
-SIMAGE_MICRO_VERSION=99
+SIMAGE_MAJOR_VERSION=1
+SIMAGE_MINOR_VERSION=0
+SIMAGE_MICRO_VERSION=0
 SIMAGE_VERSION=$SIMAGE_MAJOR_VERSION.$SIMAGE_MINOR_VERSION.$SIMAGE_MICRO_VERSION
 VERSION=$SIMAGE_VERSION
 
