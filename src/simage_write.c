@@ -300,8 +300,8 @@ add_internal_savers(void)
       
       free(qtext);
     }
-  }
 #endif /* SIMAGE_QIMAGE_SUPPORT */
+  }
 }
 
 #define SIMAGE_ERROR_BUFSIZE 512 /* hack warning. Must match define in simage.c */
