@@ -122,6 +122,9 @@ oggvorbis_reader_read(oggvorbis_reader_context *context,
   Problem reported by kyrah.
 
   The code below changes the endian-ness of the buffer.
+  It is kept only for debugging purposes. The final
+  fix will probably set the bigendianp parameter to 1 in 
+  the ov_read call above if the platform is big-endian.
   
   unsigned char tmp;
   for (int i=0; i<size-1; i+=2) {
