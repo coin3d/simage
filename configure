@@ -1620,19 +1620,19 @@ if { (eval echo "$as_me:1618: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:1621: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-         { (eval echo "$as_me:1623: \"test -s conftest$ac_exeext\"") >&5
-  (eval test -s conftest$ac_exeext) 2>&5
+         { ac_try='test -s conftest$ac_exeext'; { (eval echo "$as_me:1623: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:1626: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
   # FIXME: these cross compiler hacks should be removed for autoconf 3.0
 # If not cross compiling, check that we can run a simple program.
 if test "$cross_compiling" != yes; then
-  if { (eval echo "$as_me:1631: \"./conftest$ac_exeext\"") >&5
-  (eval ./conftest$ac_exeext) 2>&5
+  if { ac_try='./conftest$ac_exeext'; { (eval echo "$as_me:1631: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:1634: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
     cross_compiling=no
   else
     if test "$cross_compiling" = maybe; then
@@ -1689,11 +1689,11 @@ if { (eval echo "$as_me:1687: \"$ac_compile\"") >&5
   ac_status=$?
   echo "$as_me:1690: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-         { (eval echo "$as_me:1692: \"test -s conftest.$ac_objext\"") >&5
-  (eval test -s conftest.$ac_objext) 2>&5
+         { ac_try='test -s conftest.$ac_objext'; { (eval echo "$as_me:1692: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:1695: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
   ac_compiler_gnu=yes
 else
   echo "$as_me: failed program was:" >&5
@@ -1733,11 +1733,11 @@ if { (eval echo "$as_me:1731: \"$ac_compile\"") >&5
   ac_status=$?
   echo "$as_me:1734: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-         { (eval echo "$as_me:1736: \"test -s conftest.$ac_objext\"") >&5
-  (eval test -s conftest.$ac_objext) 2>&5
+         { ac_try='test -s conftest.$ac_objext'; { (eval echo "$as_me:1736: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:1739: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
   ac_cv_prog_cc_g=yes
 else
   echo "$as_me: failed program was:" >&5
@@ -1778,11 +1778,11 @@ if { (eval echo "$as_me:1776: \"$ac_compile\"") >&5
   ac_status=$?
   echo "$as_me:1779: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-         { (eval echo "$as_me:1781: \"test -s conftest.$ac_objext\"") >&5
-  (eval test -s conftest.$ac_objext) 2>&5
+         { ac_try='test -s conftest.$ac_objext'; { (eval echo "$as_me:1781: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:1784: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
   for ac_declaration in \
    ''\
    '#include <stdlib.h>' \
@@ -1811,11 +1811,11 @@ if { (eval echo "$as_me:1809: \"$ac_compile\"") >&5
   ac_status=$?
   echo "$as_me:1812: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-         { (eval echo "$as_me:1814: \"test -s conftest.$ac_objext\"") >&5
-  (eval test -s conftest.$ac_objext) 2>&5
+         { ac_try='test -s conftest.$ac_objext'; { (eval echo "$as_me:1814: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:1817: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
   :
 else
   echo "$as_me: failed program was:" >&5
@@ -1841,11 +1841,11 @@ if { (eval echo "$as_me:1839: \"$ac_compile\"") >&5
   ac_status=$?
   echo "$as_me:1842: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-         { (eval echo "$as_me:1844: \"test -s conftest.$ac_objext\"") >&5
-  (eval test -s conftest.$ac_objext) 2>&5
+         { ac_try='test -s conftest.$ac_objext'; { (eval echo "$as_me:1844: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:1847: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
   break
 else
   echo "$as_me: failed program was:" >&5
@@ -1933,11 +1933,11 @@ if { (eval echo "$as_me:1931: \"$ac_compile\"") >&5
   ac_status=$?
   echo "$as_me:1934: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-         { (eval echo "$as_me:1936: \"test -s conftest.$ac_objext\"") >&5
-  (eval test -s conftest.$ac_objext) 2>&5
+         { ac_try='test -s conftest.$ac_objext'; { (eval echo "$as_me:1936: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:1939: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
   am_cv_prog_cc_stdc="$ac_arg"; break
 else
   echo "$as_me: failed program was:" >&5
@@ -3053,11 +3053,11 @@ if { (eval echo "$as_me:3051: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:3054: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-         { (eval echo "$as_me:3056: \"test -s conftest$ac_exeext\"") >&5
-  (eval test -s conftest$ac_exeext) 2>&5
+         { ac_try='test -s conftest$ac_exeext'; { (eval echo "$as_me:3056: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:3059: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
   lt_cv_cc_needs_belf=yes
 else
   echo "$as_me: failed program was:" >&5
@@ -3275,11 +3275,11 @@ if { (eval echo "$as_me:3273: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:3276: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-         { (eval echo "$as_me:3278: \"test -s conftest$ac_exeext\"") >&5
-  (eval test -s conftest$ac_exeext) 2>&5
+         { ac_try='test -s conftest$ac_exeext'; { (eval echo "$as_me:3278: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:3281: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
   sim_cv_lib_math=$sim_ac_math_chk
 else
   echo "$as_me: failed program was:" >&5
@@ -3483,11 +3483,11 @@ if { (eval echo "$as_me:3481: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:3484: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-         { (eval echo "$as_me:3486: \"test -s conftest$ac_exeext\"") >&5
-  (eval test -s conftest$ac_exeext) 2>&5
+         { ac_try='test -s conftest$ac_exeext'; { (eval echo "$as_me:3486: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:3489: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
   LIBS=$ac_save_LIBS
 # We can link X programs with no special library path.
 ac_x_libraries=
@@ -3606,11 +3606,11 @@ if { (eval echo "$as_me:3604: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:3607: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-         { (eval echo "$as_me:3609: \"test -s conftest$ac_exeext\"") >&5
-  (eval test -s conftest$ac_exeext) 2>&5
+         { ac_try='test -s conftest$ac_exeext'; { (eval echo "$as_me:3609: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:3612: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
   sim_ac_have_libungif=true
 else
   echo "$as_me: failed program was:" >&5
@@ -3643,11 +3643,11 @@ if { (eval echo "$as_me:3641: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:3644: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-         { (eval echo "$as_me:3646: \"test -s conftest$ac_exeext\"") >&5
-  (eval test -s conftest$ac_exeext) 2>&5
+         { ac_try='test -s conftest$ac_exeext'; { (eval echo "$as_me:3646: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:3649: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
   sim_ac_have_libungif=true
 else
   echo "$as_me: failed program was:" >&5
@@ -3799,11 +3799,11 @@ if { (eval echo "$as_me:3797: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:3800: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-         { (eval echo "$as_me:3802: \"test -s conftest$ac_exeext\"") >&5
-  (eval test -s conftest$ac_exeext) 2>&5
+         { ac_try='test -s conftest$ac_exeext'; { (eval echo "$as_me:3802: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:3805: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
   sim_ac_have_libjpeg=true
 else
   echo "$as_me: failed program was:" >&5
@@ -3945,11 +3945,11 @@ if { (eval echo "$as_me:3943: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:3946: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-         { (eval echo "$as_me:3948: \"test -s conftest$ac_exeext\"") >&5
-  (eval test -s conftest$ac_exeext) 2>&5
+         { ac_try='test -s conftest$ac_exeext'; { (eval echo "$as_me:3948: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:3951: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
   sim_ac_have_libzlib=true
 else
   echo "$as_me: failed program was:" >&5
@@ -4061,11 +4061,11 @@ if { (eval echo "$as_me:4059: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:4062: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-         { (eval echo "$as_me:4064: \"test -s conftest$ac_exeext\"") >&5
-  (eval test -s conftest$ac_exeext) 2>&5
+         { ac_try='test -s conftest$ac_exeext'; { (eval echo "$as_me:4064: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:4067: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
   sim_ac_have_libpng=true
 else
   echo "$as_me: failed program was:" >&5
@@ -4226,11 +4226,11 @@ if { (eval echo "$as_me:4224: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:4227: \$? = $ac_status" >&5
   (exit $ac_status); } &&
-         { (eval echo "$as_me:4229: \"test -s conftest$ac_exeext\"") >&5
-  (eval test -s conftest$ac_exeext) 2>&5
+         { ac_try='test -s conftest$ac_exeext'; { (eval echo "$as_me:4229: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:4232: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
+  (exit $ac_status); }; }; then
   sim_ac_have_libtiff=true
 else
   echo "$as_me: failed program was:" >&5

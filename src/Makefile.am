@@ -51,6 +51,7 @@ libsimage@SUFFIX@_la_LDFLAGS = \
 
 libsimage@SUFFIX@_la_SOURCES = \
 	simage.c \
+	simage_write.c \
 	simage.h \
 	$(JPEGSOURCES) \
 	$(UNGIFSOURCES) \

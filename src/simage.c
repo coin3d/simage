@@ -177,7 +177,7 @@ add_internal_loaders(void)
 }
 
 #define SIMAGE_ERROR_BUFSIZE 512
-static char simage_error_msg[SIMAGE_ERROR_BUFSIZE+1];
+char simage_error_msg[SIMAGE_ERROR_BUFSIZE+1];
 
 unsigned char *
 simage_read_image(const char *filename,

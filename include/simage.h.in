@@ -107,7 +107,16 @@ extern "C" {
 						      int * w, int * h,
 						      int * numcomponents);
 
-  /* check this if simage_read_image returns NULL */
+  /* check if export is available for a filetype. Returns 1 if supported, 0 otherwise */
+  SIMAGE_DLL_EXPORT int simage_check_save_supported(const char * filenameextension);
+  
+  /* save image. use simage_check_write_supported first, please */
+  SIMAGE_DLL_EXPORT int simage_save_image(const char * filename,
+                                          const unsigned char * bytes,
+                                          int w, int h, int numcomponents,
+                                          const char * filenameextension);
+  
+  /* check this if simage_read_image returns NULL or simage_write_image returns 0 */
   SIMAGE_DLL_EXPORT const char * simage_get_last_error(void);
 
   /* scale the input image and return a new image with the given dimensions */
@@ -137,10 +146,24 @@ extern "C" {
 			 const unsigned char * header, int headerlen);
     int (*error_func)(char * textbuffer, int bufferlen);
   };
-  
+
   SIMAGE_DLL_EXPORT void * simage_add_loader(const struct simage_plugin * l,
                                              int addbefore);
   SIMAGE_DLL_EXPORT void simage_remove_loader(void * handle);
+
+
+  struct simage_save_plugin
+  {
+    int (*save_func)(const char * name, const unsigned char * bytes,
+                     int width, int height, int numcomponents);
+    int (*error_func)(char * textbuffer, int bufferlen);
+    char filenameextension[32];
+  };
+  
+  SIMAGE_DLL_EXPORT void * simage_add_saver(const struct simage_save_plugin * s,
+                                            int addbefore);
+  
+  SIMAGE_DLL_EXPORT void simage_remove_saver(void * handle);
   
 #ifdef __cplusplus
 }

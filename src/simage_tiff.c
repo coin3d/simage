@@ -18,6 +18,8 @@
 #define ERR_MEM         3
 #define ERR_UNSUPPORTED 4
 #define ERR_TIFFLIB     5
+#define ERR_OPEN_WRITE  6
+#define ERR_WRITE       7
 
 static int tifferror = ERR_NO_ERROR;
 
@@ -36,6 +38,12 @@ simage_tiff_error(char * buffer, int buflen)
     break;    
   case ERR_TIFFLIB:
     strncpy(buffer, "TIFF loader: Illegal tiff file", buflen);
+    break;
+  case ERR_OPEN_WRITE:
+    strncpy(buffer, "TIFF saver: Error opening file", buflen);
+    break;
+  case ERR_WRITE:
+    strncpy(buffer, "TIFF loader: Error writing file", buflen);
     break;
   }
   return tifferror;
@@ -326,3 +334,61 @@ simage_tiff_load(const char *filename,
 
 #undef CVT
 #undef pack
+
+
+int 
+simage_tiff_save(const char *filename,
+                 const unsigned char * bytes,
+                 int width,
+                 int height,
+                 int numcomponents)
+{
+  uint16 photometric;
+  TIFF * out;
+  int y, bytesperrow;
+  short config = PLANARCONFIG_CONTIG;
+  int16 compression = COMPRESSION_PACKBITS; /* RLE */
+
+  out = TIFFOpen(filename, "w");
+  if (out == NULL) {
+    tifferror = ERR_OPEN_WRITE;
+    return 0;
+  }
+
+  TIFFSetField(out, TIFFTAG_IMAGEWIDTH, (uint32) width);
+  TIFFSetField(out, TIFFTAG_IMAGELENGTH, (uint32) height);
+  TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 8);
+  TIFFSetField(out, TIFFTAG_COMPRESSION, compression);
+  if (numcomponents <= 2)
+    photometric = PHOTOMETRIC_MINISBLACK;
+  else
+    photometric = PHOTOMETRIC_RGB;
+  TIFFSetField(out, TIFFTAG_PHOTOMETRIC, photometric);
+
+  TIFFSetField(out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
+  TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, numcomponents);
+  if (numcomponents == 2 || numcomponents == 4) {
+    uint16 v[1];
+    v[0] = EXTRASAMPLE_UNASSALPHA;
+    TIFFSetField(out, TIFFTAG_EXTRASAMPLES, 1, v);
+  }
+  TIFFSetField(out, TIFFTAG_MINSAMPLEVALUE, (uint16) 0);
+  TIFFSetField(out, TIFFTAG_MAXSAMPLEVALUE, (uint16) 255);
+  TIFFSetField(out, TIFFTAG_PLANARCONFIG, config);
+  /* force 1 row/strip for library limitation */
+  TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, 1L);
+  TIFFSetField(out, TIFFTAG_IMAGEDESCRIPTION, filename);
+  
+  bytesperrow = width * numcomponents;
+
+  for (y = 0; y < height; y++) {
+    if (TIFFWriteScanline(out, (tdata_t) bytes + bytesperrow * (height-y-1), y, 0) < 0) {
+      TIFFClose(out);
+      tifferror = ERR_WRITE;
+      return 0;
+    }
+  }
+
+  TIFFClose(out);
+  return 1;
+}

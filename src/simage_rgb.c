@@ -26,6 +26,7 @@
 #define ERR_READ              2
 #define ERR_MEM               3
 #define ERR_SIZEZ             4
+#define ERR_OPEN_WRITE        5
 
 static int rgberror = ERR_NO_ERROR;
 
@@ -378,4 +379,65 @@ simage_rgb_load(const char *filename,
     }
   }
   return buffer;
+}
+
+//
+// avoid endian problems (little endian sucks, right? :)
+//
+static int
+write_short(FILE * fp, unsigned short val)
+{
+  unsigned char tmp[2];
+  tmp[0] = (unsigned char)(val >> 8);
+  tmp[1] = (unsigned char)(val & 0xff);
+  return fwrite(&tmp, 2, 1, fp);
+}
+
+int 
+simage_rgb_save(const char *filename,
+                const unsigned char * bytes,
+                int width,
+                int height,
+                int comp)
+{
+  int x, y, c;
+  unsigned char * tmpbuf;
+  unsigned char buf[500];
+
+  FILE * fp = fopen(filename, "wb");
+  if (!fp) {
+    rgberror = ERR_OPEN_WRITE;
+    return 0;
+  }
+
+  write_short(fp, 0x01da); // imagic
+  write_short(fp, 0x0001); // raw (no rle yet)
+
+  if (comp == 1)
+    write_short(fp, 0x0002); // 2 dimensions (heightmap)
+  else
+    write_short(fp, 0x0003); // 3 dimensions
+
+  write_short(fp, (unsigned short) width);
+  write_short(fp, (unsigned short) height);
+  write_short(fp, (unsigned short) comp);
+
+  memset(buf, 0, 500);
+  buf[7] = 255; // set maximum pixel value to 255
+  strcpy((char *)buf+8, "http://www.coin3d.org");
+  fwrite(buf, 1, 500, fp);
+
+  tmpbuf = (unsigned char *) malloc(width);
+
+  for (c = 0; c < comp; c++) {
+    for (y = 0; y < height; y++) {
+      for (x = 0; x < width; x++) {
+        tmpbuf[x] = bytes[x * comp + y * comp * width + c];
+      }
+      fwrite(tmpbuf, 1, width, fp);
+    }
+  }
+  free(tmpbuf);
+  fclose(fp);
+  return 1;
 }
