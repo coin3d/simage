@@ -9,7 +9,7 @@ QIMAGESOURCES =
 endif
 
 if SIMAGE_QUICKTIME_SUPPORT
-QUICKTIMESOURCES = simage_quicktime.cpp $(top_srcdir)/include/simage_quicktime.h
+QUICKTIMESOURCES = simage_quicktime.c $(top_srcdir)/include/simage_quicktime.h
 JPEGSOURCES = 
 UNGIFSOURCES = 
 TIFFSOURCES = 
