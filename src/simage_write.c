@@ -39,7 +39,12 @@ static saver_data tiff_saver;
 #ifdef SIMAGE_RGB_SUPPORT
 #include <simage_rgb.h>
 static saver_data rgb_saver;
-#endif /* SIMAGE_PIC_SUPPORT */
+#endif /* SIMAGE_RGB_SUPPORT */
+#ifdef SIMAGE_EPS_SUPPORT
+#include <simage_eps.h>
+static saver_data eps_saver;
+#endif /* SIMAGE_EPS_SUPPORT */
+
 #include <assert.h>
 
 static saver_data * first_saver = NULL;
@@ -159,6 +164,9 @@ static char tiffext[] = "tiff,tif";
 static const char tifffull[] = "The Tag Image File Format";
 static char rgbext[] = "rgb,rgba,bw.inta,int";
 static const char rgbfull[] ="The SGI RGB file format";
+static char epsext[] = "eps,ps";
+static const char epsfull[] ="Encapsulated postscript";
+
 
 static void
 add_internal_savers(void)
@@ -202,6 +210,15 @@ add_internal_savers(void)
               NULL,
               1, 0);
 #endif /* SIMAGE_RGB_SUPPORT */
+#ifdef SIMAGE_EPS_SUPPORT
+    add_saver(&eps_saver, 
+              simage_eps_save,
+              simage_eps_error,
+              epsext,
+              epsfull,
+              NULL,
+              1, 0);
+#endif /* SIMAGE_EPS_SUPPORT */
   }
 }
 

@@ -10,6 +10,7 @@ TGASOURCES = simage_tga.c $(top_srcdir)/include/simage_tga.h
 RGBSOURCES = simage_rgb.c $(top_srcdir)/include/simage_rgb.h
 PICSOURCES = simage_pic.c $(top_srcdir)/include/simage_pic.h
 XWDSOURCES = simage_xwd.c $(top_srcdir)/include/simage_xwd.h
+EPSSOURCES = simage_eps.c $(top_srcdir)/include/simage_eps.h
 
 SIMAGESOURCES = \
 	$(top_builddir)/include/simage.h \
@@ -26,7 +27,8 @@ SIMAGESOURCES = \
 	$(TGASOURCES) \
 	$(RGBSOURCES) \
 	$(PICSOURCES) \
-	$(XWDSOURCES)
+	$(XWDSOURCES) \
+	$(EPSSOURCES)
 
 if BUILD_WITH_MSVC
 # we don't use libtool on Cygwin to generate lib

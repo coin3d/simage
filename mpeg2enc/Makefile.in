@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4e from Makefile.am.
+# Makefile.in generated automatically by automake 1.4k from Makefile.am.
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -10,6 +10,10 @@
 # but WITHOUT ANY WARRANTY, to the extent permitted by law; without
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
+
+@SET_MAKE@
+
+# **************************************************************************
 
 SHELL = @SHELL@
 
@@ -31,11 +35,9 @@ infodir = @infodir@
 mandir = @mandir@
 includedir = @includedir@
 oldincludedir = /usr/include
-
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
-
 top_builddir = ..
 
 ACLOCAL = @ACLOCAL@
@@ -49,19 +51,14 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_HEADER = $(INSTALL_DATA)
 transform = @program_transform_name@
-
 NORMAL_INSTALL = :
 PRE_INSTALL = :
 POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-
 host_alias = @host_alias@
 host_triplet = @host@
-
-@SET_MAKE@
-AMDEP = @AMDEP@
 AMTAR = @AMTAR@
 AS = @AS@
 AWK = @AWK@
@@ -74,7 +71,6 @@ DSUFFIX = @DSUFFIX@
 EXEEXT = @EXEEXT@
 GUILE_PROG = @GUILE_PROG@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-INSTALL_STRIP_PROGRAM_ENV = @INSTALL_STRIP_PROGRAM_ENV@
 LDFLAGS = @LDFLAGS@
 LIBFLAGS = @LIBFLAGS@
 LIBTOOL = @LIBTOOL@
@@ -83,7 +79,6 @@ LT_AGE = @LT_AGE@
 LT_CURRENT = @LT_CURRENT@
 LT_REVISION = @LT_REVISION@
 MAINT = @MAINT@
-MAKEINFO = @MAKEINFO@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
@@ -97,18 +92,15 @@ SIMAGE_MAJOR_VERSION = @SIMAGE_MAJOR_VERSION@
 SIMAGE_MICRO_VERSION = @SIMAGE_MICRO_VERSION@
 SIMAGE_MINOR_VERSION = @SIMAGE_MINOR_VERSION@
 SIMAGE_VERSION = @SIMAGE_VERSION@
-STRIP = @STRIP@
 SUFFIX = @SUFFIX@
 VERSION = @VERSION@
-_am_include = @_am_include@
+am__include = @am__include@
+am__quote = @am__quote@
 install_sh = @install_sh@
 simage_configure_date = @simage_configure_date@
 win_includedir = @win_includedir@
 win_libdir = @win_libdir@
 win_srcdir = @win_srcdir@
-
-# **************************************************************************
-
 
 @BUILD_WITH_MSVC_TRUE@noinst_LIBRARIES = mpeg2enc.lst
 @BUILD_WITH_MSVC_FALSE@noinst_LTLIBRARIES = libmpeg2enc.la
@@ -153,82 +145,74 @@ libmpeg2enc_la_SOURCES = \
 
 subdir = mpeg2enc
 mkinstalldirs = $(SHELL) $(top_srcdir)/cfg/mkinstalldirs
-CONFIG_HEADER = $(top_builddir)/config.h $(top_builddir)/include/simage.h
+CONFIG_HEADER = $(top_builddir)/config.h \
+	$(top_builddir)/include/simage.h
 CONFIG_CLEAN_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 
-
-DEFS = @DEFS@ -I. -I$(srcdir) -I$(top_builddir) -I$(top_builddir)/include
-CPPFLAGS = @CPPFLAGS@
 mpeg2enc_lst_AR = $(AR) cru
-mpeg2enc_lst_LIBADD = 
+mpeg2enc_lst_LIBADD =
 @BUILD_WITH_MSVC_TRUE@am_mpeg2enc_lst_OBJECTS = api.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@ conform.$(OBJEXT) fdctref.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@ idct.$(OBJEXT) motion.$(OBJEXT) predict.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@ putbits.$(OBJEXT) puthdr.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@ putmpg.$(OBJEXT) putpic.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@ putseq.$(OBJEXT) putvlc.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@ quantize.$(OBJEXT) ratectl.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@ readpic.$(OBJEXT) stats.$(OBJEXT) \
-@BUILD_WITH_MSVC_TRUE@ transfrm.$(OBJEXT) writepic.$(OBJEXT)
+@BUILD_WITH_MSVC_TRUE@	conform.$(OBJEXT) fdctref.$(OBJEXT) \
+@BUILD_WITH_MSVC_TRUE@	idct.$(OBJEXT) motion.$(OBJEXT) \
+@BUILD_WITH_MSVC_TRUE@	predict.$(OBJEXT) putbits.$(OBJEXT) \
+@BUILD_WITH_MSVC_TRUE@	puthdr.$(OBJEXT) putmpg.$(OBJEXT) \
+@BUILD_WITH_MSVC_TRUE@	putpic.$(OBJEXT) putseq.$(OBJEXT) \
+@BUILD_WITH_MSVC_TRUE@	putvlc.$(OBJEXT) quantize.$(OBJEXT) \
+@BUILD_WITH_MSVC_TRUE@	ratectl.$(OBJEXT) readpic.$(OBJEXT) \
+@BUILD_WITH_MSVC_TRUE@	stats.$(OBJEXT) transfrm.$(OBJEXT) \
+@BUILD_WITH_MSVC_TRUE@	writepic.$(OBJEXT)
+@BUILD_WITH_MSVC_FALSE@am_mpeg2enc_lst_OBJECTS =
 mpeg2enc_lst_OBJECTS = $(am_mpeg2enc_lst_OBJECTS)
-AR = ar
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 
-libmpeg2enc_la_LDFLAGS = 
-libmpeg2enc_la_LIBADD = 
+libmpeg2enc_la_LDFLAGS =
+libmpeg2enc_la_LIBADD =
 am_libmpeg2enc_la_OBJECTS = api.lo conform.lo fdctref.lo idct.lo \
-motion.lo predict.lo putbits.lo puthdr.lo putmpg.lo putpic.lo putseq.lo \
-putvlc.lo quantize.lo ratectl.lo readpic.lo stats.lo transfrm.lo \
-writepic.lo
+	motion.lo predict.lo putbits.lo puthdr.lo putmpg.lo putpic.lo \
+	putseq.lo putvlc.lo quantize.lo ratectl.lo readpic.lo stats.lo \
+	transfrm.lo writepic.lo
 libmpeg2enc_la_OBJECTS = $(am_libmpeg2enc_la_OBJECTS)
-COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CFLAGS = @CFLAGS@
-CCLD = $(CC)
-LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(mpeg2enc_lst_SOURCES) $(libmpeg2enc_la_SOURCES)
-depcomp = $(SHELL) $(top_srcdir)/cfg/depcomp
-@AMDEP@DEP_FILES = $(DEPDIR)/api.Plo $(DEPDIR)/api.Po \
-@AMDEP@ $(DEPDIR)/conform.Plo $(DEPDIR)/conform.Po $(DEPDIR)/fdctref.Plo \
-@AMDEP@ $(DEPDIR)/fdctref.Po $(DEPDIR)/idct.Plo $(DEPDIR)/idct.Po \
-@AMDEP@ $(DEPDIR)/motion.Plo $(DEPDIR)/motion.Po $(DEPDIR)/predict.Plo \
-@AMDEP@ $(DEPDIR)/predict.Po $(DEPDIR)/putbits.Plo $(DEPDIR)/putbits.Po \
-@AMDEP@ $(DEPDIR)/puthdr.Plo $(DEPDIR)/puthdr.Po $(DEPDIR)/putmpg.Plo \
-@AMDEP@ $(DEPDIR)/putmpg.Po $(DEPDIR)/putpic.Plo $(DEPDIR)/putpic.Po \
-@AMDEP@ $(DEPDIR)/putseq.Plo $(DEPDIR)/putseq.Po $(DEPDIR)/putvlc.Plo \
-@AMDEP@ $(DEPDIR)/putvlc.Po $(DEPDIR)/quantize.Plo $(DEPDIR)/quantize.Po \
-@AMDEP@ $(DEPDIR)/ratectl.Plo $(DEPDIR)/ratectl.Po $(DEPDIR)/readpic.Plo \
-@AMDEP@ $(DEPDIR)/readpic.Po $(DEPDIR)/stats.Plo $(DEPDIR)/stats.Po \
-@AMDEP@ $(DEPDIR)/transfrm.Plo $(DEPDIR)/transfrm.Po \
-@AMDEP@ $(DEPDIR)/writepic.Plo $(DEPDIR)/writepic.Po
-DIST_COMMON = README Makefile.am Makefile.in
 
+DEFS = @DEFS@
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir) -I$(top_builddir)/include
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+depcomp = $(SHELL) $(top_srcdir)/cfg/depcomp
+@AMDEP_TRUE@DEP_FILES = $(DEPDIR)/api.Plo $(DEPDIR)/api.Po \
+@AMDEP_TRUE@	$(DEPDIR)/conform.Plo $(DEPDIR)/conform.Po \
+@AMDEP_TRUE@	$(DEPDIR)/fdctref.Plo $(DEPDIR)/fdctref.Po \
+@AMDEP_TRUE@	$(DEPDIR)/idct.Plo $(DEPDIR)/idct.Po \
+@AMDEP_TRUE@	$(DEPDIR)/motion.Plo $(DEPDIR)/motion.Po \
+@AMDEP_TRUE@	$(DEPDIR)/predict.Plo $(DEPDIR)/predict.Po \
+@AMDEP_TRUE@	$(DEPDIR)/putbits.Plo $(DEPDIR)/putbits.Po \
+@AMDEP_TRUE@	$(DEPDIR)/puthdr.Plo $(DEPDIR)/puthdr.Po \
+@AMDEP_TRUE@	$(DEPDIR)/putmpg.Plo $(DEPDIR)/putmpg.Po \
+@AMDEP_TRUE@	$(DEPDIR)/putpic.Plo $(DEPDIR)/putpic.Po \
+@AMDEP_TRUE@	$(DEPDIR)/putseq.Plo $(DEPDIR)/putseq.Po \
+@AMDEP_TRUE@	$(DEPDIR)/putvlc.Plo $(DEPDIR)/putvlc.Po \
+@AMDEP_TRUE@	$(DEPDIR)/quantize.Plo $(DEPDIR)/quantize.Po \
+@AMDEP_TRUE@	$(DEPDIR)/ratectl.Plo $(DEPDIR)/ratectl.Po \
+@AMDEP_TRUE@	$(DEPDIR)/readpic.Plo $(DEPDIR)/readpic.Po \
+@AMDEP_TRUE@	$(DEPDIR)/stats.Plo $(DEPDIR)/stats.Po \
+@AMDEP_TRUE@	$(DEPDIR)/transfrm.Plo $(DEPDIR)/transfrm.Po \
+@AMDEP_TRUE@	$(DEPDIR)/writepic.Plo $(DEPDIR)/writepic.Po
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
+	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+CFLAGS = @CFLAGS@
+DIST_SOURCES = $(mpeg2enc_lst_SOURCES) $(libmpeg2enc_la_SOURCES)
+DIST_COMMON = README Makefile.am Makefile.in
 SOURCES = $(mpeg2enc_lst_SOURCES) $(libmpeg2enc_la_SOURCES)
-OBJECTS = $(am_mpeg2enc_lst_OBJECTS) $(am_libmpeg2enc_la_OBJECTS)
 
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .h .lo .o .obj
-
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
-	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  mpeg2enc/Makefile
-
-Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
-	cd $(top_builddir) && \
-	  CONFIG_HEADERS= CONFIG_LINKS= \
-	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
-
-clean-noinstLIBRARIES:
-	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-
-mostlyclean-compile:
-	-rm -f *.$(OBJEXT) core *.core
-
-distclean-compile:
-	-rm -f *.tab.c
+.SUFFIXES: .c .lo .o .obj
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -238,12 +222,89 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+	cd $(top_srcdir) && \
+	  $(AUTOMAKE) --gnu  mpeg2enc/Makefile
+Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) && \
+	  CONFIG_HEADERS= CONFIG_LINKS= \
+	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
+
+AR = ar
+
+clean-noinstLIBRARIES:
+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
 
 clean-noinstLTLIBRARIES:
 	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
-
-libmpeg2enc.la: $(libmpeg2enc_la_OBJECTS) $(libmpeg2enc_la_DEPENDENCIES)
+libmpeg2enc.la: $(libmpeg2enc_la_OBJECTS) $(libmpeg2enc_la_DEPENDENCIES) 
 	$(LINK)  $(libmpeg2enc_la_LDFLAGS) $(libmpeg2enc_la_OBJECTS) $(libmpeg2enc_la_LIBADD) $(LIBS)
+
+mostlyclean-compile:
+	-rm -f *.$(OBJEXT) core *.core
+
+distclean-compile:
+	-rm -f *.tab.c
+
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/api.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/api.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/conform.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/conform.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fdctref.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fdctref.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/idct.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/idct.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/motion.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/motion.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/predict.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/predict.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/putbits.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/putbits.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/puthdr.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/puthdr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/putmpg.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/putmpg.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/putpic.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/putpic.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/putseq.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/putseq.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/putvlc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/putvlc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/quantize.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/quantize.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/ratectl.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/ratectl.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/readpic.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/readpic.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/stats.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/stats.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/transfrm.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/transfrm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/writepic.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/writepic.Po@am__quote@
+
+distclean-depend:
+	-rm -rf $(DEPDIR)
+
+.c.o:
+@AMDEP_TRUE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(COMPILE) -c `test -f $< || echo '$(srcdir)/'`$<
+
+.c.obj:
+@AMDEP_TRUE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(COMPILE) -c `cygpath -w $<`
+
+.c.lo:
+@AMDEP_TRUE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
+CCDEPMODE = @CCDEPMODE@
+uninstall-info-am:
 
 tags: TAGS
 
@@ -272,71 +333,10 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 GTAGS:
 	here=`CDPATH=: && cd $(top_builddir) && pwd` \
 	  && cd $(top_srcdir) \
-	  && gtags -i $$here
+	  && gtags -i $(GTAGS_ARGS) $$here
 
 distclean-tags:
-	-rm -f TAGS ID
-
-@AMDEP@@_am_include@ $(DEPDIR)/api.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/api.Po
-@AMDEP@@_am_include@ $(DEPDIR)/conform.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/conform.Po
-@AMDEP@@_am_include@ $(DEPDIR)/fdctref.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/fdctref.Po
-@AMDEP@@_am_include@ $(DEPDIR)/idct.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/idct.Po
-@AMDEP@@_am_include@ $(DEPDIR)/motion.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/motion.Po
-@AMDEP@@_am_include@ $(DEPDIR)/predict.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/predict.Po
-@AMDEP@@_am_include@ $(DEPDIR)/putbits.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/putbits.Po
-@AMDEP@@_am_include@ $(DEPDIR)/puthdr.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/puthdr.Po
-@AMDEP@@_am_include@ $(DEPDIR)/putmpg.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/putmpg.Po
-@AMDEP@@_am_include@ $(DEPDIR)/putpic.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/putpic.Po
-@AMDEP@@_am_include@ $(DEPDIR)/putseq.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/putseq.Po
-@AMDEP@@_am_include@ $(DEPDIR)/putvlc.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/putvlc.Po
-@AMDEP@@_am_include@ $(DEPDIR)/quantize.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/quantize.Po
-@AMDEP@@_am_include@ $(DEPDIR)/ratectl.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/ratectl.Po
-@AMDEP@@_am_include@ $(DEPDIR)/readpic.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/readpic.Po
-@AMDEP@@_am_include@ $(DEPDIR)/stats.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/stats.Po
-@AMDEP@@_am_include@ $(DEPDIR)/transfrm.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/transfrm.Po
-@AMDEP@@_am_include@ $(DEPDIR)/writepic.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/writepic.Po
-
-distclean-depend:
-	-rm -rf $(DEPDIR)
-
-@AMDEP@CCDEPMODE = @CCDEPMODE@
-
-.c.o:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
-
-.c.lo:
-@AMDEP@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
-
-.c.obj:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c -o $@ `cygpath -w $<`
-
+	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
@@ -345,7 +345,11 @@ distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
 
 distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
-	  d=$(srcdir); \
+	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
+	  dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \
+	  if test "$$dir" != "$$file" && test "$$dir" != "."; then \
+	    $(mkinstalldirs) "$(distdir)/$$dir"; \
+	  fi; \
 	  if test -d $$d/$$file; then \
 	    cp -pR $$d/$$file $(distdir) \
 	    || exit 1; \
@@ -370,23 +374,20 @@ install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 
 installcheck: installcheck-am
-
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
-	  INSTALL_PROGRAM_ENV='$(INSTALL_STRIP_PROGRAM_ENV)' install
-
+	  `test -z '$(STRIP)' || \
+	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
 mostlyclean-generic:
 
 clean-generic:
 
 distclean-generic:
-	-rm -f Makefile $(CONFIG_CLEAN_FILES)
-	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	-rm -f Makefile $(CONFIG_CLEAN_FILES) stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-rm -f Makefile.in
 clean: clean-am
 
 clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
@@ -397,11 +398,11 @@ distclean: distclean-am
 distclean-am: clean-am distclean-compile distclean-depend \
 	distclean-generic distclean-libtool distclean-tags
 
-dvi:
+dvi: dvi-am
 
 dvi-am:
 
-info:
+info: info-am
 
 info-am:
 
@@ -409,7 +410,7 @@ install-data-am:
 
 install-exec-am:
 
-install-info:
+install-info: install-info-am
 
 install-man:
 
@@ -424,16 +425,19 @@ mostlyclean: mostlyclean-am
 mostlyclean-am: mostlyclean-compile mostlyclean-generic \
 	mostlyclean-libtool
 
-.PHONY: all all-am check check-am clean clean-generic clean-libtool \
-	clean-noinstLIBRARIES clean-noinstLTLIBRARIES distclean \
-	distclean-compile distclean-depend distclean-generic \
+uninstall-am: uninstall-info-am
+
+.PHONY: GTAGS all all-am check check-am clean clean-generic \
+	clean-libtool clean-noinstLIBRARIES clean-noinstLTLIBRARIES \
+	distclean distclean-compile distclean-depend distclean-generic \
 	distclean-libtool distclean-tags distdir dvi dvi-am info \
 	info-am install install-am install-data install-data-am \
-	install-exec install-exec-am install-info install-man \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	tags uninstall uninstall-am
+	install-exec install-exec-am install-info install-info-am \
+	install-man install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool tags uninstall uninstall-am \
+	uninstall-info-am
 
 
 @BUILD_WITH_MSVC_TRUE@mpeg2enc.lst: Makefile $(mpeg2enc_lst_OBJECTS)
@@ -444,7 +448,6 @@ mostlyclean-am: mostlyclean-compile mostlyclean-generic \
 @BUILD_WITH_MSVC_TRUE@	  $(mpeg2enc_lst_OBJECTS);
 
 # EOF **********************************************************************
-
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -483,6 +483,27 @@ else
 fi
 
 # **************************************************************************
+# Check if EPS (encapsulated postscript) export is wanted.
+
+AC_ARG_WITH(
+  [eps],
+  [AC_HELP_STRING([--with-eps], [enable/disable support for encapsulated postscript export])],
+  [case $withval in
+  yes | "") sim_ac_want_eps=true ;;
+  no)       sim_ac_want_eps=false ;;
+  *)        AC_MSG_ERROR([bad value "$withval" for --with-eps]) ;;
+  esac],
+  [sim_ac_want_eps=true])
+
+# AM_CONDITIONAL(SIMAGE_EPS_SUPPORT, $sim_ac_want_eps)
+if $sim_ac_want_eps; then
+  AC_DEFINE(SIMAGE_EPS_SUPPORT, , [define to enable eps support])
+  SIM_AC_CONFIGURATION_SETTING([Encapsulated postscript export support], [Yes])
+else
+  SIM_AC_CONFIGURATION_SETTING([Encapsulated postscript export support], [No])
+fi
+
+# **************************************************************************
 # Check if mpeg2enc is wanted.
 
 AC_ARG_WITH(
