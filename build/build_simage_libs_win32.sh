@@ -677,59 +677,104 @@ if ! test -d $SIMAGELIBS_DIST; then
   mkdir $SIMAGELIBS_DIST
 fi
 
-mkdir $SIMAGELIBS_DIST/libungif
+if ! test -d $SIMAGELIBS_DIST/libungif; then
+  mkdir $SIMAGELIBS_DIST/libungif
+fi
+
 for SIMAGELIBS_CRT in $SIMAGELIBS_CRT_LIST; do
-  mkdir $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT
+  if ! test -d $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT; then
+    mkdir $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT
+  fi
   cp -R $SIMAGELIBS_BUILD/libungif/$SIMAGELIBS_CRT/COPYING \
         $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT/LICENSE.TXT
-  mkdir $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT/lib
+  if ! test -d $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT/lib; then
+    mkdir $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT/lib
+  fi
   cp -R $SIMAGELIBS_BUILD/libungif/$SIMAGELIBS_CRT/lib/ungif.lib \
         $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT/lib
-  mkdir $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT/include
+  if ! test -d $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT/include; then
+    mkdir $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT/include
+  fi
   cp -R $SIMAGELIBS_BUILD/libungif/$SIMAGELIBS_CRT/include/gif_lib.h \
         $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT/include
 done
 
-mkdir $SIMAGELIBS_DIST/zlib
+if ! test -d $SIMAGELIBS_DIST/zlib; then
+  mkdir $SIMAGELIBS_DIST/zlib
+fi
+
 for SIMAGELIBS_CRT in $SIMAGELIBS_CRT_LIST; do
-  mkdir $SIMAGELIBS_DIST/zlib/$SIMAGELIBS_CRT
-  mkdir $SIMAGELIBS_DIST/zlib/$SIMAGELIBS_CRT/lib
+  if ! test -d $SIMAGELIBS_DIST/zlib/$SIMAGELIBS_CRT; then
+    mkdir $SIMAGELIBS_DIST/zlib/$SIMAGELIBS_CRT
+  fi
+  if ! test -d $SIMAGELIBS_DIST/zlib/$SIMAGELIBS_CRT/lib; then
+    mkdir $SIMAGELIBS_DIST/zlib/$SIMAGELIBS_CRT/lib
+  fi
   cp -R $SIMAGELIBS_BUILD/zlib/$SIMAGELIBS_CRT/lib/zlib.lib \
         $SIMAGELIBS_DIST/zlib/$SIMAGELIBS_CRT/lib
-  mkdir $SIMAGELIBS_DIST/zlib/$SIMAGELIBS_CRT/include
+  if ! test -d $SIMAGELIBS_DIST/zlib/$SIMAGELIBS_CRT/include; then
+    mkdir $SIMAGELIBS_DIST/zlib/$SIMAGELIBS_CRT/include
+  fi
   cp -R $SIMAGELIBS_BUILD/zlib/$SIMAGELIBS_CRT/include/*.h \
         $SIMAGELIBS_DIST/zlib/$SIMAGELIBS_CRT/include
 done
 
-mkdir $SIMAGELIBS_DIST/libjpeg
+if ! test -d $SIMAGELIBS_DIST/libjpeg; then
+  mkdir $SIMAGELIBS_DIST/libjpeg
+fi
+
 for SIMAGELIBS_CRT in $SIMAGELIBS_CRT_LIST; do
-  mkdir $SIMAGELIBS_DIST/libjpeg/$SIMAGELIBS_CRT
-  mkdir $SIMAGELIBS_DIST/libjpeg/$SIMAGELIBS_CRT/lib
+  if ! test -d $SIMAGELIBS_DIST/libjpeg/$SIMAGELIBS_CRT; then
+    mkdir $SIMAGELIBS_DIST/libjpeg/$SIMAGELIBS_CRT
+  fi
+  if ! test -d $SIMAGELIBS_DIST/libjpeg/$SIMAGELIBS_CRT/lib; then
+    mkdir $SIMAGELIBS_DIST/libjpeg/$SIMAGELIBS_CRT/lib
+  fi
   cp -R $SIMAGELIBS_BUILD/libjpeg/$SIMAGELIBS_CRT/lib/jpeg.lib \
         $SIMAGELIBS_DIST/libjpeg/$SIMAGELIBS_CRT/lib
-  mkdir $SIMAGELIBS_DIST/libjpeg/$SIMAGELIBS_CRT/include
+  if ! test -d $SIMAGELIBS_DIST/libjpeg/$SIMAGELIBS_CRT/include; then
+    mkdir $SIMAGELIBS_DIST/libjpeg/$SIMAGELIBS_CRT/include
+  fi
   cp -R $SIMAGELIBS_BUILD/libjpeg/$SIMAGELIBS_CRT/include/*.h \
         $SIMAGELIBS_DIST/libjpeg/$SIMAGELIBS_CRT/include
 done
 
-mkdir $SIMAGELIBS_DIST/libtiff
+if ! test -d $SIMAGELIBS_DIST/libtiff; then
+  mkdir $SIMAGELIBS_DIST/libtiff
+fi
+
 for SIMAGELIBS_CRT in $SIMAGELIBS_CRT_LIST; do
-  mkdir $SIMAGELIBS_DIST/libtiff/$SIMAGELIBS_CRT
-  mkdir $SIMAGELIBS_DIST/libtiff/$SIMAGELIBS_CRT/lib
+  if ! test -d $SIMAGELIBS_DIST/libtiff/$SIMAGELIBS_CRT; then
+    mkdir $SIMAGELIBS_DIST/libtiff/$SIMAGELIBS_CRT
+  fi
+  if ! test -d $SIMAGELIBS_DIST/libtiff/$SIMAGELIBS_CRT/lib; then
+    mkdir $SIMAGELIBS_DIST/libtiff/$SIMAGELIBS_CRT/lib
+  fi
   cp -R $SIMAGELIBS_BUILD/libtiff/$SIMAGELIBS_CRT/lib/tiff.lib \
         $SIMAGELIBS_DIST/libtiff/$SIMAGELIBS_CRT/lib
-  mkdir $SIMAGELIBS_DIST/libtiff/$SIMAGELIBS_CRT/include
+  if ! test -d $SIMAGELIBS_DIST/libtiff/$SIMAGELIBS_CRT/include; then
+    mkdir $SIMAGELIBS_DIST/libtiff/$SIMAGELIBS_CRT/include
+  fi
   cp -R $SIMAGELIBS_BUILD/libtiff/$SIMAGELIBS_CRT/include/*.h \
         $SIMAGELIBS_DIST/libtiff/$SIMAGELIBS_CRT/include
 done
 
-mkdir $SIMAGELIBS_DIST/libpng
+if ! test -d $SIMAGELIBS_DIST/libpng; then
+  mkdir $SIMAGELIBS_DIST/libpng
+fi
+
 for SIMAGELIBS_CRT in $SIMAGELIBS_CRT_LIST; do
-  mkdir $SIMAGELIBS_DIST/libpng/$SIMAGELIBS_CRT
-  mkdir $SIMAGELIBS_DIST/libpng/$SIMAGELIBS_CRT/lib
+  if ! test -d $SIMAGELIBS_DIST/libpng/$SIMAGELIBS_CRT; then
+    mkdir $SIMAGELIBS_DIST/libpng/$SIMAGELIBS_CRT
+  fi
+  if ! test -d $SIMAGELIBS_DIST/libpng/$SIMAGELIBS_CRT/lib; then
+    mkdir $SIMAGELIBS_DIST/libpng/$SIMAGELIBS_CRT/lib
+  fi
   cp -R $SIMAGELIBS_BUILD/libpng/$SIMAGELIBS_CRT/lib/png.lib \
         $SIMAGELIBS_DIST/libpng/$SIMAGELIBS_CRT/lib
-  mkdir $SIMAGELIBS_DIST/libpng/$SIMAGELIBS_CRT/include
+  if ! test -d $SIMAGELIBS_DIST/libpng/$SIMAGELIBS_CRT/include; then
+    mkdir $SIMAGELIBS_DIST/libpng/$SIMAGELIBS_CRT/include
+  fi
   cp -R $SIMAGELIBS_BUILD/libpng/$SIMAGELIBS_CRT/include/*.h \
         $SIMAGELIBS_DIST/libpng/$SIMAGELIBS_CRT/include
 done
