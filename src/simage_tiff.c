@@ -227,9 +227,10 @@ simage_tiff_load(const char *filename,
   if (photometric == PHOTOMETRIC_MINISWHITE || 
       photometric == PHOTOMETRIC_MINISBLACK)
     format = 1;
-  else
-    format = samplesperpixel;
-
+  else {
+    if (photometric == PHOTOMETRIC_PALETTE) format = 3;
+    else format = samplesperpixel;
+  }
   buffer = (unsigned char*)malloc(w*h*format);
   
   if (!buffer) {
@@ -493,9 +494,10 @@ simage_tiff_open(const char * filename,
   if (od->photometric == PHOTOMETRIC_MINISWHITE || 
       od->photometric == PHOTOMETRIC_MINISBLACK)
     od->format = 1;
-  else
-    od->format = od->samplesperpixel;
-
+  else {
+    if (od->photometric == PHOTOMETRIC_PALETTE) od->format = 3;
+    else od->format = od->samplesperpixel;
+  }
   switch (pack(od->photometric, od->config)) {
   default:
     break;
