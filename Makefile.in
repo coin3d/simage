@@ -76,6 +76,7 @@ CXXCPP = @CXXCPP@
 DEPDIR = @DEPDIR@
 DLLFLAGS = @DLLFLAGS@
 DLLTOOL = @DLLTOOL@
+DSUFFIX = @DSUFFIX@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 LT_AGE = @LT_AGE@
@@ -505,7 +506,7 @@ simage-config: simage-config.in
 simage-installer.exe:
 	@sed 's/$$/
 /g' <$(srcdir)/COPYING >COPYING.DOS; \
-	makensis build\\simage.nsi; \
+	( cd ..; makensis debug\\build\\simage.nsi ); \
 	rm COPYING.DOS
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
