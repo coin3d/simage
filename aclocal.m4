@@ -908,7 +908,7 @@ AC_CACHE_CHECK(
 
 if test x"$sim_cv_lib_math" != xUNDEFINED; then
   LIBS="$sim_ac_libm $sim_ac_store_libs"
-  sim_ac_libm=sim_cv_lib_math
+  sim_ac_libm=$sim_cv_lib_math
   $1
 else
   LIBS=$sim_ac_store_libs
