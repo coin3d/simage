@@ -280,32 +280,100 @@ if ! test -d $SIMAGE_SDK/libogg; then
 
   for SIMAGE_PREFIX in md mdd mt mtd; do
     mkdir $SIMAGE_SDK/libogg/$SIMAGE_PREFIX
-    cp -R $SIMAGE_SDK/libogg/temp/libogg-1.0/* $SIMAGE_SDK/libogg/$SIMAGE_PREFIX
-    mkdir $SIMAGE_SDK/libogg/$SIMAGE_PREFIX/include
     mkdir $SIMAGE_SDK/libogg/$SIMAGE_PREFIX/lib
+    cp -R $SIMAGE_SDK/libogg/temp/libogg-1.0/* $SIMAGE_SDK/libogg/$SIMAGE_PREFIX
   done
 
   rm -R $SIMAGE_SDK/libogg/temp
   
   echo "[SIMAGE]         Modifying libogg configuration and make files"
+  # unix2dos conversion (\n -> \r\n)
+  echo -e "s/\$/\r/;\np;" >unix2dos.sed
+
+  cat $SIMAGE_SDK/libogg/md/win32/ogg_static.dsp | sed -e "s/\/MT/\/MD/g" | sed -e "s/ADD LIB32 \/nologo\$/ADD LIB32 \/nologo \/out:ogg.lib/g" | sed -e "s/ogg_static \- Win32 Release/ogg_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libogg/md/win32/ogg_static_md.dsp
+  cat $SIMAGE_SDK/libogg/mdd/win32/ogg_static.dsp | sed -e "s/Static_Debug\\\\ogg_static_d\.lib/ogg\.lib/g" | sed -e "s/ogg_static - Win32 Debug/ogg_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libogg/mdd/win32/ogg_static_mdd.dsp
+
+  cat $SIMAGE_SDK/libogg/mt/win32/ogg_static.dsp | sed -e "s/ADD LIB32 \/nologo\$/ADD LIB32 \/nologo \/out:ogg.lib/g" | sed -e "s/ogg_static - Win32 Release/ogg_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libogg/mt/win32/ogg_static_mt.dsp
+  cat $SIMAGE_SDK/libogg/mtd/win32/ogg_static.dsp | sed -e "s/\/MDd/MTD/g" | sed -e "s/Static_Debug\\\\ogg_static_d\.lib/ogg.lib/g" | sed -e "s/ogg_static - Win32 Debug/ogg_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libogg/mtd/win32/ogg_static_mtd.dsp
+
+fi
+
+if ! test -e $SIMAGE_SDK/libogg/mt/lib/ogg.lib; then
+  echo "[SIMAGE]         Making libogg"
   for SIMAGE_PREFIX in md mdd mt mtd; do
-    cp $SIMAGE_SDK/libogg/$SIMAGE_PREFIX/*.h $SIMAGE_SDK/libogg/$SIMAGE_PREFIX/include
-    export SIMAGE_UPPERPREFIX=`echo $SIMAGE_PREFIX | tr [:lower:] [:upper:]` 
-    cat $SIMAGE_SDK/libtiff/$SIMAGE_PREFIX/makefile.vc | sed -e "s/CFLAGS  = /CFLAGS  = -$SIMAGE_UPPERPREFIX /g" > $SIMAGE_SDK/libtiff/$SIMAGE_PREFIX/makefile.vc_$SIMAGE_PREFIX
+    cd $SIMAGE_SDK/libogg/$SIMAGE_PREFIX/win32
+    SIMAGE_OLDINCLUDE=$INCLUDE
+    export INCLUDE=$INCLUDE\;$SIMAGE_SDK/libogg/$SIMAGE_PREFIX/include
+    cmd /C msdev ogg_static_$SIMAGE_PREFIX.dsp /useenv /make "ogg_static - Win32 Simage" /rebuild
+    cp ogg.lib $SIMAGE_SDK/libogg/$SIMAGE_PREFIX/lib
+    INCLUDE=$SIMAGE_OLDINCLUDE
   done
 fi
 
-if ! test -e $SIMAGE_SDK/libtiff/mt/lib/tiff.lib; then
-  echo "[SIMAGE]         Making libtiff"
+if ! test -e $SIMAGE_SDK/libogg/mt/lib/ogg.lib; then
+  echo "[SIMAGE]         Failed to make libogg. Aborting."
+  exit;
+fi
+
+echo "[SIMAGE]      ogg verified OK"
+
+############# vorbis
+# http://www.xiph.org/ogg/vorbis/
+
+echo "[SIMAGE]      Verifying libvorbis..."
+
+*****
+
+if ! test -e $SIMAGE_SDK/libogg-1.0.tar; then
+  if ! test -e $SIMAGE_SDK/libogg-1.0.tar.gz; then
+    echo "[SIMAGE]         Downloading libogg"
+    wget --directory-prefix=$SIMAGE_SDK http://www.xiph.org/ogg/vorbis/download/libogg-1.0.tar.gz
+  fi
+  echo "[SIMAGE]         gunzip'ing libogg"
+  gunzip $SIMAGE_SDK/libogg-1.0.tar.gz
+fi
+
+if ! test -d $SIMAGE_SDK/libogg; then
+  echo "[SIMAGE]         Extracting libogg"
+  mkdir $SIMAGE_SDK/libogg
+  mkdir $SIMAGE_SDK/libogg/temp
+  cd $SIMAGE_SDK/libogg/temp
+  tar xf $SIMAGE_SDK/libogg-1.0.tar
+
   for SIMAGE_PREFIX in md mdd mt mtd; do
-    cd $SIMAGE_SDK/libtiff/$SIMAGE_PREFIX
-    nmake -f makefile.vc_$SIMAGE_PREFIX
-    cp libtiff.lib lib/tiff.lib
+    mkdir $SIMAGE_SDK/libogg/$SIMAGE_PREFIX
+    mkdir $SIMAGE_SDK/libogg/$SIMAGE_PREFIX/lib
+    cp -R $SIMAGE_SDK/libogg/temp/libogg-1.0/* $SIMAGE_SDK/libogg/$SIMAGE_PREFIX
+  done
+
+  rm -R $SIMAGE_SDK/libogg/temp
+  
+  echo "[SIMAGE]         Modifying libogg configuration and make files"
+  # unix2dos conversion (\n -> \r\n)
+  echo -e "s/\$/\r/;\np;" >unix2dos.sed
+
+  cat $SIMAGE_SDK/libogg/md/win32/ogg_static.dsp | sed -e "s/\/MT/\/MD/g" | sed -e "s/ADD LIB32 \/nologo\$/ADD LIB32 \/nologo \/out:ogg.lib/g" | sed -e "s/ogg_static \- Win32 Release/ogg_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libogg/md/win32/ogg_static_md.dsp
+  cat $SIMAGE_SDK/libogg/mdd/win32/ogg_static.dsp | sed -e "s/Static_Debug\\\\ogg_static_d\.lib/ogg\.lib/g" | sed -e "s/ogg_static - Win32 Debug/ogg_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libogg/mdd/win32/ogg_static_mdd.dsp
+
+  cat $SIMAGE_SDK/libogg/mt/win32/ogg_static.dsp | sed -e "s/ADD LIB32 \/nologo\$/ADD LIB32 \/nologo \/out:ogg.lib/g" | sed -e "s/ogg_static - Win32 Release/ogg_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libogg/mt/win32/ogg_static_mt.dsp
+  cat $SIMAGE_SDK/libogg/mtd/win32/ogg_static.dsp | sed -e "s/\/MDd/MTD/g" | sed -e "s/Static_Debug\\\\ogg_static_d\.lib/ogg.lib/g" | sed -e "s/ogg_static - Win32 Debug/ogg_static \- Win32 Simage/g" | sed -n -f unix2dos.sed > $SIMAGE_SDK/libogg/mtd/win32/ogg_static_mtd.dsp
+
+fi
+
+if ! test -e $SIMAGE_SDK/libogg/mt/lib/ogg.lib; then
+  echo "[SIMAGE]         Making libogg"
+  for SIMAGE_PREFIX in md mdd mt mtd; do
+    cd $SIMAGE_SDK/libogg/$SIMAGE_PREFIX/win32
+    SIMAGE_OLDINCLUDE=$INCLUDE
+    export INCLUDE=$INCLUDE\;$SIMAGE_SDK/libogg/$SIMAGE_PREFIX/include
+    cmd /C msdev ogg_static_$SIMAGE_PREFIX.dsp /useenv /make "ogg_static - Win32 Simage" /rebuild
+    cp ogg.lib $SIMAGE_SDK/libogg/$SIMAGE_PREFIX/lib
+    INCLUDE=$SIMAGE_OLDINCLUDE
   done
 fi
 
-if ! test -e $SIMAGE_SDK/libtiff/mt/lib/tiff.lib; then
-  echo "[SIMAGE]         Failed to make libtiff. Aborting."
+if ! test -e $SIMAGE_SDK/libogg/mt/lib/ogg.lib; then
+  echo "[SIMAGE]         Failed to make libogg. Aborting."
   exit;
 fi
 
