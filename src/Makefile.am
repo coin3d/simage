@@ -68,6 +68,15 @@ else
 lib_LTLIBRARIES = libsimage@SUFFIX@.la
 endif
 
+if MACOSX_10_2
+# we are dealing with the Mac OS X 10.2 gcc compiler toolset...
+LibtoolLinkArgs = -Wl,-twolevel_namespace -Wl,-undefined,error 
+else
+LibtoolLinkArgs = -no-undefined
+endif
+
+
+
 simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_SOURCES = \
 	$(SIMAGESOURCES)
 
@@ -75,6 +84,7 @@ libsimage@SUFFIX@_la_SOURCES = \
 	$(SIMAGESOURCES)
 
 libsimage@SUFFIX@_la_LDFLAGS = \
+  $(LibtoolLinkArgs) \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 if SIMAGE_MPEG2ENC_SUPPORT
