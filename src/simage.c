@@ -312,6 +312,9 @@ cnt_bits(int val, int * highbit)
 int 
 simage_next_power_of_two(int val)
 {
+  /* FIXME: this is done in a more elegant way in Coin's tidbits.c
+     file. 20021210 mortene.*/
+
   int highbit;
   if (cnt_bits(val, &highbit) > 1) {
     return 1<<highbit;
