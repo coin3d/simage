@@ -63,12 +63,12 @@ SIM_AC_CHECK_FINK([
 ])
 
 
-sim_ac_qimage_support=false
+sim_ac_qimage_support_wanted=false
 AC_ARG_ENABLE(
   [qimage],
   AC_HELP_STRING([--enable-qimage], [Use Qt's QImage to load/save images]), [
   case $enableval in
-    yes) sim_ac_qimage_support=true ;;
+    yes) sim_ac_qimage_support_wanted=true ;;
     *) ;;
   esac])
 
@@ -90,6 +90,7 @@ darwin*)
       *) ;;
    esac])
   ;;
+*) SIM_AC_CONFIGURATION_SETTING([QuickTime support], [No (only available for Mac OS X)]) ;;
 esac
 
 # circumvent Automake 1.4h problem - explicitly use OBJEXT and EXEEXT
@@ -219,7 +220,8 @@ AC_LANG_POP(C++)
 # **************************************************************************
 # Check if qimage support is wanted (and if so, available)
 
-if $sim_ac_qimage_support; then
+sim_ac_qimage_support=false
+if $sim_ac_qimage_support_wanted; then
   SIM_AC_CHECK_QT([
     SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_qt_cppflags"
     SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_qt_ldflags"
@@ -227,9 +229,9 @@ if $sim_ac_qimage_support; then
     CPPFLAGS="$CPPFLAGS $sim_ac_qt_cppflags"
     LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
     LIBS="$sim_ac_qt_libs $LIBS"
+    sim_ac_qimage_support=true
   ], [
     AC_MSG_WARN([can't compile and link against Qt development kit])
-    sim_ac_qimage_support=false
   ])
 fi
 
@@ -239,7 +241,11 @@ if $sim_ac_qimage_support; then
   AC_DEFINE(SIMAGE_QIMAGE_SUPPORT, ,[define to support Qt's QImage])
   SIM_AC_CONFIGURATION_SETTING([QImage support], [Yes])
 else
-  SIM_AC_CONFIGURATION_SETTING([QImage support], [No (default)])
+  if $sim_ac_qimage_support_wanted; then
+    SIM_AC_CONFIGURATION_SETTING([QImage support], [No (needs installed Qt SDK)])
+  else
+    SIM_AC_CONFIGURATION_SETTING([QImage support], [No (default, enable with --enable-qimage)])
+  fi
 fi
 
 # **************************************************************************
@@ -273,8 +279,6 @@ if $sim_ac_quicktime_support; then
   if test $"$sim_ac_have_quicktime" = xfalse; then
     sim_ac_quicktime_support=false
   fi
-else
-    SIM_AC_CONFIGURATION_SETTING([QuickTime support], [No])
 fi
 
 AM_CONDITIONAL(SIMAGE_QUICKTIME_SUPPORT, $sim_ac_quicktime_support)
@@ -294,7 +298,7 @@ if test x"$sim_ac_quicktime_support" = xfalse; then
     LIBS="$sim_ac_libungif_libs $LIBS"
     SIM_AC_CONFIGURATION_SETTING([GIF image format support], [Yes])
   ], [
-    SIM_AC_CONFIGURATION_SETTING([GIF image format support], [No])
+    SIM_AC_CONFIGURATION_SETTING([GIF image format support], [No (needs libungif)])
   ])
 
   # : ${sim_ac_have_libungif=false}
@@ -313,7 +317,7 @@ if test x"$sim_ac_quicktime_support" = xfalse; then
     LIBS="$sim_ac_libjpeg_libs $LIBS"
     SIM_AC_CONFIGURATION_SETTING([JPEG image format support], [Yes])
   ], [
-    SIM_AC_CONFIGURATION_SETTING([JPEG image format support], [No])
+    SIM_AC_CONFIGURATION_SETTING([JPEG image format support], [No (needs libjpeg)])
   ])
 
   # : ${sim_ac_have_libjpeg=false}
@@ -343,7 +347,7 @@ if test x"$sim_ac_quicktime_support" = xfalse; then
     LIBS="$sim_ac_libpng_libs $LIBS"
     SIM_AC_CONFIGURATION_SETTING([PNG image format support], [Yes])
   ], [
-    SIM_AC_CONFIGURATION_SETTING([PNG image format support], [No])
+    SIM_AC_CONFIGURATION_SETTING([PNG image format support], [No (needs libpng)])
     if test x"$sim_ac_have_libzlib" = xfalse; then
       SIM_AC_CONFIGURATION_WARNING(
         [PNG image format support may be disabled because of missing libz])
@@ -366,7 +370,7 @@ if test x"$sim_ac_quicktime_support" = xfalse; then
     LIBS="$sim_ac_libtiff_libs $LIBS"
     SIM_AC_CONFIGURATION_SETTING([TIFF image format support], [Yes])
   ], [
-    SIM_AC_CONFIGURATION_SETTING([TIFF image format support], [No])
+    SIM_AC_CONFIGURATION_SETTING([TIFF image format support], [No (needs libtiff)])
   ])
 
   # : ${sim_ac_have_libtiff=false}
@@ -454,7 +458,7 @@ if $sim_ac_want_xwd; then
   AC_DEFINE(SIMAGE_XWD_SUPPORT, , [define to enable xwd support])
   SIM_AC_CONFIGURATION_SETTING([XWD support (experimental)], [Yes])
 else
-  SIM_AC_CONFIGURATION_SETTING([XWD support (experimental)], [No (default)])
+  SIM_AC_CONFIGURATION_SETTING([XWD support (experimental)], [No (default, enable with --with-xwd)])
 fi
 
 # **************************************************************************
@@ -496,7 +500,7 @@ if $sim_ac_want_mpeg2enc; then
   AC_DEFINE(SIMAGE_MPEG2ENC_SUPPORT, , [define to enable mpeg2enc support])
   SIM_AC_CONFIGURATION_SETTING([Mpeg2 encoding support], [Yes])
 else
-  SIM_AC_CONFIGURATION_SETTING([Mpeg2 encoding support], [No (default)])
+  SIM_AC_CONFIGURATION_SETTING([Mpeg2 encoding support], [No (default, enable with --with-mpeg2enc)])
 fi
 
 # **************************************************************************
@@ -518,35 +522,40 @@ AC_ARG_WITH(
 # fixme 20020920 thammer: Do proper library linking, not just the
 #                         visual c++ pragma hack
 
-AC_MSG_CHECKING([for Video for Windows library])
-AC_TRY_LINK([
-#include <windows.h>
-#include <vfw.h>
-#pragma comment(lib, "vfw32.lib")
-], [
-  (void)AVIFileInit();
-], [
-  AC_MSG_RESULT([yes])
-  AC_DEFINE([HAVE_VFW],, [Define to use the Video for Windows library])
-], [
-  AC_MSG_RESULT([no])
-  if $sim_ac_want_avienc; then
+sim_ac_have_vfw=false
+if $sim_ac_want_avienc; then
+  AC_MSG_CHECKING([for Video for Windows library])
+  AC_TRY_LINK([
+  #include <windows.h>
+  #include <vfw.h>
+  #pragma comment(lib, "vfw32.lib")
+  ], [
+    (void)AVIFileInit();
+  ], [
+    AC_MSG_RESULT([yes])
+    AC_DEFINE([HAVE_VFW],, [Define to use the Video for Windows library])
+    sim_ac_have_vfw=true
+  ], [
+    AC_MSG_RESULT([no])
     AC_MSG_WARN([need Video for Windows for avi encoding])
     SIM_AC_CONFIGURATION_WARNING(
       [avi encoding has been disabled because of missing Video for Windows library])
-    sim_ac_want_avienc=false
-  fi
-])
+  ])
+fi
 
 # **************************************************************************
-# Set avi ancode define
+# Set avi encode define
 
 # AM_CONDITIONAL(SIMAGE_AVIENC_SUPPORT, $sim_ac_want_avienc)
-if $sim_ac_want_avienc; then
+if $sim_ac_have_vfw; then
   AC_DEFINE(SIMAGE_AVIENC_SUPPORT, , [define to enable avienc support])
   SIM_AC_CONFIGURATION_SETTING([Avi encoding support], [Yes])
 else
-  SIM_AC_CONFIGURATION_SETTING([Avi encoding support], [No (default)])
+  if $sim_ac_want_avienc; then
+    SIM_AC_CONFIGURATION_SETTING([Avi encoding support], [No (needs Video for Windows library, vfw32.lib))])
+  else
+    SIM_AC_CONFIGURATION_SETTING([Avi encoding support], [No (default, enable with --with-avienc)])
+  fi
 fi
 
 # **************************************************************************
@@ -562,7 +571,7 @@ SIM_AC_CHECK_OGGVORBIS([
   AC_DEFINE(SIMAGE_OGGVORBIS_SUPPORT, 1, [Ogg Vorbis extensions available])
   SIM_AC_CONFIGURATION_SETTING([Ogg Vorbis support], [Yes])
 ], [
-  SIM_AC_CONFIGURATION_SETTING([Ogg Vorbis support], [No])
+  SIM_AC_CONFIGURATION_SETTING([Ogg Vorbis support], [No (needs libraries libogg, libvorbis and libvorbisfile)])
 ])
 
 # **************************************************************************
@@ -578,7 +587,7 @@ SIM_AC_CHECK_LIBSNDFILE([
   AC_DEFINE(SIMAGE_LIBSNDFILE_SUPPORT, 1, [libsndfile available])
   SIM_AC_CONFIGURATION_SETTING([libsnd support], [Yes])
 ], [
-  SIM_AC_CONFIGURATION_SETTING([libsnd support], [No])
+  SIM_AC_CONFIGURATION_SETTING([libsnd support], [No (needs libsndfile)])
 ])
 
 # **************************************************************************
@@ -626,7 +635,7 @@ fi
 if $HAVE_GUILE; then
   SIM_AC_CONFIGURATION_SETTING([Guile module], [Build])
 else
-  SIM_AC_CONFIGURATION_SETTING([Guile module], [Ignore])
+  SIM_AC_CONFIGURATION_SETTING([Guile module], [Ignore (needs installed Guile SDK)])
 fi
 AM_CONDITIONAL(HAVE_GUILE, $HAVE_GUILE)
 
