@@ -1039,13 +1039,13 @@ fi
 
 AC_DEFUN([SIM_AC_TRY_LINK_LIBUNGIF_IFELSE], [
 : ${sim_ac_have_libungif=false}
-sim_ac_libungif_save_libs=$LIBS
+sim_ac_internal_libungif_save_libs=$LIBS
 LIBS="-lungif $LIBS"
 AC_TRY_LINK(
   [#include <gif_lib.h>],
   [(void)EGifOpenFileName(0L, 0);],
   [sim_ac_have_libungif=true])
-LIBS=$sim_ac_libungif_save_libs
+LIBS=$sim_ac_internal_libungif_save_libs
 if $sim_ac_have_libungif; then
   ifelse([$1], , :, [$1])
 else
