@@ -1,0 +1,12 @@
+simage.dsp.in
+simage.mak.in
+
+        Templates processed by configure script to generate a
+        Microsoft VisualC++ 6.0 project file (simage.dsp) and NMake
+        makefile (simage.mak).
+
+
+simage.spec.in
+
+        Template processed by configure script to generate an RPM
+        specification file simage.spec.
