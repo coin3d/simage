@@ -1,6 +1,10 @@
 #ifndef _SIMAGE_TIFF_H_
 #define _SIMAGE_TIFF_H_
 
+#ifndef HAVE_LIBTIFF
+#error "This file should not be used under the current configuration!"
+#endif /* !HAVE_LIBTIFF */
+
 unsigned char *simage_tiff_load(const char *filename,
 				 int *width,
 				 int *height,

@@ -1,3 +1,7 @@
+#include "config.h"
+
+#ifdef HAVE_LIBJPEG
+
 /*
  * Based on example code found in the libjpeg archive
  *
@@ -248,3 +252,4 @@ simage_jpeg_load(const char *filename,
   return buffer;
 }
 
+#endif /* HAVE_LIBJPEG */

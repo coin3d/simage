@@ -1,3 +1,7 @@
+#include "config.h"
+
+#ifdef HAVE_LIBPNG
+
 /*
  * Based heavily on example code in libpng. Some bugs fixed though.
  */
@@ -232,3 +236,5 @@ simage_png_load(const char *filename,
   }
   return buffer;
 }
+
+#endif /* HAVE_LIBPNG */

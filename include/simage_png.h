@@ -1,6 +1,10 @@
 #ifndef _SIMAGE_PNG_H_
 #define _SIMAGE_PNG_H_
 
+#ifndef HAVE_LIBPNG
+#error "This file should not be used under the current configuration!"
+#endif /* !HAVE_LIBPNG */
+
 unsigned char *simage_png_load(const char *filename,
 				int *width,
 				int *height,

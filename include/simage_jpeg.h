@@ -1,6 +1,11 @@
 #ifndef _SIMAGE_JPEG_H_
 #define _SIMAGE_JPEG_H_
 
+#ifndef HAVE_LIBJPEG
+#error "This file should not be used under the current configuration!"
+#endif /* !HAVE_LIBJPEG */
+
+
 unsigned char *simage_jpeg_load(const char *filename,
 				 int *width,
 				 int *height,

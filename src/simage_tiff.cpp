@@ -1,3 +1,7 @@
+#include "config.h"
+
+#ifdef HAVE_LIBTIFF
+
 /*
  * based on example code found in libtiff
  * 
@@ -324,3 +328,5 @@ simage_tiff_load(const char *filename,
 
 #undef CVT
 #undef pack
+
+#endif /* HAVE_LIBTIFF */

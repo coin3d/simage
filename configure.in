@@ -1,0 +1,53 @@
+dnl  This can be any file in the package.
+AC_INIT(include/simage.h)
+
+AM_INIT_AUTOMAKE(libsimage, 0.9.0)
+
+dnl  File to cram the configure tests into.
+AM_CONFIG_HEADER(config.h)
+
+dnl Initialize libtool
+AM_PROG_LIBTOOL
+
+dnl  Locate C compiler.
+AC_PROG_CC
+dnl  Locate C++ compiler.
+AC_PROG_CXX
+
+
+dnl  Check if libjpeg development system is installed.
+
+AC_CHECK_HEADER(jpeglib.h, jpeg_dev=yes, jpeg_dev=no)
+if test "$jpeg_dev" = yes; then
+  AC_CHECK_LIB(jpeg, jpeg_read_header, , jpeg_dev=no)
+fi
+if test "$jpeg_dev" = no; then
+  AC_MSG_WARN(libjpeg development system not found -- no JPEG support)
+fi
+
+
+dnl  Check if libtiff development system is installed.
+
+AC_CHECK_HEADER(tiffio.h, tiff_dev=yes, tiff_dev=no)
+if test "$tiff_dev" = yes; then
+  AC_CHECK_LIB(tiff, TIFFOpen, , tiff_dev=no, -lm)
+fi
+if test "$tiff_dev" = no; then
+  AC_MSG_WARN(libtiff development system not found -- no TIFF support)
+fi
+
+
+dnl  Check if libpng development system is installed.
+
+AC_CHECK_HEADER(png.h, png_dev=yes, png_dev=no)
+if test "$png_dev" = yes; then
+  AC_CHECK_LIB(png, png_read_info, , png_dev=no, -lz -lm)
+fi
+if test "$png_dev" = no; then
+  AC_MSG_WARN(libpng development system not found -- no PNG support)
+fi
+
+
+
+dnl  List of all files to generate.
+AC_OUTPUT(Makefile src/Makefile)

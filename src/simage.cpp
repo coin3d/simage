@@ -3,6 +3,8 @@
  */
 
 #include "simage.h"
+#include "config.h"
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,22 +19,22 @@ struct _loader_data
 typedef struct _loader_data loader_data;
 
 /* built in image loaders */ 
-#if !defined(SIMAGE_EXCLUDE_SIMAGE_JPEG)
+#ifdef HAVE_LIBJPEG
 #include "simage_jpeg.h"
 static loader_data jpeg_loader;
-#endif
-#if !defined(SIMAGE_EXCLUDE_SIMAGE_PNG)
+#endif /* HAVE_LIBJPEG */
+#ifdef HAVE_LIBPNG
 #include "simage_png.h"
 static loader_data png_loader;
-#endif
+#endif /* HAVE_LIBPNG */
 #if !defined(SIMAGE_EXCLUDE_SIMAGE_TGA)
 #include "simage_tga.h"
 static loader_data targa_loader;
 #endif
-#if !defined(SIMAGE_EXCLUDE_SIMAGE_TIFF)
+#ifdef HAVE_LIBTIFF
 #include "simage_tiff.h"
 static loader_data tiff_loader;
-#endif
+#endif /* HAVE_LIBTIFF */
 #if !defined(SIMAGE_EXCLUDE_SIMAGE_PIC)
 #include "simage_pic.h"
 static loader_data pic_loader;
@@ -118,20 +120,20 @@ add_internal_loaders()
   static int first = 1;
   if (first) {
     first = 0;
-#if !defined(SIMAGE_EXCLUDE_SIMAGE_JPEG)
+#ifdef HAVE_LIBJPEG
     add_loader(&jpeg_loader, 
 	       simage_jpeg_load,
 	       simage_jpeg_identify,
 	       simage_jpeg_error,
 	       1, 0);
-#endif
-#if !defined(SIMAGE_EXCLUDE_SIMAGE_PNG)
+#endif /* HAVE_LIBJPEG */
+#ifdef HAVE_LIBPNG
     add_loader(&png_loader, 
 	       simage_png_load,
 	       simage_png_identify,
 	       simage_png_error,
 	       1, 0);
-#endif
+#endif /* HAVE_LIBPNG */
 #if !defined(SIMAGE_EXCLUDE_SIMAGE_TGA)
     add_loader(&targa_loader, 
 	       simage_tga_load,
@@ -139,13 +141,13 @@ add_internal_loaders()
 	       simage_tga_error,
 	       1, 0);
 #endif
-#if !defined(SIMAGE_EXCLUDE_SIMAGE_TIFF)
+#ifdef HAVE_LIBTIFF
     add_loader(&tiff_loader, 
 	       simage_tiff_load,
 	       simage_tiff_identify,
 	       simage_tiff_error,
 	       1, 0);
-#endif
+#endif /* HAVE_LIBTIFF */
 #if !defined(SIMAGE_EXCLUDE_SIMAGE_RGB)
     add_loader(&rgb_loader, 
 	       simage_rgb_load,

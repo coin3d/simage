@@ -97,5 +97,4 @@ extern "C" {
 }
 #endif
 
-#endif /* _SO_IMAGE_LIB_H_ */
-
+#endif /* _SIMAGE_H_ */

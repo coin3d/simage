@@ -2,6 +2,6 @@ All files in this library are public domain, except simage_rgb.cpp which is
 Copyright (c) Mark J Kilgard <mjk@nvidia.com>. I will contact Mark
 very soon to hear if this source also can become public domain.
 
-Please send patches and contributions to: <pederb@sim.no>
+Please send patches for bugs and new features to: <pederb@sim.no>.
 
-Peder
+Peder Blekken
