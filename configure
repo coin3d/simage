@@ -561,9 +561,9 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-gnu-ld           assume the C compiler uses GNU ld default=no
-  --with-jpeg=DIR         include support for JPEG images default=yes
   --with-ungif=PATH     enable use of libungif
   --with-x                use the X Window System
+  --with-jpeg=DIR         include support for JPEG images default=yes
   --with-tiff=DIR         include support for TIFF images default=yes
   --with-zlib=DIR         zlib installation directory
   --with-png=DIR          include support for PNG images default=yes
@@ -2593,100 +2593,9 @@ else
 fi
 
 # **************************************************************************
-# Check if JPEG support is wanted (and if so, available).
-
-# Check whether --with-jpeg or --without-jpeg was given.
-if test "${with_jpeg+set}" = set; then
-  withval="$with_jpeg"
-
-else
-  with_jpeg=yes
-fi
-
-sim_ac_jpegdev_avail=no
-
-if test x"$with_jpeg" != xno; then
-  if test x"$with_jpeg" != xyes; then
-    sim_ac_jpegdev_cppflags="-I${with_jpeg}/include"
-    sim_ac_jpegdev_ldflags="-L${with_jpeg}/lib"
-  fi
-
-  if test x"$sim_ac_linking_style" = xmswin; then
-    sim_ac_jpegdev_libs=jpeg.lib
-  else
-    sim_ac_jpegdev_libs=-ljpeg
-  fi
-
-  sim_ac_save_cppflags=$CPPFLAGS
-  sim_ac_save_ldflags=$LDFLAGS
-  sim_ac_save_libs=$LIBS
-
-  CPPFLAGS="$CPPFLAGS $sim_ac_jpegdev_cppflags"
-  LDFLAGS="$LDFLAGS $sim_ac_jpegdev_ldflags"
-  LIBS="$sim_ac_jpegdev_libs $LIBS"
-
-  echo "configure:2628: checking whether the libjpeg development system is available" >&5
-echo $ECHO_N "checking whether the libjpeg development system is available... $ECHO_C" >&6
-if test "${sim_cv_lib_jpegdev_avail+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-#line 2634 "configure"
-#include "confdefs.h"
-#include <stdio.h>
-                  #include <jpeglib.h>
-int
-main ()
-{
-(void)jpeg_read_header(0L, 0);
-  ;
-  return 0;
-}
-_ACEOF
-if { (eval echo configure:2646: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
-  sim_cv_lib_jpegdev_avail=yes
-else
-  echo "configure: failed program was:" >&5
-  cat conftest.$ac_ext >&5
-  sim_cv_lib_jpegdev_avail=no
-fi
-rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
-fi
-echo "configure:2655: result: $sim_cv_lib_jpegdev_avail" >&5
-echo "${ECHO_T}$sim_cv_lib_jpegdev_avail" >&6
-
-  if test x"$sim_cv_lib_jpegdev_avail" = xyes; then
-    sim_ac_jpegdev_avail=yes
-
-  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_jpegdev_cppflags"
-  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_jpegdev_ldflags"
-  SIMAGE_EXTRA_LIBS="$sim_ac_jpegdev_libs $SIMAGE_EXTRA_LIBS"
-  cat >>confdefs.h <<\EOF
-#define HAVE_JPEGLIB 1
-EOF
-
-  else
-    CPPFLAGS=$sim_ac_save_cppflags
-    LDFLAGS=$sim_ac_save_ldflags
-    LIBS=$sim_ac_save_libs
-
-  echo "configure: WARNING: libjpeg development system not found" >&2
-
-  fi
-fi
-
-if test x"$sim_ac_jpegdev_avail" = xyes; then
-  SIMAGE_JPEG_SUPPORT_TRUE=
-  SIMAGE_JPEG_SUPPORT_FALSE='#'
-else
-  SIMAGE_JPEG_SUPPORT_TRUE='#'
-  SIMAGE_JPEG_SUPPORT_FALSE=
-fi
-
-# **************************************************************************
 # Check if UNGIF support is wanted (and if so, available).
 
-echo "configure:2689: checking for X" >&5
+echo "configure:2598: checking for X" >&5
 echo $ECHO_N "checking for X... $ECHO_C" >&6
 
 # Check whether --with-x or --without-x was given.
@@ -2783,12 +2692,12 @@ if test "$ac_x_includes" = no; then
   # Guess where to find include files, by looking for Intrinsic.h.
   # First, try using that file with no special directory specified.
   cat >conftest.$ac_ext <<_ACEOF
-#line 2786 "configure"
+#line 2695 "configure"
 #include "confdefs.h"
 #include <X11/Intrinsic.h>
 _ACEOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:2791: \"$ac_try\") >&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:2700: \"$ac_try\") >&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.$ac_ext\$"`
 if test -z "$ac_err"; then
   # We can compile using X headers with no special include directory.
@@ -2814,7 +2723,7 @@ if test "$ac_x_libraries" = no; then
   ac_save_LIBS=$LIBS
   LIBS="-lXt $LIBS"
   cat >conftest.$ac_ext <<_ACEOF
-#line 2817 "configure"
+#line 2726 "configure"
 #include "confdefs.h"
 #include <X11/Intrinsic.h>
 int
@@ -2825,7 +2734,7 @@ XtMalloc (0)
   return 0;
 }
 _ACEOF
-if { (eval echo configure:2828: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:2737: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   LIBS=$ac_save_LIBS
 # We can link X programs with no special library path.
 ac_x_libraries=
@@ -2861,7 +2770,7 @@ fi
 fi # $with_x != no
 
 if test "$have_x" != yes; then
-  echo "configure:2864: result: $have_x" >&5
+  echo "configure:2773: result: $have_x" >&5
 echo "${ECHO_T}$have_x" >&6
   no_x=yes
 else
@@ -2871,7 +2780,7 @@ else
   # Update the cache value to reflect the command line values.
   ac_cv_have_x="have_x=yes \
 		ac_x_includes=$x_includes ac_x_libraries=$x_libraries"
-  echo "configure:2874: result: libraries $x_libraries, headers $x_includes" >&5
+  echo "configure:2783: result: libraries $x_libraries, headers $x_includes" >&5
 echo "${ECHO_T}libraries $x_libraries, headers $x_includes" >&6
 fi
 
@@ -2891,7 +2800,7 @@ if test "${with_ungif+set}" = set; then
 
 fi
 
-echo "configure:2894: checking use of libungif for gif support" >&5
+echo "configure:2803: checking use of libungif for gif support" >&5
 echo $ECHO_N "checking use of libungif for gif support... $ECHO_C" >&6
 
 if $sim_ac_want_libungif; then
@@ -2899,11 +2808,27 @@ if $sim_ac_want_libungif; then
   sim_ac_libungif_save_ldflags=$LDFLAGS
   sim_ac_libungif_save_libs=$LIBS
 
+  sim_ac_libungif_cppflags=
+  sim_ac_libungif_ldflags=
+  sim_ac_libungif_libs="-lungif"
+  if test x"$sim_ac_libungif_extrapath" != x; then
+    sim_ac_libungif_cppflags=-I$sim_ac_libungif_extrapath/include
+    sim_ac_libungif_ldflags=-L$sim_ac_libungif_extrapath/lib
+    CPPFLAGS="-I$sim_ac_libungif_extrapath/include $CPPFLAGS"
+    LDFLAGS="-L$sim_ac_libungif_extrapath/lib $LDFLAGS"
+  fi
+
+#  Also search in --prefix=... path
+#  if test x"$prefix" != xNONE; then
+#    $prefix/include
+#    $prefix/lib
+#  fi
+
 : ${sim_ac_have_libungif=false}
 sim_ac_libungif_save_libs=$LIBS
 LIBS="-lungif $LIBS"
 cat >conftest.$ac_ext <<_ACEOF
-#line 2906 "configure"
+#line 2831 "configure"
 #include "confdefs.h"
 #include <gif_lib.h>
 int
@@ -2914,7 +2839,7 @@ main ()
   return 0;
 }
 _ACEOF
-if { (eval echo configure:2917: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:2842: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   sim_ac_have_libungif=true
 else
   echo "configure: failed program was:" >&5
@@ -2924,11 +2849,7 @@ fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 LIBS=$sim_ac_libungif_save_libs
 if $sim_ac_have_libungif; then
-
-    sim_ac_libungif_cppflags=
-    sim_ac_libungif_ldflags=
-    sim_ac_libungif_libs="-lungif"
-
+  :
 else
 
     # libungif sometimes needs libX11
@@ -2953,7 +2874,7 @@ $sim_ac_have_libx11 || {
     LIBS="$sim_ac_libx11_libs $LIBS"
 
     cat >conftest.$ac_ext <<_ACEOF
-#line 2956 "configure"
+#line 2877 "configure"
 #include "confdefs.h"
 #include <X11/Xlib.h>
 int
@@ -2964,7 +2885,7 @@ main ()
   return 0;
 }
 _ACEOF
-if { (eval echo configure:2967: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:2888: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   sim_ac_have_libx11=true
 else
   echo "configure: failed program was:" >&5
@@ -2981,15 +2902,15 @@ rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 
 if $sim_ac_have_libx11; then
 
-      CPPFLAGS="$sim_ac_libx11_cppflags $sim_ac_libungif_save_cppflags"
-      LDFLAGS="$sim_ac_libx11_ldflags $sim_ac_libungif_save_ldflags"
+      CPPFLAGS="$sim_ac_libungif_cppflags $sim_ac_libx11_cppflags $sim_ac_libungif_save_cppflags"
+      LDFLAGS="$sim_ac_libungif_ldflags $sim_ac_libx11_ldflags $sim_ac_libungif_save_ldflags"
       LIBS="$sim_ac_libx11_libs $sim_ac_libungif_save_libs"
 
 : ${sim_ac_have_libungif=false}
 sim_ac_libungif_save_libs=$LIBS
 LIBS="-lungif $LIBS"
 cat >conftest.$ac_ext <<_ACEOF
-#line 2992 "configure"
+#line 2913 "configure"
 #include "confdefs.h"
 #include <gif_lib.h>
 int
@@ -3000,7 +2921,7 @@ main ()
   return 0;
 }
 _ACEOF
-if { (eval echo configure:3003: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:2924: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   sim_ac_have_libungif=true
 else
   echo "configure: failed program was:" >&5
@@ -3011,9 +2932,9 @@ rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 LIBS=$sim_ac_libungif_save_libs
 if $sim_ac_have_libungif; then
 
-        sim_ac_libungif_cppflags="$sim_ac_libx11_cppflags"
-        sim_ac_libungif_ldflags="$sim_ac_libx11_ldflags"
-        sim_ac_libungif_libs="-lungif $sim_ac_libx11_libs"
+        sim_ac_libungif_cppflags="$sim_ac_libungif_cppflags $sim_ac_libx11_cppflags"
+        sim_ac_libungif_ldflags="$sim_ac_libungif_ldflags $sim_ac_libx11_ldflags"
+        sim_ac_libungif_libs="$sim_ac_libungif_libs $sim_ac_libx11_libs"
 
 else
   :
@@ -3032,7 +2953,7 @@ fi
 
 if $sim_ac_want_libungif; then
   if $sim_ac_have_libungif; then
-    echo "configure:3035: result: success" >&5
+    echo "configure:2956: result: success" >&5
 echo "${ECHO_T}success" >&6
 
   cat >>confdefs.h <<\EOF
@@ -3047,14 +2968,14 @@ EOF
   LIBS="$sim_ac_libungif_libs $LIBS"
 
   else
-    echo "configure:3050: result: failure" >&5
+    echo "configure:2971: result: failure" >&5
 echo "${ECHO_T}failure" >&6
 
   echo "configure: WARNING: libungif will not be used" >&2
 
   fi
 else
-  echo "configure:3057: result: disabled" >&5
+  echo "configure:2978: result: disabled" >&5
 echo "${ECHO_T}disabled" >&6
 
   echo "configure: WARNING: libungif will not be used" >&2
@@ -3067,6 +2988,97 @@ if test x"$sim_ac_have_libungif" = xtrue; then
 else
   SIMAGE_UNGIF_SUPPORT_TRUE='#'
   SIMAGE_UNGIF_SUPPORT_FALSE=
+fi
+
+# **************************************************************************
+# Check if JPEG support is wanted (and if so, available).
+
+# Check whether --with-jpeg or --without-jpeg was given.
+if test "${with_jpeg+set}" = set; then
+  withval="$with_jpeg"
+
+else
+  with_jpeg=yes
+fi
+
+sim_ac_jpegdev_avail=no
+
+if test x"$with_jpeg" != xno; then
+  if test x"$with_jpeg" != xyes; then
+    sim_ac_jpegdev_cppflags="-I${with_jpeg}/include"
+    sim_ac_jpegdev_ldflags="-L${with_jpeg}/lib"
+  fi
+
+  if test x"$sim_ac_linking_style" = xmswin; then
+    sim_ac_jpegdev_libs=jpeg.lib
+  else
+    sim_ac_jpegdev_libs=-ljpeg
+  fi
+
+  sim_ac_save_cppflags=$CPPFLAGS
+  sim_ac_save_ldflags=$LDFLAGS
+  sim_ac_save_libs=$LIBS
+
+  CPPFLAGS="$CPPFLAGS $sim_ac_jpegdev_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_jpegdev_ldflags"
+  LIBS="$sim_ac_jpegdev_libs $LIBS"
+
+  echo "configure:3026: checking whether the libjpeg development system is available" >&5
+echo $ECHO_N "checking whether the libjpeg development system is available... $ECHO_C" >&6
+if test "${sim_cv_lib_jpegdev_avail+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line 3032 "configure"
+#include "confdefs.h"
+#include <stdio.h>
+                  #include <jpeglib.h>
+int
+main ()
+{
+(void)jpeg_read_header(0L, 0);
+  ;
+  return 0;
+}
+_ACEOF
+if { (eval echo configure:3044: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+  sim_cv_lib_jpegdev_avail=yes
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  sim_cv_lib_jpegdev_avail=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+fi
+echo "configure:3053: result: $sim_cv_lib_jpegdev_avail" >&5
+echo "${ECHO_T}$sim_cv_lib_jpegdev_avail" >&6
+
+  if test x"$sim_cv_lib_jpegdev_avail" = xyes; then
+    sim_ac_jpegdev_avail=yes
+
+  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_jpegdev_cppflags"
+  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_jpegdev_ldflags"
+  SIMAGE_EXTRA_LIBS="$sim_ac_jpegdev_libs $SIMAGE_EXTRA_LIBS"
+  cat >>confdefs.h <<\EOF
+#define HAVE_JPEGLIB 1
+EOF
+
+  else
+    CPPFLAGS=$sim_ac_save_cppflags
+    LDFLAGS=$sim_ac_save_ldflags
+    LIBS=$sim_ac_save_libs
+
+  echo "configure: WARNING: libjpeg development system not found" >&2
+
+  fi
+fi
+
+if test x"$sim_ac_jpegdev_avail" = xyes; then
+  SIMAGE_JPEG_SUPPORT_TRUE=
+  SIMAGE_JPEG_SUPPORT_FALSE='#'
+else
+  SIMAGE_JPEG_SUPPORT_TRUE='#'
+  SIMAGE_JPEG_SUPPORT_FALSE=
 fi
 
 # **************************************************************************
@@ -3102,13 +3114,13 @@ if test x"$with_tiff" != xno; then
   LDFLAGS="$LDFLAGS $sim_ac_tiffdev_ldflags"
   LIBS="$sim_ac_tiffdev_libs $LIBS"
 
-  echo "configure:3105: checking whether the libtiff development system is available" >&5
+  echo "configure:3117: checking whether the libtiff development system is available" >&5
 echo $ECHO_N "checking whether the libtiff development system is available... $ECHO_C" >&6
 if test "${sim_cv_lib_tiffdev_avail+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 3111 "configure"
+#line 3123 "configure"
 #include "confdefs.h"
 #include <tiffio.h>
 int
@@ -3119,7 +3131,7 @@ main ()
   return 0;
 }
 _ACEOF
-if { (eval echo configure:3122: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:3134: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   sim_cv_lib_tiffdev_avail=yes
 else
   echo "configure: failed program was:" >&5
@@ -3128,7 +3140,7 @@ else
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 fi
-echo "configure:3131: result: $sim_cv_lib_tiffdev_avail" >&5
+echo "configure:3143: result: $sim_cv_lib_tiffdev_avail" >&5
 echo "${ECHO_T}$sim_cv_lib_tiffdev_avail" >&6
 
   if test x"$sim_cv_lib_tiffdev_avail" = x"yes"; then
@@ -3201,13 +3213,13 @@ if test x"$with_zlib" != xno; then
   LDFLAGS="$LDFLAGS $sim_ac_zlib_ldflags"
   LIBS="$sim_ac_zlib_libs $LIBS"
 
-  echo "configure:3204: checking whether the zlib development system is available" >&5
+  echo "configure:3216: checking whether the zlib development system is available" >&5
 echo $ECHO_N "checking whether the zlib development system is available... $ECHO_C" >&6
 if test "${sim_cv_lib_zlib_avail+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 3210 "configure"
+#line 3222 "configure"
 #include "confdefs.h"
 #include <zlib.h>
 int
@@ -3218,7 +3230,7 @@ main ()
   return 0;
 }
 _ACEOF
-if { (eval echo configure:3221: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:3233: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   sim_cv_lib_zlib_avail=yes
 else
   echo "configure: failed program was:" >&5
@@ -3227,7 +3239,7 @@ else
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 fi
-echo "configure:3230: result: $sim_cv_lib_zlib_avail" >&5
+echo "configure:3242: result: $sim_cv_lib_zlib_avail" >&5
 echo "${ECHO_T}$sim_cv_lib_zlib_avail" >&6
 
   if test x"$sim_cv_lib_zlib_avail" = xyes; then
@@ -3279,13 +3291,13 @@ if test x"$with_png" != xno; then
   LDFLAGS="$LDFLAGS $sim_ac_pngdev_ldflags"
   LIBS="$sim_ac_pngdev_libs $LIBS"
 
-  echo "configure:3282: checking whether the libpng development system is available" >&5
+  echo "configure:3294: checking whether the libpng development system is available" >&5
 echo $ECHO_N "checking whether the libpng development system is available... $ECHO_C" >&6
 if test "${sim_cv_lib_pngdev_avail+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 3288 "configure"
+#line 3300 "configure"
 #include "confdefs.h"
 #include <png.h>
 int
@@ -3296,7 +3308,7 @@ main ()
   return 0;
 }
 _ACEOF
-if { (eval echo configure:3299: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:3311: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   sim_cv_lib_pngdev_avail=yes
 else
   echo "configure: failed program was:" >&5
@@ -3305,7 +3317,7 @@ else
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 fi
-echo "configure:3308: result: $sim_cv_lib_pngdev_avail" >&5
+echo "configure:3320: result: $sim_cv_lib_pngdev_avail" >&5
 echo "${ECHO_T}$sim_cv_lib_pngdev_avail" >&6
 
   if test x"$sim_cv_lib_pngdev_avail" = x"yes"; then
@@ -3949,10 +3961,10 @@ s,@SIMAGE_EXTRA_CPPFLAGS@,$SIMAGE_EXTRA_CPPFLAGS,;t t
 s,@SIMAGE_EXTRA_LDFLAGS@,$SIMAGE_EXTRA_LDFLAGS,;t t
 s,@SIMAGE_EXTRA_LIBS@,$SIMAGE_EXTRA_LIBS,;t t
 s,@SIMAGE_LIBNAME@,$SIMAGE_LIBNAME,;t t
-s,@SIMAGE_JPEG_SUPPORT_TRUE@,$SIMAGE_JPEG_SUPPORT_TRUE,;t t
-s,@SIMAGE_JPEG_SUPPORT_FALSE@,$SIMAGE_JPEG_SUPPORT_FALSE,;t t
 s,@SIMAGE_UNGIF_SUPPORT_TRUE@,$SIMAGE_UNGIF_SUPPORT_TRUE,;t t
 s,@SIMAGE_UNGIF_SUPPORT_FALSE@,$SIMAGE_UNGIF_SUPPORT_FALSE,;t t
+s,@SIMAGE_JPEG_SUPPORT_TRUE@,$SIMAGE_JPEG_SUPPORT_TRUE,;t t
+s,@SIMAGE_JPEG_SUPPORT_FALSE@,$SIMAGE_JPEG_SUPPORT_FALSE,;t t
 s,@SIMAGE_TIFF_SUPPORT_TRUE@,$SIMAGE_TIFF_SUPPORT_TRUE,;t t
 s,@SIMAGE_TIFF_SUPPORT_FALSE@,$SIMAGE_TIFF_SUPPORT_FALSE,;t t
 s,@SIMAGE_PNG_SUPPORT_TRUE@,$SIMAGE_PNG_SUPPORT_TRUE,;t t

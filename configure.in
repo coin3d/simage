@@ -98,20 +98,6 @@ fi
 AC_SUBST(SIMAGE_LIBNAME)
 
 # **************************************************************************
-# Check if JPEG support is wanted (and if so, available).
-
-SIM_CHECK_JPEGLIB([
-  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_jpegdev_cppflags"
-  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_jpegdev_ldflags"
-  SIMAGE_EXTRA_LIBS="$sim_ac_jpegdev_libs $SIMAGE_EXTRA_LIBS"
-  AC_DEFINE(HAVE_JPEGLIB)
-], [
-  AC_MSG_WARN(libjpeg development system not found)
-])
-
-AM_CONDITIONAL(SIMAGE_JPEG_SUPPORT, test x"$sim_ac_jpegdev_avail" = xyes)
-
-# **************************************************************************
 # Check if UNGIF support is wanted (and if so, available).
 
 SIM_AC_HAVE_LIBUNGIF_IFELSE([
@@ -127,6 +113,20 @@ SIM_AC_HAVE_LIBUNGIF_IFELSE([
 ])
 
 AM_CONDITIONAL(SIMAGE_UNGIF_SUPPORT, test x"$sim_ac_have_libungif" = xtrue)
+
+# **************************************************************************
+# Check if JPEG support is wanted (and if so, available).
+
+SIM_CHECK_JPEGLIB([
+  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_jpegdev_cppflags"
+  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_jpegdev_ldflags"
+  SIMAGE_EXTRA_LIBS="$sim_ac_jpegdev_libs $SIMAGE_EXTRA_LIBS"
+  AC_DEFINE(HAVE_JPEGLIB)
+], [
+  AC_MSG_WARN(libjpeg development system not found)
+])
+
+AM_CONDITIONAL(SIMAGE_JPEG_SUPPORT, test x"$sim_ac_jpegdev_avail" = xyes)
 
 # **************************************************************************
 # Check if TIFF support is wanted (and if so, available).

@@ -970,75 +970,6 @@ fi
 ])
 
 # Usage:
-#  SIM_CHECK_JPEGLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-#
-#  Try to find the JPEG development system. If it is found, these
-#  shell variables are set:
-#
-#    $sim_ac_jpegdev_cppflags (extra flags the compiler needs for jpeg lib)
-#    $sim_ac_jpegdev_ldflags  (extra flags the linker needs for jpeg lib)
-#    $sim_ac_jpegdev_libs     (link libraries the linker needs for jpeg lib)
-#
-#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-#  In addition, the variable $sim_ac_jpegdev_avail is set to "yes" if
-#  the jpeg development system is found.
-#
-#
-# Author: Morten Eriksen, <mortene@sim.no>.
-
-AC_DEFUN([SIM_CHECK_JPEGLIB], [
-
-AC_ARG_WITH(
-  [jpeg],
-  AC_HELP_STRING([--with-jpeg=DIR],
-                 [include support for JPEG images [default=yes]]),
-  [],
-  [with_jpeg=yes])
-
-sim_ac_jpegdev_avail=no
-
-if test x"$with_jpeg" != xno; then
-  if test x"$with_jpeg" != xyes; then
-    sim_ac_jpegdev_cppflags="-I${with_jpeg}/include"
-    sim_ac_jpegdev_ldflags="-L${with_jpeg}/lib"
-  fi
-
-  if test x"$sim_ac_linking_style" = xmswin; then
-    sim_ac_jpegdev_libs=jpeg.lib
-  else
-    sim_ac_jpegdev_libs=-ljpeg
-  fi
-
-  sim_ac_save_cppflags=$CPPFLAGS
-  sim_ac_save_ldflags=$LDFLAGS
-  sim_ac_save_libs=$LIBS
-
-  CPPFLAGS="$CPPFLAGS $sim_ac_jpegdev_cppflags"
-  LDFLAGS="$LDFLAGS $sim_ac_jpegdev_ldflags"
-  LIBS="$sim_ac_jpegdev_libs $LIBS"
-
-  AC_CACHE_CHECK([whether the libjpeg development system is available],
-    sim_cv_lib_jpegdev_avail,
-    [AC_TRY_LINK([#include <stdio.h>
-                  #include <jpeglib.h>],
-                 [(void)jpeg_read_header(0L, 0);],
-                 [sim_cv_lib_jpegdev_avail=yes],
-                 [sim_cv_lib_jpegdev_avail=no])])
-
-  if test x"$sim_cv_lib_jpegdev_avail" = xyes; then
-    sim_ac_jpegdev_avail=yes
-    $1
-  else
-    CPPFLAGS=$sim_ac_save_cppflags
-    LDFLAGS=$sim_ac_save_ldflags
-    LIBS=$sim_ac_save_libs
-    $2
-  fi
-fi
-])
-
-
-# Usage:
 #  SIM_AC_CHECK_UNGIFLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 #
 #  Try to find the libungif development system. If it is found, these
@@ -1145,20 +1076,33 @@ if $sim_ac_want_libungif; then
   sim_ac_libungif_save_cppflags=$CPPFLAGS
   sim_ac_libungif_save_ldflags=$LDFLAGS
   sim_ac_libungif_save_libs=$LIBS
-  SIM_AC_TRY_LINK_LIBUNGIF_IFELSE([
-    sim_ac_libungif_cppflags=
-    sim_ac_libungif_ldflags=
-    sim_ac_libungif_libs="-lungif"
-  ], [
+
+  sim_ac_libungif_cppflags=
+  sim_ac_libungif_ldflags=
+  sim_ac_libungif_libs="-lungif"
+  if test x"$sim_ac_libungif_extrapath" != x; then
+    sim_ac_libungif_cppflags=-I$sim_ac_libungif_extrapath/include
+    sim_ac_libungif_ldflags=-L$sim_ac_libungif_extrapath/lib
+    CPPFLAGS="-I$sim_ac_libungif_extrapath/include $CPPFLAGS"
+    LDFLAGS="-L$sim_ac_libungif_extrapath/lib $LDFLAGS"
+  fi
+
+#  Also search in --prefix=... path
+#  if test x"$prefix" != xNONE; then
+#    $prefix/include
+#    $prefix/lib
+#  fi
+
+  SIM_AC_TRY_LINK_LIBUNGIF_IFELSE([], [
     # libungif sometimes needs libX11
     SIM_AC_HAVE_LIBX11_IFELSE([
-      CPPFLAGS="$sim_ac_libx11_cppflags $sim_ac_libungif_save_cppflags"
-      LDFLAGS="$sim_ac_libx11_ldflags $sim_ac_libungif_save_ldflags"
+      CPPFLAGS="$sim_ac_libungif_cppflags $sim_ac_libx11_cppflags $sim_ac_libungif_save_cppflags"
+      LDFLAGS="$sim_ac_libungif_ldflags $sim_ac_libx11_ldflags $sim_ac_libungif_save_ldflags"
       LIBS="$sim_ac_libx11_libs $sim_ac_libungif_save_libs"
       SIM_AC_TRY_LINK_LIBUNGIF_IFELSE([
-        sim_ac_libungif_cppflags="$sim_ac_libx11_cppflags"
-        sim_ac_libungif_ldflags="$sim_ac_libx11_ldflags"
-        sim_ac_libungif_libs="-lungif $sim_ac_libx11_libs"
+        sim_ac_libungif_cppflags="$sim_ac_libungif_cppflags $sim_ac_libx11_cppflags"
+        sim_ac_libungif_ldflags="$sim_ac_libungif_ldflags $sim_ac_libx11_ldflags"
+        sim_ac_libungif_libs="$sim_ac_libungif_libs $sim_ac_libx11_libs"
       ])
     ])
   ])
@@ -1590,6 +1534,75 @@ else
   ifelse([$2], , :, [$2])
 fi
 ]) # SIM_AC_HAVE_LIBX11_IFELSE
+
+
+# Usage:
+#  SIM_CHECK_JPEGLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#
+#  Try to find the JPEG development system. If it is found, these
+#  shell variables are set:
+#
+#    $sim_ac_jpegdev_cppflags (extra flags the compiler needs for jpeg lib)
+#    $sim_ac_jpegdev_ldflags  (extra flags the linker needs for jpeg lib)
+#    $sim_ac_jpegdev_libs     (link libraries the linker needs for jpeg lib)
+#
+#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
+#  In addition, the variable $sim_ac_jpegdev_avail is set to "yes" if
+#  the jpeg development system is found.
+#
+#
+# Author: Morten Eriksen, <mortene@sim.no>.
+
+AC_DEFUN([SIM_CHECK_JPEGLIB], [
+
+AC_ARG_WITH(
+  [jpeg],
+  AC_HELP_STRING([--with-jpeg=DIR],
+                 [include support for JPEG images [default=yes]]),
+  [],
+  [with_jpeg=yes])
+
+sim_ac_jpegdev_avail=no
+
+if test x"$with_jpeg" != xno; then
+  if test x"$with_jpeg" != xyes; then
+    sim_ac_jpegdev_cppflags="-I${with_jpeg}/include"
+    sim_ac_jpegdev_ldflags="-L${with_jpeg}/lib"
+  fi
+
+  if test x"$sim_ac_linking_style" = xmswin; then
+    sim_ac_jpegdev_libs=jpeg.lib
+  else
+    sim_ac_jpegdev_libs=-ljpeg
+  fi
+
+  sim_ac_save_cppflags=$CPPFLAGS
+  sim_ac_save_ldflags=$LDFLAGS
+  sim_ac_save_libs=$LIBS
+
+  CPPFLAGS="$CPPFLAGS $sim_ac_jpegdev_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_jpegdev_ldflags"
+  LIBS="$sim_ac_jpegdev_libs $LIBS"
+
+  AC_CACHE_CHECK([whether the libjpeg development system is available],
+    sim_cv_lib_jpegdev_avail,
+    [AC_TRY_LINK([#include <stdio.h>
+                  #include <jpeglib.h>],
+                 [(void)jpeg_read_header(0L, 0);],
+                 [sim_cv_lib_jpegdev_avail=yes],
+                 [sim_cv_lib_jpegdev_avail=no])])
+
+  if test x"$sim_cv_lib_jpegdev_avail" = xyes; then
+    sim_ac_jpegdev_avail=yes
+    $1
+  else
+    CPPFLAGS=$sim_ac_save_cppflags
+    LDFLAGS=$sim_ac_save_ldflags
+    LIBS=$sim_ac_save_libs
+    $2
+  fi
+fi
+])
 
 
 # Usage:
