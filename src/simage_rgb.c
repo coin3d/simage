@@ -51,9 +51,11 @@ simage_rgb_load(const char * filename,
       if (simage_rgb_read_line(od, i, buf+bpr*i) == 0) {
         /* rgberror will be set by simage_rgb_read_line() */
         free(buf);
+        simage_rgb_close(od);
         return NULL;
       }
     }
+    simage_rgb_close(od);
     return buf;
   }
   return NULL;
