@@ -1,0 +1,187 @@
+
+[InstallShield Wizard]
+iDate=0
+iTime=0
+Flag=fe000000
+ISX.EXE Size=679936
+ISX.EXE Date=11:21:52AM  4/8/1999
+ISX.EXE Ver=2.1.2.62
+SETUP.EXE Size=45312
+SETUP.EXE Date=9:12:24AM  3/23/1999
+SETUP.EXE Ver=3.0.111.0
+SETUP.INS Size=81342
+SETUP.INS Date=11:26:40AM  4/8/1999
+SETUP.INS Ver=Not available
+_INST16.EX_ Size=283522
+_INST16.EX_ Date=9:12:22AM  3/23/1999
+_INST16.EX_ Ver=Not available
+_INST32I.EX_ Size=294079
+_INST32I.EX_ Date=9:12:22AM  3/23/1999
+_INST32I.EX_ Ver=Not available
+ISDEPEND.INI Size=294079
+ISDEPEND.INI Date=9:12:22AM  3/23/1999
+ISDEPEND.INI Ver=Not available
+SWDEPEND.INI Size=294079
+SWDEPEND.INI Date=9:12:22AM  3/23/1999
+SWDEPEND.INI Ver=Not available
+ICOMP.EXE Size=119808
+ICOMP.EXE Date=9:12:24AM  3/23/1999
+ICOMP.EXE Ver=3.00.062
+SPLIT.EXE Size=90624
+SPLIT.EXE Date=9:12:24AM  3/23/1999
+SPLIT.EXE Ver=3.00.060
+PACKLIST.EXE Size=87552
+PACKLIST.EXE Date=9:12:24AM  3/23/1999
+PACKLIST.EXE Ver=3.00.060
+Version=2.12
+DevTool=Generic Windows
+Platform=Win32
+DisksBuilt=1
+DisksDir=simage\120MB\
+TabsVisit=1111111111111111100011
+LangNum=451
+LangDir=LANG\ENG\
+
+[VisualDesign]
+AppName=simage
+AppExe=
+AppExeFile=
+Version=42.43.44
+Company=Systems in Motion
+Title=simage
+TitleType=1
+BackgrndBmp=
+BackgrndAlign=4
+Backgrnd=1
+BackgrndColor=10
+Uninstall=1
+UninstallChecked=1
+Silent=1
+SmsMode=0
+
+[Types]
+Types=3
+Type1Components=3
+Type1Name=Custom
+Type1ComponentList=1 2 3 
+Type2Components=3
+Type2Name=Typical
+Type2ComponentList=1 2 3 
+Type3Components=2
+Type3Name=Compact
+Type3ComponentList=1 2 
+
+[Components]
+Components=3
+Component1Groups=1
+Component1Name=Application Files
+Component1Description=Application files needed to run the application
+Component1GroupList=1 
+Component2Groups=0
+Component2Name=Help and Tutorial Files
+Component2Description=Help and tutorial needed for online help
+Component2GroupList=
+Component3Groups=0
+Component3Name=Sample Files
+Component3Description=Sample data files
+Component3GroupList=
+
+[Groups]
+Groups=1
+Group1Size=392876
+Group1Files=2
+Group1Name=libs
+Group1Dir=<INSTALLDIR>
+Group1Update=0
+Group1TargetOS=-1
+Group1File1=C:\home\install\lib\simage0.lib
+Group1File2=C:\home\install\lib\simage0.dll
+
+[Sequence]
+DestinationLocationDir=<ProgramFilesDir>\SIM\simage
+DatabaseLocationDir=<INSTALLDIR>\data
+SelectProgramFolderName=simage
+WelcomeMessage=1
+WelcomeMessageFile=
+UserInformation=1
+DestinationLocation=1
+SetupType=1
+CustomSetup=1
+CustomSetupGroupSel=1
+SelectProgramFolder=1
+BeginFileTransfer=1
+ProgressBar=1
+Billboards=1
+BillboardsFile=C:\PROGRA~1\INSTAL~1\INSTAL~1.12\Redist\
+SetupComplete=1
+SetupCompleteExec=
+SetupCompleteExecParam=
+SetupCompleteExecReadme=
+
+[RegEntries]
+Reg1Path=HKEY_CLASSES_ROOT
+Reg1Val1Type=0
+Reg1Val1Name=(Default)
+Reg1Val1Data=(value not set)
+Reg1Vals=1
+Reg2Path=HKEY_CURRENT_USER
+Reg2Val1Type=0
+Reg2Val1Name=(Default)
+Reg2Val1Data=(value not set)
+Reg2Vals=1
+Reg3Path=HKEY_LOCAL_MACHINE
+Reg3Val1Type=0
+Reg3Val1Name=(Default)
+Reg3Val1Data=(value not set)
+Reg3Vals=1
+Reg4Path=HKEY_USERS
+Reg4Val1Type=0
+Reg4Val1Name=(Default)
+Reg4Val1Data=(value not set)
+Reg4Vals=1
+Reg5Path=HKEY_CURRENT_CONFIG
+Reg5Val1Type=0
+Reg5Val1Name=(Default)
+Reg5Val1Data=(value not set)
+Reg5Vals=1
+Reg6Path=HKEY_DYN_DATA
+Reg6Val1Type=0
+Reg6Val1Name=(Default)
+Reg6Val1Data=(value not set)
+Reg6Vals=1
+Regs=6
+
+[Registry]
+
+[VisualBasic]
+PRJFile=
+
+[SysIniFiles]
+File1=WIN.INI
+Section1=
+Key1=
+Value1=
+File2=SYSTEM.INI
+Section2=
+Key2=
+Value2=
+File3=PROTOCOL.INI
+Section3=
+Key3=
+Value3=
+IniFiles=3
+
+[Autoexec]
+PathDir=<INSTALLDIR>\libs
+ShareLocks=
+ShareFiles=
+Command=
+
+[CopyToFloppy]
+DriveOption=
+DestinationPath=
+DestinationPathOneFile=
+Password=
+
+[Uninstall]
+UserUninstall=0
