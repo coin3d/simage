@@ -55,41 +55,110 @@ if test x"$am_cv_prog_cc_stdc" = xno; then
 fi
 
 # **************************************************************************
-# Library version control.
-
-# Making releases:
-#   SIMAGE_MICRO_VERSION += 1;
-#   SIMAGE_INTERFACE_AGE += 1;
-#   SIMAGE_BINARY_AGE += 1;
-# if any functions have been added, set SIMAGE_INTERFACE_AGE to 0.
-# if backwards compatibility has been broken,
-# set SIMAGE_BINARY_AGE _and_ SIMAGE_INTERFACE_AGE to 0.
+#
+# Library versioning
+# ==================
+#
+# When making releases, follow these rules:
+#
+#  * if there has been made any incompatible changes to the ABI¹:
+#    SIMAGE_MAJOR_VERSION += 1, SIMAGE_MINOR_VERSION = 0,
+#    SIMAGE_MICRO_VERSION = 0.
+#
+#    (If you don't know if the changes that have been made since last
+#    release is binary incompatible with the last ABI, you shouldn't
+#    be making releases.)
+#
+#  * if there has been made additions to the API², but the ABI
+#    is still backwards compatible: SIMAGE_MAJOR_VERSION unchanged,
+#    SIMAGE_MINOR_VERSION += 1, SIMAGE_MICRO_VERSION = 0.
+#
+#  * for bugfix releases and other changes which do not change the interface
+#    at all, keep SIMAGE_MAJOR_VERSION and SIMAGE_MINOR_VERSION unchanged
+#    and SIMAGE_MICRO_VERSION += 1.
+#
+# Note that our MAJOR.MINOR.MICRO versioning scheme differs somewhat from
+# the idea of library versioning applied by Libtool. According to Libtool,
+# libraries should be versioned according to a CURRENT.AGE.REVISION scheme.
+# Here CURRENT is supposed to be increased by 1 each time the API changes,
+# and AGE increased by 1 along with CURRENT each time the API changes in a
+# way which keeps the ABI backwards compatible. If compatibility is broken,
+# AGE is set to 0 (while CURRENT is still increased by 1). The REVISION
+# number has the same semantics as our MICRO number.
+#
+# To cooperate in a painless way with Libtool, we choose to "convert" our
+# MAJOR.MINOR.MICRO scheme to Libtool's idea of versioning like this:
+#
+#    * Libtool's CURRENT number is increased when our MAJOR number is
+#      increased.
+#
+#    * Libtool's AGE number is always kept at 0 (i.e. we will never make
+#      ABI compatible releases where we increase the MAJOR number).
+#
+#    * Libtool's REVISION number will be a combination of our MINOR and
+#      MICRO number, like this: REVISION = MINOR * 100 + MICRO, so we get
+#      a REVISION number monotonically increasing in the way we want.
+#
+#      Note that this little "simplification" has two important
+#      ramifications: 1) we can't make more than 99 bugfix-releases of
+#      the library unless a MINOR or MAJOR version increase has happened,
+#      2) we need to keep a release history log to map from Libtool numbers
+#      back to our "native" MACRO.MINOR.MICRO versioning, as Libtool encodes
+#      the filename of the library with it's own CURRENT.AGE.REVISION scheme.
+#      This way it'll still be easy for us to find out which version a
+#      bugreport belongs to: we must tell the user to check out the full
+#      filename of the library, then we can just look up the MAJOR.MINOR.MICRO
+#      number from the release history log below.
+#
+#
+# **************************************************************************
+# CVS maintenance
+# ===============
+#
+# (to be written)
+#
+# **************************************************************************
+# Release history
+# ===============
+#
+# (no official releases yet)
+#
+# **************************************************************************
+# Footnotes
+# =========
+#
+# ¹ Application Binary Interface. This covers any publicly exposed
+#   functions, function signatures, structures (and classes for C++
+#   code). If any functions has been removed or changed, or if any
+#   structures/classes has been modified in any way, the ABI has
+#   most likely been made incompatible with earlier releases.
+#
+# ² Application Programmer's Interface. This is the functions and data
+#   structures/classes exposed to the application programmer for
+#   interaction with the library.
+#
+# **************************************************************************
 
 SIMAGE_MAJOR_VERSION=0
 SIMAGE_MINOR_VERSION=9
-SIMAGE_MICRO_VERSION=0
-SIMAGE_INTERFACE_AGE=0
-SIMAGE_BINARY_AGE=0
+SIMAGE_MICRO_VERSION=99
 SIMAGE_VERSION=$SIMAGE_MAJOR_VERSION.$SIMAGE_MINOR_VERSION.$SIMAGE_MICRO_VERSION
+VERSION=$SIMAGE_VERSION
 
 AC_SUBST(SIMAGE_MAJOR_VERSION)
 AC_SUBST(SIMAGE_MINOR_VERSION)
 AC_SUBST(SIMAGE_MICRO_VERSION)
 AC_SUBST(SIMAGE_VERSION)
-AC_SUBST(SIMAGE_INTERFACE_AGE)
-AC_SUBST(SIMAGE_BINARY_AGE)
 
-# libtool versioning
-LT_RELEASE=$SIMAGE_MAJOR_VERSION.$SIMAGE_MINOR_VERSION
-LT_CURRENT=`expr $SIMAGE_MICRO_VERSION - $SIMAGE_INTERFACE_AGE`
-LT_REVISION=$SIMAGE_INTERFACE_AGE
-LT_AGE=`expr $SIMAGE_BINARY_AGE - $SIMAGE_INTERFACE_AGE`
-AC_SUBST(LT_RELEASE)
+
+LT_CURRENT=$SIMAGE_MAJOR_VERSION
+LT_AGE=0
+LT_REVISION=`expr $SIMAGE_MINOR_VERSION \* 100 + $SIMAGE_MICRO_VERSION`
+
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
 
-VERSION=$SIMAGE_VERSION
 
 #  These are for include/simage.h.
 
