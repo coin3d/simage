@@ -1,0 +1,66 @@
+#!/usr/bin/make -f
+############################################################################
+# rules -- debian package make rules
+#
+# Authors:
+#   Lars J. Aas <larsa@coin3d.org>
+
+source: clean
+	@echo "> make debian/$@";
+
+build: build-arch
+	@echo "> make debian/$@";
+
+# optional
+build-arch:
+	@echo "> make debian/$@"; \
+	$(SHELL) configure --prefix=/usr --disable-simageguile;
+	$(MAKE);
+
+# optional
+# build-indep:
+# 	@echo "> make debian/$@";
+
+binary: binary-arch
+	@echo "> make debian/$@";
+
+binary-arch:
+	@echo "> make debian/$@";
+	@installdir=debian/tmp; \
+	rm -rf $installdir; \
+	mkdir $$installdir; \
+	mkdir $$installdir/DEBIAN; \
+	cp debian/* $$installdir/DEBIAN/; \
+	$(MAKE) DESTDIR=`pwd`/$$installdir install;
+	if test `pwd | grep -c simage@SIMAGE_MAJOR_VERSION@-dev` -eq 0; then \
+	  ( cd debian/tmp/usr; rm -rf include share bin ); \
+	  dpkg-gencontrol -psimage@SIMAGE_MAJOR_VERSION@; \
+	else \
+	  dpkg-gencontrol -psimage@SIMAGE_MAJOR_VERSION@-dev; \
+	fi;
+#	echo >/dev/null dpkg-shlibdeps debian/tmp/usr/lib/libsimage.so;
+	dpkg-deb -b debian/tmp;
+	if test `pwd | grep -c simage@SIMAGE_MAJOR_VERSION@-dev` -eq 0; then \
+	  mv debian/tmp.deb ../simage@SIMAGE_MAJOR_VERSION@_@VERSION@-1_$(DEB_BUILD_ARCH).deb; \
+	else \
+	  mv debian/tmp.deb ../simage@SIMAGE_MAJOR_VERSION@-dev_@VERSION@-1_$(DEB_BUILD_ARCH).deb; \
+	fi
+
+binary-indep:
+	@echo "> make debian/$@";
+
+# optional
+# get-orig-source:
+# 	@echo "> make debian/$@";
+
+clean::
+	@echo "> make debian/$@";
+	@if test -f Makefile; then \
+	  $(MAKE) distclean; \
+	else \
+	  :; \
+	fi;
+	rm -rf debian/tmp
+	rm -f debian/files
+
+.PHONY: build

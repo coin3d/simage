@@ -1,0 +1,8 @@
+This package was debianized by the Coin Developer Team
+<coin-support@coin3d.org> on Tue, Aug 14 16:37:00 CEST 2001
+
+Copyright:
+
+All files in this library are public domain, except simage_rgb.cpp
+which is Copyright (c) Mark J Kilgard <mjk@nvidia.com>.
+

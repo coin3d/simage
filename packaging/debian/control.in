@@ -1,0 +1,16 @@
+Source: simage@SIMAGE_MAJOR_VERSION@
+Maintainer: Lars J. Aas <larsa@coin3d.org>
+Section: libs
+Priority: optional
+Standards-Version: 3.5.6
+
+Package: simage@SIMAGE_MAJOR_VERSION@
+Architecture: any
+Description: image file format library abstraction layer
+ Abstraction layer for misc. image file format libraries.
+
+Package: simage@SIMAGE_MAJOR_VERSION@-dev
+Architecture: any
+Description: image file format library abstraction layer
+ Abstraction layer for misc. image file format libraries.
+
