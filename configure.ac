@@ -55,13 +55,14 @@ if $BUILD_WITH_MSVC; then
 fi
 
 # Figure out if we want a static or shared library.
-case $enable_static in
+case ${enable_static-no} in
 true | yes) SIMAGE_STATIC=true
             enable_shared=no ;; # fix --enable-static problem.  20041021 larsa
 *)          SIMAGE_STATIC=false ;;
 esac
 
-case $enable_shared in
+case ${enable_shared-default} in
+default)    ;;
 true | yes) SIMAGE_STATIC=false ;;
 *)          SIMAGE_STATIC=true ;;
 esac
