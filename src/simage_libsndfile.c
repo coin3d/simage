@@ -110,26 +110,12 @@ libsndfile_stream_get(s_stream * stream, void * buffer, int * size, s_params * p
       context->tempbuffer = (double *)malloc(itemssize);
     }
 
-    if (params != NULL) {
-      int pos;
-      if (s_params_get(params, "position", S_INTEGER_PARAM_TYPE, &pos, NULL)) {
-        int newpos;
-        newpos = sf_seek(context->file, pos, SEEK_SET);
-      }
-    }
-
     intbuffer = (short int*)buffer;
     itemsread = sf_read_double(context->file, context->tempbuffer, items);
     for (i=0; i<itemsread; i++) {
       intbuffer[i] = context->tempbuffer[i] * (double)32767.0;
     }
 
-    if (params != NULL) {
-      int pos;
-      pos = sf_seek(context->file, 0, SEEK_SET);
-      s_params_set(params, "position", S_INTEGER_PARAM_TYPE, pos, NULL);
-    }
-    
     if (itemsread > 0) {
       *size = itemsread * 2;
       return buffer;
@@ -153,6 +139,31 @@ libsndfile_stream_close(s_stream * stream)
   }
   libsndfile_cleanup_context(context);
   free(context);
+}
+
+int 
+libsndfile_stream_seek(s_stream * stream, int offset, int whence, 
+                        s_params *params)
+{
+  libsndfile_context *context;
+  context = (libsndfile_context *)s_stream_context_get(stream);
+  if (context != NULL) {
+    return sf_seek(context->file, offset, whence);
+  }
+  else
+    return -1;
+}
+
+int 
+libsndfile_stream_tell(s_stream * stream, s_params *params)
+{
+  libsndfile_context *context;
+  context = (libsndfile_context *)s_stream_context_get(stream);
+  if (context != NULL) {
+    return sf_seek(context->file, 0, SEEK_CUR);
+  }
+  else
+    return -1;
 }
 
 #endif /* SIMAGE_LIBSNDFILE_SUPPORT */

@@ -125,6 +125,10 @@
 /* version 1.4 added API for stream I/O */
 #define SIMAGE_VERSION_1_4
 
+/* version 1.5 added API for seeking and getting ("telling") the 
+   current position in a stream */
+#define SIMAGE_VERSION_1_5
+
 /* These are available for adding or omitting features based on simage
  * version numbers in "client" sources. NB: they are automatically
  * synchronized with the settings in configure.in when configure is
@@ -399,6 +403,13 @@ extern "C" {
                                             s_stream_put_func * put,
                                             s_stream_close_func * close);
 
+  /*****************************************************************/
+  /**** NOTE: new methods for simage version 1.5 *******************/
+  /*****************************************************************/
+
+  typedef int s_stream_seek_func(s_stream *, int, int, s_params *);
+  typedef int s_stream_tell_func(s_stream *, s_params *);
+
   enum { 
     SIMAGE_SEEK_SET = 0,
     SIMAGE_SEEK_CUR = 1,
@@ -410,6 +421,18 @@ extern "C" {
                                    s_params * params /* | NULL */);
   SIMAGE_DLL_API int s_stream_tell(s_stream *stream,
                                    s_params * params /* | NULL */);
+
+  SIMAGE_DLL_API void s_stream_importer_add_ex(s_stream_open_func * open,
+                                               s_stream_get_func * get,
+                                               s_stream_seek_func * seek,
+                                               s_stream_tell_func * tell,
+                                               s_stream_close_func * close);
+  
+  SIMAGE_DLL_API void s_stream_exporter_add_ex(s_stream_create_func * create,
+                                               s_stream_put_func * put,
+                                               s_stream_seek_func * seek,
+                                               s_stream_tell_func * tell,
+                                               s_stream_close_func * close);
 
 #ifdef __cplusplus
 }

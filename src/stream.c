@@ -25,6 +25,8 @@ struct simage_stream_s {
   s_stream_get_func * get;
   s_stream_put_func * put;
   s_stream_close_func * close;
+  s_stream_seek_func * seek;
+  s_stream_tell_func * tell;
   
   s_params * params;
   void *context;
@@ -33,6 +35,8 @@ struct simage_stream_s {
 struct simage_stream_importer {
   s_stream_open_func * open;
   s_stream_get_func * get;
+  s_stream_seek_func * seek;
+  s_stream_tell_func * tell;
   s_stream_close_func * close;  
 
   struct simage_stream_importer * next;
@@ -41,6 +45,8 @@ struct simage_stream_importer {
 struct simage_stream_exporter {
   s_stream_create_func * create;
   s_stream_put_func * put;
+  s_stream_seek_func * seek;
+  s_stream_tell_func * tell;
   s_stream_close_func * close;  
   
   struct simage_stream_exporter * next;
@@ -57,14 +63,18 @@ add_internal_importers(void)
   static int first = 1;
   if (first) {
 #ifdef SIMAGE_OGGVORBIS_SUPPORT
-    s_stream_importer_add(oggvorbis_reader_stream_open,
-                          oggvorbis_reader_stream_get, 
-                          oggvorbis_reader_stream_close);
+    s_stream_importer_add_ex(oggvorbis_reader_stream_open,
+                             oggvorbis_reader_stream_get, 
+                             oggvorbis_reader_stream_seek,
+                             oggvorbis_reader_stream_tell,
+                             oggvorbis_reader_stream_close);
 #endif
 #ifdef SIMAGE_LIBSNDFILE_SUPPORT
-    s_stream_importer_add(libsndfile_stream_open,
-                          libsndfile_stream_get, 
-                          libsndfile_stream_close);
+    s_stream_importer_add_ex(libsndfile_stream_open,
+                             libsndfile_stream_get, 
+                             libsndfile_stream_seek,
+                             libsndfile_stream_tell,
+                             libsndfile_stream_close);
 #endif
     first = 0;
   }                
@@ -108,6 +118,8 @@ s_stream_open(const char * filename, s_params * params)
   stream->open = imp->open;
   stream->get = imp->get;
   stream->close = imp->close;
+  stream->seek = imp->seek;
+  stream->tell = imp->tell;
 
   return stream;
 }
@@ -137,6 +149,8 @@ s_stream_create(const char * filename, s_params * params /* | NULL */)
   stream->create = exp->create;
   stream->put = exp->put;
   stream->close = exp->close;
+  stream->seek = exp->seek;
+  stream->tell = exp->tell;
   strcpy(stream->filename, filename);
   return stream;
 }
@@ -192,8 +206,18 @@ s_stream_context_set(s_stream *stream, void *context)
 
 void 
 s_stream_importer_add(s_stream_open_func * open,
-                     s_stream_get_func * get,
-                     s_stream_close_func * close)
+                      s_stream_get_func * get,
+                      s_stream_close_func * close)
+{
+  s_stream_importer_add_ex(open, get, NULL, NULL, close);
+}
+
+void 
+s_stream_importer_add_ex(s_stream_open_func * open,
+                         s_stream_get_func * get,
+                         s_stream_seek_func * seek,
+                         s_stream_tell_func * tell,
+                         s_stream_close_func * close)
 {
   struct simage_stream_importer * last, * imp = importers;
   last = NULL;
@@ -205,6 +229,8 @@ s_stream_importer_add(s_stream_open_func * open,
   imp->open = open;
   imp->get = get;
   imp->close = close;
+  imp->seek = seek;
+  imp->tell = tell;
   imp->next = NULL;
 
   if (last == NULL) {
@@ -215,8 +241,18 @@ s_stream_importer_add(s_stream_open_func * open,
 
 void 
 s_stream_exporter_add(s_stream_create_func * create,
-                     s_stream_put_func * put,
-                     s_stream_close_func * close)
+                      s_stream_put_func * put,
+                      s_stream_close_func * close)
+{
+  s_stream_exporter_add_ex(create, put, NULL, NULL, close);
+}
+
+void 
+s_stream_exporter_add_ex(s_stream_create_func * create,
+                         s_stream_put_func * put,
+                         s_stream_seek_func * seek,
+                         s_stream_tell_func * tell,
+                         s_stream_close_func * close)
 {
   struct simage_stream_exporter * last, * exp = exporters;
   last = NULL;
@@ -228,6 +264,8 @@ s_stream_exporter_add(s_stream_create_func * create,
   exp->create = create;
   exp->put = put;
   exp->close = close;
+  exp->seek = seek;
+  exp->tell = tell;
   exp->next = NULL;
 
   if (last == NULL) {
@@ -240,11 +278,17 @@ int
 s_stream_seek(s_stream * stream, int offset, int whence,
               s_params * params /* | NULL */)
 {
-  return -1;
+  if (stream->seek)
+    return stream->seek(stream, offset, whence, params);
+  else
+    return -1;
 }
 
 int s_stream_tell(s_stream *stream,
                   s_params * params /* | NULL */)
 {
-  return -1;
+  if (stream->tell)
+    return stream->tell(stream, params);
+  else
+    return -1;
 }

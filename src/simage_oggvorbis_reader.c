@@ -220,4 +220,37 @@ oggvorbis_reader_stream_close(s_stream * stream)
   }
 }
 
+int
+oggvorbis_reader_stream_seek(s_stream * stream, int offset, int whence,
+                             s_params * params)
+{
+  oggvorbis_reader_context *context;
+
+  context = (oggvorbis_reader_context *)s_stream_context_get(stream);
+
+  if (context != NULL) {
+    if (whence == SIMAGE_SEEK_SET)
+      return ov_pcm_seek(&context->vorbisfile, offset);
+    else
+      return -1;
+    /* FIXME: Support the whence parameter. 2003-03-10 thammer */
+  }
+  else
+    return -1;
+}
+
+int
+oggvorbis_reader_stream_tell(s_stream * stream, s_params * params)
+{
+  oggvorbis_reader_context *context;
+
+  context = (oggvorbis_reader_context *)s_stream_context_get(stream);
+
+  if (context != NULL) {
+    return ov_pcm_tell(&context->vorbisfile);
+  }
+  else
+    return -1;
+}
+
 #endif /* SIMAGE_OGGVORBIS_SUPPORT */
