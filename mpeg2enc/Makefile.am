@@ -38,6 +38,8 @@ MPEG2ENCSOURCES = \
 libmpeg2enc_la_SOURCES = \
 	$(MPEG2ENCSOURCES)
 
+# conditional to avoid a make warning when it's not in use
+if BUILD_WITH_MSVC
 mpeg2enc_lst_SOURCES = \
 	$(MPEG2ENCSOURCES)
 
@@ -47,5 +49,6 @@ mpeg2enc.lst: Makefile $(mpeg2enc_lst_OBJECTS)
 	  $(mpeg2enc_lst_OBJECTS); \
 	$(CC) /LST:mpeg2enc.lst \
 	  $(mpeg2enc_lst_OBJECTS);
+endif
 
 # EOF **********************************************************************

@@ -147,8 +147,9 @@ libmpeg2enc_la_SOURCES = \
 	$(MPEG2ENCSOURCES)
 
 
-mpeg2enc_lst_SOURCES = \
-	$(MPEG2ENCSOURCES)
+# conditional to avoid a make warning when it's not in use
+@BUILD_WITH_MSVC_TRUE@mpeg2enc_lst_SOURCES = \
+@BUILD_WITH_MSVC_TRUE@	$(MPEG2ENCSOURCES)
 
 subdir = mpeg2enc
 mkinstalldirs = $(SHELL) $(top_srcdir)/cfg/mkinstalldirs
@@ -161,11 +162,15 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I$(top_builddir) -I$(top_builddir)/include
 CPPFLAGS = @CPPFLAGS@
 mpeg2enc_lst_AR = $(AR) cru
 mpeg2enc_lst_LIBADD = 
-am_mpeg2enc_lst_OBJECTS = api.$(OBJEXT) conform.$(OBJEXT) \
-fdctref.$(OBJEXT) idct.$(OBJEXT) motion.$(OBJEXT) predict.$(OBJEXT) \
-putbits.$(OBJEXT) puthdr.$(OBJEXT) putmpg.$(OBJEXT) putpic.$(OBJEXT) \
-putseq.$(OBJEXT) putvlc.$(OBJEXT) quantize.$(OBJEXT) ratectl.$(OBJEXT) \
-readpic.$(OBJEXT) stats.$(OBJEXT) transfrm.$(OBJEXT) writepic.$(OBJEXT)
+@BUILD_WITH_MSVC_TRUE@am_mpeg2enc_lst_OBJECTS = api.$(OBJEXT) \
+@BUILD_WITH_MSVC_TRUE@ conform.$(OBJEXT) fdctref.$(OBJEXT) \
+@BUILD_WITH_MSVC_TRUE@ idct.$(OBJEXT) motion.$(OBJEXT) predict.$(OBJEXT) \
+@BUILD_WITH_MSVC_TRUE@ putbits.$(OBJEXT) puthdr.$(OBJEXT) \
+@BUILD_WITH_MSVC_TRUE@ putmpg.$(OBJEXT) putpic.$(OBJEXT) \
+@BUILD_WITH_MSVC_TRUE@ putseq.$(OBJEXT) putvlc.$(OBJEXT) \
+@BUILD_WITH_MSVC_TRUE@ quantize.$(OBJEXT) ratectl.$(OBJEXT) \
+@BUILD_WITH_MSVC_TRUE@ readpic.$(OBJEXT) stats.$(OBJEXT) \
+@BUILD_WITH_MSVC_TRUE@ transfrm.$(OBJEXT) writepic.$(OBJEXT)
 mpeg2enc_lst_OBJECTS = $(am_mpeg2enc_lst_OBJECTS)
 AR = ar
 LTLIBRARIES = $(noinst_LTLIBRARIES)
@@ -431,12 +436,12 @@ mostlyclean-am: mostlyclean-compile mostlyclean-generic \
 	tags uninstall uninstall-am
 
 
-mpeg2enc.lst: Makefile $(mpeg2enc_lst_OBJECTS)
-	@echo "Linking mpeg2enc.lst..."; \
-	echo $(CC) /LST:mpeg2enc.lst \
-	  $(mpeg2enc_lst_OBJECTS); \
-	$(CC) /LST:mpeg2enc.lst \
-	  $(mpeg2enc_lst_OBJECTS);
+@BUILD_WITH_MSVC_TRUE@mpeg2enc.lst: Makefile $(mpeg2enc_lst_OBJECTS)
+@BUILD_WITH_MSVC_TRUE@	@echo "Linking mpeg2enc.lst..."; \
+@BUILD_WITH_MSVC_TRUE@	echo $(CC) /LST:mpeg2enc.lst \
+@BUILD_WITH_MSVC_TRUE@	  $(mpeg2enc_lst_OBJECTS); \
+@BUILD_WITH_MSVC_TRUE@	$(CC) /LST:mpeg2enc.lst \
+@BUILD_WITH_MSVC_TRUE@	  $(mpeg2enc_lst_OBJECTS);
 
 # EOF **********************************************************************
 

@@ -59,6 +59,8 @@ libsimage@SUFFIX@inc_HEADERS = \
 # **************************************************************************
 # for MS Windows (MSVC++) LIB/DLL linkage
 
+# conditional to avoid a make warning when it's not in use
+if BUILD_WITH_MSVC
 simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: Makefile \
   $(simage@SUFFIX@_lib_OBJECTS) $(simage@SUFFIX@_lib_DEPENDENCIES)
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
@@ -70,6 +72,7 @@ simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: Makefile \
 	$(CC) $(LDFLAGS) $(LIBFLAGS) \
 	  $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS) \
 	  $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_LIBADD) $(LIBS);
+endif
 
 # **************************************************************************
 
@@ -77,7 +80,7 @@ install-exec-local:
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
 	for ext in dll pdb; do \
 	  file="$$basename.$$ext"; \
-	  if test -s "$$file"; then \
+	  if test -f "$$file"; then \
 	    $(mkinstalldirs) "$(DESTDIR)$(bindir)"; \
 	    echo " $(INSTALL_PROGRAM)" "$$file" "$(DESTDIR)$(bindir)/$$file"; \
 	    $(INSTALL_PROGRAM) "$$file" "$(DESTDIR)$(bindir)/$$file"; \
@@ -88,7 +91,7 @@ install-data-local:
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
 	for ext in lib; do \
 	  file="$$basename.$$ext"; \
-	  if test -s "$$file"; then \
+	  if test -f "$$file"; then \
 	    $(mkinstalldirs) "$(DESTDIR)$(libdir)"; \
 	    echo " $(INSTALL_DATA)" "$$file" "$(DESTDIR)$(libdir)/$$file"; \
 	    $(INSTALL_DATA) "$$file" "$(DESTDIR)$(libdir)/$$file"; \
