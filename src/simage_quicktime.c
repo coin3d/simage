@@ -5,7 +5,6 @@
 #include <QuickTime/ImageCompression.h>    // for image loading 
 #include <QuickTime/QuickTimeComponents.h> // for file type support
 
-#include <libgen.h>    
 #include <stdlib.h>
 #include <sys/param.h>  // for MAXPATHLEN
 
@@ -38,6 +37,82 @@ static int quicktimeerror = ERR_NO_ERROR;
 
 // -------------------- internal functions ---------------------------
 
+// Mac OS 10.1 doesn't have basename() and dirname(), so we
+// have to use our own.
+// FIXME #1: Same problem exists in Coin, so this should be
+// shared code between Coin and simage.
+// FIXME #2: Use system dirname() and basename() on Mac OS 10.2 
+// kyrah 20030723
+
+static char *
+cc_basename(const char * path)
+{
+  static char base[MAXPATHLEN];
+  const char * sptr;
+  const char * eptr;
+
+  if (path == NULL || *path == '\0') return NULL;
+
+  /* Get rid of trailing '/'s */ 
+  eptr = path + strlen(path) - 1;
+  while (*eptr == '/' && path <= eptr) eptr--;
+
+  if (eptr == path && *eptr == '/') {
+    strcpy(base, "/");
+    return(base);
+  }
+
+  /* Go to beginning of base */
+  sptr = eptr;
+  while (sptr > path && *(sptr - 1) != '/') sptr--;
+
+  if (eptr - sptr + 1 > sizeof(base)) {
+    return(NULL);
+  }
+
+  strncpy(base, sptr, eptr - sptr + 1);
+  base[eptr - sptr + 1] = '\0';
+  fprintf(stderr, "basename: %s\n", base);
+  return(base);
+}
+
+
+static char *
+cc_dirname(const char * path) 
+{
+  static char dirpath [MAXPATHLEN];
+  const char * ptr;
+
+  if (path == NULL || *path == '\0') return NULL;
+
+  /* Get rid of trailing '/'s */ 
+  ptr = path + strlen(path) - 1;
+  while (*ptr == '/' && path <= ptr) ptr--;
+  
+  /* Skip last element in path */
+  while (*ptr != '/' && path <= ptr) ptr--;
+  
+  /* Path is only '/' */ 
+  if (ptr == path && *ptr == '/') {
+    strcpy(dirpath, "/");
+    return(dirpath);
+  }
+
+  /* No slashes in path... */
+  if (ptr == path) {
+    strcpy(dirpath, ".");
+    return(dirpath);
+  }
+
+  if ((unsigned int)(ptr - path + 1) > sizeof(dirpath)) {
+    return(NULL);
+  }
+
+  strncpy(dirpath, path, ptr - path + 1);
+  dirpath[ptr - path + 1] = '\0';
+  return(dirpath);
+}
+
 
 /* Check if there is a valid QuickTime importer that can read file.
  * The following will be tried:
@@ -60,10 +135,10 @@ get_importer(const char * filename, GraphicsImportComponent * c)
   int e = noErr;
 
   realpath(filename, fullpath);
-  FSPathMakeRef((char *)dirname(fullpath), &path, false);
+  FSPathMakeRef((char *)cc_dirname(fullpath), &path, false);
 
   // convert char * to UniChar *
-  cfstr = CFStringCreateWithCString(0, basename(fullpath), 
+  cfstr = CFStringCreateWithCString(0, cc_basename(fullpath), 
           CFStringGetSystemEncoding());
   len = CFStringGetLength(cfstr);
   ustr = malloc(len * sizeof(UniChar)); 
@@ -142,11 +217,11 @@ create_file(const char * filename, FSSpec * fss)
   char fullpath [MAXPATHLEN];
 
   realpath(filename, fullpath);
-  e = FSPathMakeRef((char *)dirname(fullpath), &path, false);
+  e = FSPathMakeRef((char *)cc_dirname(fullpath), &path, false);
   if (e != noErr) return 0;
 
   // convert char * to UniChar *
-  cfstr = CFStringCreateWithCString(0, basename(fullpath), 
+  cfstr = CFStringCreateWithCString(0, cc_basename(fullpath), 
           CFStringGetSystemEncoding());
   len = CFStringGetLength(cfstr);
   ustr = malloc(len * sizeof(UniChar)); 
@@ -212,7 +287,6 @@ rgba_to_argb(uint32_t * px, int width, int height)
   for(i = 0; i < (height * width); i++)
       *(px+i) = ((*(px+i) & 0xFFFFFF00 ) >> 8) | ((*(px+i) << 24) & 0xFF000000);
 }
-
 
 
 // -------------------- public functions ---------------------------
