@@ -96,6 +96,7 @@ SIMAGE_VERSION = @SIMAGE_VERSION@
 VERSION = @VERSION@
 install_sh = @install_sh@
 simage_configure_date = @simage_configure_date@
+simage_srcdir_dos = @simage_srcdir_dos@
 win_includedir = @win_includedir@
 win_libdir = @win_libdir@
 
@@ -953,8 +954,10 @@ install-libsimageincHEADERS: $(libsimageinc_HEADERS)
 	@list='$(libsimageinc_HEADERS)'; for p in $$list; do \
 	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
 	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimageincdir)/$$f"; \
-	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimageincdir)/$$f; \
+	  if cmp -s $$d$$p $(DESTDIR)$(libsimageincdir)/$$f; then :; else \
+	    echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimageincdir)/$$f"; \
+	    $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimageincdir)/$$f; \
+	  fi; \
 	done
 
 uninstall-libsimageincHEADERS:
@@ -1141,7 +1144,9 @@ simage@SIMAGE_MAJOR_VERSION@.dll: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDE
 	   rm -f simage@SIMAGE_MAJOR_VERSION@.dll; \
 	   touch simage@SIMAGE_MAJOR_VERSION@.dll; \
 	 else \
-	   $(CC) @DLLFLAGS@ /out:simage@SIMAGE_MAJOR_VERSION@.dll `echo $(libsimage_la_OBJECTS) | sed 's%\.lo%.obj%g'` $(libsimage_la_LIBADD) $(LIBS); \
+	   $(CC) @DLLFLAGS@ /out:simage@SIMAGE_MAJOR_VERSION@.dll \
+	     `echo $(libsimage_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
+	     $(libsimage_la_LIBADD) $(LIBS); \
 	 fi
 
 install-exec-hook: simage@SIMAGE_MAJOR_VERSION@.dll

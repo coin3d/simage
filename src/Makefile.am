@@ -92,7 +92,9 @@ simage@SIMAGE_MAJOR_VERSION@.dll: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDE
 	   rm -f simage@SIMAGE_MAJOR_VERSION@.dll; \
 	   touch simage@SIMAGE_MAJOR_VERSION@.dll; \
 	 else \
-	   $(CC) @DLLFLAGS@ /out:simage@SIMAGE_MAJOR_VERSION@.dll `echo $(libsimage_la_OBJECTS) | sed 's%\.lo%.obj%g'` $(libsimage_la_LIBADD) $(LIBS); \
+	   $(CC) @DLLFLAGS@ /out:simage@SIMAGE_MAJOR_VERSION@.dll \
+	     `echo $(libsimage_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
+	     $(libsimage_la_LIBADD) $(LIBS); \
 	 fi
 
 
