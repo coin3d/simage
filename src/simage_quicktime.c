@@ -5,9 +5,9 @@
 #include <QuickTime/ImageCompression.h>    // for image loading 
 #include <QuickTime/QuickTimeComponents.h> // for file type support
 
-#include <unistd.h>     // for getcwd
+#include <libgen.h>    
+#include <stdlib.h>
 #include <sys/param.h>  // for MAXPATHLEN
-
 
 #define ERR_NO_ERROR    0   // no error
 #define ERR_OPEN        1   // could not open file
@@ -54,22 +54,16 @@ get_importer(const char * filename, GraphicsImportComponent * c)
   FSRef path;
   FSRef file;
   char fullpath [MAXPATHLEN];
-  char * img_filename;  // the actual filename
-  char * img_path;      // the path to the image file
   CFStringRef cfstr;
   UniChar * ustr;
   int len;
   int e = noErr;
 
   realpath(filename, fullpath);
-  
-  img_filename = (char *) basename(fullpath);
-  img_path = (char *) dirname(fullpath);
-
-  FSPathMakeRef(img_path, &path, false);
+  FSPathMakeRef((char *)dirname(fullpath), &path, false);
 
   // convert char * to UniChar *
-  cfstr = CFStringCreateWithCString(0, img_filename, 
+  cfstr = CFStringCreateWithCString(0, basename(fullpath), 
           CFStringGetSystemEncoding());
   len = CFStringGetLength(cfstr);
   ustr = malloc(len * sizeof(UniChar)); 
@@ -151,17 +145,13 @@ create_file(const char * filename, FSSpec * fss)
   char * img_path;      // the path to the image file
 
   realpath(filename, fullpath);
-  
-  img_filename = (char *) basename(fullpath);
-  img_path = (char *) dirname(fullpath);
-
-  e = FSPathMakeRef(img_path, &path, false);
+  e = FSPathMakeRef((char *)dirname(fullpath), &path, false);
   if (e != noErr) {
     return 0;
   } 
 
   // convert char * to UniChar *
-  cfstr = CFStringCreateWithCString(0, img_filename, 
+  cfstr = CFStringCreateWithCString(0, basename(fullpath), 
           CFStringGetSystemEncoding());
   len = CFStringGetLength(cfstr);
   ustr = malloc(len * sizeof(UniChar)); 
