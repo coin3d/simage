@@ -275,6 +275,8 @@ build-files/$(project)$(major).dsp: $(Project)-$(VERSION) 3rdparty
 	cp $(project)$(major).dsp $(project)$(major).dsp.orig; \
 	cat $(project)$(major).dsp.orig | \
 	  sed -e "s%$$wbuilddir%\$$\(COIN3DDIR\)%g" \
+	      -e "s%/out:\"%/out:\"\.\.\\\\\.\.\\\\bin\\\\%g" \
+	      -e "s%$(project)$(major)d\.dll\"%$(project)$(major)d\.dll\" /pdb:\"\.\.\\\\\.\.\\\\bin\\\\$(project)$(major)d.pdb%g" \
 	      -e "s%\"\.\\\\include\"%\"\.\"%g" \
 	      -e "s%\\\\3rdparty\\\\dist\\\\%\\\\3rdparty\\\\%g" \
 	      -e "s%\.\.\\\\source\\\\simage-$$version%\.\.\\\\\.\.\\\\source\\\\simage-$(major)%g" \
