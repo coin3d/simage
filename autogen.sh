@@ -17,7 +17,7 @@ fi
 
 AUTOCONF_VER=2.49b  # Autoconf from CVS
 AUTOMAKE_VER=1.4a   # Automake from CVS
-LIBTOOL_VER=1.3.5
+LIBTOOL_VER=1.3.5   # Latest Libtool release
 
 MACRODIR=cfg/m4
 AUTOMAKE_ADD=
@@ -27,7 +27,7 @@ if test x"$1" = x"--clean"; then
   find . -name Makefile.in | xargs rm
   exit
 elif test x"$1" = x"--add"; then
-  AUTOMAKE_ADD=""
+  AUTOMAKE_ADD="--add-missing --foreign --copy"
 fi
 
 echo "Checking installed configuration tools..."
