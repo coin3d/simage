@@ -16,18 +16,19 @@
 
 #define WIDTH 640
 #define HEIGHT 480
+#define NUMFRAMES 30
 
-void error_cb(const char *text)
+void error_cb(void * userdata, const char *text)
 {
   printf("c2m Error  : %s\n", text);
 };
 
-void warning_cb(const char *text)
+void warning_cb(void * userdata, const char *text)
 {
   printf("c2m Warning: %s\n", text);
 };
 
-int  progress_cb(float sub, int current_frame, int num_frames)
+int  progress_cb(void * userdata, float sub, int current_frame, int num_frames)
 {
   printf("c2m Progress: sub: %3.0f, curr: %d, tot:%d\n", sub*100.0, current_frame, num_frames);
   return 1;
@@ -73,17 +74,22 @@ main(
 
   s_params * params = s_params_create();
   s_params_set(params, 
-               S_INTEGER_PARAM_TYPE, "width", WIDTH,
-               S_INTEGER_PARAM_TYPE, "height", HEIGHT,
-               S_FUNCTION_PARAM_TYPE, "error callback", error_cb,
-               S_FUNCTION_PARAM_TYPE, "warning callback", warning_cb,
-               S_FUNCTION_PARAM_TYPE, "progress callback", progress_cb,
-               S_PARAM_END);
+               "width", S_INTEGER_PARAM_TYPE, WIDTH,
+               "height", S_INTEGER_PARAM_TYPE, HEIGHT,
+               "num frames", S_INTEGER_PARAM_TYPE, NUMFRAMES,
+               "error callback", S_FUNCTION_PARAM_TYPE, error_cb,
+               "warning callback", S_FUNCTION_PARAM_TYPE, warning_cb,
+               "progress callback", S_FUNCTION_PARAM_TYPE, progress_cb,
+               /* use to specify userdata for all callbacks */
+               "callback userdata", S_POINTER_PARAM_TYPE, NULL,
+               NULL);
                
   s_movie * movie = s_movie_create(argv[1], params);
   assert(movie);
 
-  int imax=30;
+  s_image * image = NULL;
+
+  int imax = NUMFRAMES;
   for (int i=0; i<imax; i++)
   { 
     cpos = camera->position.getValue();
@@ -92,16 +98,19 @@ main(
     camera->position.setValue(x, y, z);
 
     renderer->render(root);
+
+    /* just save jpeg images for debugging */
     sprintf(fname, "renderarea%0d.jpg", i+10);
     ret = renderer->writeToFile(fname, "jpg");
 
-    s_image * image = s_image_create(WIDTH, HEIGHT, 3, renderer->getBuffer());
-    
+    if (image == NULL) {
+      image = s_image_create(WIDTH, HEIGHT, 3, renderer->getBuffer());
+    }
+    else s_image_set(image, WIDTH, HEIGHT, 3, renderer->getBuffer(), 0);
     s_movie_put_image(movie, image, NULL);
-    
-    s_image_destroy(image);    
   };
-
+  
+  if (image) s_image_destroy(image);    
   s_movie_close(movie);
   s_movie_destroy(movie);
   return 0;

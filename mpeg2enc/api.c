@@ -14,7 +14,8 @@ SimpegWrite_encode(const char * output_filename,
                    const char * parameter_filename,
                    SimpegWrite_error_cb error_cb, 
                    SimpegWrite_warning_cb warning_cb,
-                   SimpegWrite_progress_cb progress_cb); 
+                   SimpegWrite_progress_cb progress_cb,
+                   void * cbuserdata);
 
 
 static void * 
@@ -23,7 +24,8 @@ SimpegWrite_begin_encode(const char * output_filename,
                          SimpegWrite_error_cb error_cb, 
                          SimpegWrite_warning_cb warning_cb,
                          SimpegWrite_progress_cb progress_cb,
-                         int w, int h); 
+                         void * cbuserdata,
+                         int w, int h, int numframes); 
 
 static int 
 SimpegWrite_encode_bitmap(void * handle, const unsigned char * rgb_buffer);
@@ -38,9 +40,11 @@ mpeg2enc_movie_create(const char * filename, s_movie * movie, s_params * params)
   void * handle;
   const char * statfile;
   void * cb0, *cb1, *cb2;
-  int w, h;
+  void * cbdata;
+  int w, h, numframes;
 
   w = h = 0;
+  numframes = 0;
   
   statfile = NULL;
   cb0 = NULL;
@@ -48,32 +52,40 @@ mpeg2enc_movie_create(const char * filename, s_movie * movie, s_params * params)
   cb2 = NULL;
 
   s_params_get(params, 
-               S_STRING_PARAM_TYPE, "statfile", &statfile, 0);
+               "statfile", S_STRING_PARAM_TYPE, &statfile, NULL);
 
   s_params_get(params, 
-               S_FUNCTION_PARAM_TYPE, "error callback", &cb0, 0);
+               "error callback", S_FUNCTION_PARAM_TYPE, &cb0, NULL);
 
   s_params_get(params, 
-               S_FUNCTION_PARAM_TYPE, "warning callback", &cb1, 0);
+               "warning callback", S_FUNCTION_PARAM_TYPE, &cb1, NULL);
 
   s_params_get(params, 
-               S_FUNCTION_PARAM_TYPE, "progress callback", &cb2, 0);
+               "progress callback", S_FUNCTION_PARAM_TYPE, &cb2, NULL);
 
   s_params_get(params,
-               S_INTEGER_PARAM_TYPE, "width", &w, 0);
+               "callback userdata", S_POINTER_PARAM_TYPE, &cbdata, NULL);
+  
+  s_params_get(params,
+               "width", S_INTEGER_PARAM_TYPE, &w, NULL);
+  
+  s_params_get(params,
+              "height", S_INTEGER_PARAM_TYPE, &h, NULL);
 
   s_params_get(params,
-              S_INTEGER_PARAM_TYPE, "height", &h, 0);
+               "num frames", S_INTEGER_PARAM_TYPE, &numframes, NULL);
+
 
   handle = SimpegWrite_begin_encode(filename, 
                                     statfile, 
                                     (SimpegWrite_error_cb) cb0, 
                                     (SimpegWrite_warning_cb) cb1, 
                                     (SimpegWrite_progress_cb) cb2,
-                                    w, h);
+                                    cbdata,
+                                    w, h, numframes);
   if (handle == NULL) return 0;
   
-  s_params_set(s_movie_params(movie), S_POINTER_PARAM_TYPE, "mpeg2enc handle", handle, 0);
+  s_params_set(s_movie_params(movie), "mpeg2enc handle", S_POINTER_PARAM_TYPE, handle, 0);
   return 1;
 }
 
@@ -82,7 +94,7 @@ mpeg2enc_movie_put(s_movie * movie, s_image * image, s_params * params)
 {
   void * handle;
 
-  if (s_params_get(s_movie_params(movie), S_POINTER_PARAM_TYPE, "mpeg2enc handle", &handle, 0)) {
+  if (s_params_get(s_movie_params(movie), "mpeg2enc handle", S_POINTER_PARAM_TYPE, &handle, 0)) {
     return SimpegWrite_encode_bitmap(handle, s_image_data(image));
   }
   return 0;
@@ -92,7 +104,7 @@ void
 mpeg2enc_movie_close(s_movie * movie)
 {
   void * handle;
-  if (s_params_get(s_movie_params(movie), S_POINTER_PARAM_TYPE, "mpeg2enc handle", &handle, 0)) {
+  if (s_params_get(s_movie_params(movie), "mpeg2enc handle", S_POINTER_PARAM_TYPE, &handle, 0)) {
     SimpegWrite_end_encode(handle);
   }
 }
@@ -101,7 +113,8 @@ mpeg2enc_movie_close(s_movie * movie)
 /* private prototypes */
 static void init(simpeg_encode_context * context);
 static void init_context_data(simpeg_encode_context * context);
-static void readparmfile(simpeg_encode_context * context, const char *fname, int w, int h);
+static void readparmfile(simpeg_encode_context * context, const char *fname, 
+                         int w, int h, int numframes);
 static void readquantmat(simpeg_encode_context * context);
 static void cleanup(simpeg_encode_context * context);
 
@@ -114,7 +127,8 @@ SimpegWrite_encode(const char *output_filename,
                    const char *parameter_filename, 
                    SimpegWrite_error_cb error_cb, 
                    SimpegWrite_warning_cb warning_cb,
-                   SimpegWrite_progress_cb progress_cb)
+                   SimpegWrite_progress_cb progress_cb,
+                   void * cbuserdata)
 {
   simpeg_encode_context * context;
   
@@ -137,6 +151,7 @@ SimpegWrite_encode(const char *output_filename,
   context->SimpegWrite_error_cb_user = error_cb;
   context->SimpegWrite_warning_cb_user = warning_cb;
   context->SimpegWrite_progress_cb_user = progress_cb;
+  context->cbuserdata = cbuserdata;
 
   context->SimpegWrite_current_frame = 0;
 
@@ -147,7 +162,7 @@ SimpegWrite_encode(const char *output_filename,
 
 
   /* read parameter file */
-  readparmfile(context, parameter_filename, 0, 0);
+  readparmfile(context, parameter_filename, 0, 0, 0);
 
   /* read quantization matrices */
   readquantmat(context);
@@ -180,7 +195,8 @@ SimpegWrite_begin_encode(const char *output_filename,
                          SimpegWrite_error_cb error_cb, 
                          SimpegWrite_warning_cb warning_cb,
                          SimpegWrite_progress_cb progress_cb,
-                         int w, int h)
+                         void * cbuserdata,
+                         int w, int h, int numframes)
 {
   int i;
   simpeg_encode_context * context;
@@ -202,6 +218,7 @@ SimpegWrite_begin_encode(const char *output_filename,
   context->SimpegWrite_error_cb_user = error_cb;
   context->SimpegWrite_warning_cb_user = warning_cb;
   context->SimpegWrite_progress_cb_user = progress_cb;
+  context->cbuserdata = cbuserdata;
 
   context->SimpegWrite_current_frame = 0;
   context->SimpegWrite_current_input_frame = 0;
@@ -214,7 +231,7 @@ SimpegWrite_begin_encode(const char *output_filename,
   context->bufbuf = NULL;
 
   /* read parameter file */
-  readparmfile(context, parameter_filename, w, h);
+  readparmfile(context, parameter_filename, w, h, numframes);
 
   /* read quantization matrices */
   readquantmat(context);
@@ -382,7 +399,7 @@ void SimpegWrite_error(simpeg_encode_context * context, const char *text, ...)
     vsprintf(buf, text, p);
     va_end(p);
     
-    context->SimpegWrite_error_cb_user(buf);
+    context->SimpegWrite_error_cb_user(context->cbuserdata, buf);
   };
   longjmp(context->jmpbuf, 1);
 };
@@ -397,14 +414,14 @@ void SimpegWrite_warning(simpeg_encode_context * context,const char *text, ...)
     vsprintf(buf, text, p);
     va_end(p);
     
-    context->SimpegWrite_warning_cb_user(buf);
+    context->SimpegWrite_warning_cb_user(context->cbuserdata, buf);
   };
 };
 
 int SimpegWrite_progress(simpeg_encode_context * context, float sub, int current_frame, int num_frames)
 {
   if (context->SimpegWrite_progress_cb_user != NULL)
-    return context->SimpegWrite_progress_cb_user(sub, current_frame, num_frames);
+    return context->SimpegWrite_progress_cb_user(context->cbuserdata, sub, current_frame, num_frames);
   else
     return 1;
 };
@@ -493,7 +510,7 @@ void simpeg_encode_error(simpeg_encode_context * context, char *text)
 
 static void 
 readparmfile(simpeg_encode_context * context,
-             const char *fname, int width, int height)
+             const char *fname, int width, int height, int numframes)
 {
   int i;
   int h, m, s, f;
@@ -517,6 +534,7 @@ readparmfile(simpeg_encode_context * context,
     fgets(line,254,fd); sscanf(line,"%s",context->statname);
     fgets(line,254,fd); sscanf(line,"%d",&context->inputtype);
     fgets(line,254,fd); sscanf(line,"%d",&context->nframes);
+    if (numframes > 0) context->nframes = numframes;
     fgets(line,254,fd); sscanf(line,"%d",&context->frame0);
     fgets(line,254,fd); sscanf(line,"%d:%d:%d:%d",&h,&m,&s,&f);
     fgets(line,254,fd); sscanf(line,"%d",&context->N);
@@ -631,6 +649,7 @@ readparmfile(simpeg_encode_context * context,
     strcpy(context->statname, "%");
     context->inputtype = 3;
     context->nframes = 10;
+    if (numframes > 0) context->nframes = numframes;
     context->frame0 = 0;
     h = m = s = f = 0; 
 

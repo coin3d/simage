@@ -139,7 +139,7 @@ s_image_save(const char * filename, s_image * image,
   if (params != NULL) {
     s_params_get(params, S_STRING_PARAM_TYPE, 
                  "file type", &ext,
-                 S_PARAM_END);
+                 NULL);
   }
   if (ext == NULL) {
     ext = (char*) strrchr(filename, '.');

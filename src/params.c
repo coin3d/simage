@@ -177,9 +177,9 @@ s_params_set(s_params * params, ...)
   va_list ap;
   va_start(ap, params);
    
-  type = va_arg(ap, int);
-  while (type) {
-    name = va_arg(ap, const char*);
+  name = va_arg(ap, const char*);
+  while (name) {
+    type = va_arg(ap, int);
     argerr = 0;
     switch (type) {
     case S_INTEGER_PARAM_TYPE:
@@ -207,7 +207,7 @@ s_params_set(s_params * params, ...)
     if (argerr) break; /* whoa, get out of here */
 
     /* process next token */
-    type = va_arg(ap, int);
+    name = va_arg(ap, const char*);
   }
   va_end(ap);
 }
@@ -226,9 +226,9 @@ s_params_get(s_params * params, ...)
   
   numok = 0;
 
-  type = va_arg(ap, int);
-  while (type) {
-    name = va_arg(ap, const char*);
+  name = va_arg(ap, const char*);
+  while (name) {
+    type = va_arg(ap, int);
     argerr = 0;
     switch (type) {
     case S_INTEGER_PARAM_TYPE:
@@ -291,7 +291,7 @@ s_params_get(s_params * params, ...)
     }
     if (argerr) break;
     /* process next token */
-    type = va_arg(ap, int);
+    name = va_arg(ap, const char*);
   }
   va_end(ap);
   return numok;

@@ -154,6 +154,7 @@ typedef struct {
   SimpegWrite_error_cb SimpegWrite_error_cb_user;
   SimpegWrite_warning_cb SimpegWrite_warning_cb_user;
   SimpegWrite_progress_cb SimpegWrite_progress_cb_user;
+  void * cbuserdata;
 
   /* rate control variables */
   int Xi, Xp, Xb, r, d0i, d0p, d0b;

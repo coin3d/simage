@@ -236,7 +236,6 @@ extern "C" {
   SIMAGE_DLL_API s_params * s_movie_params(s_movie * movie);
 
   enum {
-    S_PARAM_END = 0,
     S_INTEGER_PARAM_TYPE,
     S_BOOL_PARAM_TYPE = S_INTEGER_PARAM_TYPE,
     S_FLOAT_PARAM_TYPE,
