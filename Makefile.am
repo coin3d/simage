@@ -23,6 +23,8 @@ EXTRA_DIST = \
 	cfg/wrapmsvc.exe \
 	cfg/gendsp.sh \
 	build/simage.spec.in \
+	docs/announcement-1_6_0.txt \
+	docs/announcement-1_6_1.txt \
 	src/simage_jpeg_reader.icc \
 	src/simage_jpeg_writer.icc \
 	README.WIN32

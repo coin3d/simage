@@ -1,0 +1,52 @@
+simage 1.6.1 Released
+=====================
+
+Preamble
+--------
+
+simage is a multiplatform library capable of loading, manipulating and
+saving images, creating and saving movies (AVI and mpeg), and loading
+audio. The simage library relies heavily on 3rd party libraries to
+perform these tasks.
+
+simage is part of the Coin3D family of libraries
+<http://www.coin3d.org> created by Systems In Motion
+<http://www.sim.no>.
+
+New in this release
+-------------------
+
+New in v1.6.1 (2004-10-08):
+* Switched resize filter from Lorenz3 to Bell filter to avoid
+  some unwanted artifacts when resizing images.
+
+Release 1.6.1 is a micro-release.  It does not contain any API/ABI-
+changes from the preceding version.  It only contains internal changes
+and bugfixes.
+
+Download instructions
+---------------------
+
+We will regularly package up new bugfix releases of the simage library
+into source code archives for distribution on the FTP site whenever we
+feel this is justified by the number and/or severity of the fixed
+bugs. This also goes for updated binary installation packages.
+
+Precompiled for MS Windows:
+  Visit http://www.coin3d.org/ and download the "Coin3D for Windows" 
+  installation package.  A new installer that incorporates this version
+  of simage may not happen in the immediate future.
+
+Source Code by FTP:
+  ftp://ftp.sim.no/pub/coin/src/simage-1.6.1.tar.gz
+
+Source Code by CVS:
+    cvs -d :pserver:cvs@cvs.coin3d.org:/export/cvsroot login
+    [password "cvs"]
+    cvs -z3 -d :pserver:cvs@cvs.coin3d.org:/export/cvsroot co simage
+
+
+Regards,
+
+Lars J. Aas
+Software Developer, Systems in Motion.
