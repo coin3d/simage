@@ -132,12 +132,25 @@ AM_DISABLE_STATIC
 # Turn off default maintainer make-rules -- use ./autogen.sh instead.
 AM_MAINTAINER_MODE
 
+# Detect Mac OS X in general
 case $host_os in
-darwin6.* ) sim_ac_macosx_10_2=true ;;
-* )         sim_ac_macosx_10_2=false ;;
+darwin* ) 
+  sim_ac_macosx=true 
+  # Check for Mac OS 10.2 or 10.3
+  case $host_os in
+  darwin[[67]].* ) 
+    sim_ac_macosx_10_2ff=true 
+    ;;
+  * )         
+    sim_ac_macosx_10_2ff=false 
+    ;;
+  esac
+  ;;
+  * ) 
+  sim_ac_macosx=false ;;
 esac
 
-if test x"$sim_ac_macosx_10_2" = x"true"; then
+if test x"$sim_ac_macosx_10_2ff" = x"true"; then
   # Defines how undefined symbols are handled (used in libtool.m4)
   LD_TWOLEVEL_NAMESPACE=1
 fi
@@ -149,7 +162,8 @@ else
   AC_PROG_LIBTOOL
 fi
   
-AM_CONDITIONAL([MACOSX_10_2], [$sim_ac_macosx_10_2])
+AM_CONDITIONAL([MACOSX], [$sim_ac_macosx])
+AM_CONDITIONAL([MACOSX_10_2FF], [$sim_ac_macosx_10_2ff])
 
 # These are used for constructing the simage-config file.
 AC_SUBST([SIMAGE_EXTRA_CPPFLAGS], [$CPPFLAGS])
