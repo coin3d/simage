@@ -415,6 +415,12 @@ zoom(Image * dst,               /* destination image structure */
   free(tmp);
 }
 
+// FIXME: pederb suspects that MSVC++ v6 mis-compiles some code in the
+// resize functionality -- which again causes a crash whenever (?) a
+// resize is attempted with a simage-library compiled in release mode.
+// This sounds very nasty with regard to application programmers using
+// Coin / simage, and should be investigated ASAP. 20010904 mortene.
+
 // FIXME: methinks the type of the first argument should have been
 // ``const unsigned char *''. Can't change it now, though, as it'd
 // probably break ABI compatibility (?). Wait for simage2. 20010809 mortene.
