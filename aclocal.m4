@@ -4706,7 +4706,7 @@ if test x"$with_qt" != xno; then
 
   # Find version of the Qt library (MSWindows .dll is named with the
   # version number.)
-  AC_MSG_CHECKING([version of Qt library, if available])
+  AC_MSG_CHECKING([version of Qt library])
   cat > conftest.c << EOF
 #include <qglobal.h>
 int VerQt = QT_VERSION;
@@ -4719,15 +4719,34 @@ EOF
   rm -f conftest.c
   AC_MSG_RESULT($sim_ac_qt_version)
 
+  if test $sim_ac_qt_version -lt 200; then
+    SIM_AC_ERROR([too-old-qt])
+  fi
+
+  # Too hard to feature-check for the Qt-on-Mac problems, as they involve
+  # obscure behavior of the QGLWidget -- so we just resort to do platform
+  # and version checking instead.
   case $host_os in
   darwin*)
     if test $sim_ac_qt_version -lt 302; then
       SIM_AC_CONFIGURATION_WARNING([The version of Qt you are using is
-known to contain some serious bugs. We strongly recommend you to
+known to contain some serious bugs on MacOS X. We strongly recommend you to
 upgrade. (See $srcdir/README.MAC for details.)])
     fi
     ;;
   esac
+
+  # Known problems:
+  #
+  #   * Qt v3.0.1 has a bug where SHIFT-PRESS + CTRL-PRESS + CTRL-RELEASE
+  #     results in the last key-event coming out completely wrong under X11.
+  #     Known to be fixed in 3.0.3, unknown status in 3.0.2.  <mortene@sim.no>.
+  #
+  if test $sim_ac_qt_version -lt 303; then
+    SIM_AC_CONFIGURATION_WARNING([The version of Qt you are compiling against
+is known to contain bugs which influences functionality in SoQt. We strongly
+recommend you to upgrade.])
+  fi
 
   sim_ac_qt_cppflags=
   if test x"$MOC" != xfalse; then
@@ -4812,7 +4831,7 @@ upgrade. (See $srcdir/README.MAC for details.)])
     AC_MSG_RESULT($sim_ac_qt_cppflags $sim_ac_qt_libs)
   fi
 
-  fi # sim_ac_sbbasic = TRUE
+  fi # sim_ac_qglobal = TRUE
   fi # MOC = false
 
   if test ! x"$sim_ac_qt_libs" = xUNRESOLVED; then
