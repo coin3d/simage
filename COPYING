@@ -1,7 +1,6 @@
-All files in this library are public domain, except simage_rgb.cpp
-and the files in the mpeg2enc directory.
+All files in this library are public domain, except the files in the 
+mpeg2enc directory.
 
-simage_rgb.cpp is Copyright (c) Mark J Kilgard <mjk@nvidia.com>.
 The license for the files in the mpeg2enc directory can be found
 in the file mpeg2enc/mpeg2enc.h.
 
