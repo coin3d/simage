@@ -121,6 +121,53 @@ interleave_row(unsigned char *ptr,
   }
 }
 
+static int
+tiff_try_read_rgba(TIFF *in, int w, int h, int format, 
+                      unsigned char * buffer)
+{
+  unsigned char * newbuffer = NULL;
+  if (format != 4) {
+    newbuffer = (unsigned char*) malloc(w*h*4);
+  }
+  else {
+    newbuffer = buffer;
+  }
+  if (!TIFFReadRGBAImage(in, w, h, 
+                         (unsigned long*) newbuffer, 1)) {
+    free(newbuffer);
+    return ERR_READ;
+  }
+  if (format != 4) {
+    unsigned char * src = newbuffer;
+    unsigned char * dst = buffer;
+    int i, n = w*h;
+    for (i = 0; i < n; i++) {
+      switch (format) {
+      case 1:
+        *dst++ = src[0];
+        break;
+      case 2:
+        *dst++ = src[0];
+        *dst++ = src[3];
+        break;
+      case 3:
+        *dst++ = src[0];
+        *dst++ = src[1];
+        *dst++ = src[2];
+        break;
+      default:
+        break;
+
+      }
+      src += 4;
+    }
+    free(newbuffer);
+  }
+
+  return ERR_NO_ERROR;
+}
+
+
 int 
 simage_tiff_identify(const char *ptr,
 		     const unsigned char *header,
@@ -261,6 +308,10 @@ simage_tiff_load(const char *filename,
       invert_row(currPtr, inbuf, w, photometric == PHOTOMETRIC_MINISWHITE);  
       currPtr -= format*w;
     }
+    if (tifferror == ERR_READ) {
+      tifferror = tiff_try_read_rgba(in, w, h, format, buffer);
+    }
+
     break;
     
   case pack(PHOTOMETRIC_PALETTE, PLANARCONFIG_CONTIG):
@@ -289,6 +340,10 @@ simage_tiff_load(const char *filename,
       remap_row(currPtr, inbuf, w, red, green, blue, NULL);
       currPtr -= format*w;
     }
+    if (tifferror == ERR_READ) {
+      tifferror = tiff_try_read_rgba(in, w, h, format, buffer);
+    }
+
     break;
 
   case pack(PHOTOMETRIC_RGB, PLANARCONFIG_CONTIG):
@@ -301,6 +356,10 @@ simage_tiff_load(const char *filename,
       copy_row(currPtr, inbuf, w, format);  
       currPtr -= format*w;
     }
+    if (tifferror == ERR_READ) {
+      tifferror = tiff_try_read_rgba(in, w, h, format, buffer);
+    }
+    
     break;
 
   case pack(PHOTOMETRIC_RGB, PLANARCONFIG_SEPARATE):
@@ -313,12 +372,16 @@ simage_tiff_load(const char *filename,
 	  tifferror = ERR_READ; break;
 	}
       }
-      if (!tifferror) {
+      if (tifferror != ERR_READ) {
 	interleave_row(currPtr, inbuf, inbuf+rowsize, inbuf+2*rowsize, 
                        format == 4 ? inbuf+3*rowsize : NULL, w);
 	currPtr -= format*w;
       }
     }
+    if (tifferror == ERR_READ) {
+      tifferror = tiff_try_read_rgba(in, w, h, format, buffer);
+    }
+
     break;
   default:
     tifferror = ERR_UNSUPPORTED;
