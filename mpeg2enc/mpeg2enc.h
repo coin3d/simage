@@ -25,6 +25,9 @@
  * general enough such that they are unavoidable regardless of implementation
  * design.
  *
+ * Please visit MPEGLA at http://www.mpegla.com/ for more information about
+ * licensing.
+ *
  */
 
 #ifndef MPEG2ENC_H
