@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4s from Makefile.am.
+# Makefile.in generated automatically by automake 1.5.1a from Makefile.am.
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -178,24 +178,36 @@ simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_AR = $(AR) cru
 @BUILD_WITH_MSVC_TRUE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_DEPENDENCIES = \
 @BUILD_WITH_MSVC_TRUE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@	../mpeg2enc/mpeg2enc.lst
 @BUILD_WITH_MSVC_TRUE@@SIMAGE_MPEG2ENC_SUPPORT_FALSE@simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_DEPENDENCIES =
-am__objects_3 = simage_jpeg.$(OBJEXT)
-am__objects_4 = simage_gif.$(OBJEXT)
-am__objects_5 = simage_png.$(OBJEXT)
-am__objects_6 = simage_tiff.$(OBJEXT)
-am__objects_7 = simage_tga.$(OBJEXT)
-am__objects_8 = simage_rgb.$(OBJEXT)
-am__objects_9 = simage_pic.$(OBJEXT)
-am__objects_10 = simage_xwd.$(OBJEXT)
-am__objects_11 = simage_eps.$(OBJEXT)
-@SIMAGE_QIMAGE_SUPPORT_TRUE@am__objects_12 = simage_qimage.$(OBJEXT)
-@SIMAGE_QIMAGE_SUPPORT_FALSE@am__objects_12 =
-am__objects_2 = simage.$(OBJEXT) simage_write.$(OBJEXT) resize.$(OBJEXT) \
-	simage12.$(OBJEXT) movie.$(OBJEXT) params.$(OBJEXT) \
-	$(am__objects_3) $(am__objects_4) $(am__objects_5) \
-	$(am__objects_6) $(am__objects_7) $(am__objects_8) \
-	$(am__objects_9) $(am__objects_10) $(am__objects_11) \
-	$(am__objects_12)
-am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS = $(am__objects_2)
+@SIMAGE_QIMAGE_SUPPORT_TRUE@am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS = \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_write.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	resize.$(OBJEXT) simage12.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	movie.$(OBJEXT) params.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_jpeg.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_gif.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_png.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_tiff.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_tga.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_rgb.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_pic.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_xwd.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_eps.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_qimage.$(OBJEXT)
+@SIMAGE_QIMAGE_SUPPORT_FALSE@am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS = \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_write.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	resize.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage12.$(OBJEXT) movie.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	params.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_jpeg.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_gif.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_png.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_tiff.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_tga.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_rgb.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_pic.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_xwd.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_eps.$(OBJEXT)
 simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS = \
 	$(am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS)
 LTLIBRARIES = $(lib_LTLIBRARIES)
@@ -205,7 +217,22 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 @BUILD_WITH_MSVC_FALSE@@SIMAGE_MPEG2ENC_SUPPORT_FALSE@libsimage@SUFFIX@_la_DEPENDENCIES =
 @BUILD_WITH_MSVC_TRUE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@libsimage@SUFFIX@_la_DEPENDENCIES =
 @BUILD_WITH_MSVC_TRUE@@SIMAGE_MPEG2ENC_SUPPORT_FALSE@libsimage@SUFFIX@_la_DEPENDENCIES =
-am_libsimage@SUFFIX@_la_OBJECTS = $(am__objects_2)
+@SIMAGE_QIMAGE_SUPPORT_TRUE@am_libsimage@SUFFIX@_la_OBJECTS = simage.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_write.lo resize.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage12.lo movie.lo params.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_jpeg.lo simage_gif.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_png.lo simage_tiff.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_tga.lo simage_rgb.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_pic.lo simage_xwd.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_eps.lo simage_qimage.lo
+@SIMAGE_QIMAGE_SUPPORT_FALSE@am_libsimage@SUFFIX@_la_OBJECTS = simage.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_write.lo resize.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage12.lo movie.lo params.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_jpeg.lo simage_gif.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_png.lo simage_tiff.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_tga.lo simage_rgb.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_pic.lo simage_xwd.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_eps.lo
 libsimage@SUFFIX@_la_OBJECTS = $(am_libsimage@SUFFIX@_la_OBJECTS)
 
 DEFS = @DEFS@
