@@ -250,6 +250,36 @@ AC_SUBST(simage_src_dir)
 SIM_AC_ISO8601_DATE(simage_configure_date)
 AC_SUBST(simage_configure_date)
 
+# **************************************************************************
+# Remove redundant options from certain option lists.
+# We add the first argument ourselves to shift it off because it's added
+# again inside simage-config.in
+
+SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_CPPFLAGS, -I$includedir $SIMAGE_EXTRA_CPPFLAGS)
+set : $SIMAGE_EXTRA_CPPFLAGS
+shift
+shift
+SIMAGE_EXTRA_CPPFLAGS=$@
+
+SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LDFLAGS, -I$includedir $SIMAGE_EXTRA_LDFLAGS)
+set : $SIMAGE_EXTRA_LDFLAGS
+shift
+shift
+SIMAGE_EXTRA_LDFLAGS=$@
+
+SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LIBS, $SIMAGE_LIBNAME $SIMAGE_EXTRA_LIBS)
+set : $SIMAGE_EXTRA_LIBS
+shift
+shift
+SIMAGE_EXTRA_LIBS=$@
+
+# We don't have to do shift magic on these:
+SIM_AC_UNIQIFY_LIST(CPPFLAGS, $CPPFLAGS)
+SIM_AC_UNIQIFY_LIST(LDFLAGS, $LDFLAGS)
+SIM_AC_UNIQIFY_LIST(LIBS, $LIBS)
+
+# **************************************************************************
+
 AC_OUTPUT([
 	Makefile
 	src/Makefile

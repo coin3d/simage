@@ -5,12 +5,13 @@
 usage()
 {
 cat <<EOF
-    Usage: simage-config [OPTIONS]
-    Options:
-            [--version]
-            [--cppflags]
-            [--ldflags]
-            [--libs]
+Usage: simage-config [OPTIONS]
+Options:
+  --cppflags
+  --ldflags
+  --libs
+  --version
+  --usage | --help
 EOF
   exit $1
 }
@@ -21,6 +22,9 @@ EOF
 while test $# -gt 0; do
   case $1 in
     --cppflags)
+      # NOTE: If the first includedir argument is changed in the future,
+      # we need to update configure.in as well, since the argument is
+      # shifted off.
       echo -I@includedir@ @SIMAGE_EXTRA_CPPFLAGS@
       ;;
     --ldflags)
@@ -33,7 +37,7 @@ while test $# -gt 0; do
       echo @SIMAGE_VERSION@
       ;;
     --help | --usage)
-      usage 1
+      usage 0
       ;;
     *)
       echo "Unknown option: \"$1\""
