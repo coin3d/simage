@@ -405,12 +405,13 @@ int
 simage_get_num_savers(void)
 {
   int cnt = 0;
-  saver_data * saver = first_saver;
+  saver_data * saver;
 
   /* FIXME: it's ugly design that we have to call this method on all
      public API functions for initialization. 20020215 mortene. */
   add_internal_savers();
 
+  saver = first_saver; /* must be set after add_internal_savers(), obviously */
   while (saver) {
     cnt++;
     saver = saver->next;
