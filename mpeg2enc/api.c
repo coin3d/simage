@@ -62,8 +62,9 @@ mpeg2enc_movie_create(const char * filename, s_movie * movie, s_params * params)
   s_params_get(params, 
                "mime-type", S_STRING_PARAM_TYPE, &mime_type, NULL);
 
-  if (strcmp(mime_type, "video/mpeg") != 0)
+  if (!mime_type || (strcmp(mime_type, "video/mpeg") != 0)) {
     return 0;
+  }
 
   /* Note 20020321 thammer: 
      The video/mpeg mime type is defined in RFC 2046 "MIME Part Two: Media Types".
