@@ -107,6 +107,13 @@ if ! test -d $SIMAGE_INSTALL; then
   exit
 fi
 
+function set_simage_param_crt()
+{
+  if test "X$SIMAGE_CRT" = "Xmt"; then SIMAGE_PARAMCRT="MT"; fi
+  if test "X$SIMAGE_CRT" = "Xmtd"; then SIMAGE_PARAMCRT="MTd"; fi
+  if test "X$SIMAGE_CRT" = "Xmd"; then SIMAGE_PARAMCRT="MD"; fi
+  if test "X$SIMAGE_CRT" = "Xmdd"; then SIMAGE_PARAMCRT="MDd"; fi
+}
 
 # Verify SDKs
 
@@ -150,8 +157,8 @@ if ! test -d $SIMAGE_SDK/libjpeg; then
   for SIMAGE_CRT in md mdd mt mtd; do
     cp $SIMAGE_SDK/libjpeg/$SIMAGE_CRT/jconfig.vc $SIMAGE_SDK/libjpeg/$SIMAGE_CRT/jconfig.h
     cp $SIMAGE_SDK/libjpeg/$SIMAGE_CRT/*.h $SIMAGE_SDK/libjpeg/$SIMAGE_CRT/include
-    SIMAGE_UPPERPREFIX=`echo $SIMAGE_CRT | tr [:lower:] [:upper:]` 
-    cat $SIMAGE_SDK/libjpeg/$SIMAGE_CRT/makefile.vc | sed -e "s/CFLAGS= /CFLAGS= -$SIMAGE_UPPERPREFIX /g" | sed -e 's/RM= del/RM= rm -f/g' > $SIMAGE_SDK/libjpeg/$SIMAGE_CRT/makefile.vc_$SIMAGE_CRT
+    set_simage_param_crt
+    cat $SIMAGE_SDK/libjpeg/$SIMAGE_CRT/makefile.vc | sed -e "s/CFLAGS= /CFLAGS= -$SIMAGE_PARAMCRT /g" | sed -e 's/RM= del/RM= rm -f/g' > $SIMAGE_SDK/libjpeg/$SIMAGE_CRT/makefile.vc_$SIMAGE_CRT
   done
 fi
 
@@ -203,8 +210,8 @@ if ! test -d $SIMAGE_SDK/zlib; then
   echo "[SIMAGE]         Modifying zlib configuration and make files"
   for SIMAGE_CRT in md mdd mt mtd; do
     cp $SIMAGE_SDK/zlib/$SIMAGE_CRT/*.h $SIMAGE_SDK/zlib/$SIMAGE_CRT/include
-    SIMAGE_UPPERPREFIX=`echo $SIMAGE_CRT | tr [:lower:] [:upper:]` 
-    cat $SIMAGE_SDK/zlib/$SIMAGE_CRT/msdos/Makefile.w32 | sed -e "s/CFLAGS=/CFLAGS= -$SIMAGE_UPPERPREFIX /g" > $SIMAGE_SDK/zlib/$SIMAGE_CRT/makefile.vc_$SIMAGE_CRT
+    set_simage_param_crt
+    cat $SIMAGE_SDK/zlib/$SIMAGE_CRT/msdos/Makefile.w32 | sed -e "s/CFLAGS=/CFLAGS= -$SIMAGE_PARAMCRT /g" > $SIMAGE_SDK/zlib/$SIMAGE_CRT/makefile.vc_$SIMAGE_CRT
   done
 fi
 
@@ -257,8 +264,8 @@ if ! test -d $SIMAGE_SDK/libpng; then
   echo "[SIMAGE]         Modifying libpng configuration and make files"
   for SIMAGE_CRT in md mdd mt mtd; do
     cp $SIMAGE_SDK/libpng/$SIMAGE_CRT/*.h $SIMAGE_SDK/libpng/$SIMAGE_CRT/include
-    SIMAGE_UPPERPREFIX=`echo $SIMAGE_CRT | tr [:lower:] [:upper:]` 
-    cat $SIMAGE_SDK/libpng/$SIMAGE_CRT/scripts/makefile.vcwin32 | sed -e "s/CFLAGS= /CFLAGS= -$SIMAGE_UPPERPREFIX /g" | sed -e "s/-I\\.\\.\\\\zlib/-I\\.\\.\\\\\\.\\.\\\\zlib\\\\$SIMAGE_CRT/g" > $SIMAGE_SDK/libpng/$SIMAGE_CRT/makefile.vc_$SIMAGE_CRT
+    set_simage_param_crt
+    cat $SIMAGE_SDK/libpng/$SIMAGE_CRT/scripts/makefile.vcwin32 | sed -e "s/CFLAGS= /CFLAGS= -$SIMAGE_PARAMCRT /g" | sed -e "s/-I\\.\\.\\\\zlib/-I\\.\\.\\\\\\.\\.\\\\zlib\\\\$SIMAGE_CRT/g" > $SIMAGE_SDK/libpng/$SIMAGE_CRT/makefile.vc_$SIMAGE_CRT
   done
 fi
 
@@ -314,8 +321,8 @@ if ! test -d $SIMAGE_SDK/libtiff; then
   echo "[SIMAGE]         Modifying libtiff configuration and make files"
   for SIMAGE_CRT in md mdd mt mtd; do
     cp $SIMAGE_SDK/libtiff/$SIMAGE_CRT/*.h $SIMAGE_SDK/libtiff/$SIMAGE_CRT/include
-    SIMAGE_UPPERPREFIX=`echo $SIMAGE_CRT | tr [:lower:] [:upper:]` 
-    cat $SIMAGE_SDK/libtiff/$SIMAGE_CRT/makefile.vc | sed -e "s/CFLAGS  = /CFLAGS  = -$SIMAGE_UPPERPREFIX /g" > $SIMAGE_SDK/libtiff/$SIMAGE_CRT/makefile.vc_$SIMAGE_CRT
+    set_simage_param_crt
+    cat $SIMAGE_SDK/libtiff/$SIMAGE_CRT/makefile.vc | sed -e "s/CFLAGS  = /CFLAGS  = -$SIMAGE_PARAMCRT /g" > $SIMAGE_SDK/libtiff/$SIMAGE_CRT/makefile.vc_$SIMAGE_CRT
   done
 fi
 
@@ -549,15 +556,15 @@ if ! test -d $SIMAGE_SDK/libsndfile; then
   echo "[SIMAGE]         Modifying libsndfile configuration and make files"
   for SIMAGE_CRT in md mdd mt mtd; do
     cp $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/sndfile.h $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/src
-    SIMAGE_UPPERPREFIX=`echo $SIMAGE_CRT | tr [:lower:] [:upper:]` 
+    set_simage_param_crt
     SIMAGE_TEMP1=`which cl | sed -e "s/\/bin\/cl$//g" | sed "s/ /\\\\\\ /g"`
     SIMAGE_MSVCDIR=`cygpath -w "$SIMAGE_TEMP1"`
     
     # Note 2003-05-21 thammer: The line below is to be used if
     # libsndfile is built as a dll.
-    # cat $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/Makefile.msvc | sed -e "s/MSVCDir=.*/MSVCDir=$SIMAGE_MSVCDIR/g" | sed -e "s/\/MD/\/$SIMAGE_UPPERPREFIX/g" > $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/Makefile.msvc_$SIMAGE_CRT
+    # cat $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/Makefile.msvc | sed -e "s/MSVCDir=.*/MSVCDir=$SIMAGE_MSVCDIR/g" | sed -e "s/\/MD/\/$SIMAGE_PARAMCRT/g" > $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/Makefile.msvc_$SIMAGE_CRT
     
-    cat $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/Makefile.msvc | sed -e "s/MSVCDir=.*/MSVCDir=$SIMAGE_MSVCDIR/g" | sed -e "s/\/MD/\/$SIMAGE_UPPERPREFIX/g" | sed -e "s/DLL_LINK_FLAGS=\/nologo.*$/DLL_LINK_FLAGS=-lib \/nologo/" | sed -e "s/_USRDLL/_LIB/" > $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/Makefile.msvc_$SIMAGE_CRT
+    cat $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/Makefile.msvc | sed -e "s/MSVCDir=.*/MSVCDir=$SIMAGE_MSVCDIR/g" | sed -e "s/\/MD/\/$SIMAGE_PARAMCRT/g" | sed -e "s/DLL_LINK_FLAGS=\/nologo.*$/DLL_LINK_FLAGS=-lib \/nologo/" | sed -e "s/_USRDLL/_LIB/" > $SIMAGE_SDK/libsndfile/$SIMAGE_CRT/Win32/Makefile.msvc_$SIMAGE_CRT
   done
 fi
 
