@@ -150,10 +150,10 @@ oggvorbis_reader_stream_open(const char * filename, s_stream * stream,
   s_stream_context_set(stream, (void *)context);
 
   oggvorbis_reader_get_stream_info(context, &channels, &samplerate);
-  s_params_set(s_stream_params(stream), "channels", 
-               S_INTEGER_PARAM_TYPE, channels, 0);
-  s_params_set(s_stream_params(stream), "samplerate", 
-               S_INTEGER_PARAM_TYPE, samplerate, 0);
+  s_params_set(s_stream_params(stream),
+               "channels",   S_INTEGER_PARAM_TYPE, channels,
+               "samplerate", S_INTEGER_PARAM_TYPE, samplerate,
+               NULL);
   return 1;
 }
 

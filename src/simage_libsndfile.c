@@ -58,12 +58,11 @@ libsndfile_stream_open(const char * filename, s_stream * stream,
   sf_command (context->file, SFC_SET_NORM_DOUBLE, NULL, SF_TRUE) ;
 
   s_stream_context_set(stream, (void *)context);
-  s_params_set(s_stream_params(stream), "samplerate", 
-               S_INTEGER_PARAM_TYPE, context->sfinfo.samplerate, 0);
-  s_params_set(s_stream_params(stream), "frames", 
-               S_INTEGER_PARAM_TYPE, context->sfinfo.frames, 0);
-  s_params_set(s_stream_params(stream), "channels", 
-               S_INTEGER_PARAM_TYPE, context->sfinfo.channels, 0);
+  s_params_set(s_stream_params(stream),
+               "samplerate", S_INTEGER_PARAM_TYPE, context->sfinfo.samplerate,
+               "frames",     S_INTEGER_PARAM_TYPE, context->sfinfo.frames,
+               "channels",   S_INTEGER_PARAM_TYPE, context->sfinfo.channels,
+               NULL);
   return 1;
 }
 
