@@ -1,5 +1,5 @@
 # **************************************************************************
-AC_INIT(src/simage.c)
+AC_INIT([src/simage.c])
 AC_CONFIG_AUX_DIR(cfg)
 
 # **************************************************************************
@@ -8,8 +8,9 @@ AC_CONFIG_AUX_DIR(cfg)
 SIM_AC_CVS_CHANGES([
   SIM_AC_CVS_CHANGE([
     rm -rf conf-macros
-    cvs co simage-macros
-  ], [test -d cfg/m4], [test ! -d conf-macros])
+    cvs co simage-macros],
+    [test -d cfg/m4],
+    [test ! -d conf-macros])
 ])
 
 # **************************************************************************
@@ -28,8 +29,8 @@ SIM_AC_MSVC_SUPPORT
 AC_PROG_CC
 AM_PROG_CC_STDC
 
-if test x"$am_cv_prog_cc_stdc" = xno; then
-  AC_MSG_WARN(doesn't look like you're using an ANSI compatible C compiler)
+if test x"$am_cv_prog_cc_stdc" = x"no"; then
+  AC_MSG_WARN([doesn't look like you're using an ANSI compatible C compiler])
 fi
 
 # **************************************************************************
@@ -197,15 +198,20 @@ AC_SUBST(LT_AGE)
 
 #  These are for include/simage.h.
 
-AC_DEFINE_UNQUOTED(SIMAGE_MAJOR_VERSION, $SIMAGE_MAJOR_VERSION, [define this to the simage major version number])
-AC_DEFINE_UNQUOTED(SIMAGE_MINOR_VERSION, $SIMAGE_MINOR_VERSION, [define this to the simage minor version number])
-AC_DEFINE_UNQUOTED(SIMAGE_MICRO_VERSION, $SIMAGE_MICRO_VERSION, [define this to the simage release version number])
-AC_DEFINE_UNQUOTED(SIMAGE_VERSION, "$SIMAGE_VERSION", [define this to the full simage major.minor.micro version number])
+AC_DEFINE_UNQUOTED([SIMAGE_MAJOR_VERSION], [$SIMAGE_MAJOR_VERSION],
+  [define this to the simage major version number])
+AC_DEFINE_UNQUOTED([SIMAGE_MINOR_VERSION], [$SIMAGE_MINOR_VERSION],
+  [define this to the simage minor version number])
+AC_DEFINE_UNQUOTED([SIMAGE_MICRO_VERSION], [$SIMAGE_MICRO_VERSION],
+  [define this to the simage release version number])
+AC_DEFINE_UNQUOTED([SIMAGE_VERSION], ["$SIMAGE_VERSION"],
+  [define this to the full simage major.minor.micro version number])
 
 # **************************************************************************
 # Miscellaneous options and initializations.
 
 AC_CANONICAL_SYSTEM
+
 AM_INIT_AUTOMAKE(libsimage, $VERSION)
 
 # Files to cram the configure tests into.
@@ -231,7 +237,7 @@ AC_SUBST(SIMAGE_EXTRA_LIBS)
 
 SIM_AC_COMPILE_DEBUG([
   CPPFLAGS="$CPPFLAGS -DSIMAGE_DEBUG=1"
-]. [
+], [
   CPPFLAGS="$CPPFLAGS -DSIMAGE_DEBUG=0"
 ])
 
