@@ -446,6 +446,27 @@ else
 fi
 
 # **************************************************************************
+# Check if mpeg2enc is wanted.
+
+AC_ARG_WITH(
+  [mpeg2enc],
+  [AC_HELP_STRING([--with-mpeg2enc], [enable/disable support for mpeg2 encoding])],
+  [case $withval in
+  yes | "") sim_ac_want_mpeg2enc=true ;;
+  no)       sim_ac_want_mpeg2enc=false ;;
+  *)        AC_MSG_ERROR([bad value "$withval" for --with-mpeg2enc]) ;;
+  esac],
+  [sim_ac_want_mpeg2enc=false])
+
+AM_CONDITIONAL(SIMAGE_MPEG2ENC_SUPPORT, $sim_ac_want_mpeg2enc)
+if $sim_ac_want_mpeg2enc; then
+  AC_DEFINE(SIMAGE_MPEG2ENC_SUPPORT, , [define to enable mpeg2enc support])
+  SIM_AC_CONFIGURATION_SETTING([Mpeg2 encoding support], [Yes])
+else
+  SIM_AC_CONFIGURATION_SETTING([Mpeg2 encoding support], [No])
+fi
+
+# **************************************************************************
 # check if we are compiling with debug symbols
 
 SIMAGE_DEBUG_BUILD=false
@@ -584,6 +605,7 @@ AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
 	guile/Makefile
+        mpeg2enc/Makefile
 	build/simage.spec
 ])
 

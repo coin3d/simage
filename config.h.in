@@ -33,6 +33,9 @@
 /* define this to the simage minor version number */
 #undef SIMAGE_MINOR_VERSION
 
+/* define to enable mpeg2enc support */
+#undef SIMAGE_MPEG2ENC_SUPPORT
+
 /* define to enable pic support */
 #undef SIMAGE_PIC_SUPPORT
 

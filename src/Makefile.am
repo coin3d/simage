@@ -46,6 +46,10 @@ endif
 
 lib_LTLIBRARIES = libsimage@SUFFIX@.la
 
+if SIMAGE_MPEG2ENC_SUPPORT
+libsimage@SUFFIX@_la_LIBADD = ../mpeg2enc/libmpeg2enc.la
+endif
+
 libsimage@SUFFIX@_la_LDFLAGS = \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 

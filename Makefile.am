@@ -1,6 +1,12 @@
 # **************************************************************************
 
-SUBDIRS = src guile
+if SIMAGE_MPEG2ENC_SUPPORT
+MPEG2ENCDIR = mpeg2enc
+else
+MPEG2ENCDIR =
+endif
+
+SUBDIRS = $(MPEG2ENCDIR) src guile 
 
 dist_bin_SCRIPTS = simage-config
 
