@@ -86,13 +86,13 @@ libsimageinc_HEADERS = \
 ## DLL. If not, just make an empty simage{version}.dll file so the
 ## install-exec-hook knows when to _not_ install the .dll.
 
-simage@SIMAGE_MAJOR_VERSION@.dll: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDENCIES)
-	@rm -f simage@SIMAGE_MAJOR_VERSION@.dll && \
+simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDENCIES)
+	@rm -f simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll && \
 	 if test x"`$(CC) 2>/dev/null | egrep '^The Microsoft Visual C\+\+ wrapper'`" = x""; then \
-	   rm -f simage@SIMAGE_MAJOR_VERSION@.dll; \
-	   touch simage@SIMAGE_MAJOR_VERSION@.dll; \
+	   rm -f simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll; \
+	   touch simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll; \
 	 else \
-	   $(CC) @DLLFLAGS@ /out:simage@SIMAGE_MAJOR_VERSION@.dll \
+	   $(CC) @DLLFLAGS@ /out:simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll \
 	     `echo $(libsimage_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
 	     $(libsimage_la_LIBADD) $(LIBS); \
 	 fi
@@ -103,25 +103,25 @@ simage@SIMAGE_MAJOR_VERSION@.dll: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDE
 ## The single action taken is to install the simage.dll and simage.lib
 ## files (if they have been built properly).
 
-install-exec-hook: simage@SIMAGE_MAJOR_VERSION@.dll
-	@if test -s simage@SIMAGE_MAJOR_VERSION@.dll; then \
-	  echo "Installing simage@SIMAGE_MAJOR_VERSION@.dll"; \
-	  for i in simage@SIMAGE_MAJOR_VERSION@.dll simage@SIMAGE_MAJOR_VERSION@.lib; do \
+install-exec-hook: simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll
+	@if test -s simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll; then \
+	  echo "Installing simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll"; \
+	  for i in simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.dll simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.lib; do \
 	    $(INSTALL_DATA) $$i $(DESTDIR)$(libdir)/$$i; \
 	  done; \
-	  if test -s simage@SIMAGE_MAJOR_VERSION@.pdb; then \
-	    echo "Installing simage@SIMAGE_MAJOR_VERSION@.pdb"; \
-	    cp simage@SIMAGE_MAJOR_VERSION@.pdb $(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@.pdb; \
+	  if test -s simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.pdb; then \
+	    echo "Installing simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.pdb"; \
+	    cp simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.pdb $(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.pdb; \
 	  fi \
 	fi
 
 # should have been uninstall-hook, but that doesn't work
 uninstall: uninstall-am
 	@for e in dll lib pdb; do \
-	  file="$(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@.$$e"; \
-	  if test -f "$$file"; then \
-	    echo rm -f "$$file"; \
-	    rm -f "$$file"; \
+	  file="$(DESTDIR)$(libdir)"/simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@.$$e; \
+	  if test -f $$file; then \
+	    echo rm -f $$file; \
+	    rm -f $$file; \
 	  fi \
 	done
 

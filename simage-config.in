@@ -17,8 +17,13 @@ Options:
 
 version="@SIMAGE_VERSION@"
 
-# NOTE: If the first argument is changed in the following variables, it is
-# also necessary to update configure.in, since that argument is shifted off.
+for arg
+do
+  case $arg in
+  --debug) dsuffix=d ;;
+  *) ;;
+  esac
+done
 
 cppflags="@SIMAGE_EXTRA_CPPFLAGS@"
 ldflags="@SIMAGE_EXTRA_LDFLAGS@"
@@ -42,6 +47,8 @@ do
       -o $program $@ \
       $LIBS $libs
     ;;
+  # ignore some options
+  --debug) ;;
   *)
     echo "$me: Invalid option: \"$1\""
     echo "$usage" >&2
