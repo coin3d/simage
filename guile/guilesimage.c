@@ -1,7 +1,18 @@
 /* *************************************************************************
  * guilesimage.c
+ *
  * Written by Lars J. Aas <larsa@coin3d.org>.
  * This file is in the Public Domain.
+ *
+ * $Revision$
+ */
+
+/* *************************************************************************
+ * TODO:
+ * - do proper type checking, range checking, and throw proper errors for
+ *   each hook
+ * - ensure the componet order in the pixel is correct.
+ * - implement simage-pixel functions
  */
 
 #include <guilesimage.h>
@@ -14,6 +25,11 @@
 
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
+#else
+#error need dlopen() support
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
 #endif
 
 /* ********************************************************************** */
@@ -27,58 +43,6 @@ static unsigned char * (*simage_read_image)( const char *, int *, int *, int *);
 static int (*simage_save_image)( const char *, const unsigned char *, int, int, int, const char * );
 static unsigned char * (*simage_resize)( unsigned char *, int, int, int, int, int );
 static void (*simage_free_image)(unsigned char * imagedata);
-
-/* ********************************************************************** */
-/* the "simage-image" smob */
-
-static long simage_image_smob_type = 0;
-
-struct simage_image {
-  unsigned char * data;
-  int width;
-  int height;
-  int components;
-};
-
-static SCM
-scimage_image_mark(
-  SCM simage_image_smob )
-{
-  return SCM_BOOL_F;
-} /* scimage_image_mark() */
-
-static scm_sizet
-scimage_image_free(
-  SCM simage_image_smob )
-{
-  struct simage_image * simage_image_data;
-  scm_sizet size;
-  simage_image_data =
-    (struct simage_image *) SCM_SMOB_DATA( simage_image_smob );
-  size = simage_image_data->width * simage_image_data->height * 4
-    + sizeof( struct simage_image );
-  simage_free_image( simage_image_data->data );
-  free( simage_image_data );
-  return size;
-} /* scimage_image_free() */
-
-static int
-scimage_image_print(
-  SCM simage_image_smob,
-  SCM port,
-  scm_print_state * print_state )
-{
-  char dimensions[16];
-  struct simage_image * simage_image_data;
-  simage_image_data =
-    (struct simage_image *) SCM_SMOB_DATA( simage_image_smob );
-  sprintf( dimensions, "%dx%dx%d", simage_image_data->width,
-    simage_image_data->height, simage_image_data->components );
-  scm_puts( "#<simage-image ", port );
-  scm_puts( dimensions, port );
-  scm_puts( ">", port );
-  return 1;
-} /* scimage_image_print() */
 
 /* ********************************************************************** */
 /* guile hooks */
@@ -131,10 +95,250 @@ scimage_get_last_error(
   void )
 {
   const char * last_error = simage_get_last_error();
-  if ( last_error )
+  if ( last_error && last_error[0] != 0 )
     return gh_str02scm( simage_get_last_error() );
-  return SCM_UNSPECIFIED;
+  return SCM_UNSPECIFIED; /* or '()? */
 } /* scimage_get_last_error() */
+
+/* ********************************************************************** */
+/* the "simage-image" smob */
+
+static long simage_image_smob_type = 0;
+
+struct simage_image {
+  unsigned char * data;
+  int width;
+  int height;
+  int components;
+};
+
+static SCM
+scimage_image_mark(
+  SCM scm_simage_image )
+{
+  return SCM_BOOL_F;
+} /* scimage_image_mark() */
+
+static scm_sizet
+scimage_image_free(
+  SCM scm_simage_image )
+{
+  struct simage_image * simage_image_data;
+  scm_sizet size;
+  simage_image_data =
+    (struct simage_image *) SCM_SMOB_DATA( scm_simage_image );
+  size = simage_image_data->width * simage_image_data->height * 4
+    + sizeof( struct simage_image );
+  simage_free_image( simage_image_data->data );
+  free( simage_image_data );
+  return size;
+} /* scimage_image_free() */
+
+static int
+scimage_image_print(
+  SCM scm_simage_image,
+  SCM port,
+  scm_print_state * print_state )
+{
+  char dimensions[16];
+  struct simage_image * simage_image_data;
+  simage_image_data =
+    (struct simage_image *) SCM_SMOB_DATA( scm_simage_image );
+  sprintf( dimensions, "%dx%dx%d", simage_image_data->width,
+    simage_image_data->height, simage_image_data->components );
+  scm_puts( "#<simage-image ", port );
+  scm_puts( dimensions, port );
+  scm_puts( ">", port );
+  return 1;
+} /* scimage_image_print() */
+
+/*/ (make-simage-image width height [components = 4])
+ *
+ */
+
+static SCM
+scimage_make_image(
+  SCM scm_width,
+  SCM scm_height,
+  SCM scm_components )
+{
+  struct simage_image * simage_image_data;
+  int width, height, components = 4;
+  simage_image_data = malloc( sizeof( struct simage_image ) );
+  width = gh_scm2int( scm_width );
+  height = gh_scm2int( scm_height );
+  if ( scm_components != SCM_UNDEFINED )
+    components = gh_scm2int( scm_components );
+  /* FIXME: assert components are 3 or 4 (rather use bits?) */
+  /* FIXME: need to flag this to avoid using simage_free_image() on buffer */
+  simage_image_data->data =
+    (unsigned char *) malloc( width * height * components );
+  memset( simage_image_data->data, 0, width * height * components );
+  simage_image_data->width = width;
+  simage_image_data->height = height;
+  simage_image_data->components = components;
+  SCM_RETURN_NEWSMOB( simage_image_smob_type, simage_image_data );
+} /* scimage_make_image() */
+
+/*/ (simage-image-width image)
+ *
+ */
+
+static SCM
+scimage_image_width(
+  SCM scm_simage_image )
+{
+  struct simage_image * simage_image_data;
+  SCM_ASSERT( SCM_SMOB_PREDICATE( simage_image_smob_type, scm_simage_image ),
+              scm_simage_image, SCM_ARG1, "simage-image-width" );
+  simage_image_data =
+    (struct simage_image *) SCM_SMOB_DATA( scm_simage_image );
+  return gh_int2scm( simage_image_data->width );
+} /* scimage_image_width() */
+
+/*/ (simage-image-height image)
+ *
+ */
+
+static SCM
+scimage_image_height(
+  SCM scm_simage_image )
+{
+  struct simage_image * simage_image_data;
+  SCM_ASSERT( SCM_SMOB_PREDICATE( simage_image_smob_type, scm_simage_image ),
+              scm_simage_image, SCM_ARG1, "simage-image-height" );
+  simage_image_data =
+    (struct simage_image *) SCM_SMOB_DATA( scm_simage_image );
+  return gh_int2scm( simage_image_data->height );
+} /* scimage_image_height() */
+
+/*/ (simage-image-components)
+ *
+ */
+
+static SCM
+scimage_image_components(
+  SCM scm_simage_image )
+{
+  struct simage_image * simage_image_data;
+  SCM_ASSERT( SCM_SMOB_PREDICATE( simage_image_smob_type, scm_simage_image ),
+              scm_simage_image, SCM_ARG1, "simage-image-components" );
+  simage_image_data =
+    (struct simage_image *) SCM_SMOB_DATA( scm_simage_image );
+  return gh_int2scm( simage_image_data->components );
+} /* scimage_image_components() */
+
+/* ********************************************************************** */
+/* the "simage-pixel" smob */
+
+static long simage_pixel_smob_type = 0;
+
+static SCM
+scimage_pixel_mark(
+  SCM simage_pixel_smob )
+{
+  return SCM_BOOL_F;
+} /* scimage_pixel_mark() */
+
+static scm_sizet
+scimage_pixel_free(
+  SCM simage_pixel_smob )
+{
+  return 0;
+} /* scimage_pixel_free() */
+
+static int
+scimage_pixel_print(
+  SCM simage_pixel_smob,
+  SCM port,
+  scm_print_state * print_state )
+{
+  char value[12];
+  unsigned long pixel;
+  pixel = (unsigned long) SCM_SMOB_DATA( simage_pixel_smob );
+  sprintf( value, "0x%02x%02x%02x%02x", (pixel >> 24) & 0xff,
+    (pixel >> 16) & 0xff, (pixel >> 8) & 0xff, pixel & 0xff );
+  scm_puts( "#<simage-pixel ", port );
+  scm_puts( value, port );
+  scm_puts( ">", port );
+  return 1;
+} /* scimage_pixel_print() */
+
+/*/ (make-simage-pixel red green blue [alpha = 255])
+ *
+ */
+
+static SCM
+scimage_make_pixel(
+  SCM scm_red,
+  SCM scm_green,
+  SCM scm_blue,
+  SCM scm_alpha )
+{
+  unsigned long pixel = 0;
+  unsigned int red, green, blue, alpha = 255;
+  red = gh_scm2int( scm_red );
+  green = gh_scm2int( scm_green );
+  blue = gh_scm2int( scm_blue );
+  if ( scm_alpha != SCM_UNDEFINED )
+    alpha = gh_scm2int( scm_alpha );
+  pixel = (red << 24) | (green << 16) | (blue << 8) | alpha;
+  SCM_RETURN_NEWSMOB( simage_pixel_smob_type, pixel );
+} /* scimage_make_pixel() */
+
+/*/ (simage-pixel-get-red simage-pixel)
+ *
+ */
+
+static SCM
+scimage_pixel_get_red(
+  SCM simage_pixel_smob )
+{
+  unsigned long pixel;
+  pixel = (unsigned long) SCM_SMOB_DATA( simage_pixel_smob );
+  return gh_int2scm( (pixel >> 24) & 0xff );
+} /* scimage_pixel_get_red() */
+
+/*/ (simage-pixel-get-green simage-pixel)
+ *
+ */
+
+static SCM
+scimage_pixel_get_green(
+  SCM simage_pixel_smob )
+{
+  unsigned long pixel;
+  pixel = (unsigned long) SCM_SMOB_DATA( simage_pixel_smob );
+  return gh_int2scm( (pixel >> 16) & 0xff );
+} /* scimage_pixel_get_green() */
+
+/*/ (simage-pixel-get-blue simage-pixel)
+ *
+ */
+
+static SCM
+scimage_pixel_get_blue(
+  SCM simage_pixel_smob )
+{
+  unsigned long pixel;
+  pixel = (unsigned long) SCM_SMOB_DATA( simage_pixel_smob );
+  return gh_int2scm( (pixel >> 8) & 0xff );
+} /* scimage_pixel_get_blue() */
+
+/*/ (simage-pixel-get-alpha simage-pixel)
+ *
+ */
+
+static SCM
+scimage_pixel_get_alpha(
+  SCM simage_pixel_smob )
+{
+  unsigned long pixel;
+  pixel = (unsigned long) SCM_SMOB_DATA( simage_pixel_smob );
+  return gh_int2scm( pixel & 0xff );
+} /* scimage_pixel_get_alpha() */
+
+/* ********************************************************************** */
 
 /*/ (simage-load-supported? filename)
  *
@@ -176,42 +380,6 @@ scimage_load(
   SCM_RETURN_NEWSMOB( simage_image_smob_type, simage_image_data );
 } /* scimage_load() */
 
-/*/ (simage-resize image width height)
- *
- */
-
-static SCM
-scimage_resize(
-  SCM simage_image_smob,
-  SCM scm_width,
-  SCM scm_height )
-{
-  struct simage_image * simage_image_data;
-  int new_width, new_height, new_components;
-  unsigned char * new_data;
-
-  SCM_ASSERT( SCM_SMOB_PREDICATE( simage_image_smob_type, simage_image_smob ),
-              simage_image_smob, SCM_ARG1, "simage-image-width" );
-  simage_image_data =
-    (struct simage_image *) SCM_SMOB_DATA( simage_image_smob );
-  new_width = gh_scm2int( scm_width );
-  new_height = gh_scm2int( scm_height );
-  new_components = simage_image_data->components;
-  
-  new_data = simage_resize( simage_image_data->data,
-    simage_image_data->width, simage_image_data->height,
-    simage_image_data->components, new_width, new_height );
-
-  if ( ! new_data ) return SCM_UNSPECIFIED;
-  simage_image_data =
-    (struct simage_image *) malloc( sizeof( struct simage_image ) );
-  simage_image_data->data = new_data;
-  simage_image_data->width = new_width;
-  simage_image_data->height = new_height;
-  simage_image_data->components = new_components;
-  SCM_RETURN_NEWSMOB( simage_image_smob_type, simage_image_data );
-} /* scimage_resize() */
-
 /*/ (simage-save-supported? extension)
  *
  */
@@ -234,17 +402,17 @@ scimage_save_supported_p(
 
 static SCM
 scimage_save(
-  SCM simage_image_smob,
+  SCM scm_simage_image,
   SCM scm_filename,
   SCM scm_extension )
 {
   char * filename, * extension;
   struct simage_image * simage_image_data;
   int result;
-  SCM_ASSERT( SCM_SMOB_PREDICATE( simage_image_smob_type, simage_image_smob ),
-              simage_image_smob, SCM_ARG1, "simage-image-width" );
+  SCM_ASSERT( SCM_SMOB_PREDICATE( simage_image_smob_type, scm_simage_image ),
+              scm_simage_image, SCM_ARG1, "simage-image-width" );
   simage_image_data =
-    (struct simage_image *) SCM_SMOB_DATA( simage_image_smob );
+    (struct simage_image *) SCM_SMOB_DATA( scm_simage_image );
   filename = gh_scm2newstr( scm_filename, NULL );
   extension = gh_scm2newstr( scm_extension, NULL );
   result = simage_save_image( filename, simage_image_data->data,
@@ -255,63 +423,117 @@ scimage_save(
   return result ? SCM_BOOL_T : SCM_BOOL_F;
 } /* scimage_save() */
 
+/*/ (simage-resize image width height)
+ *
+ */
+
+static SCM
+scimage_resize(
+  SCM scm_simage_image,
+  SCM scm_width,
+  SCM scm_height )
+{
+  struct simage_image * simage_image_data;
+  int new_width, new_height, new_components;
+  unsigned char * new_data;
+
+  SCM_ASSERT( SCM_SMOB_PREDICATE( simage_image_smob_type, scm_simage_image ),
+              scm_simage_image, SCM_ARG1, "simage-image-width" );
+  simage_image_data =
+    (struct simage_image *) SCM_SMOB_DATA( scm_simage_image );
+  new_width = gh_scm2int( scm_width );
+  new_height = gh_scm2int( scm_height );
+  new_components = simage_image_data->components;
+  
+  new_data = simage_resize( simage_image_data->data,
+    simage_image_data->width, simage_image_data->height,
+    simage_image_data->components, new_width, new_height );
+
+  if ( ! new_data ) return SCM_UNSPECIFIED;
+  simage_image_data =
+    (struct simage_image *) malloc( sizeof( struct simage_image ) );
+  simage_image_data->data = new_data;
+  simage_image_data->width = new_width;
+  simage_image_data->height = new_height;
+  simage_image_data->components = new_components;
+  SCM_RETURN_NEWSMOB( simage_image_smob_type, simage_image_data );
+} /* scimage_resize() */
+
 /* ********************************************************************** */
-/* guile hooks operating on the simage-image struct */
+/* image<->pixel functions */
 
-/*/ (simage-image-width image)
+/*/ (simage-image-get-pixel simage-image x y)
  *
  */
 
 static SCM
-scimage_image_width(
-  SCM simage_image_smob )
+scimage_image_get_pixel(
+  SCM scm_simage_image,
+  SCM scm_x,
+  SCM scm_y )
 {
   struct simage_image * simage_image_data;
-  SCM_ASSERT( SCM_SMOB_PREDICATE( simage_image_smob_type, simage_image_smob ),
-              simage_image_smob, SCM_ARG1, "simage-image-width" );
+  int x, y;
+  unsigned char * pos;
+  unsigned long pixel;
+  SCM_ASSERT( SCM_SMOB_PREDICATE( simage_image_smob_type, scm_simage_image ),
+              scm_simage_image, SCM_ARG1, "simage-image-get-pixel" );
   simage_image_data =
-    (struct simage_image *) SCM_SMOB_DATA( simage_image_smob );
-  return gh_int2scm( simage_image_data->width );
-} /* scimage_image_width() */
+    (struct simage_image *) SCM_SMOB_DATA( scm_simage_image );
+  x = gh_scm2int( scm_x );
+  y = gh_scm2int( scm_y );
+  if ( x < 0 || x >= simage_image_data->width )
+    return SCM_UNDEFINED;
+  if ( y < 0 || y >= simage_image_data->height )
+    return SCM_UNDEFINED;
+  pos = simage_image_data->data +
+    (simage_image_data->width * y + x) * simage_image_data->components;
+  pixel = pos[0] << 24 | pos[1] << 16 | pos[2] << 8 | 0xff;
+  if ( simage_image_data->components == 4 )
+    pixel &= ~((unsigned long)pos[3]);
+  SCM_RETURN_NEWSMOB( simage_pixel_smob_type, pixel );
+} /* scimage_image_get_pixel() */
 
-/*/ (simage-image-height image)
+/*/ (simage-image-set-pixel! simage-image x y pixel)
  *
  */
 
 static SCM
-scimage_image_height(
-  SCM simage_image_smob )
+scimage_image_set_pixel(
+  SCM scm_simage_image,
+  SCM scm_x,
+  SCM scm_y,
+  SCM scm_simage_pixel )
 {
   struct simage_image * simage_image_data;
-  SCM_ASSERT( SCM_SMOB_PREDICATE( simage_image_smob_type, simage_image_smob ),
-              simage_image_smob, SCM_ARG1, "simage-image-height" );
+  int x, y;
+  unsigned long pixel;
+  unsigned char * pos;
+  SCM_ASSERT( SCM_SMOB_PREDICATE( simage_image_smob_type, scm_simage_image ),
+              scm_simage_image, SCM_ARG1, "simage-image-set-pixel!" );
+  SCM_ASSERT( SCM_SMOB_PREDICATE( simage_pixel_smob_type, scm_simage_pixel ),
+              scm_simage_pixel, SCM_ARG4, "simage-image-set-pixel!" );
   simage_image_data =
-    (struct simage_image *) SCM_SMOB_DATA( simage_image_smob );
-  return gh_int2scm( simage_image_data->height );
-} /* scimage_image_height() */
-
-/*/ (simage-image-components)
- *
- */
-
-static SCM
-scimage_image_components(
-  SCM simage_image_smob )
-{
-  struct simage_image * simage_image_data;
-  SCM_ASSERT( SCM_SMOB_PREDICATE( simage_image_smob_type, simage_image_smob ),
-              simage_image_smob, SCM_ARG1, "simage-image-components" );
-  simage_image_data =
-    (struct simage_image *) SCM_SMOB_DATA( simage_image_smob );
-  return gh_int2scm( simage_image_data->components );
-} /* scimage_image_components() */
-
+    (struct simage_image *) SCM_SMOB_DATA( scm_simage_image );
+  x = gh_scm2int( scm_x );
+  y = gh_scm2int( scm_y );
+  pixel = (unsigned long) SCM_SMOB_DATA( scm_simage_pixel );
+  if ( x < 0 || x >= simage_image_data->width )
+    return SCM_UNDEFINED;
+  if ( y < 0 || y >= simage_image_data->height )
+    return SCM_UNDEFINED;
+  pos = simage_image_data->data +
+    (simage_image_data->width * y + x) * simage_image_data->components;
+  pos[0] = (pixel >> 24) & 0xff;
+  pos[1] = (pixel >> 16) & 0xff;
+  pos[2] = (pixel >> 8) & 0xff;
+  if ( simage_image_data->components == 4 )
+    pos[3] = pixel & 0xff;
+  return SCM_UNSPECIFIED;
+} /* scimage_image_set_pixel() */
+  
 /* ********************************************************************** */
 /* init-function for binding the functions to the Guile environment */
-
-/*/
- *
- */
 
 void
 guilesimage_init(
@@ -338,21 +560,37 @@ guilesimage_init(
   scm_set_smob_free( simage_image_smob_type, scimage_image_free );
   scm_set_smob_print( simage_image_smob_type, scimage_image_print );
 
-  /* register guile functions */
+  simage_pixel_smob_type =
+    scm_make_smob_type( "simage-pixel", 0 ); /* immediate data */
+  scm_set_smob_mark( simage_pixel_smob_type, scimage_pixel_mark );
+  scm_set_smob_free( simage_pixel_smob_type, scimage_pixel_free );
+  scm_set_smob_print( simage_pixel_smob_type, scimage_pixel_print );
+
+  /* register guile hooks */
   scm_make_gsubr( "simage-version-major", 0, 0, 0, scimage_version_major );
   scm_make_gsubr( "simage-version-minor", 0, 0, 0, scimage_version_minor );
   scm_make_gsubr( "simage-version-micro", 0, 0, 0, scimage_version_micro );
   scm_make_gsubr( "simage-get-last-error", 0, 0, 0, scimage_get_last_error );
 
-  scm_make_gsubr( "simage-load-supported?", 1, 0, 0, scimage_load_supported_p );
-  scm_make_gsubr( "simage-load", 1, 0, 0, scimage_load );
-  scm_make_gsubr( "simage-resize", 3, 0, 0, scimage_resize );
-  scm_make_gsubr( "simage-save-supported?", 1, 0, 0, scimage_save_supported_p );
-  scm_make_gsubr( "simage-save", 3, 0, 0, scimage_save );
-
+  scm_make_gsubr( "make-simage-image", 2, 1, 0, scimage_make_image );
   scm_make_gsubr( "simage-image-width", 1, 0, 0, scimage_image_width );
   scm_make_gsubr( "simage-image-height", 1, 0, 0, scimage_image_height );
   scm_make_gsubr( "simage-image-components", 1, 0, 0,scimage_image_components );
+
+  scm_make_gsubr( "simage-load-supported?", 1, 0, 0, scimage_load_supported_p );
+  scm_make_gsubr( "simage-load", 1, 0, 0, scimage_load );
+  scm_make_gsubr( "simage-save-supported?", 1, 0, 0, scimage_save_supported_p );
+  scm_make_gsubr( "simage-save", 3, 0, 0, scimage_save );
+  scm_make_gsubr( "simage-resize", 3, 0, 0, scimage_resize );
+
+  scm_make_gsubr( "make-simage-pixel", 3, 1, 0, scimage_make_pixel );
+  scm_make_gsubr( "simage-pixel-get-red", 1, 0, 0, scimage_pixel_get_red );
+  scm_make_gsubr( "simage-pixel-get-green", 1, 0, 0, scimage_pixel_get_green );
+  scm_make_gsubr( "simage-pixel-get-blue", 1, 0, 0, scimage_pixel_get_blue );
+  scm_make_gsubr( "simage-pixel-get-alpha", 1, 0, 0, scimage_pixel_get_alpha );
+
+  scm_make_gsubr( "simage-image-get-pixel", 3, 0, 0, scimage_image_get_pixel );
+  scm_make_gsubr( "simage-image-set-pixel!", 4, 0, 0, scimage_image_set_pixel );
 } /* guilesimage_init() */
 
 /* EOF ****************************************************************** */
