@@ -32,6 +32,9 @@ fi
 cd $RPM_BUILD_DIR
 test -d simage || mkdir simage
 cd simage
+# Errors might go unnoticed if configuration info is taken from
+# an old cache.
+rm -f ./config.cache
 # The options must cover the set of install-directories in the %files section.
 $RPM_SOURCE_DIR/simage/configure \
                        --bindir=@bindir@ --includedir=@includedir@ \
@@ -42,15 +45,18 @@ make
 %install
 
 cd $RPM_BUILD_DIR/simage
-make install
+make install-strip
+# FIXME: for some unknown reason, the lib-file is not automatically
+# stripped, so we use this hack. 20000705 mortene.
+strip @libdir@/libsimage.so.0.0.0
 
 
 %files
 
 @bindir@/simage-config
 @includedir@/simage.h
-@libdir@/libsimage-0.9.so.0
-@libdir@/libsimage-0.9.so.0.0.0
+@libdir@/libsimage.so.0
+@libdir@/libsimage.so.0.0.0
 @libdir@/libsimage.la
 @libdir@/libsimage.so
 @datadir@/aclocal/simage.m4
