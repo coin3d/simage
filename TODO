@@ -5,6 +5,8 @@ Todo
 (format is: "* [author][conceived-date] item", listed in approx
 prioritized order)
 
+* [mortene][19990901] make an example/test application
+
 * [mortene][19990826] make it user-selectable whether or not to
   include support for the various image file formats (with everything
   defaulting to "include if available", of course)

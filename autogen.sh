@@ -42,10 +42,16 @@ fi
 
 echo "Running aclocal"
 aclocal
+
 echo "Running autoheader"
 autoheader
+
 echo "Running automake"
-automake --add-missing --gnu --include-deps
+case $CC in
+    *xlc | *xlc\ * | *lcc | *lcc\ *) am_opt=--include-deps;;
+esac
+automake --add-missing --gnu $am_opt
+
 echo "Running autoconf"
 autoconf
 
