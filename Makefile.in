@@ -85,6 +85,7 @@ SIMAGE_EXTRA_CPPFLAGS = @SIMAGE_EXTRA_CPPFLAGS@
 SIMAGE_EXTRA_LDFLAGS = @SIMAGE_EXTRA_LDFLAGS@
 SIMAGE_EXTRA_LIBS = @SIMAGE_EXTRA_LIBS@
 SIMAGE_INTERFACE_AGE = @SIMAGE_INTERFACE_AGE@
+SIMAGE_LIBNAME = @SIMAGE_LIBNAME@
 SIMAGE_MAJOR_VERSION = @SIMAGE_MAJOR_VERSION@
 SIMAGE_MICRO_VERSION = @SIMAGE_MICRO_VERSION@
 SIMAGE_MINOR_VERSION = @SIMAGE_MINOR_VERSION@
@@ -114,8 +115,8 @@ DATA =  $(m4data_DATA)
 
 DIST_COMMON =  README ./stamp-h.in AUTHORS COPYING ChangeLog INSTALL \
 Makefile.am Makefile.in NEWS TODO acconfig.h aclocal.m4 config.guess \
-config.h.in config.sub configure configure.in install-sh ltconfig \
-ltmain.sh missing mkinstalldirs simage-config.in
+config.h.in config.sub configure configure.in depcomp install-sh \
+ltconfig ltmain.sh missing mkinstalldirs simage-config.in
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)

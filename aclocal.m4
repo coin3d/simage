@@ -866,6 +866,43 @@ else
 fi])
 
 # Usage:
+#   SIM_AC_CHECK_LINKSTYLE
+#
+# Description:
+#
+#   Detect how to link against external libraries; UNIX-style
+#   ("-llibname") or MSWin-style ("libname.lib"). As a side-effect of
+#   running this macro, the shell variable sim_ac_linking_style will be
+#   set to either "mswin" or "unix".
+#
+# Author:
+#   Marius B. Monsen <mariusbu@sim.no>
+
+AC_DEFUN([SIM_AC_CHECK_LINKSTYLE], [
+
+sim_ac_save_ldflags=$LDFLAGS
+LDFLAGS="$LDFLAGS version.lib"
+
+AC_CACHE_CHECK(
+  [if linking should be done "MSWin-style"],
+  sim_cv_mswin_linking,
+  AC_TRY_COMPILE([#include <windows.h>
+#include <version.h>],
+                 [(void)GetFileVersionInfoSize(0L, 0L);],
+                 [sim_cv_mswin_linking=yes],
+                 [sim_cv_mswin_linking=no])
+)
+
+LDFLAGS=$sim_ac_save_ldflags
+
+if test x"$sim_cv_mswin_linking" = x"yes"; then
+  sim_ac_linking_style=mswin
+else
+  sim_ac_linking_style=unix
+fi
+])
+
+# Usage:
 #  SIM_CHECK_JPEGLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 #
 #  Try to find the JPEG development system. If it is found, these
@@ -881,14 +918,8 @@ fi])
 #
 #
 # Author: Morten Eriksen, <mortene@sim.no>.
-#
-# TODO:
-#    * [mortene:20000122] make sure this work on MSWin (with
-#      Cygwin installation)
-#
 
 AC_DEFUN([SIM_CHECK_JPEGLIB], [
-AC_PREREQ([2.14.1])
 
 AC_ARG_WITH(
   [jpeg],
@@ -904,7 +935,12 @@ if test x"$with_jpeg" != xno; then
     sim_ac_jpegdev_cppflags="-I${with_jpeg}/include"
     sim_ac_jpegdev_ldflags="-L${with_jpeg}/lib"
   fi
-  sim_ac_jpegdev_libs="-ljpeg"
+
+  if test x"$sim_ac_linking_style" = xmswin; then
+    sim_ac_jpegdev_libs=jpeg.lib
+  else
+    sim_ac_jpegdev_libs=-ljpeg
+  fi
 
   sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
@@ -951,11 +987,6 @@ fi
 #
 #
 # Author: Morten Eriksen, <mortene@sim.no>.
-#
-# TODO:
-#    * [mortene:20000122] make sure this work on MSWin (with
-#      Cygwin installation)
-#
 
 AC_DEFUN([SIM_AC_CHECK_UNGIFLIB], [
 AC_ARG_WITH(
@@ -972,7 +1003,12 @@ if test x"$with_ungif" != xno; then
     sim_ac_ungifdev_cppflags="-I${with_ungif}/include"
     sim_ac_ungifdev_ldflags="-L${with_ungif}/lib"
   fi
-  sim_ac_ungifdev_libs="-lungif"
+
+  if test x"$sim_ac_linking_style" = xmswin; then
+    sim_ac_ungifdev_libs=ungif.lib
+  else
+    sim_ac_ungifdev_libs=-lungif
+  fi
 
   sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
@@ -1017,14 +1053,8 @@ fi
 #  tiff development system is found.
 #
 # Author: Morten Eriksen, <mortene@sim.no>.
-#
-# TODO:
-#    * [mortene:20000122] make sure this work on MSWin (with
-#      Cygwin installation)
-#
 
 AC_DEFUN([SIM_CHECK_TIFFLIB], [
-AC_PREREQ([2.14.1])
 
 AC_ARG_WITH(
   [tiff],
@@ -1040,7 +1070,12 @@ if test x"$with_tiff" != xno; then
     sim_ac_tiffdev_cppflags="-I${with_tiff}/include"
     sim_ac_tiffdev_ldflags="-L${with_tiff}/lib"
   fi
-  sim_ac_tiffdev_libs="-ltiff"
+
+  if test x"$sim_ac_linking_style" = xmswin; then
+    sim_ac_tiffdev_libs=tiff.lib
+  else
+    sim_ac_tiffdev_libs=-ltiff
+  fi
 
   sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
@@ -1086,14 +1121,8 @@ fi
 #
 #
 # Author: Morten Eriksen, <mortene@sim.no>.
-#
-# TODO:
-#    * [mortene:20000122] make sure this work on MSWin (with
-#      Cygwin installation)
-#
 
 AC_DEFUN([SIM_CHECK_ZLIB], [
-AC_PREREQ([2.14.1])
 
 AC_ARG_WITH(
   [zlib],
@@ -1109,7 +1138,12 @@ if test x"$with_zlib" != xno; then
     sim_ac_zlib_cppflags="-I${with_zlib}/include"
     sim_ac_zlib_ldflags="-L${with_zlib}/lib"
   fi
-  sim_ac_zlib_libs="-lz"
+
+  if test x"$sim_ac_linking_style" = xmswin; then
+    sim_ac_zlib_libs=z.lib
+  else
+    sim_ac_zlib_libs="-lz"
+  fi
 
   sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
@@ -1156,14 +1190,8 @@ fi
 #  png development system is found.
 #
 # Author: Morten Eriksen, <mortene@sim.no>.
-#
-# TODO:
-#    * [mortene:20000122] make sure this work on MSWin (with
-#      Cygwin installation)
-#
 
 AC_DEFUN([SIM_CHECK_PNGLIB], [
-AC_PREREQ([2.14.1])
 
 AC_ARG_WITH(
   [png],
@@ -1179,7 +1207,13 @@ if test x"$with_png" != xno; then
     sim_ac_pngdev_cppflags="-I${with_png}/include"
     sim_ac_pngdev_ldflags="-L${with_png}/lib"
   fi
-  sim_ac_pngdev_libs="-lpng"
+
+
+  if test x"$sim_ac_linking_style" = xmswin; then
+    sim_ac_pngdev_libs=png.lib
+  else
+    sim_ac_pngdev_libs=-lpng
+  fi
 
   sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
