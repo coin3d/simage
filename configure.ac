@@ -247,6 +247,7 @@ AC_LANG_POP(C++)
 # **************************************************************************
 # Check if qimage support is wanted (and if so, available)
 
+echo "PRE LIBS: $LIBS";
 sim_ac_qimage_support=false
 if $sim_ac_qimage_support_wanted; then
   SIM_AC_CHECK_QT([
@@ -254,8 +255,23 @@ if $sim_ac_qimage_support_wanted; then
     SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_qt_ldflags"
     SIMAGE_EXTRA_LIBS="$sim_ac_qt_libs $SIMAGE_EXTRA_LIBS"
     CPPFLAGS="$CPPFLAGS $sim_ac_qt_cppflags"
-    LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
-    LIBS="$sim_ac_qt_libs $LIBS"
+    # this is probably bogus - it's whether Qt is static or dynamic that's the
+    # real issue, or?  20041021 larsa
+    if $SIMAGE_STATIC; then
+      if $BUILD_WITH_MSVC; then
+        SIM_AC_CONFIGURATION_SETTING([LIBS], [not added])
+	echo "LIBS: $LIBS";
+        :
+      else
+        LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
+        LIBS="$sim_ac_qt_libs $LIBS"
+        SIM_AC_CONFIGURATION_SETTING([LIBS], [added 1])
+      fi
+    else
+      LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
+      LIBS="$sim_ac_qt_libs $LIBS"
+      SIM_AC_CONFIGURATION_SETTING([LIBS], [added 2])
+    fi
     sim_ac_qimage_support=true
   ], [
     AC_MSG_WARN([can't compile and link against Qt development kit])
