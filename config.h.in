@@ -48,5 +48,8 @@
 /* define this to the simage major.minor.micro version string */
 #undef SIMAGE_VERSION
 
+/* define to enable xwd support */
+#undef SIMAGE_XWD_SUPPORT
+
 /* Version number of package */
 #undef VERSION

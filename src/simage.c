@@ -46,6 +46,10 @@ static loader_data rgb_loader;
 #include <simage_gif.h>
 static loader_data gif_loader;
 #endif /* HAVE_UNGIFLIB */
+#ifdef SIMAGE_XWD_SUPPORT
+#include <simage_xwd.h>
+static loader_data xwd_loader;
+#endif /* SIMAGE_XWD_SUPPORT */
 #include <assert.h>
 
 static loader_data *first_loader = NULL;
@@ -173,6 +177,13 @@ add_internal_loaders(void)
                simage_gif_error,
                1, 0);
 #endif /* HAVE_UNGIFLIB */
+#ifdef SIMAGE_XWD_SUPPORT
+    add_loader(&xwd_loader,
+               simage_xwd_load,
+               simage_xwd_identify,
+               simage_xwd_error,
+               1, 0);
+#endif /* SIMAGE_XWD_SUPPORT */
   }
 }
 

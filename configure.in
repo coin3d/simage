@@ -6,7 +6,10 @@ m4_define([SIMAGE_MINOR], [1])
 m4_define([SIMAGE_MICRO], [2])
 
 # **************************************************************************
-AC_INIT([simage], [v[]SIMAGE_MAJOR.SIMAGE_MINOR.SIMAGE_MICRO])
+AC_INIT(
+  [simage],
+  [v[]SIMAGE_MAJOR.SIMAGE_MINOR.SIMAGE_MICRO],
+  [coin-bugs@coin3d.org])
 AC_REVISION([$Revision$])
 
 AC_CONFIG_AUX_DIR([cfg])
@@ -28,7 +31,7 @@ SIM_AC_CVS_CHANGES([
 
 # **************************************************************************
 
-AC_CANONICAL_SYSTEM
+AC_CANONICAL_TARGET
 
 SIM_AC_SETUP_MSVC_IFELSE([], [
   case $host in
@@ -274,7 +277,7 @@ AC_ARG_WITH(
   [CONFIG=$withval],
   [CONFIG=default])
 
-AC_SUBST(CONFIG)
+AC_SUBST([CONFIG])
 
 AC_ARG_WITH(
   [suffix],
@@ -283,7 +286,7 @@ AC_ARG_WITH(
   [SUFFIX=$withval],
   [SUFFIX=])
 
-AC_SUBST(SUFFIX)
+AC_SUBST([SUFFIX])
 
 # **************************************************************************
 # libtiff and libpng uses math library functions.
@@ -446,6 +449,27 @@ else
 fi
 
 # **************************************************************************
+# Check if XWD support is wanted.
+
+AC_ARG_WITH(
+  [xwd],
+  [AC_HELP_STRING([--with-xwd], [enable/disable support for XWD images])],
+  [case $withval in
+  yes | "") sim_ac_want_xwd=true ;;
+  no)       sim_ac_want_xwd=false ;;
+  *)        AC_MSG_ERROR([bad value "$withval" for --with-xwd]) ;;
+  esac],
+  [sim_ac_want_xwd=false])
+
+AM_CONDITIONAL(SIMAGE_XWD_SUPPORT, $sim_ac_want_xwd)
+if $sim_ac_want_xwd; then
+  AC_DEFINE(SIMAGE_XWD_SUPPORT, , [define to enable xwd support])
+  SIM_AC_CONFIGURATION_SETTING([XWD support (experimental)], [Yes])
+else
+  SIM_AC_CONFIGURATION_SETTING([XWD support (experimental)], [No (default)])
+fi
+
+# **************************************************************************
 # Check if mpeg2enc is wanted.
 
 AC_ARG_WITH(
@@ -463,7 +487,7 @@ if $sim_ac_want_mpeg2enc; then
   AC_DEFINE(SIMAGE_MPEG2ENC_SUPPORT, , [define to enable mpeg2enc support])
   SIM_AC_CONFIGURATION_SETTING([Mpeg2 encoding support], [Yes])
 else
-  SIM_AC_CONFIGURATION_SETTING([Mpeg2 encoding support], [No])
+  SIM_AC_CONFIGURATION_SETTING([Mpeg2 encoding support], [No (default)])
 fi
 
 # **************************************************************************

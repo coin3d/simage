@@ -44,6 +44,12 @@ else
 PICSOURCES =
 endif
 
+if SIMAGE_XWD_SUPPORT
+XWDSOURCES = simage_xwd.c $(top_srcdir)/include/simage_xwd.h
+else
+XWDSOURCES =
+endif
+
 lib_LTLIBRARIES = libsimage@SUFFIX@.la
 
 if SIMAGE_MPEG2ENC_SUPPORT
@@ -67,7 +73,8 @@ libsimage@SUFFIX@_la_SOURCES = \
 	$(TIFFSOURCES) \
 	$(TGASOURCES) \
 	$(RGBSOURCES) \
-	$(PICSOURCES)
+	$(PICSOURCES) \
+	$(XWDSOURCES)
 
 # all the conditionally compiled source files must be added here...
 EXTRA_libsimage@SUFFIX@_la_SOURCES = \
@@ -84,7 +91,9 @@ EXTRA_libsimage@SUFFIX@_la_SOURCES = \
 	$(top_srcdir)/include/simage_rgb.h \
 	simage_rgb.c \
 	$(top_srcdir)/include/simage_pic.h \
-	simage_pic.c
+	simage_pic.c \
+	$(top_srcdir)/include/simage_xwd.h \
+	simage_xwd.c
 
 libsimage@SUFFIX@incdir = $(includedir)
 libsimage@SUFFIX@inc_HEADERS = \
