@@ -25,6 +25,9 @@ NULL=
 NULL=nul
 !ENDIF 
 
+CPP=cl.exe
+RSC=rc.exe
+
 !IF  "$(CFG)" == "simage - Win32 Release"
 
 OUTDIR=C:@libdir@
@@ -54,40 +57,7 @@ CLEAN :
 "$(INTDIR)" :
     if not exist "$(INTDIR)/$(NULL)" mkdir "$(INTDIR)"
 
-CPP=cl.exe
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "@simage_build_dir@" /I "@simage_src_dir@\include" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /Fp"$(INTDIR)\simage.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\simage.bsc" 
 BSC32_SBRS= \
@@ -109,19 +79,6 @@ LIB32_OBJS= \
   $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
 <<
 
-SOURCE="$(InputPath)"
-DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
-
-ALL : $(DS_POSTBUILD_DEP)
-
-# Begin Custom Macros
-OutDir=C:@libdir@
-# End Custom Macros
-
-$(DS_POSTBUILD_DEP) : "$(OUTDIR)\simage.lib"
-   cp @top_srcdir@/../include/simage.h @includedir@/simage.h
-	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
-
 !ELSEIF  "$(CFG)" == "simage - Win32 Debug"
 
 OUTDIR=C:@libdir@
@@ -130,7 +87,7 @@ INTDIR=.\Debug
 OutDir=C:@libdir@
 # End Custom Macros
 
-ALL : "$(OUTDIR)\simage.lib"
+ALL : "$(OUTDIR)\simaged.lib"
 
 
 CLEAN :
@@ -144,7 +101,7 @@ CLEAN :
 	-@erase "$(INTDIR)\simage_tiff.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vc60.pdb"
-	-@erase "$(OUTDIR)\simage.lib"
+	-@erase "$(OUTDIR)\simaged.lib"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -152,8 +109,29 @@ CLEAN :
 "$(INTDIR)" :
     if not exist "$(INTDIR)/$(NULL)" mkdir "$(INTDIR)"
 
-CPP=cl.exe
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /I "@simage_build_dir@" /I "@simage_src_dir@\include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Fp"$(INTDIR)\simage.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
+BSC32=bscmake.exe
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\simage.bsc" 
+BSC32_SBRS= \
+	
+LIB32=link.exe -lib
+LIB32_FLAGS=/nologo /out:"$(OUTDIR)\simaged.lib" 
+LIB32_OBJS= \
+	"$(INTDIR)\simage.obj" \
+	"$(INTDIR)\simage_gif.obj" \
+	"$(INTDIR)\simage_jpeg.obj" \
+	"$(INTDIR)\simage_pic.obj" \
+	"$(INTDIR)\simage_png.obj" \
+	"$(INTDIR)\simage_rgb.obj" \
+	"$(INTDIR)\simage_tga.obj" \
+	"$(INTDIR)\simage_tiff.obj"
+
+"$(OUTDIR)\simaged.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
+    $(LIB32) @<<
+  $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
+<<
+
+!ENDIF 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -184,30 +162,6 @@ CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /I "@simage_build_dir@" /I "@simage_sr
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
-
-RSC=rc.exe
-BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\simage.bsc" 
-BSC32_SBRS= \
-	
-LIB32=link.exe -lib
-LIB32_FLAGS=/nologo /out:"$(OUTDIR)\simage.lib" 
-LIB32_OBJS= \
-	"$(INTDIR)\simage.obj" \
-	"$(INTDIR)\simage_gif.obj" \
-	"$(INTDIR)\simage_jpeg.obj" \
-	"$(INTDIR)\simage_pic.obj" \
-	"$(INTDIR)\simage_png.obj" \
-	"$(INTDIR)\simage_rgb.obj" \
-	"$(INTDIR)\simage_tga.obj" \
-	"$(INTDIR)\simage_tiff.obj"
-
-"$(OUTDIR)\simage.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
-    $(LIB32) @<<
-  $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
-<<
-
-!ENDIF 
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"

@@ -50,10 +50,6 @@ BSC32=bscmake.exe
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
-# Begin Special Build Tool
-SOURCE="$(InputPath)"
-PostBuild_Cmds=cp @top_srcdir@/../include/simage.h @includedir@/simage.h
-# End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "simage - Win32 Debug"
 
@@ -76,7 +72,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
+# ADD LIB32 /nologo /out:"C:@libdir@\simaged.lib"
 
 !ENDIF 
 
