@@ -179,7 +179,6 @@ simage_gif_load(const char *filename,
         return NULL;
       }
       if (giffile->Image.Interlace) {
-        fprintf(stderr,"interlace\n");
         /* Need to perform 4 passes on the images: */
         for (i = 0; i < 4; i++) {
           for (j = row + interlacedoffset[i]; j < row + height;
