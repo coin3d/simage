@@ -25,6 +25,13 @@ libsndfile_stream_open(const char * filename, s_stream * stream,
 {
   libsndfile_context *context;
   int channels;
+  FILE *dummyfile;
+
+  dummyfile = fopen(filename, "rb");
+  if (!dummyfile)
+    return 0;
+  else
+    fclose(dummyfile);
 
   context = (libsndfile_context *) malloc(sizeof(libsndfile_context));
   libsndfile_init_context(context);

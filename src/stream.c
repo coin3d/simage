@@ -84,7 +84,9 @@ s_stream *
 s_stream_open(const char * filename, s_params * params)
 {
   struct simage_stream_importer * imp;
-  s_stream * stream = (s_stream*) malloc(sizeof(s_stream));
+  s_stream * stream;
+
+  stream = (s_stream*) malloc(sizeof(s_stream));
   stream->params = NULL;
   stream->filename = NULL;
   stream->context = NULL;
