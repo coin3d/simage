@@ -115,11 +115,11 @@ simage_tiff_identify(const char *ptr,
 		     const unsigned char *header,
 		     int headerlen)
 {
-  static unsigned char tifcmp[] = {0x4d, 0x4d, 0x0, 0x2a, 0, 0};
+  static unsigned char tifcmp[] = {0x4d, 0x4d, 0x0, 0x2a};
   static unsigned char tifcmp2[] = {0x49, 0x49, 0x2a, 0}; 
-
-  if (headerlen < 6) return 0;
-  if (memcmp((const void*)header, (const void*)tifcmp, 6) == 0) return 1;
+  
+  if (headerlen < 4) return 0;
+  if (memcmp((const void*)header, (const void*)tifcmp, 4) == 0) return 1;
   if (memcmp((const void*)header, (const void*)tifcmp2, 4) == 0) return 1;
   return 0;
 }
