@@ -86,6 +86,12 @@ do
     shift
     program=$1
     shift
+    echo $compiler \
+      $cppflags $CPPFLAGS \
+      $cflags $CFLAGS \
+      $ldflags $LDFLAGS \
+      -o $program $@ \
+      $LIBS $libs
     exec $compiler \
       $cppflags $CPPFLAGS \
       $cflags $CFLAGS \
