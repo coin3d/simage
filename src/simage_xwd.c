@@ -137,21 +137,32 @@ simage_xwd_identify(
   int headerlen )
 {
   /* this test could certainly be improved */
-  fprintf( stdout, "xwd identify: " );
+
   if ( headerlen < 12 ) return 0;
   if ( getuint32be( header + XWD_HOFF_HEADER_SIZE ) < XWD_HEADER_SIZE ) {
-    fprintf( stdout, "headersize failure\n" );
+    /* FIXME: should store error message somewhere for the client app
+       to read. Should anyway *not* print to stdout/stderr, as that
+       can cause a crash when simage is built as a DLL under
+       MSWin. 20020820 mortene. */
+    /* fprintf( stdout, "headersize failure\n" ); */
     return 0;
   }
   if ( getuint32be( header + XWD_HOFF_FILE_VERSION ) != 7 ) {
-    fprintf( stdout, "version failure\n" );
+    /* FIXME: should store error message somewhere for the client app
+       to read. Should anyway *not* print to stdout/stderr, as that
+       can cause a crash when simage is built as a DLL under
+       MSWin. 20020820 mortene. */
+    /* fprintf( stdout, "version failure\n" ); */
     return 0;
   }
   if ( getuint32be( header + XWD_HOFF_FORMAT ) != ZPixmap ) {
-    fprintf( stdout, "format failure\n" );
+    /* FIXME: should store error message somewhere for the client app
+       to read. Should anyway *not* print to stdout/stderr, as that
+       can cause a crash when simage is built as a DLL under
+       MSWin. 20020820 mortene. */
+    /* fprintf( stdout, "format failure\n" ); */
     return 0;
   }
-  fprintf( stdout, "ok\n" );
   return 1;
 } /* simage_xwd_identify() */
 

@@ -29,14 +29,14 @@ static jmp_buf setjmp_buffer;
 static void 
 warn_callback(png_structp ps, png_const_charp pc)
 {
-  fprintf(stderr,"PNG warn: %s\n", pc);
+/*   fprintf(stderr,"PNG warn: %s\n", pc); */
   /*FIXME: notify? */
 }
 
 static void 
 err_callback(png_structp ps, png_const_charp pc)
 {
-  fprintf(stderr,"PNG error: %s\n", pc);
+/*   fprintf(stderr,"PNG error: %s\n", pc); */
 
   /* FIXME: store error message? */
   longjmp(setjmp_buffer, 1);

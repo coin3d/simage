@@ -322,6 +322,8 @@ simage_jpeg_save(const char * filename,
    */
 
   if ((outfile = fopen(filename, "wb")) == NULL) {
+    /* FIXME: should store error message somewhere for the client app
+       to read. 20020820 mortene. */
     /*fprintf(stderr, "can't open %s for writing\n", filename);*/
     jpeg_destroy_compress(&cinfo);
     jpegerror = ERR_OPEN_WRITE;
