@@ -1944,8 +1944,8 @@ fi
 echo "$ac_t""$sim_cv_lib_math" 1>&6
 
 if test x"$sim_cv_lib_math" != xUNDEFINED; then
-  LIBS="$sim_ac_libm $sim_ac_store_libs"
   sim_ac_libm=$sim_cv_lib_math
+  LIBS="$sim_ac_libm $sim_ac_store_libs"
   SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_libm"
 else
   LIBS=$sim_ac_store_libs
@@ -2546,9 +2546,21 @@ fi
 
 test x"$prefix" = x"NONE" && prefix="$ac_default_prefix"
 test x"$exec_prefix" = x"NONE" && exec_prefix="${prefix}"
-includedir="`eval echo $includedir`"
-libdir="`eval echo $libdir`"
+
+# This is the list of all install-path variables found in configure
+# scripts. FIXME: use another "eval-nesting" to move assignments into
+# a for-loop. 20000704 mortene.
+bindir="`eval echo $bindir`"
+sbindir="`eval echo $sbindir`"
+libexecdir="`eval echo $libexecdir`"
 datadir="`eval echo $datadir`"
+sysconfdir="`eval echo $sysconfdir`"
+sharedstatedir="`eval echo $sharedstatedir`"
+localstatedir="`eval echo $localstatedir`"
+libdir="`eval echo $libdir`"
+includedir="`eval echo $includedir`"
+infodir="`eval echo $infodir`"
+mandir="`eval echo $mandir`"
 
 
 
@@ -2561,6 +2573,11 @@ eval "simage_build_dir=\"`echo $simage_current_dir | sed -e 's%\\/%\\\\%g'`\""
 
 
 eval "simage_src_dir=\"`echo $srcdir | sed -e 's%\\/%\\\\%g'`\""
+
+
+
+
+  eval "simage_configure_date=\"`date +%Y%m%d`\""
 
 
 
@@ -2647,7 +2664,8 @@ cat >$CONFIG_STATUS <<EOF
 
 # Files that config.status was made for.
 config_files="\\
-    Makefile src/Makefile simage-config build/simage.dsp build/simage.mak"
+    Makefile src/Makefile simage-config build/simage.spec build/simage.dsp
+    build/simage.mak"
 config_headers="\\
     config.h"
 
@@ -2694,6 +2712,7 @@ do
   'Makefile' ) CONFIG_FILES="\$CONFIG_FILES Makefile" ;;
   'src/Makefile' ) CONFIG_FILES="\$CONFIG_FILES src/Makefile" ;;
   'simage-config' ) CONFIG_FILES="\$CONFIG_FILES simage-config" ;;
+  'build/simage.spec' ) CONFIG_FILES="\$CONFIG_FILES build/simage.spec" ;;
   'build/simage.dsp' ) CONFIG_FILES="\$CONFIG_FILES build/simage.dsp" ;;
   'build/simage.mak' ) CONFIG_FILES="\$CONFIG_FILES build/simage.mak" ;;
   'config.h' ) CONFIG_HEADERS="\$CONFIG_HEADERS config.h" ;;
@@ -2819,6 +2838,7 @@ s%@PIC_SUPPORT_TRUE@%$PIC_SUPPORT_TRUE%;t t
 s%@PIC_SUPPORT_FALSE@%$PIC_SUPPORT_FALSE%;t t
 s%@simage_build_dir@%$simage_build_dir%;t t
 s%@simage_src_dir@%$simage_src_dir%;t t
+s%@simage_configure_date@%$simage_configure_date%;t t
 CEOF
 
 EOF
@@ -2935,7 +2955,7 @@ for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then
   if test x"$ac_file_in" != x-; then
     ac_file_inputs=`echo $ac_file_in | sed -e "s%^%$ac_given_srcdir/%" -e "s%:% $ac_given_srcdir/%g"`
   else
-    ac_file_inputs=-
+    ac_file_inputs=
   fi
 EOF
 cat >>$CONFIG_STATUS <<EOF
@@ -2997,7 +3017,7 @@ for ac_file in .. $CONFIG_HEADERS; do if test "x$ac_file" != x..; then
   if test x"$ac_file_in" != x-; then
     ac_file_inputs=`echo $ac_file_in|sed -e "s%^%$ac_given_srcdir/%" -e "s%:% $ac_given_srcdir/%g"`
   else
-    ac_file_inputs=-
+    ac_file_inputs=
   fi
   # Remove the trailing spaces.
   sed -e 's/[ 	]*$//' $ac_file_inputs >$ac_cs_root.in

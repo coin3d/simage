@@ -1,0 +1,62 @@
+Summary: Tiny library for loading texture bitmaps.
+Name: simage
+Version: @VERSION@
+Release: @simage_configure_date@
+Copyright: Public Domain
+Group: Development/Libraries
+URL: http://www.coin3d.org
+Vendor: Systems in Motion
+Packager: Morten Eriksen <mortene@sim.no>
+
+%description
+
+simage is a library for loading texture bitmaps for 3D
+applications. It contains "wrappers" for libjpeg, libpng, libtiff and
+libungif, as well as native code for parsing bitmap files in SGI RGB,
+PIC and TARGA.  simage is used by the Coin 3D library.
+
+
+%prep
+
+cd $RPM_SOURCE_DIR
+export CVSROOT=:pserver:cvs@cvs.sim.no:/export/cvsroot
+if test ! -d simage; then
+  cvs checkout -P simage
+else
+  cvs update -dP simage
+fi
+
+
+%build
+
+cd $RPM_BUILD_DIR
+test -d simage || mkdir simage
+cd simage
+# The options must cover the set of install-directories in the %files section.
+$RPM_SOURCE_DIR/simage/configure \
+                       --bindir=@bindir@ --includedir=@includedir@ \
+                       --libdir=@libdir@ --datadir=@datadir@
+make
+
+
+%install
+
+cd $RPM_BUILD_DIR/simage
+make install
+
+
+%files
+
+@bindir@/simage-config
+@includedir@/simage.h
+@libdir@/libsimage-0.9.so.0
+@libdir@/libsimage-0.9.so.0.0.0
+@libdir@/libsimage.la
+@libdir@/libsimage.so
+@datadir@/aclocal/simage.m4
+
+
+%clean
+
+cd $RPM_BUILD_DIR/simage
+make uninstall
