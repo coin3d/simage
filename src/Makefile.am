@@ -11,16 +11,7 @@ RGBSOURCES = simage_rgb.c $(top_srcdir)/include/simage_rgb.h
 PICSOURCES = simage_pic.c $(top_srcdir)/include/simage_pic.h
 XWDSOURCES = simage_xwd.c $(top_srcdir)/include/simage_xwd.h
 
-lib_LTLIBRARIES = libsimage@SUFFIX@.la
-
-if SIMAGE_MPEG2ENC_SUPPORT
-libsimage@SUFFIX@_la_LIBADD = ../mpeg2enc/libmpeg2enc.la
-endif
-
-libsimage@SUFFIX@_la_LDFLAGS = \
-	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
-
-libsimage@SUFFIX@_la_SOURCES = \
+SIMAGESOURCES = \
 	$(top_builddir)/include/simage.h \
 	simage.c \
 	simage_write.c \
@@ -37,48 +28,48 @@ libsimage@SUFFIX@_la_SOURCES = \
 	$(PICSOURCES) \
 	$(XWDSOURCES)
 
-# all the conditionally compiled source files must be added here...
-EXTRA_libsimage@SUFFIX@_la_SOURCES = \
-	$(top_srcdir)/include/simage_jpeg.h \
-	simage_jpeg.c \
-	$(top_srcdir)/include/simage_gif.h \
-	simage_gif.c \
-	$(top_srcdir)/include/simage_tiff.h \
-	simage_tiff.c \
-	$(top_srcdir)/include/simage_png.h \
-	simage_png.c \
-	$(top_srcdir)/include/simage_tga.h \
-	simage_tga.c \
-	$(top_srcdir)/include/simage_rgb.h \
-	simage_rgb.c \
-	$(top_srcdir)/include/simage_pic.h \
-	simage_pic.c \
-	$(top_srcdir)/include/simage_xwd.h \
-	simage_xwd.c
+if BUILD_WITH_MSVC
+# we don't use libtool on Cygwin to generate lib
+lib_LIBRARIES = simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
+else
+lib_LTLIBRARIES = libsimage@SUFFIX@.la
+endif
+
+simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_SOURCES = \
+	$(SIMAGESOURCES)
+
+libsimage@SUFFIX@_la_SOURCES = \
+	$(SIMAGESOURCES)
+
+libsimage@SUFFIX@_la_LDFLAGS = \
+	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+
+if SIMAGE_MPEG2ENC_SUPPORT
+if BUILD_WITH_MSVC
+simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_LIBADD = ../mpeg2enc/mpeg2enc.lst
+else
+libsimage@SUFFIX@_la_LIBADD = ../mpeg2enc/libmpeg2enc.la
+endif
+endif
 
 libsimage@SUFFIX@incdir = $(includedir)
 libsimage@SUFFIX@inc_HEADERS = \
 	$(top_builddir)/include/simage.h
 
 # **************************************************************************
+# for MS Windows (MSVC++) LIB/DLL linkage
 
 simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: Makefile \
-  $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_DEPENDENCIES)
+  $(simage@SUFFIX@_lib_OBJECTS) $(simage@SUFFIX@_lib_DEPENDENCIES)
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
 	rm -f "$$basename.dll" "$$basename.lib"; \
-	if @BUILD_WITH_MSVC@; then \
-	  echo "Linking $$basename.lib..."; \
-	  echo $(CC) $(LDFLAGS) $(LIBFLAGS) \
-	    `echo $(libsimage@SUFFIX@_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
-	    $(libsimage@SUFFIX@_la_LIBADD) $(LIBS); \
-	  $(CC) $(LDFLAGS) $(LIBFLAGS) \
-	    `echo $(libsimage@SUFFIX@_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
-	    $(libsimage@SUFFIX@_la_LIBADD) $(LIBS); \
-	else \
-	  touch "$$basename.dll" "$$basename.lib"; \
-	fi
-
-all-local: simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
+	echo "Linking $$basename.lib..."; \
+	echo $(CC) $(LDFLAGS) $(LIBFLAGS) \
+	  $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS) \
+	  $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_LIBADD) $(LIBS); \
+	$(CC) $(LDFLAGS) $(LIBFLAGS) \
+	  $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS) \
+	  $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_LIBADD) $(LIBS);
 
 # **************************************************************************
 

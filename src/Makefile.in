@@ -71,6 +71,7 @@ CONFIG = @CONFIG@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSUFFIX = @DSUFFIX@
+EXEEXT = @EXEEXT@
 GUILE_PROG = @GUILE_PROG@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INSTALL_STRIP_PROGRAM_ENV = @INSTALL_STRIP_PROGRAM_ENV@
@@ -84,6 +85,7 @@ LT_REVISION = @LT_REVISION@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 OBJDUMP = @OBJDUMP@
+OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 SIMAGE_DEBUG_BUILD = @SIMAGE_DEBUG_BUILD@
@@ -119,15 +121,7 @@ RGBSOURCES = simage_rgb.c $(top_srcdir)/include/simage_rgb.h
 PICSOURCES = simage_pic.c $(top_srcdir)/include/simage_pic.h
 XWDSOURCES = simage_xwd.c $(top_srcdir)/include/simage_xwd.h
 
-lib_LTLIBRARIES = libsimage@SUFFIX@.la
-
-@SIMAGE_MPEG2ENC_SUPPORT_TRUE@libsimage@SUFFIX@_la_LIBADD = ../mpeg2enc/libmpeg2enc.la
-
-libsimage@SUFFIX@_la_LDFLAGS = \
-	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
-
-
-libsimage@SUFFIX@_la_SOURCES = \
+SIMAGESOURCES = \
 	$(top_builddir)/include/simage.h \
 	simage.c \
 	simage_write.c \
@@ -145,44 +139,55 @@ libsimage@SUFFIX@_la_SOURCES = \
 	$(XWDSOURCES)
 
 
-# all the conditionally compiled source files must be added here...
-EXTRA_libsimage@SUFFIX@_la_SOURCES = \
-	$(top_srcdir)/include/simage_jpeg.h \
-	simage_jpeg.c \
-	$(top_srcdir)/include/simage_gif.h \
-	simage_gif.c \
-	$(top_srcdir)/include/simage_tiff.h \
-	simage_tiff.c \
-	$(top_srcdir)/include/simage_png.h \
-	simage_png.c \
-	$(top_srcdir)/include/simage_tga.h \
-	simage_tga.c \
-	$(top_srcdir)/include/simage_rgb.h \
-	simage_rgb.c \
-	$(top_srcdir)/include/simage_pic.h \
-	simage_pic.c \
-	$(top_srcdir)/include/simage_xwd.h \
-	simage_xwd.c
+# we don't use libtool on Cygwin to generate lib
+@BUILD_WITH_MSVC_TRUE@lib_LIBRARIES = simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
+@BUILD_WITH_MSVC_FALSE@lib_LTLIBRARIES = libsimage@SUFFIX@.la
 
+simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_SOURCES = \
+	$(SIMAGESOURCES)
+
+
+libsimage@SUFFIX@_la_SOURCES = \
+	$(SIMAGESOURCES)
+
+
+libsimage@SUFFIX@_la_LDFLAGS = \
+	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+
+
+@BUILD_WITH_MSVC_TRUE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_LIBADD = ../mpeg2enc/mpeg2enc.lst
+@BUILD_WITH_MSVC_FALSE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@libsimage@SUFFIX@_la_LIBADD = ../mpeg2enc/libmpeg2enc.la
 
 libsimage@SUFFIX@incdir = $(includedir)
 libsimage@SUFFIX@inc_HEADERS = \
 	$(top_builddir)/include/simage.h
 
-EXEEXT =
-OBJEXT = o
 subdir = src
 mkinstalldirs = $(SHELL) $(top_srcdir)/cfg/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h $(top_builddir)/include/simage.h
 CONFIG_CLEAN_FILES =
-LTLIBRARIES = $(lib_LTLIBRARIES)
+LIBRARIES = $(lib_LIBRARIES)
 
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I$(top_builddir) -I$(top_builddir)/include
 CPPFLAGS = @CPPFLAGS@
 LIBS = @LIBS@
-@SIMAGE_MPEG2ENC_SUPPORT_TRUE@libsimage@SUFFIX@_la_DEPENDENCIES = \
-@SIMAGE_MPEG2ENC_SUPPORT_TRUE@ ../mpeg2enc/libmpeg2enc.la
+simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_AR = $(AR) cru
+@BUILD_WITH_MSVC_TRUE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_DEPENDENCIES = \
+@BUILD_WITH_MSVC_TRUE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@ ../mpeg2enc/mpeg2enc.lst
+am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS = simage.$(OBJEXT) \
+simage_write.$(OBJEXT) resize.$(OBJEXT) simage12.$(OBJEXT) \
+movie.$(OBJEXT) params.$(OBJEXT) simage_jpeg.$(OBJEXT) \
+simage_gif.$(OBJEXT) simage_png.$(OBJEXT) simage_tiff.$(OBJEXT) \
+simage_tga.$(OBJEXT) simage_rgb.$(OBJEXT) simage_pic.$(OBJEXT) \
+simage_xwd.$(OBJEXT)
+simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS = \
+$(am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS)
+AR = ar
+LTLIBRARIES = $(lib_LTLIBRARIES)
+
+@BUILD_WITH_MSVC_FALSE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@libsimage@SUFFIX@_la_DEPENDENCIES = \
+@BUILD_WITH_MSVC_FALSE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@ ../mpeg2enc/libmpeg2enc.la
 am_libsimage@SUFFIX@_la_OBJECTS = simage.lo simage_write.lo resize.lo \
 simage12.lo movie.lo params.lo simage_jpeg.lo simage_gif.lo \
 simage_png.lo simage_tiff.lo simage_tga.lo simage_rgb.lo simage_pic.lo \
@@ -193,22 +198,28 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(libsimage@SUFFIX@_la_SOURCES) \
-$(EXTRA_libsimage@SUFFIX@_la_SOURCES)
+DIST_SOURCES = $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_SOURCES) \
+$(libsimage@SUFFIX@_la_SOURCES)
 HEADERS = $(libsimage@SUFFIX@inc_HEADERS)
 
 depcomp = $(SHELL) $(top_srcdir)/cfg/depcomp
-@AMDEP@DEP_FILES = $(DEPDIR)/movie.Plo $(DEPDIR)/params.Plo \
-@AMDEP@ $(DEPDIR)/resize.Plo $(DEPDIR)/simage.Plo $(DEPDIR)/simage12.Plo \
-@AMDEP@ $(DEPDIR)/simage_gif.Plo $(DEPDIR)/simage_jpeg.Plo \
-@AMDEP@ $(DEPDIR)/simage_pic.Plo $(DEPDIR)/simage_png.Plo \
-@AMDEP@ $(DEPDIR)/simage_rgb.Plo $(DEPDIR)/simage_tga.Plo \
-@AMDEP@ $(DEPDIR)/simage_tiff.Plo $(DEPDIR)/simage_write.Plo \
-@AMDEP@ $(DEPDIR)/simage_xwd.Plo
+@AMDEP@DEP_FILES = $(DEPDIR)/movie.Plo $(DEPDIR)/movie.Po \
+@AMDEP@ $(DEPDIR)/params.Plo $(DEPDIR)/params.Po $(DEPDIR)/resize.Plo \
+@AMDEP@ $(DEPDIR)/resize.Po $(DEPDIR)/simage.Plo $(DEPDIR)/simage.Po \
+@AMDEP@ $(DEPDIR)/simage12.Plo $(DEPDIR)/simage12.Po \
+@AMDEP@ $(DEPDIR)/simage_gif.Plo $(DEPDIR)/simage_gif.Po \
+@AMDEP@ $(DEPDIR)/simage_jpeg.Plo $(DEPDIR)/simage_jpeg.Po \
+@AMDEP@ $(DEPDIR)/simage_pic.Plo $(DEPDIR)/simage_pic.Po \
+@AMDEP@ $(DEPDIR)/simage_png.Plo $(DEPDIR)/simage_png.Po \
+@AMDEP@ $(DEPDIR)/simage_rgb.Plo $(DEPDIR)/simage_rgb.Po \
+@AMDEP@ $(DEPDIR)/simage_tga.Plo $(DEPDIR)/simage_tga.Po \
+@AMDEP@ $(DEPDIR)/simage_tiff.Plo $(DEPDIR)/simage_tiff.Po \
+@AMDEP@ $(DEPDIR)/simage_write.Plo $(DEPDIR)/simage_write.Po \
+@AMDEP@ $(DEPDIR)/simage_xwd.Plo $(DEPDIR)/simage_xwd.Po
 DIST_COMMON = $(libsimage@SUFFIX@inc_HEADERS) Makefile.am Makefile.in
 
-SOURCES = $(libsimage@SUFFIX@_la_SOURCES) $(EXTRA_libsimage@SUFFIX@_la_SOURCES)
-OBJECTS = $(am_libsimage@SUFFIX@_la_OBJECTS)
+SOURCES = $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_SOURCES) $(libsimage@SUFFIX@_la_SOURCES)
+OBJECTS = $(am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS) $(am_libsimage@SUFFIX@_la_OBJECTS)
 
 all: all-am
 
@@ -223,6 +234,52 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 	cd $(top_builddir) && \
 	  CONFIG_HEADERS= CONFIG_LINKS= \
 	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
+install-libLIBRARIES: $(lib_LIBRARIES)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(libdir)
+	@list='$(lib_LIBRARIES)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo " $(INSTALL_DATA) $$p $(DESTDIR)$(libdir)/$$p"; \
+	    $(INSTALL_DATA) $$p $(DESTDIR)$(libdir)/$$p; \
+	  else :; fi; \
+	done
+	@$(POST_INSTALL)
+	@list='$(lib_LIBRARIES)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo " $(RANLIB) $(DESTDIR)$(libdir)/$$p"; \
+	    $(RANLIB) $(DESTDIR)$(libdir)/$$p; \
+	  else :; fi; \
+	done
+
+uninstall-libLIBRARIES:
+	@$(NORMAL_UNINSTALL)
+	@list='$(lib_LIBRARIES)'; for p in $$list; do \
+	  echo " rm -f $(DESTDIR)$(libdir)/$$p"; \
+	  rm -f $(DESTDIR)$(libdir)/$$p; \
+	done
+
+clean-libLIBRARIES:
+	-test -z "$(lib_LIBRARIES)" || rm -f $(lib_LIBRARIES)
+
+mostlyclean-compile:
+	-rm -f *.$(OBJEXT) core *.core
+
+distclean-compile:
+	-rm -f *.tab.c
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+	-rm -f libtool
+
+simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS) $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_DEPENDENCIES)
+	-rm -f simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
+	$(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_AR) simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS) $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_LIBADD)
+	$(RANLIB) simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(libdir)
@@ -242,21 +299,6 @@ uninstall-libLTLIBRARIES:
 
 clean-libLTLIBRARIES:
 	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
-
-mostlyclean-compile:
-	-rm -f *.$(OBJEXT) core *.core
-
-distclean-compile:
-	-rm -f *.tab.c
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool
 
 libsimage@SUFFIX@.la: $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_DEPENDENCIES)
 	$(LINK) -rpath $(libdir) $(libsimage@SUFFIX@_la_LDFLAGS) $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_LIBADD) $(LIBS)
@@ -311,19 +353,33 @@ distclean-tags:
 	-rm -f TAGS ID
 
 @AMDEP@@_am_include@ $(DEPDIR)/movie.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/movie.Po
 @AMDEP@@_am_include@ $(DEPDIR)/params.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/params.Po
 @AMDEP@@_am_include@ $(DEPDIR)/resize.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/resize.Po
 @AMDEP@@_am_include@ $(DEPDIR)/simage.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage.Po
 @AMDEP@@_am_include@ $(DEPDIR)/simage12.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage12.Po
 @AMDEP@@_am_include@ $(DEPDIR)/simage_gif.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_gif.Po
 @AMDEP@@_am_include@ $(DEPDIR)/simage_jpeg.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_jpeg.Po
 @AMDEP@@_am_include@ $(DEPDIR)/simage_pic.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_pic.Po
 @AMDEP@@_am_include@ $(DEPDIR)/simage_png.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_png.Po
 @AMDEP@@_am_include@ $(DEPDIR)/simage_rgb.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_rgb.Po
 @AMDEP@@_am_include@ $(DEPDIR)/simage_tga.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_tga.Po
 @AMDEP@@_am_include@ $(DEPDIR)/simage_tiff.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_tiff.Po
 @AMDEP@@_am_include@ $(DEPDIR)/simage_write.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_write.Po
 @AMDEP@@_am_include@ $(DEPDIR)/simage_xwd.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_xwd.Po
 
 distclean-depend:
 	-rm -rf $(DEPDIR)
@@ -368,10 +424,10 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES) $(HEADERS) all-local
+all-am: Makefile $(LIBRARIES) $(LTLIBRARIES) $(HEADERS)
 
 installdirs:
-	$(mkinstalldirs) $(DESTDIR)$(libdir) $(DESTDIR)$(libsimage@SUFFIX@incdir)
+	$(mkinstalldirs) $(DESTDIR)$(libdir) $(DESTDIR)$(libdir) $(DESTDIR)$(libsimage@SUFFIX@incdir)
 
 install: install-am
 install-exec: install-exec-am
@@ -401,8 +457,8 @@ maintainer-clean-generic:
 	-rm -f Makefile.in
 clean: clean-am
 
-clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
-	mostlyclean-am
+clean-am: clean-generic clean-libLIBRARIES clean-libLTLIBRARIES \
+	clean-libtool mostlyclean-am
 
 distclean: distclean-am
 
@@ -419,7 +475,8 @@ info-am:
 
 install-data-am: install-data-local install-libsimage@SUFFIX@incHEADERS
 
-install-exec-am: install-exec-local install-libLTLIBRARIES
+install-exec-am: install-exec-local install-libLIBRARIES \
+	install-libLTLIBRARIES
 
 install-info:
 
@@ -436,43 +493,38 @@ mostlyclean: mostlyclean-am
 mostlyclean-am: mostlyclean-compile mostlyclean-generic \
 	mostlyclean-libtool
 
-uninstall-am: uninstall-libLTLIBRARIES \
+uninstall-am: uninstall-libLIBRARIES uninstall-libLTLIBRARIES \
 	uninstall-libsimage@SUFFIX@incHEADERS uninstall-local
 
-.PHONY: all all-am all-local check check-am clean clean-generic \
+.PHONY: all all-am check check-am clean clean-generic clean-libLIBRARIES \
 	clean-libLTLIBRARIES clean-libtool distclean distclean-compile \
 	distclean-depend distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am info info-am install \
 	install-am install-data install-data-am install-data-local \
 	install-exec install-exec-am install-exec-local install-info \
-	install-libLTLIBRARIES install-libsimage@SUFFIX@incHEADERS \
-	install-man install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool tags uninstall uninstall-am \
-	uninstall-libLTLIBRARIES uninstall-libsimage@SUFFIX@incHEADERS \
-	uninstall-local
+	install-libLIBRARIES install-libLTLIBRARIES \
+	install-libsimage@SUFFIX@incHEADERS install-man install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool tags uninstall \
+	uninstall-am uninstall-libLIBRARIES uninstall-libLTLIBRARIES \
+	uninstall-libsimage@SUFFIX@incHEADERS uninstall-local
 
 
 # **************************************************************************
+# for MS Windows (MSVC++) LIB/DLL linkage
 
 simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: Makefile \
-  $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_DEPENDENCIES)
+  $(simage@SUFFIX@_lib_OBJECTS) $(simage@SUFFIX@_lib_DEPENDENCIES)
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
 	rm -f "$$basename.dll" "$$basename.lib"; \
-	if @BUILD_WITH_MSVC@; then \
-	  echo "Linking $$basename.lib..."; \
-	  echo $(CC) $(LDFLAGS) $(LIBFLAGS) \
-	    `echo $(libsimage@SUFFIX@_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
-	    $(libsimage@SUFFIX@_la_LIBADD) $(LIBS); \
-	  $(CC) $(LDFLAGS) $(LIBFLAGS) \
-	    `echo $(libsimage@SUFFIX@_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
-	    $(libsimage@SUFFIX@_la_LIBADD) $(LIBS); \
-	else \
-	  touch "$$basename.dll" "$$basename.lib"; \
-	fi
-
-all-local: simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
+	echo "Linking $$basename.lib..."; \
+	echo $(CC) $(LDFLAGS) $(LIBFLAGS) \
+	  $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS) \
+	  $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_LIBADD) $(LIBS); \
+	$(CC) $(LDFLAGS) $(LIBFLAGS) \
+	  $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS) \
+	  $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_LIBADD) $(LIBS);
 
 # **************************************************************************
 

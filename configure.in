@@ -55,6 +55,10 @@ if test x"$am_cv_prog_cc_stdc" = x"no"; then
   AC_MSG_WARN([doesn't look like you're using an ANSI compatible C compiler])
 fi
 
+# circumvent Automake 1.4h problem - explicitly use OBJEXT and EXEEXT
+AC_OBJEXT
+AC_EXEEXT
+
 # **************************************************************************
 # *******  MAKING RELEASES  ************************************************
 # **************************************************************************
@@ -240,7 +244,11 @@ AM_DISABLE_STATIC
 AM_MAINTAINER_MODE
 
 # Initialize libtool
-AC_PROG_LIBTOOL
+if $BUILD_WITH_MSVC; then
+  RANLIB=:
+else
+  AC_PROG_LIBTOOL
+fi
 
 # These are used for constructing the simage-config file.
 SIMAGE_EXTRA_CPPFLAGS=$CPPFLAGS
@@ -562,6 +570,8 @@ LIBFLAGS=
 # AC_SUBST(SIMAGE_STATIC)
 # AC_SUBST(SIMAGE_SHARED)
 AC_SUBST(LIBFLAGS)
+
+AM_CONDITIONAL(BUILD_WITH_MSVC, $BUILD_WITH_MSVC)
 
 if $BUILD_WITH_MSVC; then
   if $SIMAGE_STATIC; then
