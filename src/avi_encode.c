@@ -253,20 +253,23 @@ avi_begin_encode(const char *filename, int width, int height, int fps, const cha
 int 
 avi_encode_bitmap(void *handle, unsigned char *buf, int rgb2bgr)
 {
-  /* buf must be a 24-bit RGB (or BGR) image with the same size as given to avi_begin_encode .
-     It is the caller's responsibility to check this. 
+  /* Note: buf must be a 24-bit RGB (or BGR) image with the same size as
+     given to avi_begin_encode. It is the caller's responsibility to
+     check this.
      
      If rgb2bgr, the color ordering in the buffer will be modified from RGB to BGR.
-     NB: this means that the buffer will be modified. 
-  */
+     NB: this means that the buffer will be modified.  
+     
+     2003-03-14 thammer.
+*/
 #ifdef HAVE_VFW
   HRESULT hr;
   avi_encode_context *context;
 
   context = (avi_encode_context *)handle;
 
-  /* For some reason, AVIStreamWrite requires the color components to be ordered BGR instead of RGB
-  */
+  /* For some reason, AVIStreamWrite requires the color components to
+  be ordered BGR instead of RGB */
   if (rgb2bgr) {
     int x, y, r, nc, w, h;
     nc = 3;
@@ -290,8 +293,8 @@ avi_encode_bitmap(void *handle, unsigned char *buf, int rgb2bgr)
     NULL);
 
   /*
-  fixme 20020227 thammer: Is it correct / smart to let every frame be a keyframe? Check avi doc and virtualdub.
-  */
+  fixme 20020227 thammer: Is it correct / smart to let every frame be
+  a keyframe? Check avi doc and virtualdub.  */
 
   if (hr != AVIERR_OK)
     return 0;

@@ -1,10 +1,12 @@
 #include <config.h>
 #ifdef SIMAGE_AVIENC_SUPPORT
 
+#include <stdio.h>
+#include <string.h>
+
 #include <simage_private.h>
 #include <simage_avi.h>
-
-#include <stdio.h>
+#include <avi_encode.h>
 
 int 
 avienc_movie_create(const char * filename, s_movie * movie, s_params * params)
@@ -76,9 +78,35 @@ int
 avienc_movie_put(s_movie * movie, s_image * image, s_params * params)
 {
   void * handle;
+  int retval;
+  s_image *temp;
 
   if (s_params_get(s_movie_params(movie), "avienc handle", S_POINTER_PARAM_TYPE, &handle, 0)) {
-    return avi_encode_bitmap(handle, s_image_data(image), 1);
+    int mod;
+    if ( (params != NULL) &&
+         (s_params_get(params, "allow image modification", S_INTEGER_PARAM_TYPE, &mod, 0) && 
+          mod) ) {
+      int order = 0;
+      /* RGB 0 
+         BGR 1 */
+      s_params_get(params, "byte_order", S_INTEGER_PARAM_TYPE, &order, 0);
+      if (avi_encode_bitmap(handle, s_image_data(image), order == 0 ? 1 : 0)) {
+        if (order == 0)
+          s_params_set(params, "byte_order", S_INTEGER_PARAM_TYPE, 1, 0);
+        return 1;
+      }
+      else
+        return 0;
+    }
+    /* Default to making a copy of the data */
+    temp = s_image_create(s_image_width(image), s_image_height(image), 
+                          s_image_components(image), NULL);
+    s_image_set(temp, s_image_width(image), s_image_height(image), 
+                s_image_components(image), s_image_data(image), 1);
+    retval = avi_encode_bitmap(handle, s_image_data(temp), 1);
+    s_image_destroy(temp);
+
+    return retval;
   }
   return 0;
 }
