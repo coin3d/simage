@@ -75,6 +75,7 @@ CONFIG = @CONFIG@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSUFFIX = @DSUFFIX@
+INSTALL_HEADER = @INSTALL_HEADER@
 LDFLAGS = @LDFLAGS@
 LIBFLAGS = @LIBFLAGS@
 LIBTOOL = @LIBTOOL@
@@ -1094,10 +1095,8 @@ install-libsimage@SUFFIX@incHEADERS: $(libsimage@SUFFIX@inc_HEADERS)
 	@list='$(libsimage@SUFFIX@inc_HEADERS)'; for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  if cmp -s $$d$$p $(DESTDIR)$(libsimage@SUFFIX@incdir)/$$f; then :; else \
-	    echo " $(INSTALL_HEADER) $$d$$p $(DESTDIR)$(libsimage@SUFFIX@incdir)/$$f"; \
-	    $(INSTALL_HEADER) $$d$$p $(DESTDIR)$(libsimage@SUFFIX@incdir)/$$f; \
-	  fi \
+	  echo " $(INSTALL_HEADER) $$d$$p $(DESTDIR)$(libsimage@SUFFIX@incdir)/$$f"; \
+	  $(INSTALL_HEADER) $$d$$p $(DESTDIR)$(libsimage@SUFFIX@incdir)/$$f; \
 	done
 
 uninstall-libsimage@SUFFIX@incHEADERS:

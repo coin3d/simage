@@ -250,9 +250,12 @@ SIM_AC_COMPILE_DEBUG([
 
 SIM_AC_DEBUGSYMBOLS
 
-# libtiff and libpng uses math library functions.
-SIM_AC_CHECK_MATHLIB(SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_libm",
-                     AC_MSG_ERROR(could not find a way to use math library))
+# **************************************************************************
+# don't overwrite unchanged header files
+
+INSTALL_HEADER="\
+INSTALL='\$(INSTALL_DATA)' \$(SHELL) \$(top_srcdir)/cfg/install-header"
+AC_SUBST(INSTALL_HEADER)
 
 # **************************************************************************
 # Want to configure an alternate installation?
@@ -274,6 +277,12 @@ AC_ARG_WITH(
   [SUFFIX=])
 
 AC_SUBST(SUFFIX)
+
+# **************************************************************************
+# libtiff and libpng uses math library functions.
+
+SIM_AC_CHECK_MATHLIB(SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_libm",
+                     AC_MSG_ERROR(could not find a way to use math library))
 
 # **************************************************************************
 # Check if UNGIF support is wanted (and if so, available).

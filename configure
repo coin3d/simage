@@ -3285,10 +3285,37 @@ if test x"$enable_symbols" = x"no"; then
   CXXFLAGS="`echo $CXXFLAGS | sed 's/-g//'`"
 fi
 
+# **************************************************************************
+# don't overwrite unchanged header files
+
+INSTALL_HEADER="\
+INSTALL='\$(INSTALL_DATA)' \$(SHELL) \$(top_srcdir)/cfg/install-header"
+
+# **************************************************************************
+# Want to configure an alternate installation?
+
+# Check whether --with-alternate or --without-alternate was given.
+if test "${with_alternate+set}" = set; then
+  withval="$with_alternate"
+  CONFIG=$withval
+else
+  CONFIG=default
+fi;
+
+# Check whether --with-suffix or --without-suffix was given.
+if test "${with_suffix+set}" = set; then
+  withval="$with_suffix"
+  SUFFIX=$withval
+else
+  SUFFIX=
+fi;
+
+# **************************************************************************
 # libtiff and libpng uses math library functions.
+
 sim_ac_libm=
 
-echo "$as_me:3291: checking for math functions library" >&5
+echo "$as_me:3318: checking for math functions library" >&5
 echo $ECHO_N "checking for math functions library... $ECHO_C" >&6
 if test "${sim_cv_lib_math+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -3302,7 +3329,7 @@ else
       sim_ac_store_libs=$LIBS
       LIBS="$sim_ac_store_libs $sim_ac_math_chk"
       cat >conftest.$ac_ext <<_ACEOF
-#line 3305 "configure"
+#line 3332 "configure"
 #include "confdefs.h"
 #include <math.h>
                   #include <stdlib.h>
@@ -3331,16 +3358,16 @@ char s[16];
 }
 _ACEOF
 rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:3334: \"$ac_link\"") >&5
+if { (eval echo "$as_me:3361: \"$ac_link\"") >&5
   (eval $ac_link) 2>&5
   ac_status=$?
-  echo "$as_me:3337: \$? = $ac_status" >&5
+  echo "$as_me:3364: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:3340: \"$ac_try\"") >&5
+  { (eval echo "$as_me:3367: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:3343: \$? = $ac_status" >&5
+  echo "$as_me:3370: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   sim_cv_lib_math=$sim_ac_math_chk
 else
@@ -3353,7 +3380,7 @@ rm -f conftest$ac_exeext conftest.$ac_ext
   done
 
 fi
-echo "$as_me:3356: result: $sim_cv_lib_math" >&5
+echo "$as_me:3383: result: $sim_cv_lib_math" >&5
 echo "${ECHO_T}$sim_cv_lib_math" >&6
 
 if test x"$sim_cv_lib_math" != xUNDEFINED; then
@@ -3361,34 +3388,15 @@ if test x"$sim_cv_lib_math" != xUNDEFINED; then
   LIBS="$sim_ac_libm $LIBS"
   SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_libm"
 else
-  { { echo "$as_me:3364: error: could not find a way to use math library" >&5
+  { { echo "$as_me:3391: error: could not find a way to use math library" >&5
 echo "$as_me: error: could not find a way to use math library" >&2;}
    { (exit 1); exit 1; }; }
 fi
 
 # **************************************************************************
-# Want to configure an alternate installation?
-
-# Check whether --with-alternate or --without-alternate was given.
-if test "${with_alternate+set}" = set; then
-  withval="$with_alternate"
-  CONFIG=$withval
-else
-  CONFIG=default
-fi;
-
-# Check whether --with-suffix or --without-suffix was given.
-if test "${with_suffix+set}" = set; then
-  withval="$with_suffix"
-  SUFFIX=$withval
-else
-  SUFFIX=
-fi;
-
-# **************************************************************************
 # Check if UNGIF support is wanted (and if so, available).
 
-echo "$as_me:3391: checking for X" >&5
+echo "$as_me:3399: checking for X" >&5
 echo $ECHO_N "checking for X... $ECHO_C" >&6
 
 # Check whether --with-x or --without-x was given.
@@ -3485,17 +3493,17 @@ if test "$ac_x_includes" = no; then
   # Guess where to find include files, by looking for Intrinsic.h.
   # First, try using that file with no special directory specified.
   cat >conftest.$ac_ext <<_ACEOF
-#line 3488 "configure"
+#line 3496 "configure"
 #include "confdefs.h"
 #include <X11/Intrinsic.h>
 _ACEOF
-if { (eval echo "$as_me:3492: \"$ac_cpp conftest.$ac_ext >/dev/null\"") >&5
+if { (eval echo "$as_me:3500: \"$ac_cpp conftest.$ac_ext >/dev/null\"") >&5
   (eval $ac_cpp conftest.$ac_ext >/dev/null) 2>conftest.er1
   ac_status=$?
   egrep -v '^ *\+' conftest.er1 >conftest.err
   rm -f conftest.er1
   cat conftest.err >&5
-  echo "$as_me:3498: \$? = $ac_status" >&5
+  echo "$as_me:3506: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   if test -s conftest.err; then
     ac_cpp_err=$ac_c_preproc_warn_flag
@@ -3528,7 +3536,7 @@ if test "$ac_x_libraries" = no; then
   ac_save_LIBS=$LIBS
   LIBS="-lXt $LIBS"
   cat >conftest.$ac_ext <<_ACEOF
-#line 3531 "configure"
+#line 3539 "configure"
 #include "confdefs.h"
 #include <X11/Intrinsic.h>
 int
@@ -3540,16 +3548,16 @@ XtMalloc (0)
 }
 _ACEOF
 rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:3543: \"$ac_link\"") >&5
+if { (eval echo "$as_me:3551: \"$ac_link\"") >&5
   (eval $ac_link) 2>&5
   ac_status=$?
-  echo "$as_me:3546: \$? = $ac_status" >&5
+  echo "$as_me:3554: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:3549: \"$ac_try\"") >&5
+  { (eval echo "$as_me:3557: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:3552: \$? = $ac_status" >&5
+  echo "$as_me:3560: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   LIBS=$ac_save_LIBS
 # We can link X programs with no special library path.
@@ -3587,7 +3595,7 @@ fi
 fi # $with_x != no
 
 if test "$have_x" != yes; then
-  echo "$as_me:3590: result: $have_x" >&5
+  echo "$as_me:3598: result: $have_x" >&5
 echo "${ECHO_T}$have_x" >&6
   no_x=yes
 else
@@ -3597,12 +3605,12 @@ else
   # Update the cache value to reflect the command line values.
   ac_cv_have_x="have_x=yes \
 		ac_x_includes=$x_includes ac_x_libraries=$x_libraries"
-  echo "$as_me:3600: result: libraries $x_libraries, headers $x_includes" >&5
+  echo "$as_me:3608: result: libraries $x_libraries, headers $x_includes" >&5
 echo "${ECHO_T}libraries $x_libraries, headers $x_includes" >&6
 fi
 
 : ${sim_ac_have_libungif=false}
-echo "$as_me:3605: checking for libungif" >&5
+echo "$as_me:3613: checking for libungif" >&5
 echo $ECHO_N "checking for libungif... $ECHO_C" >&6
 
 # Check whether --with-ungif or --without-ungif was given.
@@ -3652,7 +3660,7 @@ true)
   sim_ac_libungif_libs="-l$sim_ac_libungif_name"
   LIBS="$sim_ac_libungif_libs $LIBS"
   cat >conftest.$ac_ext <<_ACEOF
-#line 3655 "configure"
+#line 3663 "configure"
 #include "confdefs.h"
 #include <gif_lib.h>
 int
@@ -3664,16 +3672,16 @@ main ()
 }
 _ACEOF
 rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:3667: \"$ac_link\"") >&5
+if { (eval echo "$as_me:3675: \"$ac_link\"") >&5
   (eval $ac_link) 2>&5
   ac_status=$?
-  echo "$as_me:3670: \$? = $ac_status" >&5
+  echo "$as_me:3678: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:3673: \"$ac_try\"") >&5
+  { (eval echo "$as_me:3681: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:3676: \$? = $ac_status" >&5
+  echo "$as_me:3684: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   sim_ac_have_libungif=true
 else
@@ -3690,7 +3698,7 @@ rm -f conftest$ac_exeext conftest.$ac_ext
     sim_ac_libungif_libs="-l$sim_ac_libungif_name -lX11"
     LIBS="$sim_ac_libungif_libs $sim_ac_libungif_save_LIBS"
     cat >conftest.$ac_ext <<_ACEOF
-#line 3693 "configure"
+#line 3701 "configure"
 #include "confdefs.h"
 #include <gif_lib.h>
 int
@@ -3702,16 +3710,16 @@ main ()
 }
 _ACEOF
 rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:3705: \"$ac_link\"") >&5
+if { (eval echo "$as_me:3713: \"$ac_link\"") >&5
   (eval $ac_link) 2>&5
   ac_status=$?
-  echo "$as_me:3708: \$? = $ac_status" >&5
+  echo "$as_me:3716: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:3711: \"$ac_try\"") >&5
+  { (eval echo "$as_me:3719: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:3714: \$? = $ac_status" >&5
+  echo "$as_me:3722: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   sim_ac_have_libungif=true
 else
@@ -3733,7 +3741,7 @@ esac
 
 if $sim_ac_want_libungif; then
   if $sim_ac_have_libungif; then
-    echo "$as_me:3736: result: success ($sim_ac_libungif_libs)" >&5
+    echo "$as_me:3744: result: success ($sim_ac_libungif_libs)" >&5
 echo "${ECHO_T}success ($sim_ac_libungif_libs)" >&6
 
 cat >>confdefs.h <<\EOF
@@ -3753,7 +3761,7 @@ else
 fi
 
   else
-    echo "$as_me:3756: result: failure" >&5
+    echo "$as_me:3764: result: failure" >&5
 echo "${ECHO_T}failure" >&6
 
   if test x${sim_ac_configuration_settings+set} != xset; then
@@ -3764,7 +3772,7 @@ fi
 
   fi
 else
-  echo "$as_me:3767: result: disabled" >&5
+  echo "$as_me:3775: result: disabled" >&5
 echo "${ECHO_T}disabled" >&6
 
   if test x${sim_ac_configuration_settings+set} != xset; then
@@ -3790,7 +3798,7 @@ fi
 # Check if JPEG support is wanted (and if so, available).
 
 : ${sim_ac_have_libjpeg=false}
-echo "$as_me:3793: checking for libjpeg" >&5
+echo "$as_me:3801: checking for libjpeg" >&5
 echo $ECHO_N "checking for libjpeg... $ECHO_C" >&6
 
 # Check whether --with-jpeg or --without-jpeg was given.
@@ -3840,7 +3848,7 @@ true)
   sim_ac_libjpeg_libs="-l$sim_ac_libjpeg_name"
   LIBS="$sim_ac_libjpeg_libs $LIBS"
   cat >conftest.$ac_ext <<_ACEOF
-#line 3843 "configure"
+#line 3851 "configure"
 #include "confdefs.h"
 #include <stdio.h>
 #ifdef __cplusplus
@@ -3859,16 +3867,16 @@ main ()
 }
 _ACEOF
 rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:3862: \"$ac_link\"") >&5
+if { (eval echo "$as_me:3870: \"$ac_link\"") >&5
   (eval $ac_link) 2>&5
   ac_status=$?
-  echo "$as_me:3865: \$? = $ac_status" >&5
+  echo "$as_me:3873: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:3868: \"$ac_try\"") >&5
+  { (eval echo "$as_me:3876: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:3871: \$? = $ac_status" >&5
+  echo "$as_me:3879: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   sim_ac_have_libjpeg=true
 else
@@ -3888,7 +3896,7 @@ rm -f conftest$ac_exeext conftest.$ac_ext
 esac
 if $sim_ac_want_libjpeg; then
   if $sim_ac_have_libjpeg; then
-    echo "$as_me:3891: result: success ($sim_ac_libjpeg_libs)" >&5
+    echo "$as_me:3899: result: success ($sim_ac_libjpeg_libs)" >&5
 echo "${ECHO_T}success ($sim_ac_libjpeg_libs)" >&6
 
 cat >>confdefs.h <<\EOF
@@ -3908,7 +3916,7 @@ else
 fi
 
   else
-    echo "$as_me:3911: result: failure" >&5
+    echo "$as_me:3919: result: failure" >&5
 echo "${ECHO_T}failure" >&6
 
   if test x${sim_ac_configuration_settings+set} != xset; then
@@ -3919,7 +3927,7 @@ fi
 
   fi
 else
-  echo "$as_me:3922: result: disabled" >&5
+  echo "$as_me:3930: result: disabled" >&5
 echo "${ECHO_T}disabled" >&6
 
   if test x${sim_ac_configuration_settings+set} != xset; then
@@ -3944,7 +3952,7 @@ fi
 # **************************************************************************
 
 : ${sim_ac_have_libzlib=false}
-echo "$as_me:3947: checking for zlib" >&5
+echo "$as_me:3955: checking for zlib" >&5
 echo $ECHO_N "checking for zlib... $ECHO_C" >&6
 
 # Check whether --with-zlib or --without-zlib was given.
@@ -3994,7 +4002,7 @@ true)
   sim_ac_libzlib_libs="-l$sim_ac_libzlib_name"
   LIBS="$sim_ac_libzlib_libs $LIBS"
   cat >conftest.$ac_ext <<_ACEOF
-#line 3997 "configure"
+#line 4005 "configure"
 #include "confdefs.h"
 #include <zlib.h>
 int
@@ -4006,16 +4014,16 @@ main ()
 }
 _ACEOF
 rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:4009: \"$ac_link\"") >&5
+if { (eval echo "$as_me:4017: \"$ac_link\"") >&5
   (eval $ac_link) 2>&5
   ac_status=$?
-  echo "$as_me:4012: \$? = $ac_status" >&5
+  echo "$as_me:4020: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:4015: \"$ac_try\"") >&5
+  { (eval echo "$as_me:4023: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:4018: \$? = $ac_status" >&5
+  echo "$as_me:4026: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   sim_ac_have_libzlib=true
 else
@@ -4035,7 +4043,7 @@ rm -f conftest$ac_exeext conftest.$ac_ext
 esac
 if $sim_ac_want_libzlib; then
   if $sim_ac_have_libzlib; then
-    echo "$as_me:4038: result: success ($sim_ac_libzlib_libs)" >&5
+    echo "$as_me:4046: result: success ($sim_ac_libzlib_libs)" >&5
 echo "${ECHO_T}success ($sim_ac_libzlib_libs)" >&6
 
   SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libzlib_cppflags"
@@ -4046,12 +4054,12 @@ echo "${ECHO_T}success ($sim_ac_libzlib_libs)" >&6
   LIBS="$sim_ac_libzlib_libs $LIBS"
 
   else
-    echo "$as_me:4049: result: failure" >&5
+    echo "$as_me:4057: result: failure" >&5
 echo "${ECHO_T}failure" >&6
 
   fi
 else
-  echo "$as_me:4054: result: disabled" >&5
+  echo "$as_me:4062: result: disabled" >&5
 echo "${ECHO_T}disabled" >&6
 
 fi
@@ -4061,7 +4069,7 @@ fi
 # Check if PNG support is wanted (and if so, available).
 
 : ${sim_ac_have_libpng=false}
-echo "$as_me:4064: checking for libpng" >&5
+echo "$as_me:4072: checking for libpng" >&5
 echo $ECHO_N "checking for libpng... $ECHO_C" >&6
 
 # Check whether --with-png or --without-png was given.
@@ -4111,7 +4119,7 @@ true)
   sim_ac_libpng_libs="-l$sim_ac_libpng_name"
   LIBS="$sim_ac_libpng_libs $LIBS"
   cat >conftest.$ac_ext <<_ACEOF
-#line 4114 "configure"
+#line 4122 "configure"
 #include "confdefs.h"
 #include <png.h>
 int
@@ -4123,16 +4131,16 @@ main ()
 }
 _ACEOF
 rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:4126: \"$ac_link\"") >&5
+if { (eval echo "$as_me:4134: \"$ac_link\"") >&5
   (eval $ac_link) 2>&5
   ac_status=$?
-  echo "$as_me:4129: \$? = $ac_status" >&5
+  echo "$as_me:4137: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:4132: \"$ac_try\"") >&5
+  { (eval echo "$as_me:4140: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:4135: \$? = $ac_status" >&5
+  echo "$as_me:4143: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   sim_ac_have_libpng=true
 else
@@ -4152,7 +4160,7 @@ rm -f conftest$ac_exeext conftest.$ac_ext
 esac
 if $sim_ac_want_libpng; then
   if $sim_ac_have_libpng; then
-    echo "$as_me:4155: result: success ($sim_ac_libpng_libs)" >&5
+    echo "$as_me:4163: result: success ($sim_ac_libpng_libs)" >&5
 echo "${ECHO_T}success ($sim_ac_libpng_libs)" >&6
 
 cat >>confdefs.h <<\EOF
@@ -4172,7 +4180,7 @@ else
 fi
 
   else
-    echo "$as_me:4175: result: failure" >&5
+    echo "$as_me:4183: result: failure" >&5
 echo "${ECHO_T}failure" >&6
 
   if test x${sim_ac_configuration_settings+set} != xset; then
@@ -4192,7 +4200,7 @@ fi
 
   fi
 else
-  echo "$as_me:4195: result: disabled" >&5
+  echo "$as_me:4203: result: disabled" >&5
 echo "${ECHO_T}disabled" >&6
 
   if test x${sim_ac_configuration_settings+set} != xset; then
@@ -4227,7 +4235,7 @@ fi
 # Check if TIFF support is wanted (and if so, available).
 
 : ${sim_ac_have_libtiff=false}
-echo "$as_me:4230: checking for libtiff" >&5
+echo "$as_me:4238: checking for libtiff" >&5
 echo $ECHO_N "checking for libtiff... $ECHO_C" >&6
 
 # Check whether --with-tiff or --without-tiff was given.
@@ -4277,7 +4285,7 @@ true)
   sim_ac_libtiff_libs="-l$sim_ac_libtiff_name"
   LIBS="$sim_ac_libtiff_libs $LIBS"
   cat >conftest.$ac_ext <<_ACEOF
-#line 4280 "configure"
+#line 4288 "configure"
 #include "confdefs.h"
 #include <tiffio.h>
 int
@@ -4289,16 +4297,16 @@ main ()
 }
 _ACEOF
 rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:4292: \"$ac_link\"") >&5
+if { (eval echo "$as_me:4300: \"$ac_link\"") >&5
   (eval $ac_link) 2>&5
   ac_status=$?
-  echo "$as_me:4295: \$? = $ac_status" >&5
+  echo "$as_me:4303: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:4298: \"$ac_try\"") >&5
+  { (eval echo "$as_me:4306: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:4301: \$? = $ac_status" >&5
+  echo "$as_me:4309: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   sim_ac_have_libtiff=true
 else
@@ -4318,7 +4326,7 @@ rm -f conftest$ac_exeext conftest.$ac_ext
 esac
 if $sim_ac_want_libtiff; then
   if $sim_ac_have_libtiff; then
-    echo "$as_me:4321: result: success ($sim_ac_libtiff_libs)" >&5
+    echo "$as_me:4329: result: success ($sim_ac_libtiff_libs)" >&5
 echo "${ECHO_T}success ($sim_ac_libtiff_libs)" >&6
 
 cat >>confdefs.h <<\EOF
@@ -4338,7 +4346,7 @@ else
 fi
 
   else
-    echo "$as_me:4341: result: failure" >&5
+    echo "$as_me:4349: result: failure" >&5
 echo "${ECHO_T}failure" >&6
 
   if test x${sim_ac_configuration_settings+set} != xset; then
@@ -4349,7 +4357,7 @@ fi
 
   fi
 else
-  echo "$as_me:4352: result: disabled" >&5
+  echo "$as_me:4360: result: disabled" >&5
 echo "${ECHO_T}disabled" >&6
 
   if test x${sim_ac_configuration_settings+set} != xset; then
@@ -4380,7 +4388,7 @@ if test "${with_targa+set}" = set; then
   case $withval in
   yes | "") sim_ac_want_tga=true ;;
   no)       sim_ac_want_tga=false ;;
-  *)        { { echo "$as_me:4383: error: bad value \"$withval\" for --with-targa" >&5
+  *)        { { echo "$as_me:4391: error: bad value \"$withval\" for --with-targa" >&5
 echo "$as_me: error: bad value \"$withval\" for --with-targa" >&2;}
    { (exit 1); exit 1; }; } ;;
   esac
@@ -4425,7 +4433,7 @@ if test "${with_rgb+set}" = set; then
   case $withval in
   yes | "") sim_ac_want_rgb=true ;;
   no)       sim_ac_want_rgb=false ;;
-  *)        { { echo "$as_me:4428: error: bad value \"$withval\" for --with-rgb" >&5
+  *)        { { echo "$as_me:4436: error: bad value \"$withval\" for --with-rgb" >&5
 echo "$as_me: error: bad value \"$withval\" for --with-rgb" >&2;}
    { (exit 1); exit 1; }; } ;;
   esac
@@ -4470,7 +4478,7 @@ if test "${with_pic+set}" = set; then
   case $withval in
   yes | "") sim_ac_want_pic=true ;;
   no)       sim_ac_want_pic=false ;;
-  *)        { { echo "$as_me:4473: error: bad value \"$withval\" for --with-pic" >&5
+  *)        { { echo "$as_me:4481: error: bad value \"$withval\" for --with-pic" >&5
 echo "$as_me: error: bad value \"$withval\" for --with-pic" >&2;}
    { (exit 1); exit 1; }; } ;;
   esac
@@ -4852,7 +4860,7 @@ DEFS=-DHAVE_CONFIG_H
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
-{ echo "$as_me:4855: creating $CONFIG_STATUS" >&5
+{ echo "$as_me:4863: creating $CONFIG_STATUS" >&5
 echo "$as_me: creating $CONFIG_STATUS" >&6;}
 cat >$CONFIG_STATUS <<\_ACEOF
 #! /bin/sh
@@ -4909,7 +4917,7 @@ if test -x conftest.file >/dev/null 2>&1; then
 elif test -f conftest.file >/dev/null 2>&1; then
   as_executable_p="test -f"
 else
-  { { echo "$as_me:4912: error: cannot check whether a file is executable on this system" >&5
+  { { echo "$as_me:4920: error: cannot check whether a file is executable on this system" >&5
 echo "$as_me: error: cannot check whether a file is executable on this system" >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -5052,7 +5060,7 @@ cat >>$CONFIG_STATUS <<\EOF
     echo "$ac_cs_version"; exit 0 ;;
   --he | --h)
     # Conflict between --help and --header
-    { { echo "$as_me:5055: error: ambiguous option: $1
+    { { echo "$as_me:5063: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -5080,12 +5088,12 @@ Try \`$0 --help' for more information." >&2;}
   'include/simage.h' ) CONFIG_HEADERS="$CONFIG_HEADERS include/simage.h" ;;
 
   # This is an error.
-  -*) { { echo "$as_me:5083: error: unrecognized option: $1
+  -*) { { echo "$as_me:5091: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&2;}
    { (exit 1); exit 1; }; } ;;
-  *) { { echo "$as_me:5088: error: invalid argument: $1" >&5
+  *) { { echo "$as_me:5096: error: invalid argument: $1" >&5
 echo "$as_me: error: invalid argument: $1" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -5246,6 +5254,7 @@ s,@SIMAGE_EXTRA_CFLAGS@,$SIMAGE_EXTRA_CFLAGS,;t t
 s,@SIMAGE_EXTRA_LDFLAGS@,$SIMAGE_EXTRA_LDFLAGS,;t t
 s,@SIMAGE_EXTRA_LIBS@,$SIMAGE_EXTRA_LIBS,;t t
 s,@DSUFFIX@,$DSUFFIX,;t t
+s,@INSTALL_HEADER@,$INSTALL_HEADER,;t t
 s,@CONFIG@,$CONFIG,;t t
 s,@SUFFIX@,$SUFFIX,;t t
 s,@SIMAGE_UNGIF_SUPPORT_TRUE@,$SIMAGE_UNGIF_SUPPORT_TRUE,;t t
@@ -5384,7 +5393,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:5387: creating $ac_file" >&5
+    { echo "$as_me:5396: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -5402,7 +5411,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]* | ?:[\\/]*)
          # Absolute
-         test -f "$f" || { { echo "$as_me:5405: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:5414: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -5415,7 +5424,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:5418: error: cannot find input file: $f" >&5
+           { { echo "$as_me:5427: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -5476,7 +5485,7 @@ for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
   * )   ac_file_in=$ac_file.in ;;
   esac
 
-  test x"$ac_file" != x- && { echo "$as_me:5479: creating $ac_file" >&5
+  test x"$ac_file" != x- && { echo "$as_me:5488: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
 
   # First look for the input files in the build tree, otherwise in the
@@ -5487,7 +5496,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]* | ?:[\\/]*)
          # Absolute
-         test -f "$f" || { { echo "$as_me:5490: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:5499: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -5500,7 +5509,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:5503: error: cannot find input file: $f" >&5
+           { { echo "$as_me:5512: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -5617,7 +5626,7 @@ cat >>$CONFIG_STATUS <<\EOF
   rm -f $tmp/in
   if test x"$ac_file" != x-; then
     if cmp -s $ac_file $tmp/config.h 2>/dev/null; then
-      { echo "$as_me:5620: $ac_file is unchanged" >&5
+      { echo "$as_me:5629: $ac_file is unchanged" >&5
 echo "$as_me: $ac_file is unchanged" >&6;}
     else
       ac_dir=`$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
