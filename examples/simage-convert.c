@@ -14,7 +14,7 @@
 static void 
 usage(const char * argv0)
 {
-  fprintf(stderr, "Usage:\n %s <infile> <outfile> [-newsize <x> <y>] [-scale <xmul> <ymul>] [-alphathreshold <val>]\n",argv0);
+  fprintf(stderr, "Usage:\n %s <infile> <outfile> [-newsize <x> <y>] [-scale <xmul> <ymul>] [-alphathreshold <val>] [-addalpha <filename>]\n",argv0);
 }
 
 int main(int argc, char ** argv)
@@ -25,6 +25,7 @@ int main(int argc, char ** argv)
   int neww, newh;
   unsigned char * buf;
   char * infile, * outfile;
+  char * addalpha = NULL;
   const char * ext;
   int ret;
   int alphathreshold = -1;
@@ -75,6 +76,10 @@ int main(int argc, char ** argv)
       else if (strcmp(argv[i], "-alphathreshold") == 0 && i < argc-1) {
         i++;
         alphathreshold = atoi(argv[i++]);
+      }
+      else if (strcmp(argv[i], "-addalpha") == 0 && i < argc-1) {
+        i++;
+        addalpha = argv[i++];
       }
       else if (strcmp(argv[i], "-gray") == 0) {
         gray = 1;
@@ -137,6 +142,53 @@ int main(int argc, char ** argv)
     w = neww;
     h = newh;
   }
+
+  if (addalpha) {
+    int x, y, c;
+    int ac;
+    int w2, h2, nc2;
+    unsigned char * buf2 = simage_read_image(addalpha, &w2, &h2, &nc2);
+    fprintf(stderr,"alpha size: %d %d %d\n", w2, h2, nc2);
+    if (buf2) {
+      if (w == w2 && h == h2 && (nc2 == 1 || nc2 == 2 || nc2 == 4)) {
+        unsigned char * dstbuf = buf;
+        if (nc == 1 || nc == 3) {
+          fprintf(stderr,"adding alpha channel\n");
+          dstbuf = (unsigned char*) malloc(w*h*(nc+1));
+          for (y = 0; y < h; y++) {
+            for (x = 0; x < w; x++) {
+              for (c = 0; c < nc; c++) {
+                dstbuf[y*w*(nc+1) + x*(nc+1) + c] = buf[y*w*nc + x*nc + c];
+              }
+            }
+          }
+          nc++; // alpha channel added
+        }
+        ac = 0;
+        if (nc2 == 2) ac = 1;
+        if (nc2 == 4) ac = 3;
+
+        fprintf(stderr,"merging in alpha channel\n");
+        for (y = 0; y < h; y++) {
+          for (x = 0; x < w; x++) {
+            dstbuf[y*w*nc + x*nc + (nc-1)] = buf2[y*w*nc2 + x * nc2 + ac];
+          }
+        }
+        if (dstbuf != buf) {
+          free(buf);
+          buf = dstbuf;
+        }
+      }
+      else {
+        fprintf(stderr,"Unable to add alpha channel\n");
+      }
+    }
+    else {
+      fprintf(stderr,"Unable to read alpha file: %s\n", addalpha);
+    }
+  }
+
+
   if ((nc == 2 || nc == 4) && alphathreshold >= 0 && alphathreshold <= 255) {
     int cnt = 0;
     unsigned char * p = buf;
