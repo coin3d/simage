@@ -9356,8 +9356,6 @@ echo $ECHO_N "checking for QuickTime framework... $ECHO_C" >&6
 $sim_ac_have_quicktime && break
 sim_ac_quicktime_save_LIBS=$LIBS
 sim_ac_quicktime_libs="-framework QuickTime -framework CoreServices"
-# workaround - use -Wl,blah syntax until SIM_AC_UNIQIFY_LIST supports spaces
-sim_ac_quicktime_extra_libs="-Wl,-framework,QuickTime -Wl,-framework,CoreServices"
 LIBS="$sim_ac_quicktime_libs $LIBS"
 cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
@@ -9407,7 +9405,7 @@ cat >>confdefs.h <<\_ACEOF
 #define SIMAGE_QUICKTIME_SUPPORT
 _ACEOF
 
-    SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_quicktime_extra_libs"
+    SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_quicktime_libs"
     LIBS="$LIBS $sim_ac_quicktime_libs"
     # These formats are guaranteed to be readable if we have
     # a QuickTime framework, so we do not have to test for them
@@ -11516,7 +11514,13 @@ sim_ac_save_exec_prefix=$exec_prefix
 test x"$prefix" = xNONE && prefix=/usr/local
 test x"$exec_prefix" = xNONE && exec_prefix='${prefix}'
 sim_ac_uniqued_list=
-for sim_ac_item in $CPPFLAGS; do
+eval paramlist='"$CPPFLAGS"'
+sim_ac_sed_expr="s,\(-[_a-zA-Z0-9][#_a-zA-Z0-9]*\) [ ]*\([_a-zA-Z0-9][_a-zA-Z0-9]*\),\1#####\2,g"
+paramlist="`echo $paramlist | sed \"$sim_ac_sed_expr\"`"
+while test x"$paramlist" != x"`echo $paramlist | sed \"$sim_ac_sed_expr\"`"; do
+  paramlist="`echo $paramlist | sed \"$sim_ac_sed_expr\"`"
+done
+for sim_ac_item in $paramlist; do
   eval sim_ac_eval_item="$sim_ac_item"
   eval sim_ac_eval_item="$sim_ac_eval_item"
   if test x"$sim_ac_uniqued_list" = x; then
@@ -11531,7 +11535,7 @@ for sim_ac_item in $CPPFLAGS; do
     $sim_ac_unique && sim_ac_uniqued_list="$sim_ac_uniqued_list $sim_ac_item"
   fi
 done
-CPPFLAGS=$sim_ac_uniqued_list
+CPPFLAGS=`echo $sim_ac_uniqued_list | sed 's/#####/ /g'`
 prefix=$sim_ac_save_prefix
 exec_prefix=$sim_ac_save_exec_prefix
 # unset sim_ac_save_prefix
@@ -11545,7 +11549,13 @@ sim_ac_save_exec_prefix=$exec_prefix
 test x"$prefix" = xNONE && prefix=/usr/local
 test x"$exec_prefix" = xNONE && exec_prefix='${prefix}'
 sim_ac_uniqued_list=
-for sim_ac_item in $LDFLAGS; do
+eval paramlist='"$LDFLAGS"'
+sim_ac_sed_expr="s,\(-[_a-zA-Z0-9][#_a-zA-Z0-9]*\) [ ]*\([_a-zA-Z0-9][_a-zA-Z0-9]*\),\1#####\2,g"
+paramlist="`echo $paramlist | sed \"$sim_ac_sed_expr\"`"
+while test x"$paramlist" != x"`echo $paramlist | sed \"$sim_ac_sed_expr\"`"; do
+  paramlist="`echo $paramlist | sed \"$sim_ac_sed_expr\"`"
+done
+for sim_ac_item in $paramlist; do
   eval sim_ac_eval_item="$sim_ac_item"
   eval sim_ac_eval_item="$sim_ac_eval_item"
   if test x"$sim_ac_uniqued_list" = x; then
@@ -11560,7 +11570,7 @@ for sim_ac_item in $LDFLAGS; do
     $sim_ac_unique && sim_ac_uniqued_list="$sim_ac_uniqued_list $sim_ac_item"
   fi
 done
-LDFLAGS=$sim_ac_uniqued_list
+LDFLAGS=`echo $sim_ac_uniqued_list | sed 's/#####/ /g'`
 prefix=$sim_ac_save_prefix
 exec_prefix=$sim_ac_save_exec_prefix
 # unset sim_ac_save_prefix
@@ -11574,7 +11584,13 @@ sim_ac_save_exec_prefix=$exec_prefix
 test x"$prefix" = xNONE && prefix=/usr/local
 test x"$exec_prefix" = xNONE && exec_prefix='${prefix}'
 sim_ac_uniqued_list=
-for sim_ac_item in $LIBS; do
+eval paramlist='"$LIBS"'
+sim_ac_sed_expr="s,\(-[_a-zA-Z0-9][#_a-zA-Z0-9]*\) [ ]*\([_a-zA-Z0-9][_a-zA-Z0-9]*\),\1#####\2,g"
+paramlist="`echo $paramlist | sed \"$sim_ac_sed_expr\"`"
+while test x"$paramlist" != x"`echo $paramlist | sed \"$sim_ac_sed_expr\"`"; do
+  paramlist="`echo $paramlist | sed \"$sim_ac_sed_expr\"`"
+done
+for sim_ac_item in $paramlist; do
   eval sim_ac_eval_item="$sim_ac_item"
   eval sim_ac_eval_item="$sim_ac_eval_item"
   if test x"$sim_ac_uniqued_list" = x; then
@@ -11589,7 +11605,7 @@ for sim_ac_item in $LIBS; do
     $sim_ac_unique && sim_ac_uniqued_list="$sim_ac_uniqued_list $sim_ac_item"
   fi
 done
-LIBS=$sim_ac_uniqued_list
+LIBS=`echo $sim_ac_uniqued_list | sed 's/#####/ /g'`
 prefix=$sim_ac_save_prefix
 exec_prefix=$sim_ac_save_exec_prefix
 # unset sim_ac_save_prefix
@@ -11604,7 +11620,13 @@ sim_ac_save_exec_prefix=$exec_prefix
 test x"$prefix" = xNONE && prefix=/usr/local
 test x"$exec_prefix" = xNONE && exec_prefix='${prefix}'
 sim_ac_uniqued_list=
-for sim_ac_item in -I"$includedir" $SIMAGE_EXTRA_CPPFLAGS; do
+eval paramlist='"-I"$includedir" $SIMAGE_EXTRA_CPPFLAGS"'
+sim_ac_sed_expr="s,\(-[_a-zA-Z0-9][#_a-zA-Z0-9]*\) [ ]*\([_a-zA-Z0-9][_a-zA-Z0-9]*\),\1#####\2,g"
+paramlist="`echo $paramlist | sed \"$sim_ac_sed_expr\"`"
+while test x"$paramlist" != x"`echo $paramlist | sed \"$sim_ac_sed_expr\"`"; do
+  paramlist="`echo $paramlist | sed \"$sim_ac_sed_expr\"`"
+done
+for sim_ac_item in $paramlist; do
   eval sim_ac_eval_item="$sim_ac_item"
   eval sim_ac_eval_item="$sim_ac_eval_item"
   if test x"$sim_ac_uniqued_list" = x; then
@@ -11619,7 +11641,7 @@ for sim_ac_item in -I"$includedir" $SIMAGE_EXTRA_CPPFLAGS; do
     $sim_ac_unique && sim_ac_uniqued_list="$sim_ac_uniqued_list $sim_ac_item"
   fi
 done
-SIMAGE_EXTRA_CPPFLAGS=$sim_ac_uniqued_list
+SIMAGE_EXTRA_CPPFLAGS=`echo $sim_ac_uniqued_list | sed 's/#####/ /g'`
 prefix=$sim_ac_save_prefix
 exec_prefix=$sim_ac_save_exec_prefix
 # unset sim_ac_save_prefix
@@ -11633,7 +11655,13 @@ sim_ac_save_exec_prefix=$exec_prefix
 test x"$prefix" = xNONE && prefix=/usr/local
 test x"$exec_prefix" = xNONE && exec_prefix='${prefix}'
 sim_ac_uniqued_list=
-for sim_ac_item in -L"$libdir" $SIMAGE_EXTRA_LDFLAGS; do
+eval paramlist='"-L"$libdir" $SIMAGE_EXTRA_LDFLAGS"'
+sim_ac_sed_expr="s,\(-[_a-zA-Z0-9][#_a-zA-Z0-9]*\) [ ]*\([_a-zA-Z0-9][_a-zA-Z0-9]*\),\1#####\2,g"
+paramlist="`echo $paramlist | sed \"$sim_ac_sed_expr\"`"
+while test x"$paramlist" != x"`echo $paramlist | sed \"$sim_ac_sed_expr\"`"; do
+  paramlist="`echo $paramlist | sed \"$sim_ac_sed_expr\"`"
+done
+for sim_ac_item in $paramlist; do
   eval sim_ac_eval_item="$sim_ac_item"
   eval sim_ac_eval_item="$sim_ac_eval_item"
   if test x"$sim_ac_uniqued_list" = x; then
@@ -11648,7 +11676,7 @@ for sim_ac_item in -L"$libdir" $SIMAGE_EXTRA_LDFLAGS; do
     $sim_ac_unique && sim_ac_uniqued_list="$sim_ac_uniqued_list $sim_ac_item"
   fi
 done
-SIMAGE_EXTRA_LDFLAGS=$sim_ac_uniqued_list
+SIMAGE_EXTRA_LDFLAGS=`echo $sim_ac_uniqued_list | sed 's/#####/ /g'`
 prefix=$sim_ac_save_prefix
 exec_prefix=$sim_ac_save_exec_prefix
 # unset sim_ac_save_prefix
@@ -11662,7 +11690,13 @@ sim_ac_save_exec_prefix=$exec_prefix
 test x"$prefix" = xNONE && prefix=/usr/local
 test x"$exec_prefix" = xNONE && exec_prefix='${prefix}'
 sim_ac_uniqued_list=
-for sim_ac_item in $SIMAGE_EXTRA_LIBS; do
+eval paramlist='"$SIMAGE_EXTRA_LIBS"'
+sim_ac_sed_expr="s,\(-[_a-zA-Z0-9][#_a-zA-Z0-9]*\) [ ]*\([_a-zA-Z0-9][_a-zA-Z0-9]*\),\1#####\2,g"
+paramlist="`echo $paramlist | sed \"$sim_ac_sed_expr\"`"
+while test x"$paramlist" != x"`echo $paramlist | sed \"$sim_ac_sed_expr\"`"; do
+  paramlist="`echo $paramlist | sed \"$sim_ac_sed_expr\"`"
+done
+for sim_ac_item in $paramlist; do
   eval sim_ac_eval_item="$sim_ac_item"
   eval sim_ac_eval_item="$sim_ac_eval_item"
   if test x"$sim_ac_uniqued_list" = x; then
@@ -11677,7 +11711,7 @@ for sim_ac_item in $SIMAGE_EXTRA_LIBS; do
     $sim_ac_unique && sim_ac_uniqued_list="$sim_ac_uniqued_list $sim_ac_item"
   fi
 done
-SIMAGE_EXTRA_LIBS=$sim_ac_uniqued_list
+SIMAGE_EXTRA_LIBS=`echo $sim_ac_uniqued_list | sed 's/#####/ /g'`
 prefix=$sim_ac_save_prefix
 exec_prefix=$sim_ac_save_exec_prefix
 # unset sim_ac_save_prefix

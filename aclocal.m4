@@ -6042,7 +6042,6 @@ fi
 # Variables:
 #   sim_ac_have_quicktime
 #   sim_ac_quicktime_libs
-#   sim_ac_quicktime_extra_libs
 #
 # Authors:
 #   Karin Kosina <kyrah@sim.no>
@@ -6053,8 +6052,6 @@ AC_MSG_CHECKING([for QuickTime framework])
 $sim_ac_have_quicktime && break
 sim_ac_quicktime_save_LIBS=$LIBS
 sim_ac_quicktime_libs="-framework QuickTime -framework CoreServices"
-# workaround - use -Wl,blah syntax until SIM_AC_UNIQIFY_LIST supports spaces
-sim_ac_quicktime_extra_libs="-Wl,-framework,QuickTime -Wl,-framework,CoreServices"
 LIBS="$sim_ac_quicktime_libs $LIBS"
 AC_TRY_LINK(
   [#include <QuickTime/QuickTimeComponents.h>],
@@ -6796,26 +6793,30 @@ fi
 ])
 
 # **************************************************************************
-# SIM_AC_UNIQIFY_LIST( VARIABLE, LIST )
+# SIM_AC_UNIQIFY_OPTION_LIST( VARIABLE, LIST )
 #
-# This macro filters out redundant items from a list.  This macro was made
-# to avoid having multiple equivalent -I and -L options for the compiler on
-# the command-line, which made compilation quite messy to watch.
-#
-# BUGS:
-#   Items with spaces are probably not supported.
+# This macro filters out redundant commandline options. It is heavily based
+# on the SIM_AC_UNIQIFY_LIST macro, but has been extended to support
+# spaces (i.e. for instance "-framework OpenGL" as needed on Mac OS X).
 #
 # Authors:
 #   Lars J. Aas <larsa@sim.no>
-#
+#   Karin Kosina <kyrah@sim.no>
+#   Tamer Fahmy <tamer@tammura.at>
 
-AC_DEFUN([SIM_AC_UNIQIFY_LIST], [
+AC_DEFUN([SIM_AC_UNIQIFY_OPTION_LIST], [
 sim_ac_save_prefix=$prefix
 sim_ac_save_exec_prefix=$exec_prefix
 test x"$prefix" = xNONE && prefix=/usr/local
 test x"$exec_prefix" = xNONE && exec_prefix='${prefix}'
 sim_ac_uniqued_list=
-for sim_ac_item in $2; do
+eval paramlist='"$2"'
+sim_ac_sed_expr="[s,\(-[_a-zA-Z0-9][#_a-zA-Z0-9]*\) [ ]*\([_a-zA-Z0-9][_a-zA-Z0-9]*\),\1#####\2,g]"
+paramlist="`echo $paramlist | sed \"$sim_ac_sed_expr\"`"
+while test x"$paramlist" != x"`echo $paramlist | sed \"$sim_ac_sed_expr\"`"; do
+  paramlist="`echo $paramlist | sed \"$sim_ac_sed_expr\"`"
+done
+for sim_ac_item in $paramlist; do
   eval sim_ac_eval_item="$sim_ac_item"
   eval sim_ac_eval_item="$sim_ac_eval_item"
   if test x"$sim_ac_uniqued_list" = x; then
@@ -6830,14 +6831,14 @@ for sim_ac_item in $2; do
     $sim_ac_unique && sim_ac_uniqued_list="$sim_ac_uniqued_list $sim_ac_item"
   fi
 done
-$1=$sim_ac_uniqued_list
+$1=`echo $sim_ac_uniqued_list | sed 's/#####/ /g'`
 prefix=$sim_ac_save_prefix
 exec_prefix=$sim_ac_save_exec_prefix
 # unset sim_ac_save_prefix
 # unset sim_ac_save_exec_prefix
 # unset sim_ac_eval_item
 # unset sim_ac_eval_uniq
-]) # SIM_AC_UNIQIFY_LIST
+]) # SIM_AC_UNIQIFY_OPTION_LIST
 
 
 # Usage:
