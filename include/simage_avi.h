@@ -1,5 +1,5 @@
-#ifndef _SIMAGE_AVI_H
-#define _SIMAGE_AVI_H
+#ifndef SIMAGE_AVI_H
+#define SIMAGE_AVI_H
 
 #include <config.h>
 
@@ -13,4 +13,4 @@ int avienc_movie_create(const char * filename, s_movie * movie, s_params * param
 int avienc_movie_put(s_movie * movie, s_image * image, s_params * params);
 void avienc_movie_close(s_movie * movie);
 
-#endif /* _SIMAGE_AVI_H */
+#endif /* SIMAGE_AVI_H */

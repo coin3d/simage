@@ -1,5 +1,5 @@
-#ifndef _AVI_ENCODE_H_
-#define _AVI_ENCODE_H_
+#ifndef AVI_ENCODE_H_
+#define AVI_ENCODE_H_
 
 #ifndef SIMAGE_AVIENC_SUPPORT
 #error "This file should not be used under the current configuration!"
@@ -18,4 +18,4 @@ int avi_end_encode(void *handle);
 #endif
 
 
-#endif /* _AVI_ENCODE_H_ */
+#endif /* AVI_ENCODE_H_ */
