@@ -56,9 +56,9 @@ print_usage(const char * appname)
 {
   if (appname == NULL) { appname = "mpeg2enc"; }
   (void)fprintf(stderr, "\n\tUsage: %s [options] <moviefile>\n\n", appname);
-  (void)fprintf(stderr, "\t\t--width     <xsize> \n");
-  (void)fprintf(stderr, "\t\t--height    <ysize> \n");
-  (void)fprintf(stderr, "\t\t--frames    <nr of movie frames> \n");
+  (void)fprintf(stderr, "\t\t--width     <xsize>\n");
+  (void)fprintf(stderr, "\t\t--height    <ysize>\n");
+  (void)fprintf(stderr, "\t\t--clocktime <length of movie in seconds>\n");
   (void)fprintf(stderr, "\n");
 }
 
@@ -74,7 +74,7 @@ main(int argc, char ** argv)
 {
   int WIDTH = 640;
   int HEIGHT = 480;
-  int NUMFRAMES = 20;
+  int CLOCKTIME = 1;
   char * APPNAME = (argc >= 1) ? argv[0] : NULL;
   char * MPGOUT = NULL;
 
@@ -82,7 +82,7 @@ main(int argc, char ** argv)
   for (optidx=1; optidx < argc - 1; optidx++) {
     if (optcmp(argv[optidx], "width")) { WIDTH = atoi(argv[++optidx]); }
     else if (optcmp(argv[optidx], "height")) { HEIGHT = atoi(argv[++optidx]); }
-    else if (optcmp(argv[optidx], "frames")) { NUMFRAMES = atoi(argv[++optidx]); }
+    else if (optcmp(argv[optidx], "clocktime")) { CLOCKTIME = atoi(argv[++optidx]); }
     else {
       (void)fprintf(stderr, "Error: unknown option '%s'\n", argv[optidx]);
     }
@@ -91,6 +91,7 @@ main(int argc, char ** argv)
   if (optidx < argc) {
     if (strncmp("--", argv[optidx], 2) == 0) {
       print_usage(APPNAME);
+      exit(1);
     }
     else {
       MPGOUT = argv[optidx];
@@ -128,11 +129,16 @@ main(int argc, char ** argv)
 
   camera->viewAll( node, renderer->getViewportRegion() );
 
+  // the animation is 30Hz
+  int nr_frames = CLOCKTIME * 30;
+
   s_params * params = s_params_create();
   s_params_set(params, 
                "width", S_INTEGER_PARAM_TYPE, WIDTH,
                "height", S_INTEGER_PARAM_TYPE, HEIGHT,
-               "num frames", S_INTEGER_PARAM_TYPE, NUMFRAMES,
+
+               "num frames", S_INTEGER_PARAM_TYPE, nr_frames,
+
                "error callback", S_FUNCTION_PARAM_TYPE, error_cb,
                "warning callback", S_FUNCTION_PARAM_TYPE, warning_cb,
                "progress callback", S_FUNCTION_PARAM_TYPE, progress_cb,
@@ -168,13 +174,12 @@ main(int argc, char ** argv)
 
   s_image * image = NULL;
 
-  for (int i=0; i < NUMFRAMES; i++)
+  for (int i=0; i < nr_frames; i++)
   { 
     SbVec3f cpos = camera->position.getValue();
     float x, y, z;
     cpos.getValue(x, y, z);
-//      x = 1.0-(float)i/(float)NUMFRAMES * 2.0;
-    x = 1.0 - (float)i * 2.0;
+    x = 1.0f - (float)i / (float)nr_frames * 2.0f;
     camera->position.setValue(x, y, z);
 
     renderer->render(root);
