@@ -11,6 +11,7 @@ Options:
   --cppflags
   --ldflags
   --libs
+  --build <program> <sourcefile> [<sourcefile>]...
   --version
   --usage | --help"
 
@@ -31,6 +32,16 @@ do
   --cppflags)        echo "$cppflags" ;;
   --ldflags)         echo "$ldflags"  ;;
   --libs)            echo "$libs"     ;;
+  --build)
+    shift
+    program=$1
+    shift
+    exec @CC@ \
+      $CPPFLAGS $cppflags \
+      $LDFLAGS $ldflags \
+      -o $program $@ \
+      $LIBS $libs
+    ;;
   *)
     echo "$me: Invalid option: \"$1\""
     echo "$usage" >&2
