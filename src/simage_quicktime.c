@@ -72,7 +72,6 @@ cc_basename(const char * path)
 
   strncpy(base, sptr, eptr - sptr + 1);
   base[eptr - sptr + 1] = '\0';
-  fprintf(stderr, "basename: %s\n", base);
   return(base);
 }
 
