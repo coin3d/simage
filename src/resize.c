@@ -482,6 +482,11 @@ simage_resize_fast(unsigned char *src, int width,
 // This sounds very nasty with regard to application programmers using
 // Coin / simage, and should be investigated ASAP. 20010904 mortene.
 
+// UPDATE: I haven't observed any crashes in the resize functionality
+// for several years. That goes for debug builds as well as for
+// release builds. Perhaps the bug has been fixed in the latest
+// service pack, SP5 (which I'm using). 20031210 thammer.
+
 // FIXME: methinks the type of the first argument should have been
 // ``const unsigned char *''. Can't change it now, though, as it'd
 // probably break ABI compatibility (?). Wait for simage2. 20010809 mortene.
