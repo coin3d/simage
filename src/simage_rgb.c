@@ -1,4 +1,4 @@
-#include "simage_rgb.h"
+#include <simage_rgb.h>
 
 /*
  * This loader is based on code by Mark J. Kilgard. The original source

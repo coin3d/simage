@@ -3,7 +3,7 @@
  *
  */
 
-#include "simage_jpeg.h"
+#include <simage_jpeg.h>
 
 #include <stdio.h>
 

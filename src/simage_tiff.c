@@ -3,7 +3,7 @@
  * 
  */
 
-#include "simage_tiff.h"
+#include <simage_tiff.h>
 #include <stdio.h>
 
 #include <tiffio.h>

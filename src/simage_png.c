@@ -2,7 +2,7 @@
  * Based heavily on example code in libpng. Some bugs fixed though.
  */
 
-#include "simage_png.h"
+#include <simage_png.h>
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>

@@ -2,7 +2,7 @@
   GIF loader, using libungif.
   Based, in part, on source code found in libungif, gif2rgb.c
 */
-#include "simage_gif.h"
+#include <simage_gif.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>

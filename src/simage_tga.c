@@ -3,7 +3,7 @@
  *
  */
 
-#include "simage_tga.h"
+#include <simage_tga.h>
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>

@@ -4,7 +4,7 @@
 
 #include <config.h>
 
-#include "simage.h"
+#include <simage.h>
 
 #include <assert.h>
 #include <stdio.h>
@@ -21,31 +21,31 @@ typedef struct _loader_data loader_data;
 
 /* built in image loaders */ 
 #ifdef HAVE_JPEGLIB
-#include "simage_jpeg.h"
+#include <simage_jpeg.h>
 static loader_data jpeg_loader;
 #endif /* HAVE_JPEGLIB */
 #ifdef HAVE_PNGLIB
-#include "simage_png.h"
+#include <simage_png.h>
 static loader_data png_loader;
 #endif /* HAVE_PNGLIB */
 #ifdef SIMAGE_TGA_SUPPORT
-#include "simage_tga.h"
+#include <simage_tga.h>
 static loader_data targa_loader;
 #endif /* SIMAGE_TGA_SUPPORT */
 #ifdef HAVE_TIFFLIB
-#include "simage_tiff.h"
+#include <simage_tiff.h>
 static loader_data tiff_loader;
 #endif /* HAVE_TIFFLIB */
 #ifdef SIMAGE_PIC_SUPPORT
-#include "simage_pic.h"
+#include <simage_pic.h>
 static loader_data pic_loader;
 #endif /* SIMAGE_PIC_SUPPORT */
 #ifdef SIMAGE_RGB_SUPPORT
-#include "simage_rgb.h"
+#include <simage_rgb.h>
 static loader_data rgb_loader;
 #endif /* SIMAGE_PIC_SUPPORT */
 #ifdef HAVE_UNGIFLIB
-#include "simage_gif.h"
+#include <simage_gif.h>
 static loader_data gif_loader;
 #endif /* HAVE_UNGIFLIB */
 #include <assert.h>
