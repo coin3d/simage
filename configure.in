@@ -100,7 +100,7 @@ SIM_CHECK_JPEGLIB([AC_DEFINE(HAVE_JPEGLIB)
                    SIMAGE_EXTRA_LIBS="$sim_ac_jpegdev_libs $SIMAGE_EXTRA_LIBS"],
                   [AC_MSG_WARN(libjpeg development system not found)])
 
-AM_CONDITIONAL(SIMAGE_JPEG_SUPPORT, test x"$sim_cv_lib_jpegdev_avail" = xyes)
+AM_CONDITIONAL(SIMAGE_JPEG_SUPPORT, test x"$sim_ac_jpegdev_avail" = xyes)
 
 
 
@@ -114,7 +114,7 @@ SIM_CHECK_TIFFLIB([AC_DEFINE(HAVE_TIFFLIB)
                    SIMAGE_EXTRA_LIBS="$sim_ac_tiffdev_libs $SIMAGE_EXTRA_LIBS"],
                   [AC_MSG_WARN(libtiff development system not found)])
 
-AM_CONDITIONAL(SIMAGE_TIFF_SUPPORT, test x"$sim_cv_lib_tiffdev_avail" = xyes)
+AM_CONDITIONAL(SIMAGE_TIFF_SUPPORT, test x"$sim_ac_tiffdev_avail" = xyes)
 
 
 
@@ -124,18 +124,16 @@ dnl *******************************************************************
 
 simage_ac_pnglib=no
 
-dnl Yep, we can actually check for a negative with-png here, as the
+dnl Yep, we can actually check for a negative with_png here, as the
 dnl default is "yes" and the user therefore must explicitly specify
 dnl if he/she does _not_ want the PNG support.
 if ! test x"$with_png" = xno; then
-  simage_ac_zlib=no
-  SIM_CHECK_ZLIB([simage_ac_zlib=yes
-                  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_zlib_cppflags"
+  SIM_CHECK_ZLIB([SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_zlib_cppflags"
                   SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_zlib_ldflags"
                   SIMAGE_EXTRA_LIBS="$sim_ac_zlib_libs $SIMAGE_EXTRA_LIBS"],
                   [AC_MSG_WARN(zlib development system not found)])
   
-  if test x"$simage_ac_zlib" = xyes; then
+  if test x"$sim_ac_zlib_avail" = xyes; then
     SIM_CHECK_PNGLIB([simage_ac_pnglib=yes
                       AC_DEFINE(HAVE_PNGLIB)
                       SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_pngdev_cppflags"

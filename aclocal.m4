@@ -850,8 +850,8 @@ dnl    $sim_ac_jpegdev_ldflags  (extra flags the linker needs for jpeg lib)
 dnl    $sim_ac_jpegdev_libs     (link libraries the linker needs for jpeg lib)
 dnl
 dnl  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-dnl  In addition, the variable $sim_cv_lib_jpegdev_avail is set to either
-dnl  "yes" (jpeg development system found) or "no" (not found).
+dnl  In addition, the variable $sim_ac_jpegdev_avail is set to "yes" if
+dnl  the jpeg development system is found.
 dnl
 dnl
 dnl Author: Morten Eriksen, <mortene@sim.no>.
@@ -867,7 +867,7 @@ AC_PREREQ([2.14.1])
 
 AC_ARG_WITH(jpeg, AC_HELP_STRING([--with-jpeg=DIR], [include support for JPEG images [default=yes]]), , [with_jpeg=yes])
 
-sim_cv_func_jpegdev_avail=
+sim_ac_jpegdev_avail=no
 
 if ! test x"$with_jpeg" = xno; then
   if ! test x"$with_jpeg" = xyes; then
@@ -892,16 +892,14 @@ if ! test x"$with_jpeg" = xno; then
                  sim_cv_lib_jpegdev_avail=yes,
                  sim_cv_lib_jpegdev_avail=no)])
 
-  if test x"$sim_cv_lib_jpegdev_avail" = xno; then
+  if test x"$sim_cv_lib_jpegdev_avail" = xyes; then
+    sim_ac_jpegdev_avail=yes
+    ifelse($1, , :, $1)
+  else
     CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
-  fi
-
-  if test x"$sim_cv_lib_jpegdev_avail" = xyes; then
-      ifelse($1, , :, $1)
-  else
-      ifelse($2, , :, $2)
+    ifelse($2, , :, $2)
   fi
 fi
 ])
@@ -917,8 +915,8 @@ dnl    $sim_ac_tiffdev_ldflags  (extra flags the linker needs for tiff lib)
 dnl    $sim_ac_tiffdev_libs     (link libraries the linker needs for tiff lib)
 dnl
 dnl  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-dnl  In addition, the variable $sim_cv_lib_tiffdev_avail is set to either
-dnl  "yes" (tiff development system found) or "no" (not found).
+dnl  In addition, the variable $sim_ac_tiffdev_avail is set to "yes" if
+dnl  tiff development system is found.
 dnl
 dnl
 dnl Author: Morten Eriksen, <mortene@sim.no>.
@@ -934,7 +932,7 @@ AC_PREREQ([2.14.1])
 
 AC_ARG_WITH(tiff, AC_HELP_STRING([--with-tiff=DIR], [include support for TIFF images [default=yes]]), , [with_tiff=yes])
 
-sim_cv_func_tiffdev_avail=
+sim_ac_tiffdev_avail=no
 
 if ! test x"$with_tiff" = xno; then
   if ! test x"$with_tiff" = xyes; then
@@ -958,16 +956,14 @@ if ! test x"$with_tiff" = xno; then
                  sim_cv_lib_tiffdev_avail=yes,
                  sim_cv_lib_tiffdev_avail=no)])
 
-  if test x"$sim_cv_lib_tiffdev_avail" = xno; then
+  if test x"$sim_cv_lib_tiffdev_avail" = xyes; then
+    sim_ac_tiffdev_avail=yes
+    ifelse($1, , :, $1)
+  else
     CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
-  fi
-
-  if test x"$sim_cv_lib_tiffdev_avail" = xyes; then
-      ifelse($1, , :, $1)
-  else
-      ifelse($2, , :, $2)
+    ifelse($2, , :, $2)
   fi
 fi
 ])
@@ -983,8 +979,8 @@ dnl    $sim_ac_zlib_ldflags  (extra flags the linker needs for zlib)
 dnl    $sim_ac_zlib_libs     (link libraries the linker needs for zlib)
 dnl
 dnl  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-dnl  In addition, the variable $sim_cv_lib_zlib_avail is set to either
-dnl  "yes" (zlib development system found) or "no" (not found).
+dnl  In addition, the variable $sim_ac_zlib_avail is set to "yes" if the
+dnl  zlib development system is found.
 dnl
 dnl
 dnl Author: Morten Eriksen, <mortene@sim.no>.
@@ -1000,7 +996,7 @@ AC_PREREQ([2.14.1])
 
 AC_ARG_WITH(zlib, AC_HELP_STRING([--with-zlib=DIR], [zlib installation directory]), , [with_zlib=yes])
 
-sim_cv_func_zlib_avail=
+sim_ac_zlib_avail=no
 
 if ! test x"$with_zlib" = xno; then
   if ! test x"$with_zlib" = xyes; then
@@ -1024,16 +1020,14 @@ if ! test x"$with_zlib" = xno; then
                  sim_cv_lib_zlib_avail=yes,
                  sim_cv_lib_zlib_avail=no)])
 
-  if test x"$sim_cv_lib_zlib_avail" = xno; then
+  if test x"$sim_cv_lib_zlib_avail" = xyes; then
+    sim_ac_zlib_avail=yes
+    ifelse($1, , :, $1)
+  else
     CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
-  fi
-
-  if test x"$sim_cv_lib_zlib_avail" = xyes; then
-      ifelse($1, , :, $1)
-  else
-      ifelse($2, , :, $2)
+    ifelse($2, , :, $2)
   fi
 fi
 ])
@@ -1049,8 +1043,8 @@ dnl    $sim_ac_pngdev_ldflags  (extra flags the linker needs for png lib)
 dnl    $sim_ac_pngdev_libs     (link libraries the linker needs for png lib)
 dnl
 dnl  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-dnl  In addition, the variable $sim_cv_lib_pngdev_avail is set to either
-dnl  "yes" (png development system found) or "no" (not found).
+dnl  In addition, the variable $sim_ac_pngdev_avail is set to "yes" if the
+dnl  png development system is found.
 dnl
 dnl
 dnl Author: Morten Eriksen, <mortene@sim.no>.
@@ -1066,7 +1060,7 @@ AC_PREREQ([2.14.1])
 
 AC_ARG_WITH(png, AC_HELP_STRING([--with-png=DIR], [include support for PNG images [default=yes]]), , [with_png=yes])
 
-sim_cv_func_pngdev_avail=
+sim_ac_pngdev_avail=no
 
 if ! test x"$with_png" = xno; then
   if ! test x"$with_png" = xyes; then
@@ -1090,16 +1084,14 @@ if ! test x"$with_png" = xno; then
                  sim_cv_lib_pngdev_avail=yes,
                  sim_cv_lib_pngdev_avail=no)])
 
-  if test x"$sim_cv_lib_pngdev_avail" = xno; then
+  if test x"$sim_cv_lib_pngdev_avail" = xyes; then
+    sim_ac_pngdev_avail=yes
+    ifelse($1, , :, $1)
+  else
     CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
-  fi
-
-  if test x"$sim_cv_lib_pngdev_avail" = xyes; then
-      ifelse($1, , :, $1)
-  else
-      ifelse($2, , :, $2)
+    ifelse($2, , :, $2)
   fi
 fi
 ])
