@@ -3,8 +3,8 @@
 
 m4_define([SIMAGE_MAJOR], [1])
 m4_define([SIMAGE_MINOR], [6])
-m4_define([SIMAGE_MICRO], [1])
-m4_define([SIMAGE_BETA],  [])
+m4_define([SIMAGE_MICRO], [2])
+m4_define([SIMAGE_BETA],  [a])
 m4_define([SIMAGE_VERSION_STRING],
           [SIMAGE_MAJOR.SIMAGE_MINOR.SIMAGE_MICRO[]SIMAGE_BETA])
 

@@ -1,3 +1,5 @@
+New in v1.6.2a (so far):
+
 New in v1.6.1 (2004-10-08):
 * Switched resize filter from Lorenz3 to Bell filter to avoid
   some unwanted artifacts when resizing images.
