@@ -353,15 +353,6 @@ SIM_EXPAND_DIR_VARS
 # **************************************************************************
 # XXX Kill these when they are _definitely_ not in use anymore.
 
-# Set simage_build_dir so we can change simage.dsp
-#simage_current_dir=`pwd`
-#SIM_AC_DOBACKSLASH(simage_build_dir,$simage_current_dir)
-#AC_SUBST(simage_build_dir)
-
-# Set simage_src_dir so we can change simage.dsp
-#SIM_AC_DOBACKSLASH(simage_src_dir,$srcdir)
-#AC_SUBST(simage_src_dir)
-
 # For the build/simage.spec RPM specification file.
 #SIM_AC_ISO8601_DATE(simage_configure_date)
 #AC_SUBST(simage_configure_date)
@@ -382,13 +373,20 @@ if $simage_build_with_msvc; then
 
   # We use a version suffix on the .dll-file, so several incompatible
   # (major) versions can be installed on a system.
-  SIMAGE_EXTRA_LIBS="-lsimage$SIMAGE_MAJOR_VERSION $SIMAGE_EXTRA_LIBS"
-
+  #
   # BTW, when linking DLLs, the 3rd-party .lib files will be
   # linked into the .dll file. I believe it is still advisable to
   # list all libs used upon `simage-config --libs`, as we can then
   # also use them from "parent" code (remember that their interfaces
   # is not exposed from the DLL) without any fuss.
+  SIMAGE_EXTRA_LIBS="-lsimage$SIMAGE_MAJOR_VERSION $SIMAGE_EXTRA_LIBS"
+
+  # These are for the .iwz InstallShield Express file under build/.
+  win_includedir=`cygpath -w $includedir`
+  AC_SUBST(win_includedir)
+  win_libdir=`cygpath -w $libdir`
+  AC_SUBST(win_libdir)
+
 else
   SIMAGE_EXTRA_LIBS="-lsimage $SIMAGE_EXTRA_LIBS"
 fi
@@ -399,6 +397,7 @@ AC_OUTPUT([
 	Makefile
 	src/Makefile
 	build/simage.spec
+	build/simage.iwz
 	simage-config
 ], [
 	chmod a+x simage-config

@@ -36,7 +36,6 @@ PACKLIST.EXE Ver=3.00.060
 Version=2.12
 DevTool=Generic Windows
 Platform=Win32
-DisksDir=simage\650MB\
 TabsVisit=1111111111111111100011
 LangNum=451
 LangDir=LANG\ENG\
@@ -45,7 +44,7 @@ LangDir=LANG\ENG\
 AppName=simage
 AppExe=
 AppExeFile=
-Version=42.43.44
+Version=@VERSION@
 Company=Systems in Motion
 Title=simage
 TitleType=1
@@ -79,15 +78,15 @@ Group1Name=libs
 Group1Dir=<INSTALLDIR>
 Group1Update=0
 Group1TargetOS=-1
-Group1File1=C:\home\install\lib\simage0.lib
-Group1File2=C:\home\install\lib\simage0.dll
+Group1File1=@win_libdir@\simage@SIMAGE_MAJOR_VERSION@.lib
+Group1File2=@win_libdir@\simage@SIMAGE_MAJOR_VERSION@.dll
 Group2Size=5263
 Group2Files=1
 Group2Name=include
 Group2Dir=<INSTALLDIR>
 Group2Update=0
 Group2TargetOS=-1
-Group2File1=C:\home\install\include\simage.h
+Group2File1=@win_includedir@\simage.h
 
 [Sequence]
 DestinationLocationDir=<ProgramFilesDir>\SIM\simage
@@ -101,38 +100,8 @@ SetupCompleteExec=
 SetupCompleteExecParam=
 SetupCompleteExecReadme=
 
-[VisualBasic]
-PRJFile=
-
-[Disk1 Files]
-AutoRun=1
-
-[SysIniFiles]
-File1=WIN.INI
-Section1=
-Key1=
-Value1=
-File2=SYSTEM.INI
-Section2=
-Key2=
-Value2=
-File3=PROTOCOL.INI
-Section3=
-Key3=
-Value3=
-IniFiles=3
-
 [Autoexec]
 PathDir=<INSTALLDIR>\libs
-ShareLocks=
-ShareFiles=
-Command=
-
-[CopyToFloppy]
-DriveOption=
-DestinationPath=
-DestinationPathOneFile=
-Password=
 
 [Uninstall]
 UserUninstall=0
