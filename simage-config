@@ -30,10 +30,12 @@ else
   exit 1
 fi
 
-if test x"$compiler" = x"gcc"; then
+# Remove gcc system directories includes from the include path
+if test -n "$compiler" && test -n "`$compiler --version | grep GCC`";
+then
   sim_ac_save_cpp=$CPP
   CPP="cpp"
-  case `uname -s` in
+  case `uname -s` in    
     Darwin) CPP="cpp3"
     ;;
   esac
@@ -43,7 +45,7 @@ if test x"$compiler" = x"gcc"; then
     /End of search list./b
     s/ /-I/
     p
-  }'
+  }' 
   EOF`
   result=
   for inc_path in $cppflags; do
