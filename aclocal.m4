@@ -1,4 +1,4 @@
-# aclocal.m4 generated automatically by aclocal 1.4a
+# aclocal.m4 generated automatically by aclocal 1.4c
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000
 # Free Software Foundation, Inc.
@@ -39,7 +39,7 @@ dnl like #elif.
 dnl FIXME: can't do this because then AC_AIX won't work due to a
 dnl circular dependency.
 dnl AC_BEFORE([$0], [AC_PROG_CPP])
-AC_MSG_CHECKING(for ${CC-cc} option to accept ANSI C)
+AC_MSG_CHECKING([for ${CC-cc} option to accept ANSI C])
 AC_CACHE_VAL(am_cv_prog_cc_stdc,
 [am_cv_prog_cc_stdc=no
 ac_save_CC="$CC"
@@ -92,7 +92,7 @@ CC="$ac_save_CC"
 if test -z "$am_cv_prog_cc_stdc"; then
   AC_MSG_RESULT([none needed])
 else
-  AC_MSG_RESULT($am_cv_prog_cc_stdc)
+  AC_MSG_RESULT([$am_cv_prog_cc_stdc])
 fi
 case "x$am_cv_prog_cc_stdc" in
   x|xno) ;;
@@ -296,7 +296,7 @@ if test -z "$AMDEP"; then
     if depmode="$depmode" \
        source=conftest.c object=conftest.o \
        depfile=conftest.Po tmpdepfile=conftest.TPo \
-       $SHELL $am_depcomp $depcc -c conftest.c -o conftest.o 2>/dev/null &&
+       $SHELL $am_depcomp $depcc -c conftest.c -o conftest.o >/dev/null 2>&1 &&
        grep conftest.h conftest.Po > /dev/null 2>&1; then
       am_cv_[$1]_dependencies_compiler_type="$depmode"
       break
@@ -319,6 +319,9 @@ AC_SUBST([$1]DEPMODE)
 AC_DEFUN([AM_SET_DEPDIR],[
 if test -d .deps || mkdir .deps 2> /dev/null || test -d .deps; then
   DEPDIR=.deps
+  # We redirect because .deps might already exist and be populated.
+  # In this situation we don't want to see an error.
+  rmdir .deps > /dev/null 2>&1
 else
   DEPDIR=_deps
 fi
@@ -856,8 +859,8 @@ AC_DEFUN([AM_MAINTAINER_MODE],
                           (and sometimes confusing) to the casual installer],
       USE_MAINTAINER_MODE=$enableval,
       USE_MAINTAINER_MODE=no)
-  AC_MSG_RESULT($USE_MAINTAINER_MODE)
-  AM_CONDITIONAL(MAINTAINER_MODE, test $USE_MAINTAINER_MODE = yes)
+  AC_MSG_RESULT([$USE_MAINTAINER_MODE])
+  AM_CONDITIONAL(MAINTAINER_MODE, [test $USE_MAINTAINER_MODE = yes])
   MAINT=$MAINTAINER_MODE_TRUE
   AC_SUBST(MAINT)dnl
 ]
@@ -1134,7 +1137,7 @@ fi
 
 
 # Usage:
-#  SIM_CHECK_X11([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#  SIM_AC_CHECK_X11([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 #
 #  Try to find the X11 development system. If it is found, these
 #  shell variables are set:
@@ -1150,11 +1153,10 @@ fi
 #
 # Author: Morten Eriksen, <mortene@sim.no>.
 
-AC_DEFUN([SIM_CHECK_X11], [
+AC_DEFUN([SIM_AC_CHECK_X11], [
+AC_REQUIRE([AC_PATH_XTRA])
 
 sim_ac_x11_avail=no
-
-AC_PATH_XTRA
 
 if test x"$no_x" != xyes; then
   #  *** DEBUG ***
@@ -1204,7 +1206,7 @@ fi
 ])
 
 # Usage:
-#  SIM_CHECK_X11SHMEM([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#  SIM_AC_CHECK_X11SHMEM([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 #
 #  Try to find the X11 shared memory extension. If it is found, this
 #  shell variable is set:
@@ -1223,8 +1225,7 @@ fi
 #      Cygwin installation)
 #
 
-AC_DEFUN([SIM_CHECK_X11SHMEM], [
-AC_PREREQ([2.14.1])
+AC_DEFUN([SIM_AC_CHECK_X11SHMEM], [
 
 sim_ac_x11shmem_avail=no
 sim_ac_x11shmem_libs="-lXext"
@@ -1250,7 +1251,7 @@ fi
 ])
 
 # Usage:
-#  SIM_CHECK_X11MU([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#  SIM_AC_CHECK_X11MU([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 #
 #  Try to find the X11 miscellaneous utilities extension. If it is
 #  found, this shell variable is set:
@@ -1268,8 +1269,7 @@ fi
 #      Cygwin installation)
 #
 
-AC_DEFUN([SIM_CHECK_X11MU], [
-AC_PREREQ([2.14.1])
+AC_DEFUN([SIM_AC_CHECK_X11MU], [
 
 sim_ac_x11mu_avail=no
 sim_ac_x11mu_libs="-lXmu"
@@ -1296,7 +1296,7 @@ fi
 ])
 
 # Usage:
-#  SIM_CHECK_X11XID([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#  SIM_AC_CHECK_X11XID([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 #
 #  Try to find the X11 extension device library. Sets this
 #  shell variable:
@@ -1314,8 +1314,7 @@ fi
 #      Cygwin installation)
 #
 
-AC_DEFUN([SIM_CHECK_X11XID], [
-AC_PREREQ([2.14.1])
+AC_DEFUN([SIM_AC_CHECK_X11XID], [
 
 sim_ac_x11xid_avail=no
 sim_ac_x11xid_libs="-lXi"
@@ -1340,7 +1339,7 @@ fi
 ])
 
 # Usage:
-#  SIM_CHECK_X_INTRINSIC([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#  SIM_AC_CHECK_X_INTRINSIC([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 #
 #  Try to find the Xt intrinsic library. Sets this shell variable:
 #
@@ -1353,8 +1352,7 @@ fi
 # Author: Morten Eriksen, <mortene@sim.no>.
 #
 
-AC_DEFUN([SIM_CHECK_X_INTRINSIC], [
-AC_PREREQ([2.14.1])
+AC_DEFUN([SIM_AC_CHECK_X_INTRINSIC], [
 
 sim_ac_xt_avail=no
 sim_ac_xt_libs="-lXt"
@@ -1379,7 +1377,7 @@ fi
 ])
 
 # Usage:
-#   SIM_CHECK_LIBXPM( [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND] )
+#   SIM_AC_CHECK_LIBXPM( [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND] )
 #
 # Description:
 #   This macro checks for libXpm.
@@ -1392,8 +1390,7 @@ fi
 #   Lars J. Aas <larsa@sim.no>
 #
 
-AC_DEFUN([SIM_CHECK_LIBXPM], [
-AC_PREREQ([2.14.1])
+AC_DEFUN([SIM_AC_CHECK_LIBXPM], [
 
 sim_ac_xpm_avail=no
 sim_ac_xpm_libs="-lXpm"

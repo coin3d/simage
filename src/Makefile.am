@@ -101,5 +101,9 @@ install-exec-hook: simage@SIMAGE_MAJOR_VERSION@.dll
 	  echo "Installing simage@SIMAGE_MAJOR_VERSION@.dll"; \
 	  for i in simage@SIMAGE_MAJOR_VERSION@.dll simage@SIMAGE_MAJOR_VERSION@.lib; do \
 	    $(INSTALL_DATA) $$i $(DESTDIR)$(libdir)/$$i; \
-	  done \
+	  done; \
+	  if test -s vc60.pdb; then \
+	    echo "Installing simage@SIMAGE_MAJOR_VERSION@.pdb"; \
+	    cp vc60.pdb $(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@.pdb; \
+	  fi \
 	fi

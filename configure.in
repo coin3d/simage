@@ -7,7 +7,7 @@ AC_CONFIG_AUX_DIR(cfg)
 
 sim_ac_cvs_syncproblem=false;
 
-sim_ac_macro_dir=${srcdir}/cfg/m4
+sim_ac_macro_dir=`cd ${srcdir}/cfg/m4; pwd`
 
 if test ! -d $sim_ac_macro_dir; then
   if test "x${with_auto_cvs_update+set}" = "xset"; then
