@@ -17,6 +17,10 @@
 #include <math.h>
 #include <assert.h>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif /* !M_PI */
+
 typedef struct {
   int xsize;            /* horizontal size of the image in Pixels */
   int ysize;            /* vertical size of the image in Pixels */
