@@ -1,6 +1,6 @@
 # Makefile.in generated automatically by automake 1.4c from Makefile.am
 
-# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000
+# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -66,7 +66,6 @@ host_triplet = @host@
 target_alias = @target_alias@
 target_triplet = @target@
 AMDEP = @AMDEP@
-AMINCLUDE = @AMINCLUDE@
 AMTAR = @AMTAR@
 AS = @AS@
 AWK = @AWK@
@@ -99,6 +98,7 @@ SIMAGE_MINOR_VERSION = @SIMAGE_MINOR_VERSION@
 SIMAGE_VERSION = @SIMAGE_VERSION@
 SUFFIX = @SUFFIX@
 VERSION = @VERSION@
+_am_include = @_am_include@
 install_sh = @install_sh@
 simage_configure_date = @simage_configure_date@
 win_includedir = @win_includedir@
@@ -1046,15 +1046,12 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 
 mostlyclean-libLTLIBRARIES:
 
-
 clean-libLTLIBRARIES:
 	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
 
 distclean-libLTLIBRARIES:
 
-
 maintainer-clean-libLTLIBRARIES:
-
 
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
@@ -1113,7 +1110,6 @@ uninstall-libsimage@SUFFIX@incHEADERS:
 
 tags: TAGS
 
-
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
@@ -1144,15 +1140,15 @@ GTAGS:
 distclean-tags:
 	-rm -f TAGS ID
 
-@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage.Plo
-@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage_gif.Plo
-@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage_jpeg.Plo
-@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage_pic.Plo
-@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage_png.Plo
-@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage_rgb.Plo
-@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage_tga.Plo
-@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage_tiff.Plo
-@AMDEP@@AMINCLUDE@ $(DEPDIR)/simage_write.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_gif.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_jpeg.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_pic.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_png.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_rgb.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_tga.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_tiff.Plo
+@AMDEP@@_am_include@ $(DEPDIR)/simage_write.Plo
 
 distclean-depend:
 	-rm -rf $(DEPDIR)
@@ -1218,9 +1214,7 @@ installdirs:
 
 mostlyclean-generic:
 
-
 clean-generic:
-
 
 distclean-generic:
 	-rm -f Makefile $(CONFIG_CLEAN_FILES)
@@ -1268,29 +1262,32 @@ mostlyclean-am: mostlyclean-compile mostlyclean-generic \
 
 
 # **************************************************************************
-# Additional Make rules not supported by Automake
 
-# Rule for linking MSVC++ LIB file.
-simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_DEPENDENCIES)
+simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: Makefile \
+  $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_DEPENDENCIES)
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
 	rm -f "$$basename.dll" "$$basename.lib"; \
 	if @BUILD_WITH_MSVC@; then \
-	  $(CC) $(LDFLAGS) @LIBFLAGS@ \
+	  echo "Linking $$basename.lib..."; \
+	  echo $(CC) $(LDFLAGS) $(LIBFLAGS) \
+	    `echo $(libsimage@SUFFIX@_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
+	    $(libsimage@SUFFIX@_la_LIBADD) $(LIBS); \
+	  $(CC) $(LDFLAGS) $(LIBFLAGS) \
 	    `echo $(libsimage@SUFFIX@_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
 	    $(libsimage@SUFFIX@_la_LIBADD) $(LIBS); \
 	else \
 	  touch "$$basename.dll" "$$basename.lib"; \
 	fi
 
-# **************************************************************************
-# hooks for the automake infrastructure...
-
 all-local: simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
+
+# **************************************************************************
 
 install-exec-local:
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
 	if test -s "$$basename.dll"; then \
 	  $(mkinstalldirs) "$(DESTDIR)$(bindir)"; \
+	  echo " $(INSTALL_PROGRAM)" "$$basename.dll" "$(DESTDIR)$(bindir)/$$basename.dll"; \
 	  $(INSTALL_PROGRAM) "$$basename.dll" "$(DESTDIR)$(bindir)/$$basename.dll"; \
 	fi
 
@@ -1298,6 +1295,7 @@ install-data-local:
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
 	if test -s "$$basename.lib"; then \
 	  $(mkinstalldirs) "$(DESTDIR)$(libdir)"; \
+	  echo " $(INSTALL_DATA)" "$$basename.lib" "$(DESTDIR)$(libdir)/$$basename.lib"; \
 	  $(INSTALL_DATA) "$$basename.lib" "$(DESTDIR)$(libdir)/$$basename.lib"; \
 	fi
 
@@ -1306,8 +1304,9 @@ uninstall-local:
 	for file in \
 	  "$(DESTDIR)$(bindir)/$$basename.dll" \
 	  "$(DESTDIR)$(libdir)/$$basename.lib"; do \
-	  if test -f $$file; then \
-	    echo rm -f $$file && rm -f $$file; \
+	  if test -f "$$file"; then \
+	    echo " rm -f" "$$file"; \
+	    rm -f "$$file"; \
 	  fi \
 	done
 
@@ -1316,4 +1315,3 @@ uninstall-local:
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
-

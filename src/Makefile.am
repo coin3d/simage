@@ -89,7 +89,11 @@ simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: Makefile \
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
 	rm -f "$$basename.dll" "$$basename.lib"; \
 	if @BUILD_WITH_MSVC@; then \
-	  $(CC) $(LDFLAGS) @LIBFLAGS@ \
+	  echo "Linking $$basename.lib..."; \
+	  echo $(CC) $(LDFLAGS) $(LIBFLAGS) \
+	    `echo $(libsimage@SUFFIX@_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
+	    $(libsimage@SUFFIX@_la_LIBADD) $(LIBS); \
+	  $(CC) $(LDFLAGS) $(LIBFLAGS) \
 	    `echo $(libsimage@SUFFIX@_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
 	    $(libsimage@SUFFIX@_la_LIBADD) $(LIBS); \
 	else \
@@ -104,6 +108,7 @@ install-exec-local:
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
 	if test -s "$$basename.dll"; then \
 	  $(mkinstalldirs) "$(DESTDIR)$(bindir)"; \
+	  echo " $(INSTALL_PROGRAM)" "$$basename.dll" "$(DESTDIR)$(bindir)/$$basename.dll"; \
 	  $(INSTALL_PROGRAM) "$$basename.dll" "$(DESTDIR)$(bindir)/$$basename.dll"; \
 	fi
 
@@ -111,6 +116,7 @@ install-data-local:
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
 	if test -s "$$basename.lib"; then \
 	  $(mkinstalldirs) "$(DESTDIR)$(libdir)"; \
+	  echo " $(INSTALL_DATA)" "$$basename.lib" "$(DESTDIR)$(libdir)/$$basename.lib"; \
 	  $(INSTALL_DATA) "$$basename.lib" "$(DESTDIR)$(libdir)/$$basename.lib"; \
 	fi
 
@@ -120,7 +126,8 @@ uninstall-local:
 	  "$(DESTDIR)$(bindir)/$$basename.dll" \
 	  "$(DESTDIR)$(libdir)/$$basename.lib"; do \
 	  if test -f "$$file"; then \
-	    echo rm -f "$$file" && rm -f "$$file"; \
+	    echo " rm -f" "$$file"; \
+	    rm -f "$$file"; \
 	  fi \
 	done
 

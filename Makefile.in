@@ -1,6 +1,6 @@
 # Makefile.in generated automatically by automake 1.4c from Makefile.am
 
-# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000
+# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -66,7 +66,6 @@ host_triplet = @host@
 target_alias = @target_alias@
 target_triplet = @target@
 AMDEP = @AMDEP@
-AMINCLUDE = @AMINCLUDE@
 AMTAR = @AMTAR@
 AS = @AS@
 AWK = @AWK@
@@ -99,6 +98,7 @@ SIMAGE_MINOR_VERSION = @SIMAGE_MINOR_VERSION@
 SIMAGE_VERSION = @SIMAGE_VERSION@
 SUFFIX = @SUFFIX@
 VERSION = @VERSION@
+_am_include = @_am_include@
 install_sh = @install_sh@
 simage_configure_date = @simage_configure_date@
 win_includedir = @win_includedir@
@@ -121,16 +121,17 @@ subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/cfg/mkinstalldirs
 CONFIG_HEADER = config.h ./include/simage.h
-CONFIG_CLEAN_FILES = 
+CONFIG_CLEAN_FILES =  build/simage.spec
 SCRIPTS =  $(bin_SCRIPTS)
 
 DIST_SOURCES = 
 DATA =  $(cfgdata_DATA) $(m4data_DATA)
 
-DIST_COMMON =  README ./stamp-h1.in AUTHORS COPYING ChangeLog INSTALL \
-Makefile.am Makefile.in NEWS aclocal.m4 cfg/config.guess cfg/config.sub \
-cfg/install-sh cfg/ltmain.sh cfg/missing cfg/mkinstalldirs config.h.in \
-configure configure.in include/simage.h.in include/stamp-h2.in
+DIST_COMMON =  README ./include/simage.h.in ./include/stamp-h2.in \
+./stamp-h1.in AUTHORS COPYING ChangeLog INSTALL Makefile.am Makefile.in \
+NEWS aclocal.m4 cfg/config.guess cfg/config.sub cfg/install-sh \
+cfg/ltmain.sh cfg/missing cfg/mkinstalldirs config.h.in configure \
+configure.in
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -182,26 +183,28 @@ include/simage.h: include/stamp-h2
 		rm -f include/stamp-h2; \
 		$(MAKE) include/stamp-h2; \
 	else :; fi
-include/stamp-h2: $(srcdir)/include/simage.h.in $(top_builddir)/config.status
+include/stamp-h2: $(srcdir)/./include/simage.h.in $(top_builddir)/config.status
 	@rm -f include/stamp-h2 include/stamp-h2T
 	@echo timestamp > include/stamp-h2T 2> /dev/null
 	cd $(top_builddir) \
 	  && CONFIG_FILES= CONFIG_HEADERS=include/simage.h \
 	     $(SHELL) ./config.status
 	@mv include/stamp-h2T include/stamp-h2
-$(srcdir)/include/simage.h.in: @MAINTAINER_MODE_TRUE@$(srcdir)/include/stamp-h2.in
+$(srcdir)/./include/simage.h.in: @MAINTAINER_MODE_TRUE@$(srcdir)/./include/stamp-h2.in
 	@if test ! -f $@; then \
-		rm -f $(srcdir)/include/stamp-h2.in; \
-		$(MAKE) $(srcdir)/include/stamp-h2.in; \
+		rm -f $(srcdir)/./include/stamp-h2.in; \
+		$(MAKE) $(srcdir)/./include/stamp-h2.in; \
 	else :; fi
-$(srcdir)/include/stamp-h2.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	@rm -f $(srcdir)/include/stamp-h2.in $(srcdir)/include/stamp-h2.inT
-	@echo timestamp > $(srcdir)/include/stamp-h2.inT 2> /dev/null
+$(srcdir)/./include/stamp-h2.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	@rm -f $(srcdir)/./include/stamp-h2.in $(srcdir)/./include/stamp-h2.inT
+	@echo timestamp > $(srcdir)/./include/stamp-h2.inT 2> /dev/null
 	cd $(top_srcdir) && $(AUTOHEADER)
-	@mv $(srcdir)/include/stamp-h2.inT $(srcdir)/include/stamp-h2.in
+	@mv $(srcdir)/./include/stamp-h2.inT $(srcdir)/./include/stamp-h2.in
 
 distclean-hdr:
 	-rm -f config.h include/simage.h
+build/simage.spec: $(top_builddir)/config.status $(top_srcdir)/build/simage.spec.in
+	cd $(top_builddir) && CONFIG_FILES=$@ CONFIG_HEADERS= CONFIG_LINKS= CONFIG_COMMANDS= $(SHELL) ./config.status
 
 install-binSCRIPTS: $(bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
@@ -229,7 +232,7 @@ install-cfgdataDATA: $(cfgdata_DATA)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(cfgdatadir)
 	@list='$(cfgdata_DATA)'; for p in $$list; do \
-	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  f="`echo $$p | sed -e 's|^.*/||'`"; \
 	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(cfgdatadir)/$$f"; \
 	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(cfgdatadir)/$$f; \
@@ -247,7 +250,7 @@ install-m4dataDATA: $(m4data_DATA)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(m4datadir)
 	@list='$(m4data_DATA)'; for p in $$list; do \
-	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  f="`echo $$p | sed -e 's|^.*/||'`"; \
 	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(m4datadir)/$$f"; \
 	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(m4datadir)/$$f; \
@@ -319,7 +322,6 @@ tags-recursive:
 	done
 
 tags: TAGS
-
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
@@ -410,7 +412,7 @@ dist-all: distdir
 distdir: $(DISTFILES)
 	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
 	mkdir $(distdir)
-	$(mkinstalldirs) $(distdir)/. $(distdir)/cfg $(distdir)/include . cfg include
+	$(mkinstalldirs) $(distdir)/./include $(distdir)/build $(distdir)/cfg ./include build cfg
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -467,9 +469,7 @@ installdirs-am:
 
 mostlyclean-generic:
 
-
 clean-generic:
-
 
 distclean-generic:
 	-rm -f Makefile $(CONFIG_CLEAN_FILES)
@@ -520,4 +520,3 @@ simage-@CONFIG@.cfg: config.status $(srcdir)/simage.cfg.in
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
-

@@ -486,6 +486,9 @@ if $BUILD_WITH_MSVC; then
   if $SIMAGE_STATIC; then
     LIBFLAGS="-LIB"
     LIBFLAGS="$LIBFLAGS /OUT:simage$SIMAGE_MAJOR_VERSION$SUFFIX.lib"
+    SIMAGE_EXTRA_CPPFLAGS="-I$includedir"
+    SIMAGE_EXTRA_LDFLAGS="-L$libdir"
+    SIMAGE_EXTRA_LIBS=
   else
     LIBFLAGS="-DLL /INCREMENTAL:NO"
     if test x"$enable_debug" = xno; then
@@ -539,7 +542,7 @@ AC_OUTPUT([
 SIM_AC_CONFIGURATION_SUMMARY
 
 echo ""
-echo "Done.  Now run make install to build $PACKAGE"
+echo "Done.  Now run make install to build $PACKAGE."
 echo ""
 
 # **************************************************************************
