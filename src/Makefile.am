@@ -107,28 +107,31 @@ all-local: simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
 
 install-exec-local:
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
-	if test -s "$$basename.dll"; then \
-	  $(mkinstalldirs) "$(DESTDIR)$(bindir)"; \
-	  echo " $(INSTALL_PROGRAM)" "$$basename.dll" "$(DESTDIR)$(bindir)/$$basename.dll"; \
-	  $(INSTALL_PROGRAM) "$$basename.dll" "$(DESTDIR)$(bindir)/$$basename.dll"; \
-	fi
+	for ext in dll pdb; do \
+	  file="$$basename.$$ext"; \
+	  if test -s "$$file"; then \
+	    $(mkinstalldirs) "$(DESTDIR)$(bindir)"; \
+	    echo " $(INSTALL_PROGRAM)" "$$file" "$(DESTDIR)$(bindir)/$$file"; \
+	    $(INSTALL_PROGRAM) "$$file" "$(DESTDIR)$(bindir)/$$file"; \
+	  fi \
+	done;
 
 install-data-local:
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
-	for ext in lib pdb; do \
+	for ext in lib; do \
 	  file="$$basename.$$ext"; \
 	  if test -s "$$file"; then \
 	    $(mkinstalldirs) "$(DESTDIR)$(libdir)"; \
 	    echo " $(INSTALL_DATA)" "$$file" "$(DESTDIR)$(libdir)/$$file"; \
 	    $(INSTALL_DATA) "$$file" "$(DESTDIR)$(libdir)/$$file"; \
 	  fi \
-	done
+	done;
 
 uninstall-local:
 	@basename="simage@SIMAGE_MAJOR_VERSION@@SUFFIX@"; \
 	for file in \
 	  "$(DESTDIR)$(bindir)/$$basename.dll" \
-	  "$(DESTDIR)$(libdir)/$$basename.pdb" \
+	  "$(DESTDIR)$(bindir)/$$basename.pdb" \
 	  "$(DESTDIR)$(libdir)/$$basename.lib"; do \
 	  if test -f "$$file"; then \
 	    echo " rm -f" "$$file"; \

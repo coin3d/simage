@@ -491,7 +491,6 @@ if $BUILD_WITH_MSVC; then
 
   debugfile=`pwd`/src/simage${SIMAGE_MAJOR_VERSION}${SUFFIX}.pdb
   debugfile=`cygpath -w "$debugfile" | sed 's,\\\\,\\\\\\\\,g'`
-  CFLAGS="/Fd$debugfile $CFLAGS"
   if $SIMAGE_STATIC; then
     LIBFLAGS="-LIB"
     LIBFLAGS="$LIBFLAGS /OUT:simage$SIMAGE_MAJOR_VERSION$SUFFIX.lib"
@@ -500,11 +499,12 @@ if $BUILD_WITH_MSVC; then
     SIMAGE_EXTRA_LIBS=
   else
     LIBFLAGS="-DLL /INCREMENTAL:NO"
-    case $enable_debug in
+    case $enable_symbols in
     no | false)
       LIBFLAGS="$LIBFLAGS /RELEASE"
       ;;
     *)
+      CFLAGS="/Fd$debugfile $CFLAGS"
       LIBFLAGS="$LIBFLAGS /DEBUG /PDB:simage$SIMAGE_MAJOR_VERSION$SUFFIX.pdb"
       ;;
     esac
