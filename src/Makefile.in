@@ -124,8 +124,7 @@ libsimage_la_SOURCES = \
 libsimageincdir = $(includedir)
 
 libsimage_la_LDFLAGS = \
-	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
-	-release $(LT_RELEASE)
+	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 
 libsimageinc_HEADERS = \
@@ -930,6 +929,24 @@ maintainer-clean-libtool:
 libsimage.la: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDENCIES)
 	$(LINK) -rpath $(libdir) $(libsimage_la_LDFLAGS) $(libsimage_la_OBJECTS) $(libsimage_la_LIBADD) $(LIBS)
 
+install-libsimageincHEADERS: $(libsimageinc_HEADERS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(libsimageincdir)
+	@list='$(libsimageinc_HEADERS)'; for p in $$list; do \
+	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
+	  f="`echo $$p | sed -e 's|^.*/||'`"; \
+	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimageincdir)/$$f"; \
+	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimageincdir)/$$f; \
+	done
+
+uninstall-libsimageincHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(libsimageinc_HEADERS)'; for p in $$list; do \
+	  f="`echo $$p | sed -e 's|^.*/||'`"; \
+	  echo " rm -f $(DESTDIR)$(libsimageincdir)/$$f"; \
+	  rm -f $(DESTDIR)$(libsimageincdir)/$$f; \
+	done
+
 tags: TAGS
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
@@ -1090,24 +1107,6 @@ uninstall-am uninstall all-redirect all-am all install-strip \
 installdirs mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
-
-install-libsimageincHEADERS: $(libsimageinc_HEADERS)
-	@$(NORMAL_INSTALL)
-	$(mkinstalldirs) $(DESTDIR)$(libsimageincdir)
-	@list='$(libsimageinc_HEADERS)'; for p in $$list; do \
-	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
-	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimageincdir)/$$f"; \
-	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimageincdir)/$$f; \
-	done
-
-uninstall-libsimageincHEADERS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(libsimageinc_HEADERS)'; for p in $$list; do \
-	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  echo " rm -f $(DESTDIR)$(libsimageincdir)/$$f"; \
-	  rm -f $(DESTDIR)$(libsimageincdir)/$$f; \
-	done
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
