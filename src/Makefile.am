@@ -17,6 +17,8 @@ RGBSOURCES = simage_rgb.c $(top_srcdir)/include/simage_rgb.h
 PICSOURCES = simage_pic.c $(top_srcdir)/include/simage_pic.h
 XWDSOURCES = simage_xwd.c $(top_srcdir)/include/simage_xwd.h
 EPSSOURCES = simage_eps.c $(top_srcdir)/include/simage_eps.h
+AVISOURCES = simage_avi.c $(top_srcdir)/include/simage_avi.h \
+             avi_encode.c $(top_srcdir)/include/avi_encode.h
 
 SIMAGESOURCES = \
 	$(top_builddir)/include/simage.h \
@@ -37,7 +39,8 @@ SIMAGESOURCES = \
 	$(PICSOURCES) \
 	$(XWDSOURCES) \
 	$(EPSSOURCES) \
-	$(QIMAGESOURCES)
+	$(QIMAGESOURCES) \
+        $(AVISOURCES)
 
 if BUILD_WITH_MSVC
 # we don't use libtool on Cygwin to generate lib

@@ -422,6 +422,53 @@ else
 fi
 
 # **************************************************************************
+# Check if avienc is wanted.
+
+AC_ARG_WITH(
+  [avienc],
+  [AC_HELP_STRING([--with-avienc], [enable/disable support for avi encoding (Win32 only)])],
+  [case $withval in
+  yes | "") sim_ac_want_avienc=true ;;
+  no)       sim_ac_want_avienc=false ;;
+  *)        AC_MSG_ERROR([bad value "$withval" for --with-avienc]) ;;
+  esac],
+  [sim_ac_want_avienc=false])
+
+# **************************************************************************
+# Check for VfW (Video for Windows) - used by the avi encoder
+
+AC_MSG_CHECKING([for Video for Windows library])
+AC_TRY_LINK([
+#ifdef HAVE_WINDOWS_H
+#include <windows.h>
+#endif
+#include <vfw.h>
+#pragma comment(lib, "vfw32.lib")
+], [
+  (void)AVIFileInit();
+], [
+  AC_MSG_RESULT([yes])
+  AC_DEFINE([HAVE_VFW],, [Define to use the Video for Windows library])
+], [
+  AC_MSG_RESULT([no])
+  if $sim_ac_want_avienc; then
+    AC_MSG_WARN([need Video for Windows for avi encoding])
+    sim_ac_want_avienc=false
+  fi
+])
+
+# **************************************************************************
+# Set avi ancode define
+
+# AM_CONDITIONAL(SIMAGE_AVIENC_SUPPORT, $sim_ac_want_avienc)
+if $sim_ac_want_avienc; then
+  AC_DEFINE(SIMAGE_AVIENC_SUPPORT, , [define to enable avienc support])
+  SIM_AC_CONFIGURATION_SETTING([Avi encoding support], [Yes])
+else
+  SIM_AC_CONFIGURATION_SETTING([Avi encoding support], [No (default)])
+fi
+
+# **************************************************************************
 # check if we are compiling with debug symbols
 
 SIMAGE_DEBUG_BUILD=false
