@@ -49,7 +49,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /out:"..\libungif.lib"
+# ADD LIB32 /nologo /out:"libungif.lib"
 
 !ELSEIF  "$(CFG)" == "libungif - Win32 Debug"
 
@@ -72,7 +72,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /out:"..\libungif.lib"
+# ADD LIB32 /nologo /out:"libungif.lib"
 
 !ENDIF 
 
@@ -85,39 +85,39 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\lib\dev2gif.c
+SOURCE=.\lib\dev2gif.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\lib\dgif_lib.c
+SOURCE=.\lib\dgif_lib.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\lib\egif_lib.c
+SOURCE=.\lib\egif_lib.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\lib\getarg.c
+SOURCE=.\lib\getarg.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\lib\gif_err.c
+SOURCE=.\lib\gif_err.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\lib\gif_font.c
+SOURCE=.\lib\gif_font.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\lib\gifalloc.c
+SOURCE=.\lib\gifalloc.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\lib\qprintf.c
+SOURCE=.\lib\qprintf.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\lib\quantize.c
+SOURCE=.\lib\quantize.c
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -125,15 +125,15 @@ SOURCE=..\lib\quantize.c
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\lib\getarg.h
+SOURCE=.\lib\getarg.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\lib\gif_lib.h
+SOURCE=.\lib\gif_lib.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\lib\gif_lib_private.h
+SOURCE=.\lib\gif_lib_private.h
 # End Source File
 # End Group
 # End Target
