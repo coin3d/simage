@@ -1193,7 +1193,7 @@ if test x"$with_zlib" != xno; then
   if test x"$sim_ac_linking_style" = xmswin; then
     sim_ac_zlib_libs=zlib.lib
   else
-    sim_ac_zlib_libs="-lz"
+    sim_ac_zlib_libs=-lz
   fi
 
   sim_ac_save_cppflags=$CPPFLAGS
@@ -1224,6 +1224,30 @@ if test x"$with_zlib" != xno; then
 fi
 ])
 
+# Usage:
+#  SIM_AC_CHECK_ZLIB_READY([ACTION-IF-READY[, ACTION-IF-NOT-READY]])
+#
+#  Try to link code which needs the ZLIB development system.
+#
+# Author: Morten Eriksen, <mortene@sim.no>.
+
+AC_DEFUN([SIM_AC_CHECK_ZLIB_READY], [
+AC_MSG_CHECKING(if we can use zlib without explicit linkage)
+sim_ac_zlib_ready=
+
+AC_TRY_LINK([#include <zlib.h>],
+            [(void)zlibVersion();],
+            sim_ac_zlib_ready=true,
+            sim_ac_zlib_ready=false)
+
+if $sim_ac_zlib_ready; then
+  AC_MSG_RESULT(yes)
+  $1
+else
+  AC_MSG_RESULT(no)
+  $2
+fi
+])
 
 # Usage:
 #   SIM_CHECK_PNGLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
@@ -1296,11 +1320,36 @@ fi
 
 
 # Usage:
+#  SIM_AC_CHECK_PNG_READY([ACTION-IF-READY[, ACTION-IF-NOT-READY]])
+#
+#  Try to link code which needs the PNG development system.
+#
+# Author: Morten Eriksen, <mortene@sim.no>.
+
+AC_DEFUN([SIM_AC_CHECK_PNG_READY], [
+AC_MSG_CHECKING(if we can use libpng without explicit linkage)
+sim_ac_png_ready=
+
+AC_TRY_LINK([#include <png.h>],
+            [(void)png_read_info(0L, 0L);],
+            sim_ac_png_ready=true,
+            sim_ac_png_ready=false)
+
+if $sim_ac_png_ready; then
+  AC_MSG_RESULT(yes)
+  $1
+else
+  AC_MSG_RESULT(no)
+  $2
+fi
+])
+
+# Usage:
 #   SIM_EXPAND_DIR_VARS
 #
 # Description:
 #   Expand these variables into their correct full directory paths:
-#    $prefix  $exec_prefix  $includedir  $libdir
+#    $prefix  $exec_prefix  $includedir  $libdir  $datadir
 # 
 # Author: Morten Eriksen, <mortene@sim.no>.
 # 
@@ -1310,8 +1359,8 @@ test x"$prefix" = x"NONE" && prefix="$ac_default_prefix"
 test x"$exec_prefix" = x"NONE" && exec_prefix="${prefix}"
 includedir="`eval echo $includedir`"
 libdir="`eval echo $libdir`"
+datadir="`eval echo $datadir`"
 ])
-
 
 # Convenience macros SIM_AC_DEBACKSLASH and SIM_AC_DOBACKSLASH for
 # converting to and from MSWin/MS-DOS style paths.
@@ -1334,4 +1383,9 @@ eval "$1=\"`echo $2 | sed -e 's%\\\\%\\/%g'`\""
 AC_DEFUN([SIM_AC_DOBACKSLASH], [
 eval "$1=\"`echo $2 | sed -e 's%\\/%\\\\%g'`\""
 ])
+
+AC_DEFUN([SIM_AC_DODOUBLEBACKSLASH], [
+eval "$1=\"`echo $2 | sed -e 's%\\/%\\\\\\\\\\\\\\\\%g'`\""
+])
+
 

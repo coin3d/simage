@@ -98,7 +98,7 @@ SIM_AC_CHECK_LINKSTYLE
 if test x"$sim_ac_linking_style" = xmswin; then
   SIMAGE_LIBNAME=simage.lib
   # At least TIFF lib needs user32.lib
-  LDFLAGS="$LDFLAGS user32.lib"
+  LIBS="$LIBS user32.lib"
 else
   SIMAGE_LIBNAME=-lsimage
 fi
