@@ -335,10 +335,6 @@ simage_tiff_load(const char *filename,
   return buffer;
 }
 
-#undef CVT
-#undef pack
-
-
 int 
 simage_tiff_save(const char *filename,
                  const unsigned char * bytes,
@@ -395,5 +391,208 @@ simage_tiff_save(const char *filename,
   TIFFClose(out);
   return 1;
 }
+
+typedef struct {
+  TIFF * in;
+  uint16 samplesperpixel;
+  uint16 bitspersample;
+  uint16 photometric;
+  uint32 w, h;
+  uint16 config;
+  uint16 * red;
+  uint16 * green;
+  uint16 * blue;
+  int format;
+  int rowsize;
+  unsigned char * inbuf;
+} simage_tiff_opendata;
+
+void * 
+simage_tiff_open(const char * filename,
+                 int * width,
+                 int * height,
+                 int * numcomponents)
+{
+  int i;
+  TIFF * in;
+  simage_tiff_opendata * od;
+
+  tifferror = ERR_NO_ERROR;
+
+  TIFFSetErrorHandler(tiff_error);
+  TIFFSetWarningHandler(tiff_warn);
+
+  in = TIFFOpen(filename, "r");
+  if (in == NULL) {
+    tifferror = ERR_OPEN;
+    return NULL;
+  }
+  od = (simage_tiff_opendata*) malloc(sizeof(simage_tiff_opendata));
+  od->in = in;
+
+  if (TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &od->photometric) == 1) {
+    if (od->photometric != PHOTOMETRIC_RGB && od->photometric != PHOTOMETRIC_PALETTE &&
+	od->photometric != PHOTOMETRIC_MINISWHITE && 
+	od->photometric != PHOTOMETRIC_MINISBLACK) {
+      /*Bad photometric; can only handle Grayscale, RGB and Palette images :-( */
+      TIFFClose(in);
+      tifferror = ERR_UNSUPPORTED;
+      free(od);
+      return NULL;
+    }
+  }
+  else {
+    tifferror = ERR_READ;
+    free(od);
+    TIFFClose(in);
+    return NULL;
+  }
+  
+  if (TIFFGetField(in, TIFFTAG_SAMPLESPERPIXEL, &od->samplesperpixel) == 1) {
+    if (od->samplesperpixel != 1 && od->samplesperpixel != 3) {
+      /* Bad samples/pixel */
+      tifferror = ERR_UNSUPPORTED;
+      free(od);
+      TIFFClose(in);
+      return NULL;
+    }
+  }
+  else {
+    tifferror = ERR_READ;
+    free(od);
+    TIFFClose(in);
+    return NULL;
+  }
+	
+  if (TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &od->bitspersample) == 1) {
+    if (od->bitspersample != 8) {
+      /* can only handle 8-bit samples. */
+      TIFFClose(in);
+      tifferror = ERR_UNSUPPORTED;
+      free(od);
+      return NULL;
+    }
+  }
+  else {
+    tifferror = ERR_READ;
+    TIFFClose(in);
+    free(od);
+    return NULL;
+  }
+
+  if (TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &od->w) != 1 ||
+      TIFFGetField(in, TIFFTAG_IMAGELENGTH, &od->h) != 1 ||
+      TIFFGetField(in, TIFFTAG_PLANARCONFIG, &od->config) != 1) {
+    TIFFClose(in);
+    tifferror = ERR_READ;
+    free(od);
+    return NULL;
+  }
+  
+  if (od->photometric == PHOTOMETRIC_MINISWHITE || 
+      od->photometric == PHOTOMETRIC_MINISBLACK)
+    od->format = 1;
+  else
+    od->format = 3;
+
+  switch (pack(od->photometric, od->config)) {
+  default:
+    break;
+  case pack(PHOTOMETRIC_PALETTE, PLANARCONFIG_CONTIG):
+  case pack(PHOTOMETRIC_PALETTE, PLANARCONFIG_SEPARATE):
+    if (TIFFGetField(in, TIFFTAG_COLORMAP, &od->red, &od->green, &od->blue) != 1)
+      tifferror = ERR_READ;
+    /* */
+    /* Convert 16-bit colormap to 8-bit (unless it looks */
+    /* like an old-style 8-bit colormap). */
+    /* */
+    if (!tifferror && checkcmap(1<<od->bitspersample, od->red, od->green, od->blue) == 16) {
+      int i;
+      for (i = (1<<od->bitspersample)-1; i >= 0; i--) {
+	od->red[i] = CVT(od->red[i]);
+	od->green[i] = CVT(od->green[i]);
+	od->blue[i] = CVT(od->blue[i]);
+      }
+    }    
+  }
+  od->rowsize = TIFFScanlineSize(in);
+  od->inbuf = (unsigned char *) malloc(od->rowsize * 3); /* *3 to support all configs */
+
+  *width = od->w;
+  *height = od->h;
+  *numcomponents = od->format;
+
+  return (void*) od;
+}
+
+
+void 
+simage_tiff_close(void * opendata)
+{
+  simage_tiff_opendata * od = (simage_tiff_opendata*) opendata;
+  TIFFClose(od->in);
+  free(od->inbuf);
+  free(od);
+}
+
+int 
+simage_tiff_read_line(void * opendata, int y, unsigned char * buf)
+{
+  int s, row;
+  simage_tiff_opendata * od;
+  tifferror = ERR_NO_ERROR;
+  
+  od = (simage_tiff_opendata*) opendata;
+  row = (od->h-1)-y;
+  
+  switch (pack(od->photometric, od->config)) {
+  case pack(PHOTOMETRIC_MINISWHITE, PLANARCONFIG_CONTIG):
+  case pack(PHOTOMETRIC_MINISBLACK, PLANARCONFIG_CONTIG):
+  case pack(PHOTOMETRIC_MINISWHITE, PLANARCONFIG_SEPARATE):
+  case pack(PHOTOMETRIC_MINISBLACK, PLANARCONFIG_SEPARATE):
+    if (TIFFReadScanline(od->in, od->inbuf, row, 0) < 0) {
+      tifferror = ERR_READ;
+      break;
+    }
+    invert_row(buf, od->inbuf, od->w, od->photometric == PHOTOMETRIC_MINISWHITE);  
+    break;
+
+  case pack(PHOTOMETRIC_PALETTE, PLANARCONFIG_CONTIG):
+  case pack(PHOTOMETRIC_PALETTE, PLANARCONFIG_SEPARATE):
+    if (TIFFReadScanline(od->in, od->inbuf, row, 0) < 0) {
+      tifferror = ERR_READ;
+      break;
+    }
+    remap_row(buf, od->inbuf, od->w, od->red, od->green, od->blue);
+    break;
+
+  case pack(PHOTOMETRIC_RGB, PLANARCONFIG_CONTIG):
+    if (TIFFReadScanline(od->in, od->inbuf, row, 0) < 0) {
+      tifferror = ERR_READ;
+      break;
+    }
+    copy_row(buf, od->inbuf, od->w);  
+    break;
+
+  case pack(PHOTOMETRIC_RGB, PLANARCONFIG_SEPARATE):
+    for (s = 0; s < 3; s++) {
+      if (TIFFReadScanline(od->in, (tdata_t)(od->inbuf+s*od->rowsize), 
+                           (uint32)row, (tsample_t)s) < 0) {
+        tifferror = ERR_READ; break;
+      }
+    }
+    if (!tifferror) {
+      interleave_row(buf, od->inbuf, od->inbuf+od->rowsize, od->inbuf + 2*od->rowsize, od->w);
+    }
+    break;
+  default:
+    tifferror = ERR_UNSUPPORTED;
+    break;
+  }  
+  return tifferror == ERR_NO_ERROR;
+}
+
+#undef CVT
+#undef pack
 
 #endif /* HAVE_TIFFLIB */

@@ -6,16 +6,8 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 #include <simage.h>
+#include <simage_private.h>
 #include <string.h>
-
-struct simage_image_s {
-  int width;
-  int height;
-  int components;
-  int didalloc;
-  int order;
-  unsigned char * data;
-};
 
 s_image * 
 s_image_create(int w, int h, int components,
@@ -32,6 +24,12 @@ s_image_create(int w, int h, int components,
     image->didalloc = 1;
     image->data = (unsigned char *) malloc(w*h*components);
   }
+  
+  /* needed for simage 1.6 */
+  image->opendata = NULL; 
+  memset(&image->openfuncs, 0, sizeof(struct simage_open_funcs));
+
+  /* return image struct */
   return (s_image*) image;
 }
 
@@ -40,6 +38,10 @@ s_image_destroy(s_image * image)
 {
   if (image) {
     if (image->didalloc) free((void*)image->data);
+
+    if (image->opendata) {
+      image->openfuncs.close_func(image->opendata);
+    }
     free((void*)image);
   }
 }
@@ -83,7 +85,18 @@ s_image_get_component_order(s_image * image)
 unsigned char * 
 s_image_data(s_image * image)
 {
-  if (image) return image->data;
+  if (image) {
+    if (image->opendata && image->data == NULL) {
+      int i;
+      image->data = malloc(image->width*image->height*image->components);
+      image->didalloc = 1;
+      for (i = 0; i < image->height; i++) {
+        (void) image->openfuncs.read_line_func(image->opendata, i, 
+                                               image->data+image->width*image->components);
+      }
+      return image->data;
+    }
+  }
   return NULL;
 }
 
@@ -169,10 +182,9 @@ s_image_save(const char * filename, s_image * image,
   }
   
   return simage_save_image(filename, 
-                           image->data, 
+                           s_image_data(image),
                            image->width,
                            image->height,
                            image->components,
                            ext);
 }
-

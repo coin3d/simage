@@ -459,6 +459,16 @@ extern "C" {
   SIMAGE_DLL_API int s_image_set_component_order(s_image * image, int order);
   SIMAGE_DLL_API int s_image_get_component_order(s_image * image);
 
+  /*****************************************************************/
+  /**** NOTE: new methods for simage version 1.6 *******************/
+  /*****************************************************************/
+  
+  SIMAGE_DLL_API s_image * s_image_open(const char * file, int oktoreadall);
+  SIMAGE_DLL_API int s_image_read_line(s_image * image, 
+                                       int line,
+                                       unsigned char * buf);
+  
+
 #ifdef __cplusplus
 }
 #endif

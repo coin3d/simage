@@ -5,7 +5,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
+
 #include <simage.h>
+#include <simage_private.h>
 #include <string.h>
 
 struct _loader_data
@@ -13,6 +15,8 @@ struct _loader_data
   struct simage_plugin funcs;
   struct _loader_data *next;
   int is_internal;
+  /* simage 1.6 */
+  struct simage_open_funcs openfuncs;
 };
 
 typedef struct _loader_data loader_data;
@@ -94,6 +98,7 @@ add_loader(loader_data *loader,
   loader->funcs.error_func = error_func;
   loader->is_internal = is_internal;
   loader->next = NULL;
+  memset(&loader->openfuncs, 0, sizeof(struct simage_open_funcs));
 
   if (first_loader == NULL) first_loader = last_loader = loader;
   else {
@@ -168,6 +173,9 @@ add_internal_loaders(void)
 	       simage_tiff_identify,
 	       simage_tiff_error,
 	       1, 0);
+    tiff_loader.openfuncs.open_func = simage_tiff_open;
+    tiff_loader.openfuncs.close_func = simage_tiff_close;
+    tiff_loader.openfuncs.read_line_func = simage_tiff_read_line;    
 #endif /* HAVE_TIFFLIB */
 #ifdef SIMAGE_RGB_SUPPORT
     add_loader(&rgb_loader, 
@@ -175,6 +183,9 @@ add_internal_loaders(void)
 	       simage_rgb_identify,
 	       simage_rgb_error,
 	       1, 0);
+    rgb_loader.openfuncs.open_func = simage_rgb_open;
+    rgb_loader.openfuncs.close_func = simage_rgb_close;
+    rgb_loader.openfuncs.read_line_func = simage_rgb_read_line;    
 #endif /* SIMAGE_RGB_SUPPORT */
 #ifdef SIMAGE_PIC_SUPPORT
     add_loader(&pic_loader, 
@@ -335,3 +346,58 @@ simage_free_image(unsigned char * imagedata)
 {
   if (imagedata) free(imagedata);
 }
+
+
+/* new simage 1.6 methods */
+
+s_image * 
+s_image_open(const char * filename, int oktoreadall)
+{
+  loader_data * loader;
+
+  simage_error_msg[0] = 0; /* clear error msg */
+  add_internal_loaders();  
+  
+  loader = find_loader(filename);
+
+  /* check if plugin supports open_funcs */
+  if (loader && loader->openfuncs.open_func) {
+    int w, h, nc;
+    void * opendata = loader->openfuncs.open_func(filename, &w, &h, &nc);
+    if (opendata) {
+      s_image * image = (s_image*) malloc(sizeof(s_image));
+      image->width = w;
+      image->height = h;
+      image->components = nc;
+      image->order = SIMAGE_ORDER_RGB; 
+      image->didalloc = 0;
+      image->data = NULL;
+      image->opendata = opendata;
+      memcpy(&image->openfuncs, &loader->openfuncs, sizeof(struct simage_open_funcs));
+      return image;
+    }
+  }
+  else if (oktoreadall) {
+    /* just load everything */
+    return s_image_load(filename, NULL);
+  }
+  return NULL;
+}
+
+int 
+s_image_read_line(s_image * image, 
+                  int line,
+                  unsigned char * buf)
+{
+  if (image->data) {
+    int bpr = image->width*image->components;
+    memcpy(buf, image->data + bpr*line, bpr);
+    return 1;
+  }
+  else if (image->opendata && image->openfuncs.read_line_func) {
+    return image->openfuncs.read_line_func(image->opendata, line, buf);
+  }
+  return 0;
+}
+
+

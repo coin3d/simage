@@ -22,4 +22,12 @@ int simage_tiff_identify(const char * filename,
 
 int simage_tiff_error(char * buffer, int bufferlen);
 
+/* new for simage 1.6 */
+void * simage_tiff_open(const char * filename,
+                        int * width,
+                        int * height,
+                        int * numcomponents);
+void simage_tiff_close(void * opendata);
+int simage_tiff_read_line(void * opendata, int y, unsigned char * buf);
+
 #endif /* _SIMAGE_TIFF_H_ */

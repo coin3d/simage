@@ -6,6 +6,26 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+  struct simage_open_funcs {
+    void * (*open_func)(const char * filename,
+                        int * w, int * h, int * nc);
+    int (*read_line_func)(void * opendata, int y, unsigned char * buf);
+    int (*next_line_func)(void * opendata, unsigned char * buf);
+    void (*close_func)(void * opendata);
+  };
+
+  struct simage_image_s {
+    int width;
+    int height;
+    int components;
+    int didalloc;
+    int order;
+    unsigned char * data;
+    /* added for simage 1.6 */
+    void * opendata;
+    struct simage_open_funcs openfuncs;
+  };
   
   s_params * s_movie_params(s_movie * movie);
 
