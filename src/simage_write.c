@@ -404,9 +404,13 @@ simage_check_save_supported(const char * filenameextension)
 int 
 simage_get_num_savers(void)
 {
-  int cnt;
+  int cnt = 0;
   saver_data * saver = first_saver;
-  cnt = 0;
+
+  /* FIXME: it's ugly design that we have to call this method on all
+     public API functions for initialization. 20020215 mortene. */
+  add_internal_savers();
+
   while (saver) {
     cnt++;
     saver = saver->next;
