@@ -502,7 +502,6 @@ conv444to422(simpeg_encode_context * context, unsigned char *src, unsigned char 
         dst[i>>1] = context->clp[idx];
 #else
         dst[i>>1] = idx < 0 ? 0 : (idx > 255 ? 255 : idx);        
-        dst[i>>1] = 127;
 #endif
       }
       src+= width;

@@ -673,7 +673,7 @@ readparmfile(simpeg_encode_context * context,
       context->vertical_size = height;
     }
 
-    context->aspectratio = 8;
+    context->aspectratio = 2;
     context->frame_rate_code = 3;
     context->bit_rate = 1152000.0;
     context->vbv_buffer_size = 20;
@@ -683,7 +683,7 @@ readparmfile(simpeg_encode_context * context,
     context->level = 8;
     context->prog_seq = 1;
     context->chroma_format = 1;
-    context->video_format = 1;
+    context->video_format = 2;
     context->color_primaries = 5;
     context->transfer_characteristics = 5;
     context->matrix_coefficients = 5;
