@@ -54,6 +54,15 @@ libsimage_la_SOURCES = \
 	$(JPEGSOURCES) $(UNGIFSOURCES) $(PNGSOURCES) $(TIFFSOURCES) \
 	$(TGASOURCES) $(RGBSOURCES) $(PICSOURCES)
 
+# all the conditionally compiled source files must be added here...
+EXTRA_libsimage_la_SOURCES = \
+	simage_jpeg.c simage_jpeg.h \
+	simage_gif.c simage_gif.h \
+	simage_tiff.c simage_tiff.h \
+	simage_png.c simage_png.h \
+	simage_tga.c simage_tga.h \
+	simage_rgb.c simage_rgb.h \
+	simage_pic.c simage_pic.h
 
 ## Installation information.
 
