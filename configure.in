@@ -649,13 +649,17 @@ if $BUILD_WITH_MSVC; then
   # For the SuperPIMP (makensis) config file.
   win_srcdir=`cygpath -w "$srcdir"`
   AC_SUBST(win_srcdir)
+  COIN_COMPILER=wrapmsvc
 else
   SIMAGE_EXTRA_LIBS="-lsimage${SUFFIX} $SIMAGE_EXTRA_LIBS"
 
   # For the build/simage.spec RPM specification file.
   SIM_AC_ISO8601_DATE(simage_configure_date)
   AC_SUBST(simage_configure_date)
+  COIN_COMPILER="$CC"
 fi
+
+AC_SUBST(COIN_COMPILER)
 
 # **************************************************************************
 

@@ -67,6 +67,7 @@ AS = @AS@
 AWK = @AWK@
 BUILD_WITH_MSVC = @BUILD_WITH_MSVC@
 CC = @CC@
+COIN_COMPILER = @COIN_COMPILER@
 CONFIG = @CONFIG@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
@@ -130,7 +131,8 @@ EXTRA_DIST = \
 	simage.cfg.in \
 	cfg/depcomp \
 	cfg/ltconfig \
-	cfg/m4/msvccc \
+	cfg/m4/wrapmsvc.cpp \
+	cfg/m4/wrapmsvc.exe \
 	build/simage.spec.in \
 	README.WIN32
 
@@ -501,7 +503,7 @@ info-am:
 install-data-am: install-cfgdataDATA install-dist_binSCRIPTS \
 	install-dist_m4dataDATA
 
-install-exec-am:
+install-exec-am: install-exec-local
 
 install-info:
 
@@ -528,9 +530,9 @@ uninstall-am: uninstall-cfgdataDATA uninstall-dist_binSCRIPTS \
 	info-recursive install install-am install-cfgdataDATA \
 	install-data install-data-am install-data-recursive \
 	install-dist_binSCRIPTS install-dist_m4dataDATA install-exec \
-	install-exec-am install-exec-recursive install-info \
-	install-info-recursive install-man install-recursive \
-	install-strip installcheck installcheck-am \
+	install-exec-am install-exec-local install-exec-recursive \
+	install-info install-info-recursive install-man \
+	install-recursive install-strip installcheck installcheck-am \
 	installcheck-recursive installdirs installdirs-am \
 	installdirs-recursive maintainer-clean maintainer-clean-generic \
 	maintainer-clean-recursive mostlyclean mostlyclean-generic \
@@ -542,6 +544,17 @@ uninstall-am: uninstall-cfgdataDATA uninstall-dist_binSCRIPTS \
 
 simage-@CONFIG@.cfg: config.status $(srcdir)/simage.cfg.in
 	@$(SHELL) config.status --file=$@:simage.cfg.in
+
+install-exec-local: $(srcdir)/cfg/m4/wrapmsvc.exe
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
+	@if @BUILD_WITH_MSVC@; then \
+	  p=wrapmsvc.exe; \
+	  echo " $(INSTALL_PROGRAM) $(srcdir)/cfg/m4/$$p $(DESTDIR)$(bindir)/$$p"; \
+	  $(INSTALL_PROGRAM) $(srcdir)/cfg/m4/$$p $(DESTDIR)$(bindir)/$$p; \
+	fi
+
+# EOF ######################################################################
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
