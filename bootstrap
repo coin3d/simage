@@ -1,5 +1,6 @@
 #! /bin/sh
-# autogen.sh -- generate configure and build files for simage source hierarchy
+#
+# Script to generate configure and build files for simage source hierarchy.
 # 
 # Authors:
 #   Morten Eriksen, <mortene@sim.no>.
@@ -10,7 +11,7 @@ PROJECT=simage
 
 wd=`echo $0 | sed 's,[^\\/]*$,,g'`;
 cd $wd
-if test ! -f autogen.sh; then
+if test ! -f bootstrap; then
   echo "unexpected problem with your shell - bailing out"
   exit 1
 fi
