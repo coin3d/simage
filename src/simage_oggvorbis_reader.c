@@ -105,11 +105,34 @@ oggvorbis_reader_read(oggvorbis_reader_context *context,
                     buffer+readsize, 
                     size-readsize, 0, 2, 1, 
                     &context->current_section);
+    /* FIXME: Verify that EOF's (and numread=0) are
+       handled correctly. 2003-01-09 thammer
+     */
     if (numread<=0)
       return numread;
     else
       readsize += numread;
   }
+
+  /*
+  FIXME: The above code fills buffer with little-endian
+  short ints on all platforms. We want to return the
+  buffer using the endian-ness of the platform instead.
+
+  Problem reported by kyrah.
+
+  The code below changes the endian-ness of the buffer.
+  
+  unsigned char tmp;
+  for (int i=0; i<size/2; i++) {
+    tmp = buffer[i*2]; 
+    buffer[i*2] = buffer[i*2+1];
+    buffer[i*2+1] = tmp;
+  }
+
+  2003-01-10 thammer
+  */
+
   return readsize;
 }
 
