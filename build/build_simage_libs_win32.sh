@@ -384,6 +384,7 @@ if ! test -d $SIMAGELIBS_BUILD/libtiff; then
     cp -R $SIMAGELIBS_BUILD/libtiff/temp/tiff-v3.5.7./libtiff/* $SIMAGELIBS_BUILD/libtiff/$SIMAGELIBS_CRT
     cp $SIMAGELIBS_BUILD/libtiff/temp/tiff-v3.5.7/VERSION $SIMAGELIBS_BUILD/libtiff
     cp $SIMAGELIBS_BUILD/libtiff/temp/tiff-v3.5.7/RELEASE-DATE $SIMAGELIBS_BUILD/libtiff
+    cp $SIMAGELIBS_BUILD/libtiff/temp/tiff-v3.5.7/COPYRIGHT $SIMAGELIBS_BUILD/libtiff
     cp -R $SIMAGELIBS_BUILD/libtiff/temp/tiff-v3.5.7/dist $SIMAGELIBS_BUILD/libtiff
     mkdir $SIMAGELIBS_BUILD/libtiff/$SIMAGELIBS_CRT/include
     mkdir $SIMAGELIBS_BUILD/libtiff/$SIMAGELIBS_CRT/lib
@@ -679,6 +680,8 @@ if ! test -d $SIMAGELIBS_DIST; then
   mkdir $SIMAGELIBS_DIST
 fi
 
+# libungif
+
 if ! test -d $SIMAGELIBS_DIST/libungif; then
   mkdir $SIMAGELIBS_DIST/libungif
 fi
@@ -687,8 +690,6 @@ for SIMAGELIBS_CRT in $SIMAGELIBS_CRT_LIST; do
   if ! test -d $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT; then
     mkdir $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT
   fi
-  cp -R $SIMAGELIBS_BUILD/libungif/$SIMAGELIBS_CRT/COPYING \
-        $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT/LICENSE.TXT
   if ! test -d $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT/lib; then
     mkdir $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT/lib
   fi
@@ -700,6 +701,11 @@ for SIMAGELIBS_CRT in $SIMAGELIBS_CRT_LIST; do
   cp -R $SIMAGELIBS_BUILD/libungif/$SIMAGELIBS_CRT/include/gif_lib.h \
         $SIMAGELIBS_DIST/libungif/$SIMAGELIBS_CRT/include
 done
+
+cp -R $SIMAGELIBS_BUILD/libungif/md/COPYING \
+      $SIMAGELIBS_DIST/libungif/readme.txt
+
+# zlib
 
 if ! test -d $SIMAGELIBS_DIST/zlib; then
   mkdir $SIMAGELIBS_DIST/zlib
@@ -721,6 +727,11 @@ for SIMAGELIBS_CRT in $SIMAGELIBS_CRT_LIST; do
         $SIMAGELIBS_DIST/zlib/$SIMAGELIBS_CRT/include
 done
 
+cp -R $SIMAGELIBS_BUILD/zlib/md/README \
+      $SIMAGELIBS_DIST/zlib/readme.txt
+
+#libjpeg
+
 if ! test -d $SIMAGELIBS_DIST/libjpeg; then
   mkdir $SIMAGELIBS_DIST/libjpeg
 fi
@@ -740,6 +751,11 @@ for SIMAGELIBS_CRT in $SIMAGELIBS_CRT_LIST; do
   cp -R $SIMAGELIBS_BUILD/libjpeg/$SIMAGELIBS_CRT/include/*.h \
         $SIMAGELIBS_DIST/libjpeg/$SIMAGELIBS_CRT/include
 done
+
+cp -R $SIMAGELIBS_BUILD/libjpeg/md/README \
+      $SIMAGELIBS_DIST/libjpeg/readme.txt
+
+# libtiff
 
 if ! test -d $SIMAGELIBS_DIST/libtiff; then
   mkdir $SIMAGELIBS_DIST/libtiff
@@ -761,6 +777,11 @@ for SIMAGELIBS_CRT in $SIMAGELIBS_CRT_LIST; do
         $SIMAGELIBS_DIST/libtiff/$SIMAGELIBS_CRT/include
 done
 
+cp -R $SIMAGELIBS_BUILD/libtiff/COPYRIGHT \
+      $SIMAGELIBS_DIST/libtiff/readme.txt
+
+# libpng
+
 if ! test -d $SIMAGELIBS_DIST/libpng; then
   mkdir $SIMAGELIBS_DIST/libpng
 fi
@@ -780,5 +801,8 @@ for SIMAGELIBS_CRT in $SIMAGELIBS_CRT_LIST; do
   cp -R $SIMAGELIBS_BUILD/libpng/$SIMAGELIBS_CRT/include/*.h \
         $SIMAGELIBS_DIST/libpng/$SIMAGELIBS_CRT/include
 done
+
+cp -R $SIMAGELIBS_BUILD/libpng/md/LICENSE \
+      $SIMAGELIBS_DIST/libpng/readme.txt
 
 echo "[SIMAGELIBS]   Distribution OK"
