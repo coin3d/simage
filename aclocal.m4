@@ -942,42 +942,42 @@ else
 fi
 ])# SIM_AC_CHECK_MATHLIB
 
-# Usage:
-#   SIM_AC_CHECK_LINKSTYLE
-#
-# Description:
-#
-#   Detect how to link against external libraries; UNIX-style
-#   ("-llibname") or MSWin-style ("libname.lib"). As a side-effect of
-#   running this macro, the shell variable sim_ac_linking_style will be
-#   set to either "mswin" or "unix".
-#
-# Author:
-#   Marius B. Monsen <mariusbu@sim.no>
+# **************************************************************************
+# SIM_AC_MATHLIB_READY_IFELSE( [ACTION-IF-TRUE], [ACTION-IF-FALSE] )
 
-AC_DEFUN([SIM_AC_CHECK_LINKSTYLE], [
+AC_DEFUN([SIM_AC_MATHLIB_READY_IFELSE],
+[AC_CACHE_CHECK(
+  [if mathlib linkage is ready],
+  [sim_cv_mathlib_ready],
+  [AC_TRY_LINK(
+    [#include <math.h>
+    #include <stdlib.h>
+    #include <stdio.h>],
+    [char s[16];
+    /*
+    SGI IRIX MIPSpro compilers may "fold" math
+    functions with constant arguments already
+    at compile time.
 
-sim_ac_save_ldflags=$LDFLAGS
-LDFLAGS="$LDFLAGS version.lib"
-
-AC_CACHE_CHECK(
-  [if linking should be done "MSWin-style"],
-  sim_cv_mswin_linking,
-  AC_TRY_COMPILE([#include <windows.h>
-#include <version.h>],
-                 [(void)GetFileVersionInfoSize(0L, 0L);],
-                 [sim_cv_mswin_linking=yes],
-                 [sim_cv_mswin_linking=no])
-)
-
-LDFLAGS=$sim_ac_save_ldflags
-
-if test x"$sim_cv_mswin_linking" = x"yes"; then
-  sim_ac_linking_style=mswin
+    It is also theoretically possible to do this
+    for atof(), so to be _absolutely_ sure the
+    math functions aren't replaced by constants at
+    compile time, we get the arguments from a guaranteed
+    non-constant source (stdin).
+    */
+    printf("> %g\n",fmod(atof(fgets(s,15,stdin)), atof(fgets(s,15,stdin))));
+    printf("> %g\n",pow(atof(fgets(s,15,stdin)), atof(fgets(s,15,stdin))));
+    printf("> %g\n",exp(atof(fgets(s,15,stdin))));
+    printf("> %g\n",sin(atof(fgets(s,15,stdin))))],
+    [sim_cv_mathlib_ready=true],
+    [sim_cv_mathlib_ready=false])])
+if ${sim_cv_mathlib_ready}; then
+  ifelse([$1], , :, [$1])
 else
-  sim_ac_linking_style=unix
+  ifelse([$2], , :, [$2])
 fi
-])
+]) # SIM_AC_MATHLIB_READY_IFELSE()
+
 
 # Usage:
 #  SIM_AC_CHECK_UNGIFLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
@@ -1012,11 +1012,7 @@ if test x"$with_ungif" != xno; then
     sim_ac_ungifdev_ldflags="-L${with_ungif}/lib"
   fi
 
-  if test x"$sim_ac_linking_style" = xmswin; then
-    sim_ac_ungifdev_libs=ungif.lib
-  else
-    sim_ac_ungifdev_libs=-lungif
-  fi
+  sim_ac_ungifdev_libs=-lungif
 
   sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
@@ -1547,7 +1543,7 @@ fi
 
 
 # Usage:
-#  SIM_CHECK_JPEGLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#  SIM_AC_CHECK_JPEGLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 #
 #  Try to find the JPEG development system. If it is found, these
 #  shell variables are set:
@@ -1563,7 +1559,7 @@ fi
 #
 # Author: Morten Eriksen, <mortene@sim.no>.
 
-AC_DEFUN([SIM_CHECK_JPEGLIB], [
+AC_DEFUN([SIM_AC_CHECK_JPEGLIB], [
 
 AC_ARG_WITH(
   [jpeg],
@@ -1580,11 +1576,7 @@ if test x"$with_jpeg" != xno; then
     sim_ac_jpegdev_ldflags="-L${with_jpeg}/lib"
   fi
 
-  if test x"$sim_ac_linking_style" = xmswin; then
-    sim_ac_jpegdev_libs=jpeg.lib
-  else
-    sim_ac_jpegdev_libs=-ljpeg
-  fi
+  sim_ac_jpegdev_libs=-ljpeg
 
   sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
@@ -1616,7 +1608,7 @@ fi
 
 
 # Usage:
-#  SIM_CHECK_TIFFLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#  SIM_AC_CHECK_TIFFLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 #
 # Description:
 #  Try to find the TIFF development system. If it is found, these
@@ -1632,7 +1624,7 @@ fi
 #
 # Author: Morten Eriksen, <mortene@sim.no>.
 
-AC_DEFUN([SIM_CHECK_TIFFLIB], [
+AC_DEFUN([SIM_AC_CHECK_TIFFLIB], [
 
 AC_ARG_WITH(
   [tiff],
@@ -1649,29 +1641,30 @@ if test x"$with_tiff" != xno; then
     sim_ac_tiffdev_ldflags="-L${with_tiff}/lib"
   fi
 
-  if test x"$sim_ac_linking_style" = xmswin; then
-    sim_ac_tiffdev_libs=tiff.lib
-  else
-    sim_ac_tiffdev_libs=-ltiff
-  fi
-
   sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
   sim_ac_save_libs=$LIBS
 
   CPPFLAGS="$CPPFLAGS $sim_ac_tiffdev_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_tiffdev_ldflags"
-  LIBS="$sim_ac_tiffdev_libs $LIBS"
 
   AC_CACHE_CHECK([whether the libtiff development system is available],
-    sim_cv_lib_tiffdev_avail,
-    [AC_TRY_LINK([#include <tiffio.h>],
-                 [(void)TIFFOpen(0L, 0L);],
-                 [sim_cv_lib_tiffdev_avail=yes],
-                 [sim_cv_lib_tiffdev_avail=no])])
+    sim_cv_tifflibs,
+    [sim_cv_tifflibs=UNRESOLVED
+     for sim_ac_tiff_libcheck in "-ltiff" "-ltiff -luser32"; do
+       if test "x$sim_cv_tifflibs" = "xUNRESOLVED"; then
+         LIBS="$sim_ac_tiff_libcheck $sim_ac_save_libs"
+         AC_TRY_LINK([#include <tiffio.h>],
+                     [(void)TIFFOpen(0L, 0L);],
+                     [sim_cv_tifflibs="$sim_ac_tiff_libcheck"])
+       fi
+     done
+    ]
+  )
 
-  if test x"$sim_cv_lib_tiffdev_avail" = x"yes"; then
+  if test ! x"$sim_cv_tifflibs" = "xUNRESOLVED"; then
     sim_ac_tiffdev_avail=yes
+    sim_ac_tiffdev_libs="$sim_cv_tifflibs"
     $1
   else
     CPPFLAGS=$sim_ac_save_cppflags
@@ -1684,7 +1677,7 @@ fi
 
 
 # Usage:
-#  SIM_CHECK_ZLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#  SIM_AC_CHECK_ZLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 #
 #  Try to find the ZLIB development system. If it is found, these
 #  shell variables are set:
@@ -1700,7 +1693,7 @@ fi
 #
 # Author: Morten Eriksen, <mortene@sim.no>.
 
-AC_DEFUN([SIM_CHECK_ZLIB], [
+AC_DEFUN([SIM_AC_CHECK_ZLIB], [
 
 AC_ARG_WITH(
   [zlib],
@@ -1717,30 +1710,30 @@ if test x"$with_zlib" != xno; then
     sim_ac_zlib_ldflags="-L${with_zlib}/lib"
   fi
 
-  if test x"$sim_ac_linking_style" = xmswin; then
-    sim_ac_zlib_libs=zlib.lib
-  else
-    sim_ac_zlib_libs=-lz
-  fi
-
   sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
   sim_ac_save_libs=$LIBS
 
   CPPFLAGS="$CPPFLAGS $sim_ac_zlib_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_zlib_ldflags"
-  LIBS="$sim_ac_zlib_libs $LIBS"
 
-  AC_CACHE_CHECK(
-    [whether the zlib development system is available],
-    sim_cv_lib_zlib_avail,
-    [AC_TRY_LINK([#include <zlib.h>],
-                 [(void)zlibVersion();],
-                 [sim_cv_lib_zlib_avail=yes],
-                 [sim_cv_lib_zlib_avail=no])])
+  AC_CACHE_CHECK([whether the zlib development system is available],
+    sim_cv_zlib,
+    [sim_cv_zlib=UNRESOLVED
+     for sim_ac_zlib_libcheck in "-lz" "-lzlib"; do
+       if test "x$sim_cv_zlib" = "xUNRESOLVED"; then
+         LIBS="$sim_ac_zlib_libcheck $sim_ac_save_libs"
+         AC_TRY_LINK([#include <zlib.h>],
+                     [(void)zlibVersion();],
+                     [sim_cv_zlib="$sim_ac_zlib_libcheck"])
+       fi
+     done
+    ]
+  )
 
-  if test x"$sim_cv_lib_zlib_avail" = xyes; then
+  if test ! x"$sim_cv_zlib" = "xUNRESOLVED"; then
     sim_ac_zlib_avail=yes
+    sim_ac_zlib_libs="$sim_cv_zlib"
     $1
   else
     CPPFLAGS=$sim_ac_save_cppflags
@@ -1777,7 +1770,7 @@ fi
 ])
 
 # Usage:
-#   SIM_CHECK_PNGLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#   SIM_AC_CHECK_PNGLIB([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 #
 # Description:
 #  Try to find the PNG development system. If it is found, these
@@ -1793,7 +1786,7 @@ fi
 #
 # Author: Morten Eriksen, <mortene@sim.no>.
 
-AC_DEFUN([SIM_CHECK_PNGLIB], [
+AC_DEFUN([SIM_AC_CHECK_PNGLIB], [
 
 AC_ARG_WITH(
   [png],
@@ -1810,12 +1803,7 @@ if test x"$with_png" != xno; then
     sim_ac_pngdev_ldflags="-L${with_png}/lib"
   fi
 
-
-  if test x"$sim_ac_linking_style" = xmswin; then
-    sim_ac_pngdev_libs=png.lib
-  else
-    sim_ac_pngdev_libs=-lpng
-  fi
+  sim_ac_pngdev_libs=-lpng
 
   sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
@@ -1900,33 +1888,6 @@ includedir="`eval echo $includedir`"
 infodir="`eval echo $infodir`"
 mandir="`eval echo $mandir`"
 ])
-
-# Convenience macros SIM_AC_DEBACKSLASH and SIM_AC_DOBACKSLASH for
-# converting to and from MSWin/MS-DOS style paths.
-#
-# Example use:
-#
-#     SIM_AC_DEBACKSLASH(my_ac_reversed, "C:\\mydir\\bin")
-#
-# will give a shell variable $my_ac_reversed with the value "C:/mydir/bin").
-# Vice versa for SIM_AC_DOBACKSLASH.
-#
-# Author: Marius Bugge Monsen <mariusbu@sim.no>
-#         Lars Jørgen Aas <larsa@sim.no>
-#         Morten Eriksen <mortene@sim.no>
-
-AC_DEFUN([SIM_AC_DEBACKSLASH], [
-eval "$1=\"`echo $2 | sed -e 's%\\\\%\\/%g'`\""
-])
-
-AC_DEFUN([SIM_AC_DOBACKSLASH], [
-eval "$1=\"`echo $2 | sed -e 's%\\/%\\\\%g'`\""
-])
-
-AC_DEFUN([SIM_AC_DODOUBLEBACKSLASH], [
-eval "$1=\"`echo $2 | sed -e 's%\\/%\\\\\\\\\\\\\\\\%g'`\""
-])
-
 
 # Usage:
 #  SIM_AC_ISO8601_DATE(variable)

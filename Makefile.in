@@ -89,16 +89,13 @@ SIMAGE_EXTRA_CPPFLAGS = @SIMAGE_EXTRA_CPPFLAGS@
 SIMAGE_EXTRA_LDFLAGS = @SIMAGE_EXTRA_LDFLAGS@
 SIMAGE_EXTRA_LIBS = @SIMAGE_EXTRA_LIBS@
 SIMAGE_INTERFACE_AGE = @SIMAGE_INTERFACE_AGE@
-SIMAGE_LIBNAME = @SIMAGE_LIBNAME@
 SIMAGE_MAJOR_VERSION = @SIMAGE_MAJOR_VERSION@
 SIMAGE_MICRO_VERSION = @SIMAGE_MICRO_VERSION@
 SIMAGE_MINOR_VERSION = @SIMAGE_MINOR_VERSION@
 SIMAGE_VERSION = @SIMAGE_VERSION@
 VERSION = @VERSION@
 install_sh = @install_sh@
-simage_build_dir = @simage_build_dir@
 simage_configure_date = @simage_configure_date@
-simage_src_dir = @simage_src_dir@
 
 
 SUBDIRS = src
@@ -121,9 +118,9 @@ DIST_SOURCES =
 DATA =  $(m4data_DATA)
 
 DIST_COMMON =  README ./stamp-h.in AUTHORS COPYING ChangeLog INSTALL \
-Makefile.am Makefile.in NEWS TODO aclocal.m4 cfg/config.guess \
-cfg/config.sub cfg/install-sh cfg/ltconfig cfg/ltmain.sh cfg/missing \
-cfg/mkinstalldirs config.h.in configure configure.in simage-config.in
+Makefile.am Makefile.in NEWS aclocal.m4 cfg/config.guess cfg/config.sub \
+cfg/install-sh cfg/ltconfig cfg/ltmain.sh cfg/missing cfg/mkinstalldirs \
+config.h.in configure configure.in simage-config.in
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)

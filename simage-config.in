@@ -21,7 +21,7 @@ version="@SIMAGE_VERSION@"
 
 cppflags="-I@includedir@ @SIMAGE_EXTRA_CPPFLAGS@"
 ldflags="-L@libdir@ @SIMAGE_EXTRA_LDFLAGS@"
-libs="@SIMAGE_LIBNAME@ @SIMAGE_EXTRA_LIBS@"
+libs="-lsimage @SIMAGE_EXTRA_LIBS@"
 
 while test $# -gt 0
 do
