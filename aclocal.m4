@@ -906,7 +906,7 @@ AC_CACHE_CHECK(
   done
   ])
 
-if test $sim_cv_lib_math != UNDEFINED; then
+if test x"$sim_cv_lib_math" != xUNDEFINED; then
   LIBS="$sim_ac_libm $sim_ac_store_libs"
   sim_ac_libm=sim_cv_lib_math
   $1
