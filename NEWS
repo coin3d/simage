@@ -1,3 +1,15 @@
+New in v1.6 (2003-12-09)
+* Added support for reading an image one line at a time
+* Added functions for setting external dynamic loader interface
+  (not currently in use)
+
+New in v1.5
+* Extended streaming interface to support seeking in a stream
+* Added functions to set color component order
+
+New in v1.4
+* Added stream interface used for reading audio
+
 New in v1.3 (2001-12-03)
 * Added simage_resize3d
 
