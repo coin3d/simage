@@ -1,1 +1,4 @@
-First official release, v1.0.0, at 2000-10-23.
+- First official release, v1.0.0, at 2000-10-23.
+- Added save capabilities, v1.1.0 at 2001-02-05
+- Added API for movies and MPEG encoder, v1.2.0 at 2001-05-26
+
