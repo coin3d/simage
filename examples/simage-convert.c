@@ -14,8 +14,7 @@
 static void 
 usage(const char * argv0)
 {
-  fprintf(stderr, "Usage:\n %s <infile> <outfile> [-newsize <x> <y>] [-scale <xmul> <ymul>]\n",
-          argv0);
+  fprintf(stderr, "Usage:\n %s <infile> <outfile> [-newsize <x> <y>] [-scale <xmul> <ymul>] [-alphathreshold <val>]\n",argv0);
 }
 
 int main(int argc, char ** argv)
@@ -28,6 +27,7 @@ int main(int argc, char ** argv)
   char * infile, * outfile;
   const char * ext;
   int ret;
+  int alphathreshold = -1;
 
   if (argc < 3) {
     usage(argv[0]);
@@ -70,6 +70,10 @@ int main(int argc, char ** argv)
           usage(argv[0]);
           return -1;
         }
+      }
+      else if (strcmp(argv[i], "-alphathreshold") == 0 && i < argc-1) {
+        i++;
+        alphathreshold = atoi(argv[i++]);
       }
       else {
         usage(argv[0]);
@@ -128,8 +132,29 @@ int main(int argc, char ** argv)
     w = neww;
     h = newh;
   }
-
-  
+  if ((nc == 2 || nc == 4) && alphathreshold >= 0 && alphathreshold <= 255) {
+    int cnt = 0;
+    unsigned char * p = buf;
+    const int n = w * h;
+    for (i = 0; i < n; i++) {
+      if (nc == 2) p++;
+      else p += 3; 
+      if (*p < alphathreshold) {
+        if (*p != 0) {
+          cnt++;
+          *p = 0;
+        }
+      }
+      else {
+        if (*p != 255) {
+          *p = 255;
+          cnt++;
+        }
+      }
+      p++;
+    }
+    fprintf(stderr,"alpha threshold changed %d pixels\n", cnt);
+  }
 
   fprintf(stderr,"save image '%s'...", outfile);
   ret = simage_save_image(argv[2], buf, w, h, nc, ext);
