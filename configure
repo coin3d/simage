@@ -1013,6 +1013,7 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-cvs-auto-update
                           auto-update CVS repository if possible
+  --disable-msvc          don't require MS Visual C++ on Cygwin
   --enable-qimage         Use Qt's QImage to load/save images
   --enable-quicktime      Use Quicktime load/save images
   --disable-dependency-tracking Speeds up one-time builds
@@ -1636,40 +1637,70 @@ test -n "$target_alias" &&
     NONENONEs,x,x, &&
   program_prefix=${target_alias}-
 
-# **************************************************************************
-# If the Microsoft Visual C++ cl.exe compiler is available, set us up for
-# compiling with it and to generate an MSWindows .dll file.
 
-: ${BUILD_WITH_MSVC=false}
-sim_ac_wrapmsvc=`cd $srcdir; pwd`/cfg/m4/wrapmsvc.exe
-if test -z "$CC" -a -z "$CXX" && $sim_ac_wrapmsvc >/dev/null 2>&1; then
+# Check whether --enable-msvc or --disable-msvc was given.
+if test "${enable_msvc+set}" = set; then
+  enableval="$enable_msvc"
+  case $enableval in
+  no | false) sim_ac_try_msvc=false ;;
+  *)          sim_ac_try_msvc=true ;;
+  esac
+else
+  sim_ac_try_msvc=true
+fi;
 
 
-  CC=$sim_ac_wrapmsvc
-  CXX=$sim_ac_wrapmsvc
-  export CC CXX
-  BUILD_WITH_MSVC=true
+
+
+BUILD_WITH_MSVC=false
+if $sim_ac_try_msvc; then
+  sim_ac_wrapmsvc=`cd $srcdir; pwd`/cfg/m4/wrapmsvc.exe
+  if test -z "$CC" -a -z "$CXX" && $sim_ac_wrapmsvc >/dev/null 2>&1; then
+
+
+    CC=$sim_ac_wrapmsvc
+    CXX=$sim_ac_wrapmsvc
+    export CC CXX
+    BUILD_WITH_MSVC=true
+  else
+    case $host in
+    *-cygwin)
+echo >&2 ""
+
+
+: ${sim_ac_message_file=$ac_aux_dir/m4/errors.txt}
+if test -f $sim_ac_message_file; then
+  sim_ac_message="`sed -n -e '/^!no-msvc++$/,/^!/ { /^!/ d; p; }' <$sim_ac_message_file`"
+  if test x"$sim_ac_message" = x""; then
+    { { echo "$as_me:$LINENO: error: no message named 'no-msvc++' in '$sim_ac_message_file' - notify the $PACKAGE_NAME maintainer(s)" >&5
+echo "$as_me: error: no message named 'no-msvc++' in '$sim_ac_message_file' - notify the $PACKAGE_NAME maintainer(s)" >&2;}
+   { (exit 1); exit 1; }; }
+  else
+    eval "echo >&2 \"$sim_ac_message\""
+  fi
+else
+  { { echo "$as_me:$LINENO: error: file '$sim_ac_message_file' not found - notify the $PACKAGE_NAME maintainer(s)" >&5
+echo "$as_me: error: file '$sim_ac_message_file' not found - notify the $PACKAGE_NAME maintainer(s)" >&2;}
+   { (exit 1); exit 1; }; }
 fi
 
 
-case $CXX in
-*wrapmsvc.exe)
-  BUILD_WITH_MSVC=true
 
-  ;;
-*)
-  BUILD_WITH_MSVC=false
-
-  case $host in
-  *-cygwin)
-    { { echo "$as_me:$LINENO: error: You need Microsoft Visual C++ to build simage on Cygwin" >&5
-echo "$as_me: error: You need Microsoft Visual C++ to build simage on Cygwin" >&2;}
+echo >&2 ""
+{ { echo "$as_me:$LINENO: error: aborting" >&5
+echo "$as_me: error: aborting" >&2;}
    { (exit 1); exit 1; }; }
-    ;;
-  esac
+ ;;
+    esac
+  fi
+fi
 
-  ;;
-esac
+
+if $BUILD_WITH_MSVC; then
+  :
+else
+  :
+fi
 
 
 if $BUILD_WITH_MSVC; then
@@ -5241,7 +5272,7 @@ test "x$enable_libtool_lock" != xno && enable_libtool_lock=yes
 case $host in
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5244 "configure"' > conftest.$ac_ext
+  echo '#line 5275 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -5777,7 +5808,7 @@ chmod -w .
 save_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -o out/conftest2.$ac_objext"
 compiler_c_o=no
-if { (eval echo configure:5780: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>out/conftest.err; } && test -s out/conftest2.$ac_objext; then
+if { (eval echo configure:5811: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>out/conftest.err; } && test -s out/conftest2.$ac_objext; then
   # The compiler can only warn and ignore the option if not recognized
   # So say no if there are warnings
   if test -s out/conftest.err; then
@@ -6347,8 +6378,9 @@ else
     rhapsody* | darwin1.[012])
       allow_undefined_flag='-undefined suppress'
       ;;
-    *) # Darwin 1.3 on
-      allow_undefined_flag='-flat_namespace -undefined suppress'
+    *) # On Mac OS 10.1 and above, two-level namespace libraries are the
+       # default, where undefined symbols are not allowed.
+      allow_undefined_flag=''
       ;;
     esac
     # FIXME: Relying on posixy $() will cause problems for
@@ -7570,7 +7602,7 @@ else
     lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 7573 "configure"
+#line 7605 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -7668,7 +7700,7 @@ else
     lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 7671 "configure"
+#line 7703 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -8394,6 +8426,21 @@ LIBTOOL='$(SHELL) $(top_builddir)/libtool'
 
 fi
 
+case $host_os in
+darwin6.* ) sim_ac_macosx_10_2=true ;;
+* )         sim_ac_macosx_10_2=false ;;
+esac
+
+
+
+if $sim_ac_macosx_10_2; then
+  MACOSX_10_2_TRUE=
+  MACOSX_10_2_FALSE='#'
+else
+  MACOSX_10_2_TRUE='#'
+  MACOSX_10_2_FALSE=
+fi
+
 # These are used for constructing the simage-config file.
 SIMAGE_EXTRA_CPPFLAGS=$CPPFLAGS
 
@@ -8730,6 +8777,7 @@ if test x"$with_qt" != xno; then
   # FIXME: this doesn't work unless QTDIR is part of the configure
   # argument line. We should be able to grab it from the
   # environment settings. 20011018 mortene.
+  QTDIR=$QTDIR
 
 
   # The Cygwin environment needs to invoke moc with a POSIX-style path.
@@ -9008,12 +9056,12 @@ echo "$as_me: error: aborting" >&2;}
   case $host_os in
   darwin*)
     if test $sim_ac_qt_version -lt 302; then
-      if test x${sim_ac_configuration_warnings+set} != xset; then
-  sim_ac_configuration_warnings="The version of Qt you are using is
+      if test x"${sim_ac_configuration_warnings+set}" = x"set"; then
+  sim_ac_configuration_warnings="$sim_ac_configuration_warnings|The version of Qt you are using is
 known to contain some serious bugs on MacOS X. We strongly recommend you to
 upgrade. (See $srcdir/README.MAC for details.)"
 else
-  sim_ac_configuration_warnings="$sim_ac_configuration_warnings|The version of Qt you are using is
+  sim_ac_configuration_warnings="The version of Qt you are using is
 known to contain some serious bugs on MacOS X. We strongly recommend you to
 upgrade. (See $srcdir/README.MAC for details.)"
 fi
@@ -9096,12 +9144,12 @@ rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
   #     Known to be fixed in 3.0.3, unknown status in 3.0.2.  <mortene@sim.no>.
   #
   if test $sim_ac_qt_version -lt 303; then
-    if test x${sim_ac_configuration_warnings+set} != xset; then
-  sim_ac_configuration_warnings="The version of Qt you are compiling against
+    if test x"${sim_ac_configuration_warnings+set}" = x"set"; then
+  sim_ac_configuration_warnings="$sim_ac_configuration_warnings|The version of Qt you are compiling against
 is known to contain bugs which influences functionality in SoQt. We strongly
 recommend you to upgrade."
 else
-  sim_ac_configuration_warnings="$sim_ac_configuration_warnings|The version of Qt you are compiling against
+  sim_ac_configuration_warnings="The version of Qt you are compiling against
 is known to contain bugs which influences functionality in SoQt. We strongly
 recommend you to upgrade."
 fi
@@ -9338,17 +9386,17 @@ cat >>confdefs.h <<\_ACEOF
 #define SIMAGE_QIMAGE_SUPPORT
 _ACEOF
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="QImage support:Yes"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|QImage support:Yes"
+else
+  sim_ac_configuration_settings="QImage support:Yes"
 fi
 
 else
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="QImage support:No (default)"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|QImage support:No (default)"
+else
+  sim_ac_configuration_settings="QImage support:No (default)"
 fi
 
 fi
@@ -9362,7 +9410,7 @@ echo "$as_me:$LINENO: checking for QuickTime framework" >&5
 echo $ECHO_N "checking for QuickTime framework... $ECHO_C" >&6
 $sim_ac_have_quicktime && break
 sim_ac_quicktime_save_LIBS=$LIBS
-sim_ac_quicktime_libs="-Wl,-framework,QuickTime -Wl,-framework,CoreServices"
+sim_ac_quicktime_libs="-Wl,-framework,QuickTime -Wl,-framework,CoreServices -Wl,-framework,ApplicationServices"
 LIBS="$sim_ac_quicktime_libs $LIBS"
 cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
@@ -9417,46 +9465,46 @@ _ACEOF
     # These formats are guaranteed to be readable if we have
     # a QuickTime framework, so we do not have to test for them
     # individually.
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="GIF image format support:Yes (QuickTime)"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|GIF image format support:Yes (QuickTime)"
+else
+  sim_ac_configuration_settings="GIF image format support:Yes (QuickTime)"
 fi
 
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="JPEG image format support:Yes (QuickTime)"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|JPEG image format support:Yes (QuickTime)"
+else
+  sim_ac_configuration_settings="JPEG image format support:Yes (QuickTime)"
 fi
 
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="PNG image format support:Yes (QuickTime)"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|PNG image format support:Yes (QuickTime)"
+else
+  sim_ac_configuration_settings="PNG image format support:Yes (QuickTime)"
 fi
 
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="TIFF image format support:Yes (QuickTime)"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|TIFF image format support:Yes (QuickTime)"
+else
+  sim_ac_configuration_settings="TIFF image format support:Yes (QuickTime)"
 fi
 
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="TGA image format support:Yes (QuickTime)"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|TGA image format support:Yes (QuickTime)"
+else
+  sim_ac_configuration_settings="TGA image format support:Yes (QuickTime)"
 fi
 
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="BMP image format support:Yes (QuickTime)"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|BMP image format support:Yes (QuickTime)"
+else
+  sim_ac_configuration_settings="BMP image format support:Yes (QuickTime)"
 fi
 
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="PSD image format support:Yes (QuickTime)"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|PSD image format support:Yes (QuickTime)"
+else
+  sim_ac_configuration_settings="PSD image format support:Yes (QuickTime)"
 fi
 
 
@@ -9464,10 +9512,10 @@ else
   echo "$as_me:$LINENO: result: failure" >&5
 echo "${ECHO_T}failure" >&6
 
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="QuickTime support:No"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|QuickTime support:No"
+else
+  sim_ac_configuration_settings="QuickTime support:No"
 fi
 
 
@@ -9477,10 +9525,10 @@ fi
     sim_ac_quicktime_support=false
   fi
 else
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="QuickTime support:No"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|QuickTime support:No"
+else
+  sim_ac_configuration_settings="QuickTime support:No"
 fi
 
 fi
@@ -9899,10 +9947,10 @@ _ACEOF
     CPPFLAGS="$CPPFLAGS $sim_ac_libungif_cppflags"
     LDFLAGS="$LDFLAGS $sim_ac_libungif_ldflags"
     LIBS="$sim_ac_libungif_libs $LIBS"
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="GIF image format support:Yes"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|GIF image format support:Yes"
+else
+  sim_ac_configuration_settings="GIF image format support:Yes"
 fi
 
 
@@ -9910,10 +9958,10 @@ fi
     echo "$as_me:$LINENO: result: failure" >&5
 echo "${ECHO_T}failure" >&6
 
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="GIF image format support:No"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|GIF image format support:No"
+else
+  sim_ac_configuration_settings="GIF image format support:No"
 fi
 
 
@@ -9922,10 +9970,10 @@ else
   echo "$as_me:$LINENO: result: disabled" >&5
 echo "${ECHO_T}disabled" >&6
 
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="GIF image format support:No"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|GIF image format support:No"
+else
+  sim_ac_configuration_settings="GIF image format support:No"
 fi
 
 
@@ -10058,10 +10106,10 @@ _ACEOF
     CPPFLAGS="$CPPFLAGS $sim_ac_libjpeg_cppflags"
     LDFLAGS="$LDFLAGS $sim_ac_libjpeg_ldflags"
     LIBS="$sim_ac_libjpeg_libs $LIBS"
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="JPEG image format support:Yes"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|JPEG image format support:Yes"
+else
+  sim_ac_configuration_settings="JPEG image format support:Yes"
 fi
 
 
@@ -10069,10 +10117,10 @@ fi
     echo "$as_me:$LINENO: result: failure" >&5
 echo "${ECHO_T}failure" >&6
 
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="JPEG image format support:No"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|JPEG image format support:No"
+else
+  sim_ac_configuration_settings="JPEG image format support:No"
 fi
 
 
@@ -10081,10 +10129,10 @@ else
   echo "$as_me:$LINENO: result: disabled" >&5
 echo "${ECHO_T}disabled" >&6
 
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="JPEG image format support:No"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|JPEG image format support:No"
+else
+  sim_ac_configuration_settings="JPEG image format support:No"
 fi
 
 
@@ -10333,10 +10381,10 @@ _ACEOF
     CPPFLAGS="$CPPFLAGS $sim_ac_libpng_cppflags"
     LDFLAGS="$LDFLAGS $sim_ac_libpng_ldflags"
     LIBS="$sim_ac_libpng_libs $LIBS"
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="PNG image format support:Yes"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|PNG image format support:Yes"
+else
+  sim_ac_configuration_settings="PNG image format support:Yes"
 fi
 
 
@@ -10344,17 +10392,17 @@ fi
     echo "$as_me:$LINENO: result: failure" >&5
 echo "${ECHO_T}failure" >&6
 
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="PNG image format support:No"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|PNG image format support:No"
+else
+  sim_ac_configuration_settings="PNG image format support:No"
 fi
 
     if test x"$sim_ac_have_libzlib" = xfalse; then
-      if test x${sim_ac_configuration_warnings+set} != xset; then
-  sim_ac_configuration_warnings="PNG image format support may be disabled because of missing libz"
-else
+      if test x"${sim_ac_configuration_warnings+set}" = x"set"; then
   sim_ac_configuration_warnings="$sim_ac_configuration_warnings|PNG image format support may be disabled because of missing libz"
+else
+  sim_ac_configuration_warnings="PNG image format support may be disabled because of missing libz"
 fi
 
     fi
@@ -10364,17 +10412,17 @@ else
   echo "$as_me:$LINENO: result: disabled" >&5
 echo "${ECHO_T}disabled" >&6
 
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="PNG image format support:No"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|PNG image format support:No"
+else
+  sim_ac_configuration_settings="PNG image format support:No"
 fi
 
     if test x"$sim_ac_have_libzlib" = xfalse; then
-      if test x${sim_ac_configuration_warnings+set} != xset; then
-  sim_ac_configuration_warnings="PNG image format support may be disabled because of missing libz"
-else
+      if test x"${sim_ac_configuration_warnings+set}" = x"set"; then
   sim_ac_configuration_warnings="$sim_ac_configuration_warnings|PNG image format support may be disabled because of missing libz"
+else
+  sim_ac_configuration_warnings="PNG image format support may be disabled because of missing libz"
 fi
 
     fi
@@ -10541,10 +10589,10 @@ _ACEOF
     CPPFLAGS="$CPPFLAGS $sim_ac_libtiff_cppflags"
     LDFLAGS="$LDFLAGS $sim_ac_libtiff_ldflags"
     LIBS="$sim_ac_libtiff_libs $LIBS"
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="TIFF image format support:Yes"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|TIFF image format support:Yes"
+else
+  sim_ac_configuration_settings="TIFF image format support:Yes"
 fi
 
 
@@ -10552,10 +10600,10 @@ fi
     echo "$as_me:$LINENO: result: failure" >&5
 echo "${ECHO_T}failure" >&6
 
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="TIFF image format support:No"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|TIFF image format support:No"
+else
+  sim_ac_configuration_settings="TIFF image format support:No"
 fi
 
 
@@ -10564,10 +10612,10 @@ else
   echo "$as_me:$LINENO: result: disabled" >&5
 echo "${ECHO_T}disabled" >&6
 
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="TIFF image format support:No"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|TIFF image format support:No"
+else
+  sim_ac_configuration_settings="TIFF image format support:No"
 fi
 
 
@@ -10603,17 +10651,17 @@ cat >>confdefs.h <<\_ACEOF
 #define SIMAGE_TGA_SUPPORT
 _ACEOF
 
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="TGA image format support:Yes"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|TGA image format support:Yes"
+else
+  sim_ac_configuration_settings="TGA image format support:Yes"
 fi
 
   else
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="TGA image format support:No"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|TGA image format support:No"
+else
+  sim_ac_configuration_settings="TGA image format support:No"
 fi
 
   fi
@@ -10644,17 +10692,17 @@ cat >>confdefs.h <<\_ACEOF
 #define SIMAGE_RGB_SUPPORT
 _ACEOF
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="RGB image format support:Yes"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|RGB image format support:Yes"
+else
+  sim_ac_configuration_settings="RGB image format support:Yes"
 fi
 
 else
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="RGB image format support:No"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|RGB image format support:No"
+else
+  sim_ac_configuration_settings="RGB image format support:No"
 fi
 
 fi
@@ -10684,17 +10732,17 @@ cat >>confdefs.h <<\_ACEOF
 #define SIMAGE_PIC_SUPPORT
 _ACEOF
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="PIC image format support:Yes"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|PIC image format support:Yes"
+else
+  sim_ac_configuration_settings="PIC image format support:Yes"
 fi
 
 else
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="PIC image format support:No"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|PIC image format support:No"
+else
+  sim_ac_configuration_settings="PIC image format support:No"
 fi
 
 fi
@@ -10724,17 +10772,17 @@ cat >>confdefs.h <<\_ACEOF
 #define SIMAGE_XWD_SUPPORT
 _ACEOF
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="XWD support (experimental):Yes"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|XWD support (experimental):Yes"
+else
+  sim_ac_configuration_settings="XWD support (experimental):Yes"
 fi
 
 else
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="XWD support (experimental):No (default)"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|XWD support (experimental):No (default)"
+else
+  sim_ac_configuration_settings="XWD support (experimental):No (default)"
 fi
 
 fi
@@ -10764,17 +10812,17 @@ cat >>confdefs.h <<\_ACEOF
 #define SIMAGE_EPS_SUPPORT
 _ACEOF
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="Encapsulated postscript export support:Yes"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|Encapsulated postscript export support:Yes"
+else
+  sim_ac_configuration_settings="Encapsulated postscript export support:Yes"
 fi
 
 else
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="Encapsulated postscript export support:No"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|Encapsulated postscript export support:No"
+else
+  sim_ac_configuration_settings="Encapsulated postscript export support:No"
 fi
 
 fi
@@ -10812,17 +10860,17 @@ cat >>confdefs.h <<\_ACEOF
 #define SIMAGE_MPEG2ENC_SUPPORT
 _ACEOF
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="Mpeg2 encoding support:Yes"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|Mpeg2 encoding support:Yes"
+else
+  sim_ac_configuration_settings="Mpeg2 encoding support:Yes"
 fi
 
 else
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="Mpeg2 encoding support:No (default)"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|Mpeg2 encoding support:No (default)"
+else
+  sim_ac_configuration_settings="Mpeg2 encoding support:No (default)"
 fi
 
 fi
@@ -10907,10 +10955,10 @@ echo "${ECHO_T}no" >&6
   if $sim_ac_want_avienc; then
     { echo "$as_me:$LINENO: WARNING: need Video for Windows for avi encoding" >&5
 echo "$as_me: WARNING: need Video for Windows for avi encoding" >&2;}
-    if test x${sim_ac_configuration_warnings+set} != xset; then
-  sim_ac_configuration_warnings="avi encoding has been disabled because of missing Video for Windows library"
-else
+    if test x"${sim_ac_configuration_warnings+set}" = x"set"; then
   sim_ac_configuration_warnings="$sim_ac_configuration_warnings|avi encoding has been disabled because of missing Video for Windows library"
+else
+  sim_ac_configuration_warnings="avi encoding has been disabled because of missing Video for Windows library"
 fi
 
     sim_ac_want_avienc=false
@@ -10929,17 +10977,17 @@ cat >>confdefs.h <<\_ACEOF
 #define SIMAGE_AVIENC_SUPPORT
 _ACEOF
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="Avi encoding support:Yes"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|Avi encoding support:Yes"
+else
+  sim_ac_configuration_settings="Avi encoding support:Yes"
 fi
 
 else
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="Avi encoding support:No (default)"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|Avi encoding support:No (default)"
+else
+  sim_ac_configuration_settings="Avi encoding support:No (default)"
 fi
 
 fi
@@ -11035,10 +11083,10 @@ cat >>confdefs.h <<\_ACEOF
 #define SIMAGE_OGGVORBIS_SUPPORT 1
 _ACEOF
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="Ogg Vorbis support:Yes"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|Ogg Vorbis support:Yes"
+else
+  sim_ac_configuration_settings="Ogg Vorbis support:Yes"
 fi
 
 
@@ -11047,10 +11095,10 @@ fi
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="Ogg Vorbis support:No"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|Ogg Vorbis support:No"
+else
+  sim_ac_configuration_settings="Ogg Vorbis support:No"
 fi
 
 
@@ -11161,10 +11209,10 @@ cat >>confdefs.h <<\_ACEOF
 #define SIMAGE_LIBSNDFILE_SUPPORT 1
 _ACEOF
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="libsnd support:Yes"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|libsnd support:Yes"
+else
+  sim_ac_configuration_settings="libsnd support:Yes"
 fi
 
 
@@ -11173,10 +11221,10 @@ fi
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
 
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="libsnd support:No"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|libsnd support:No"
+else
+  sim_ac_configuration_settings="libsnd support:No"
 fi
 
 
@@ -11488,17 +11536,17 @@ done
   fi
 fi
 if $HAVE_GUILE; then
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="Guile module:Build"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|Guile module:Build"
+else
+  sim_ac_configuration_settings="Guile module:Build"
 fi
 
 else
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="Guile module:Ignore"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|Guile module:Ignore"
+else
+  sim_ac_configuration_settings="Guile module:Ignore"
 fi
 
 fi
@@ -11840,10 +11888,10 @@ if $BUILD_WITH_MSVC; then
   if $SIMAGE_STATIC; then
     LIBFLAGS="-LIB $LIBFLAGS"
     LIBFLAGS="$LIBFLAGS /OUT:simage$SIMAGE_MAJOR_VERSION$SUFFIX.lib"
-    if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="Simage Build Type:Static .LIB"
-else
+    if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|Simage Build Type:Static .LIB"
+else
+  sim_ac_configuration_settings="Simage Build Type:Static .LIB"
 fi
 
   else
@@ -11851,30 +11899,30 @@ fi
     case $enable_symbols in
     no | false)
       LIBFLAGS="$LIBFLAGS /RELEASE"
-      if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="Simage Build Type:Dynamic .DLL"
-else
+      if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|Simage Build Type:Dynamic .DLL"
+else
+  sim_ac_configuration_settings="Simage Build Type:Dynamic .DLL"
 fi
 
       ;;
     *)
       CFLAGS="/Fd$debugfile $CFLAGS"
       LIBFLAGS="$LIBFLAGS /DEBUG /PDB:simage$SIMAGE_MAJOR_VERSION$SUFFIX.pdb"
-      if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="Simage Build Type:Dynamic .DLL + .PDB"
-else
+      if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|Simage Build Type:Dynamic .DLL + .PDB"
+else
+  sim_ac_configuration_settings="Simage Build Type:Dynamic .DLL + .PDB"
 fi
 
       ;;
     esac
     LIBFLAGS="$LIBFLAGS /OUT:simage$SIMAGE_MAJOR_VERSION$SUFFIX.dll"
   fi
-  if test x${sim_ac_configuration_settings+set} != xset; then
-  sim_ac_configuration_settings="C Library Version:$sim_ac_msvcrt"
-else
+  if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|C Library Version:$sim_ac_msvcrt"
+else
+  sim_ac_configuration_settings="C Library Version:$sim_ac_msvcrt"
 fi
 
 
@@ -12567,6 +12615,8 @@ s,@ac_ct_RANLIB@,$ac_ct_RANLIB,;t t
 s,@STRIP@,$STRIP,;t t
 s,@ac_ct_STRIP@,$ac_ct_STRIP,;t t
 s,@LIBTOOL@,$LIBTOOL,;t t
+s,@MACOSX_10_2_TRUE@,$MACOSX_10_2_TRUE,;t t
+s,@MACOSX_10_2_FALSE@,$MACOSX_10_2_FALSE,;t t
 s,@SIMAGE_EXTRA_CPPFLAGS@,$SIMAGE_EXTRA_CPPFLAGS,;t t
 s,@SIMAGE_EXTRA_CFLAGS@,$SIMAGE_EXTRA_CFLAGS,;t t
 s,@SIMAGE_EXTRA_LDFLAGS@,$SIMAGE_EXTRA_LDFLAGS,;t t
@@ -13151,7 +13201,7 @@ fi
 
 # **************************************************************************
 
-sim_ac_settings=$sim_ac_configuration_settings
+sim_ac_settings="$sim_ac_configuration_settings"
 sim_ac_num_settings=`echo "$sim_ac_settings" | tr -d -c "|" | wc -c`
 sim_ac_maxlength=0
 while test $sim_ac_num_settings -ge 0; do
