@@ -85,6 +85,7 @@ MAKEINFO = @MAKEINFO@
 OBJDUMP = @OBJDUMP@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
+SIMAGE_DEBUG_BUILD = @SIMAGE_DEBUG_BUILD@
 SIMAGE_EXTRA_CPPFLAGS = @SIMAGE_EXTRA_CPPFLAGS@
 SIMAGE_EXTRA_LDFLAGS = @SIMAGE_EXTRA_LDFLAGS@
 SIMAGE_EXTRA_LIBS = @SIMAGE_EXTRA_LIBS@
@@ -105,7 +106,7 @@ win_srcdir = @win_srcdir@
 SUBDIRS = src
 
 bin_SCRIPTS = simage-config
-BUILT_SOURCES = simage-config
+BUILT_SOURCES = simage.cfg
 
 EXTRA_DIST = $(m4data_DATA)
 
@@ -115,7 +116,7 @@ subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/cfg/mkinstalldirs
 CONFIG_HEADER = config.h ./include/simage.h
-CONFIG_CLEAN_FILES =  simage-config
+CONFIG_CLEAN_FILES =  simage.cfg
 SCRIPTS =  $(bin_SCRIPTS)
 
 DIST_SOURCES = 
@@ -125,7 +126,7 @@ DIST_COMMON =  README ./stamp-h1.in AUTHORS COPYING ChangeLog INSTALL \
 Makefile.am Makefile.in NEWS aclocal.m4 cfg/config.guess cfg/config.sub \
 cfg/install-sh cfg/ltmain.sh cfg/missing cfg/mkinstalldirs config.h.in \
 configure configure.in include/simage.h.in include/stamp-h2.in \
-simage-config.in
+simage.cfg.in
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -203,7 +204,7 @@ distclean-hdr:
 	-rm -f config.h include/simage.h
 
 maintainer-clean-hdr:
-simage-config: $(top_builddir)/config.status simage-config.in
+simage.cfg: $(top_builddir)/config.status simage.cfg.in
 	cd $(top_builddir) && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
 install-binSCRIPTS: $(bin_SCRIPTS)
@@ -433,6 +434,8 @@ all-recursive-am: $(BUILT_SOURCES) config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 install-exec-am: install-binSCRIPTS
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
 install-exec: install-exec-recursive
 
 install-data-am: install-m4dataDATA
@@ -502,7 +505,12 @@ uninstall-binSCRIPTS uninstall-data-recursive uninstall-exec-recursive \
 uninstall-m4dataDATA uninstall-recursive uninstalldirs-recursive
 
 
-simage-config: simage-config.in
+install-exec-hook: simage.cfg
+	@target=simage.cfg; \
+	@SIMAGE_DEBUG_BUILD@ && target=simage-debug.cfg; \
+	echo "Installing $$target"; \
+	$(mkinstalldirs) $(DESTDIR)$(datadir)/Coin/conf && \
+	$(INSTALL_DATA) simage.cfg $(DESTDIR)$(datadir)/Coin/conf/$$target;
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -1650,9 +1650,9 @@ true)
     [#include <zlib.h>],
     [(void)zlibVersion();],
     [sim_ac_have_libzlib=true])
-  sim_ac_libzlib_save_CPPFLAGS=$CPPFLAGS
-  sim_ac_libzlib_save_LDFLAGS=$LDFLAGS
-  sim_ac_libzlib_save_LIBS=$LIBS
+  CPPFLAGS=$sim_ac_libzlib_save_CPPFLAGS
+  LDFLAGS=$sim_ac_libzlib_save_LDFLAGS
+  LIBS=$sim_ac_libzlib_save_LIBS
   # unset sim_ac_libzlib_debug
   # unset sim_ac_libzlib_name
   # unset sim_ac_libzlib_save_CPPFLAGS

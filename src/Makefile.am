@@ -44,14 +44,34 @@ else
 PICSOURCES =
 endif
 
+if SIMAGE_DEBUG_BUILD
+SIMAGELIB = libsimage_g.la
+else
+SIMAGELIB = libsimage.la
+endif
+
 DLLNAME = simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@
 
-lib_LTLIBRARIES = libsimage.la
+lib_LTLIBRARIES = $(SIMAGELIB)
 
 libsimage_la_LDFLAGS = \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
+libsimage_g_la_LDFLAGS = \
+	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+
 libsimage_la_SOURCES = \
+	simage.c \
+	simage.h \
+	$(JPEGSOURCES) \
+	$(UNGIFSOURCES) \
+	$(PNGSOURCES) \
+	$(TIFFSOURCES) \
+	$(TGASOURCES) \
+	$(RGBSOURCES) \
+	$(PICSOURCES)
+
+libsimage_g_la_SOURCES = \
 	simage.c \
 	simage.h \
 	$(JPEGSOURCES) \
@@ -79,8 +99,28 @@ EXTRA_libsimage_la_SOURCES = \
 	simage_pic.h \
 	simage_pic.c
 
+EXTRA_libsimage_g_la_SOURCES = \
+	simage_jpeg.h \
+	simage_jpeg.c \
+	simage_gif.h \
+	simage_gif.c \
+	simage_tiff.h \
+	simage_tiff.c \
+	simage_png.h \
+	simage_png.c \
+	simage_tga.h \
+	simage_tga.c \
+	simage_rgb.h \
+	simage_rgb.c \
+	simage_pic.h \
+	simage_pic.c
+
 libsimageincdir = $(includedir)
 libsimageinc_HEADERS = \
+	$(top_builddir)/include/simage.h
+
+libsimage_gincdir = $(includedir)
+libsimage_ginc_HEADERS = \
 	$(top_builddir)/include/simage.h
 
 # **************************************************************************
@@ -100,11 +140,12 @@ $(DLLNAME).dll: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDENCIES)
 
 ## This hook will be run at the end of a ``make install''.
 install-exec-hook: $(DLLNAME).dll
-	@if test -s $(DLLNAME).dll; then \
+	if test -s $(DLLNAME).dll; then \
 	  $(INSTALL_DATA) $(DLLNAME).dll $(DESTDIR)$(bindir)/$(DLLNAME).dll; \
 	  $(INSTALL_DATA) $(DLLNAME).lib $(DESTDIR)$(libdir)/$(DLLNAME).lib; \
-	  test -s $(DLLNAME).pdb && \
+	  if test -s $(DLLNAME).pdb; then \
 	    $(INSTALL_DATA) $(DLLNAME).pdb $(DESTDIR)$(libdir)/$(DLLNAME).pdb; \
+	  fi \
 	fi
 
 ## should have been uninstall-hook, but that doesn't work

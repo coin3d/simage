@@ -1,0 +1,5 @@
+version="@SIMAGE_VERSION@"
+cppflags="@SIMAGE_EXTRA_CPPFLAGS@"
+ldflags="@SIMAGE_EXTRA_LDFLAGS@"
+libs="@SIMAGE_EXTRA_LIBS@"
+compiler="@CC@"

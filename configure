@@ -3935,9 +3935,9 @@ else
 cat conftest.$ac_ext >&5
 fi
 rm -f conftest$ac_exeext conftest.$ac_ext
-  sim_ac_libzlib_save_CPPFLAGS=$CPPFLAGS
-  sim_ac_libzlib_save_LDFLAGS=$LDFLAGS
-  sim_ac_libzlib_save_LIBS=$LIBS
+  CPPFLAGS=$sim_ac_libzlib_save_CPPFLAGS
+  LDFLAGS=$sim_ac_libzlib_save_LDFLAGS
+  LIBS=$sim_ac_libzlib_save_LIBS
   # unset sim_ac_libzlib_debug
   # unset sim_ac_libzlib_name
   # unset sim_ac_libzlib_save_CPPFLAGS
@@ -4417,6 +4417,21 @@ fi
 fi
 
 # **************************************************************************
+# check if we are compiling with debug symbols
+
+SIMAGE_DEBUG_BUILD=false
+echo "$CPPFLAGS $CFLAGS $CXXFLAGS" | egrep -q -- "-g\\>" &&
+  SIMAGE_DEBUG_BUILD=true
+
+if $SIMAGE_DEBUG_BUILD; then
+  SIMAGE_DEBUG_BUILD_TRUE=
+  SIMAGE_DEBUG_BUILD_FALSE='#'
+else
+  SIMAGE_DEBUG_BUILD_TRUE='#'
+  SIMAGE_DEBUG_BUILD_FALSE=
+fi
+
+# **************************************************************************
 # Remove redundant options from environment variable option lists.
 
 test x"$prefix" = x"NONE" && prefix="$ac_default_prefix"
@@ -4523,6 +4538,7 @@ SIMAGE_EXTRA_LIBS=$sim_ac_uniqued_list
 
 if $BUILD_WITH_MSVC; then
   CPPFLAGS="-DSIMAGE_MAKE_DLL $CPPFLAGS"
+  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS -DSIMAGE_DLL"
 
   # FIXME: only when -g is used...
   debugfile=`pwd`/src/simage$SIMAGE_MAJOR_VERSION$DSUFFIX.pdb
@@ -4539,7 +4555,11 @@ if $BUILD_WITH_MSVC; then
   # list all libs used upon `simage-config --libs`, as we can then
   # also use them from "parent" code (remember that their interfaces
   # is not exposed from the DLL) without any fuss.
-  SIMAGE_EXTRA_LIBS="-lsimage$SIMAGE_MAJOR_VERSION\$dsuffix $SIMAGE_EXTRA_LIBS"
+  if $SIMAGE_DEBUG_BUILD; then
+    SIMAGE_EXTRA_LIBS="-lsimage${SIMAGE_MAJOR_VERSION}d $SIMAGE_EXTRA_LIBS"
+  else
+    SIMAGE_EXTRA_LIBS="-lsimage$SIMAGE_MAJOR_VERSION $SIMAGE_EXTRA_LIBS"
+  fi
 
   # These are for the .iwz InstallShield Express file under build/.
   win_includedir=`cygpath -w "$includedir"`
@@ -4550,7 +4570,11 @@ if $BUILD_WITH_MSVC; then
   win_srcdir=`cygpath -w "$srcdir"`
 
 else
-  SIMAGE_EXTRA_LIBS="-lsimage $SIMAGE_EXTRA_LIBS"
+  if $SIMAGE_DEBUG_BUILD; then
+    SIMAGE_EXTRA_LIBS="-lsimage_g $SIMAGE_EXTRA_LIBS"
+  else
+    SIMAGE_EXTRA_LIBS="-lsimage $SIMAGE_EXTRA_LIBS"
+  fi
 
   # For the build/simage.spec RPM specification file.
 
@@ -4560,8 +4584,7 @@ fi
 
 # **************************************************************************
 
-ac_config_files="$ac_config_files Makefile src/Makefile build/simage.spec build/simage.nsi simage-config"
-ac_config_commands="$ac_config_commands default"
+ac_config_files="$ac_config_files Makefile src/Makefile build/simage.spec simage.cfg"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -4632,7 +4655,7 @@ DEFS=-DHAVE_CONFIG_H
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
-{ echo "$as_me:4635: creating $CONFIG_STATUS" >&5
+{ echo "$as_me:4658: creating $CONFIG_STATUS" >&5
 echo "$as_me: creating $CONFIG_STATUS" >&6;}
 cat >$CONFIG_STATUS <<\_ACEOF
 #! /bin/sh
@@ -4689,7 +4712,7 @@ if test -x conftest.file; then
 elif test -f conftest.file; then
   as_executable_p="test -f"
 else
-  { { echo "$as_me:4692: error: cannot check whether a file is executable on this system" >&5
+  { { echo "$as_me:4715: error: cannot check whether a file is executable on this system" >&5
 echo "$as_me: error: cannot check whether a file is executable on this system" >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -4832,7 +4855,7 @@ cat >>$CONFIG_STATUS <<\EOF
     echo "$ac_cs_version"; exit 0 ;;
   --he | --h)
     # Conflict between --help and --header
-    { { echo "$as_me:4835: error: ambiguous option: $1
+    { { echo "$as_me:4858: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -4854,21 +4877,19 @@ Try \`$0 --help' for more information." >&2;}
   'Makefile' ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   'src/Makefile' ) CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
   'build/simage.spec' ) CONFIG_FILES="$CONFIG_FILES build/simage.spec" ;;
-  'build/simage.nsi' ) CONFIG_FILES="$CONFIG_FILES build/simage.nsi" ;;
-  'simage-config' ) CONFIG_FILES="$CONFIG_FILES simage-config" ;;
+  'simage.cfg' ) CONFIG_FILES="$CONFIG_FILES simage.cfg" ;;
   'default-1' ) CONFIG_COMMANDS="$CONFIG_COMMANDS default-1" ;;
   'default-2' ) CONFIG_COMMANDS="$CONFIG_COMMANDS default-2" ;;
-  'default' ) CONFIG_COMMANDS="$CONFIG_COMMANDS default" ;;
   'config.h' ) CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
   'include/simage.h' ) CONFIG_HEADERS="$CONFIG_HEADERS include/simage.h" ;;
 
   # This is an error.
-  -*) { { echo "$as_me:4866: error: unrecognized option: $1
+  -*) { { echo "$as_me:4887: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&2;}
    { (exit 1); exit 1; }; } ;;
-  *) { { echo "$as_me:4871: error: invalid argument: $1" >&5
+  *) { { echo "$as_me:4892: error: invalid argument: $1" >&5
 echo "$as_me: error: invalid argument: $1" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -5040,6 +5061,9 @@ s,@SIMAGE_RGB_SUPPORT_TRUE@,$SIMAGE_RGB_SUPPORT_TRUE,;t t
 s,@SIMAGE_RGB_SUPPORT_FALSE@,$SIMAGE_RGB_SUPPORT_FALSE,;t t
 s,@SIMAGE_PIC_SUPPORT_TRUE@,$SIMAGE_PIC_SUPPORT_TRUE,;t t
 s,@SIMAGE_PIC_SUPPORT_FALSE@,$SIMAGE_PIC_SUPPORT_FALSE,;t t
+s,@SIMAGE_DEBUG_BUILD@,$SIMAGE_DEBUG_BUILD,;t t
+s,@SIMAGE_DEBUG_BUILD_TRUE@,$SIMAGE_DEBUG_BUILD_TRUE,;t t
+s,@SIMAGE_DEBUG_BUILD_FALSE@,$SIMAGE_DEBUG_BUILD_FALSE,;t t
 s,@DLLFLAGS@,$DLLFLAGS,;t t
 s,@win_includedir@,$win_includedir,;t t
 s,@win_libdir@,$win_libdir,;t t
@@ -5159,7 +5183,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:5162: creating $ac_file" >&5
+    { echo "$as_me:5186: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -5177,7 +5201,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]* | ?:[\\/]*)
          # Absolute
-         test -f "$f" || { { echo "$as_me:5180: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:5204: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -5190,7 +5214,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:5193: error: cannot find input file: $f" >&5
+           { { echo "$as_me:5217: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -5251,7 +5275,7 @@ for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
   * )   ac_file_in=$ac_file.in ;;
   esac
 
-  test x"$ac_file" != x- && { echo "$as_me:5254: creating $ac_file" >&5
+  test x"$ac_file" != x- && { echo "$as_me:5278: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
 
   # First look for the input files in the build tree, otherwise in the
@@ -5262,7 +5286,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]* | ?:[\\/]*)
          # Absolute
-         test -f "$f" || { { echo "$as_me:5265: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:5289: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -5275,7 +5299,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:5278: error: cannot find input file: $f" >&5
+           { { echo "$as_me:5302: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -5392,7 +5416,7 @@ cat >>$CONFIG_STATUS <<\EOF
   rm -f $tmp/in
   if test x"$ac_file" != x-; then
     if cmp -s $ac_file $tmp/config.h 2>/dev/null; then
-      { echo "$as_me:5395: $ac_file is unchanged" >&5
+      { echo "$as_me:5419: $ac_file is unchanged" >&5
 echo "$as_me: $ac_file is unchanged" >&6;}
     else
       ac_dir=`$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
@@ -5483,9 +5507,6 @@ for mf in $CONFIG_FILES; do
 done
  ;;
     default-2 )  ;;
-    default )
-	chmod a+x simage-config
- ;;
   esac
 done
 EOF
@@ -5542,7 +5563,7 @@ done
 fi
 
 echo ""
-echo "Done.  Now run make install to build $PACKAGE $VERSION"
+echo "Done.  Now run make install to build $PACKAGE"
 echo ""
 
 # **************************************************************************
