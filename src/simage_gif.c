@@ -233,10 +233,10 @@ simage_gif_load(const char *filename,
   while (recordtype != TERMINATE_RECORD_TYPE);
 
   free(rowdata);
-  DGifCloseFile(giffile);
   *width_ret = giffile->SWidth;
   *height_ret = giffile->SHeight;
   *numComponents_ret = 4;
+  DGifCloseFile(giffile);
   return buffer;
 }
 
