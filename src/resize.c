@@ -223,7 +223,7 @@ new_image(int xsize, int ysize, int bpp, unsigned char * data)
   img->bpp = bpp;
   img->span = xsize * bpp;
   img->data = data;
-  if (data == NULL) img->data = malloc(img->span*img->ysize);
+  if (data == NULL) img->data = (unsigned char*) malloc(img->span*img->ysize);
   return img;
 }
 
