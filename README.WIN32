@@ -59,6 +59,7 @@
       nmake simage.mak CFG="simage - Win32 Debug"
       cd ..
       make install-data
+      make install-exec-am
 
 
 * 5 Linking with Simage *
@@ -71,6 +72,20 @@
 
 5.3 If you are using png.lib, you also have to link zlib.lib.
 
+5.4 If you need to load gifs files your program, you need to check out 
+    the latest libUnGif CVS snapshot, not the libungif-4.1.0b1.
 
 Done!
+
+
+
+
+
+
+
+
+
+
+
+
 
