@@ -312,6 +312,7 @@ avi_end_encode(void *handle)
 
   context = (avi_encode_context *)handle;
   avi_cleanup_context(context);
+  free(context);
   AVIFileExit();
   return 1; 
 #else /* HAVE_VFW */
