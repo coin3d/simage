@@ -1454,10 +1454,14 @@ true)
     [sim_ac_have_libungif=true])
   # libungif has become dependent on Xlib :(
   if test x"$sim_ac_have_libungif" = xfalse; then
-    sim_ac_libungif_cppflags="$sim_ac_libungif_cppflags -I$x_includes"
-    CPPFLAGS="$sim_ac_libungif_cppflags $sim_ac_libungif_save_CPPFLAGS"
-    sim_ac_libungif_ldflags="$sim_ac_libungif_ldflags -L$x_libraries"
-    LDFLAGS="$sim_ac_libungif_ldflags $sim_ac_libungif_save_LDFLAGS"
+    if test x"$x_includes" != x""; then
+      sim_ac_libungif_cppflags="$sim_ac_libungif_cppflags -I$x_includes"
+      CPPFLAGS="$sim_ac_libungif_cppflags $sim_ac_libungif_save_CPPFLAGS"
+    fi
+    if test x"$x_libraries" != x""; then
+      sim_ac_libungif_ldflags="$sim_ac_libungif_ldflags -L$x_libraries"
+      LDFLAGS="$sim_ac_libungif_ldflags $sim_ac_libungif_save_LDFLAGS"
+    fi
     sim_ac_libungif_libs="-l$sim_ac_libungif_name -lX11"
     LIBS="$sim_ac_libungif_libs $sim_ac_libungif_save_LIBS"
     AC_TRY_LINK(
