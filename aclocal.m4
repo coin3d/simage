@@ -133,7 +133,7 @@ fi
 # **************************************************************************
 # SIM_AC_SETUP_MSVC_IFELSE( IF-FOUND, IF-NOT-FOUND )
 #
-# This macro invokes IF-FOUND if the msvccc wrapper can be run, and
+# This macro invokes IF-FOUND if the wrapmsvc wrapper can be run, and
 # IF-NOT-FOUND if not.
 #
 # Authors:
@@ -148,13 +148,13 @@ AC_DEFUN([SIM_AC_SETUP_MSVC_IFELSE],
 # compiling with it and to generate an MSWindows .dll file.
 
 : ${BUILD_WITH_MSVC=false}
-sim_ac_msvccc=`cd $srcdir; pwd`/cfg/m4/wrapmsvc.exe
-if test -z "$CC" -a -z "$CXX" && $sim_ac_msvccc >/dev/null 2>&1; then
+sim_ac_wrapmsvc=`cd $srcdir; pwd`/cfg/m4/wrapmsvc.exe
+if test -z "$CC" -a -z "$CXX" && $sim_ac_wrapmsvc >/dev/null 2>&1; then
   m4_ifdef([$0_VISITED],
     [AC_FATAL([Macro $0 invoked multiple times])])
   m4_define([$0_VISITED], 1)
-  CC=$sim_ac_msvccc
-  CXX=$sim_ac_msvccc
+  CC=$sim_ac_wrapmsvc
+  CXX=$sim_ac_wrapmsvc
   export CC CXX
   BUILD_WITH_MSVC=true
 fi
@@ -168,7 +168,136 @@ else
 fi
 ]) # SIM_AC_SETUP_MSVC_IFELSE
 
+# **************************************************************************
+# SIM_AC_SETUP_MSVCRT
+#
+# This macro sets up compiler flags for the MS Visual C++ C library of
+# choice.
+
+AC_DEFUN([SIM_AC_SETUP_MSVCRT],
+[sim_ac_msvcrt_LDFLAGS=""
+sim_ac_msvcrt_LIBS=""
+
+AC_ARG_WITH([msvcrt],
+  [AC_HELP_STRING([--with-msvcrt=<crt>],
+                  [set which C run-time library to build against])],
+  [case `echo "$withval" | tr "[A-Z]" "[a-z]"` in
+  default | singlethread-static | ml | /ml | libc | libc\.lib )
+    sim_ac_msvcrt=singlethread-static
+    sim_ac_msvcrt_CFLAGS="/ML"
+    sim_ac_msvcrt_CXXFLAGS="/ML"
+    sim_ac_msvcrt_LIBLDFLAGS=""
+    sim_ac_msvcrt_LIBLIBS=""
+    ;;
+  default-debug | singlethread-static-debug | mld | /mld | libcd | libcd\.lib )
+    sim_ac_msvcrt=singlethread-static-debug
+    sim_ac_msvcrt_CFLAGS="/MLd"
+    sim_ac_msvcrt_CXXFLAGS="/MLd"
+    sim_ac_msvcrt_LIBLDFLAGS="/NODEFAULTLIB:libc"
+    sim_ac_msvcrt_LIBLIBS="-llibcd"
+    ;;
+  multithread-static | mt | /mt | libcmt | libcmt\.lib )
+    sim_ac_msvcrt=multithread-static
+    sim_ac_msvcrt_CFLAGS="/MT"
+    sim_ac_msvcrt_CXXFLAGS="/MT"
+    sim_ac_msvcrt_LIBLDFLAGS="/NODEFAULTLIB:libc"
+    sim_ac_msvcrt_LIBLIBS="-llibcmt"
+    ;;
+  multithread-static-debug | mtd | /mtd | libcmtd | libcmtd\.lib )
+    sim_ac_msvcrt=multithread-static-debug
+    sim_ac_msvcrt_CFLAGS="/MTd"
+    sim_ac_msvcrt_CXXFLAGS="/MTd"
+    sim_ac_msvcrt_LIBLDFLAGS="/NODEFAULTLIB:libc"
+    sim_ac_msvcrt_LIBLIBS="-llibcmtd"
+    ;;
+  multithread-dynamic | md | /md | msvcrt | msvcrt\.lib )
+    sim_ac_msvcrt=multithread-dynamic
+    sim_ac_msvcrt_CFLAGS=""
+    sim_ac_msvcrt_CXXFLAGS=""
+    sim_ac_msvcrt_LIBLDFLAGS="/NODEFAULTLIB:libc"
+    sim_ac_msvcrt_LIBLIBS="-lmsvcrt"
+    ;;
+  multithread-dynamic-debug | mdd | /mdd | msvcrtd | msvcrtd\.lib )
+    sim_ac_msvcrt=multithread-dynamic-debug
+    sim_ac_msvcrt_CFLAGS="/MDd"
+    sim_ac_msvcrt_CXXFLAGS="/MDd"
+    sim_ac_msvcrt_LIBLDFLAGS="/NODEFAULTLIB:libc"
+    sim_ac_msvcrt_LIBLIBS="-lmsvcrtd"
+    ;;
+  *)
+    SIM_AC_ERROR([invalid-msvcrt])
+    ;;
+  esac],
+  [sim_ac_msvcrt=singlethread-static])
+
+AC_MSG_CHECKING([MSVC++ C library choice])
+AC_MSG_RESULT([$sim_ac_msvcrt])
+
+$1
+]) # SIM_AC_SETUP_MSVCRT
+
 # EOF **********************************************************************
+# EOF **********************************************************************
+
+# **************************************************************************
+# SIM_AC_ERROR_MESSAGE_FILE( FILENAME )
+#   Sets the error message file.  Default is $ac_aux_dir/m4/errors.txt.
+#
+# SIM_AC_ERROR( ERROR [, ERROR ...] )
+#   Fetches the error messages from the error message file and displays
+#   them on stderr.
+#
+# SIM_AC_WITH_ERROR( WITHARG )
+#   Invokes AC_MSG_ERROR in a consistent way for problems with the --with-*
+#   $withval argument.
+#
+# SIM_AC_ENABLE_ERROR( ENABLEARG )
+#   Invokes AC_MSG_ERROR in a consistent way for problems with the --enable-*
+#   $enableval argument.
+#
+# Authors:
+#   Lars J. Aas <larsa@sim.no>
+
+AC_DEFUN([SIM_AC_ERROR_MESSAGE_FILE], [
+sim_ac_message_file=$1
+]) # SIM_AC_ERROR_MESSAGE_FILE
+
+AC_DEFUN([SIM_AC_ONE_MESSAGE], [
+: ${sim_ac_message_file=$ac_aux_dir/m4/errors.txt}
+if test -f $sim_ac_message_file; then
+  sim_ac_message="`sed -n -e '/^!$1$/,/^!/ { /^!/ d; p; }' <$sim_ac_message_file`"
+  if test x"$sim_ac_message" = x""; then
+    AC_MSG_ERROR([no message named '$1' in '$sim_ac_message_file' - notify the $PACKAGE_NAME maintainer(s)])
+  else
+    eval "echo >&2 \"$sim_ac_message\""
+  fi
+else
+  AC_MSG_ERROR([file '$sim_ac_message_file' not found - notify the $PACKAGE_NAME maintainer(s)])
+fi
+]) # SIM_AC_ONE_MESSAGE
+
+AC_DEFUN([_SIM_AC_ERROR], [
+SIM_AC_ONE_MESSAGE([$1])
+ifelse([$2], , , [
+echo >&2 ""
+_SIM_AC_ERROR(m4_shift($@))])
+]) # _SIM_AC_ERROR
+
+AC_DEFUN([SIM_AC_ERROR], [
+echo >&2 ""
+_SIM_AC_ERROR($@)
+echo >&2 ""
+AC_MSG_ERROR([aborting])
+]) # SIM_AC_ERROR
+
+AC_DEFUN([SIM_AC_WITH_ERROR], [
+AC_MSG_ERROR([invalid value "${withval}" for "$1" configure argument])
+]) # SIM_AC_WITH_ERROR
+
+AC_DEFUN([SIM_AC_ENABLE_ERROR], [
+AC_MSG_ERROR([invalid value "${enableval}" for "$1" configure argument])
+]) # SIM_AC_ENABLE_ERROR
+
 
 
 # serial 1
@@ -2276,7 +2405,7 @@ else
     # FIXME: Relying on posixy $() will cause problems for
     #        cross-compilation, but unfortunately the echo tests do not
     #        yet detect zsh echo's removal of \ escapes.
-    archive_cmds='$nonopt $(test "x$module" = xyes && echo -bundle || echo -dynamiclib) $allow_undefined_flag -o $lib $libobjs $deplibs$linker_flags -install_name $rpath/$soname $verstring'
+    archive_cmds='$nonopt $(test x$module = xyes && echo -bundle || echo -dynamiclib) $allow_undefined_flag -o $lib $libobjs $deplibs$linker_flags -install_name $rpath/$soname $verstring'
     # We need to add '_' to the symbols in $export_symbols first
     #archive_expsym_cmds="$archive_cmds"' && strip -s $export_symbols'
     hardcode_direct=yes
@@ -4296,6 +4425,42 @@ fi
 AC_SUBST(DSUFFIX)
 ])
 
+# Usage:
+#   SIM_AC_COMPILER_OPTIMIZATION
+#
+# Description:
+#   Let the user decide if optimization should be attempted turned off
+#   by stripping off an "-O[0-9]" option.
+# 
+#   Note: this macro must be placed after either AC_PROG_CC or AC_PROG_CXX
+#   in the configure.in script.
+#
+# FIXME: this is pretty much just a dirty hack. Unfortunately, this
+# seems to be the best we can do without fixing Autoconf to behave
+# properly wrt setting optimization options. 20011021 mortene.
+# 
+# Author: Morten Eriksen, <mortene@sim.no>.
+# 
+
+AC_DEFUN([SIM_AC_COMPILER_OPTIMIZATION], [
+AC_ARG_ENABLE(
+  [optimization],
+  AC_HELP_STRING([--enable-optimization],
+                 [allow compilers to make optimized code [[default=yes]]]),
+  [case "${enableval}" in
+    yes) sim_ac_enable_optimization=true ;;
+    no)  sim_ac_enable_optimization=false ;;
+    *) AC_MSG_ERROR(bad value "${enableval}" for --enable-optimization) ;;
+  esac],
+  [sim_ac_enable_optimization=true])
+
+if $sim_ac_enable_optimization; then
+  :
+else
+  CFLAGS="`echo $CFLAGS | sed 's/-O[[0-9]]*[[ ]]*//'`"
+  CXXFLAGS="`echo $CXXFLAGS | sed 's/-O[[0-9]]*[[ ]]*//'`"
+fi
+])
 
 # Usage:
 #   SIM_AC_DEBUGSYMBOLS
@@ -4466,7 +4631,20 @@ sim_ac_qt_avail=no
 if test x"$with_qt" != xno; then
   sim_ac_path=$PATH
 
-  SIM_AC_DEBACKSLASH(sim_ac_qt_dir, $QTDIR)
+  # Remember over config.status re-runs of configure.
+  # FIXME: this doesn't work unless QTDIR is part of the configure
+  # argument line. We should be able to grab it from the
+  # environment settings. 20011018 mortene. 
+  AC_SUBST(QTDIR)
+
+  # The Cygwin environment needs to invoke moc with a POSIX-style path.
+  AC_PATH_PROG(sim_ac_qt_cygpath, cygpath, false)
+  if test $sim_ac_qt_cygpath = "false"; then
+    sim_ac_qt_dir=$QTDIR
+  else
+    # Quote $QTDIR in case it's empty.
+    sim_ac_qt_dir=`$sim_ac_qt_cygpath -u "$QTDIR"`
+  fi
 
   if test x"$with_qt" != xyes; then
     sim_ac_qt_incflags="-I${with_qt}/include"
@@ -4479,8 +4657,13 @@ if test x"$with_qt" != xno; then
       AC_MSG_WARN([QTDIR environment variable not set -- this might be an indication of a problem])
     else
       AC_MSG_RESULT([$sim_ac_qt_dir])
-      # list contents of what's in the qt libdir into config.log...
-      ls -l $sim_ac_qt_dir/lib >&5
+
+      # list contents of what's in the qt dev environment into config.log...
+      for i in "" bin lib; do
+        echo "Listing contents of $sim_ac_qt_dir/$i:" >&5
+        ls -l $sim_ac_qt_dir/$i >&5 2>&1
+      done
+
       sim_ac_qt_incflags="-I$sim_ac_qt_dir/include"
       sim_ac_qt_ldflags="-L$sim_ac_qt_dir/lib"
       sim_ac_path=$sim_ac_qt_dir/bin:$PATH
@@ -4782,33 +4965,6 @@ if $sim_cv_def_qt_keypad; then
             [Define this if Qt::Keypad is available])
 fi
 ]) # SIM_AC_QT_KEYPAD_DEFINE
-
-# Convenience macros SIM_AC_DEBACKSLASH and SIM_AC_DOBACKSLASH for
-# converting to and from MSWin/MS-DOS style paths.
-#
-# Example use:
-#
-#     SIM_AC_DEBACKSLASH(my_ac_reversed, "C:\\mydir\\bin")
-#
-# will give a shell variable $my_ac_reversed with the value "C:/mydir/bin").
-# Vice versa for SIM_AC_DOBACKSLASH.
-#
-# Author: Marius Bugge Monsen <mariusbu@sim.no>
-#         Lars Jørgen Aas <larsa@sim.no>
-#         Morten Eriksen <mortene@sim.no>
-
-AC_DEFUN([SIM_AC_DEBACKSLASH], [
-eval "$1=\"`echo $2 | sed -e 's%\\\\%\\/%g'`\""
-])
-
-AC_DEFUN([SIM_AC_DOBACKSLASH], [
-eval "$1=\"`echo $2 | sed -e 's%\\/%\\\\%g'`\""
-])
-
-AC_DEFUN([SIM_AC_DODOUBLEBACKSLASH], [
-eval "$1=\"`echo $2 | sed -e 's%\\/%\\\\\\\\\\\\\\\\%g'`\""
-])
-
 
 # **************************************************************************
 # configuration_summary.m4

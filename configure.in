@@ -4,17 +4,16 @@
 m4_define([SIMAGE_MAJOR], [1])
 m4_define([SIMAGE_MINOR], [2])
 m4_define([SIMAGE_MICRO], [2])
+m4_define([SIMAGE_BETA],  [])
+m4_define([SIMAGE_VERSION_STRING],
+          [SIMAGE_MAJOR.SIMAGE_MINOR.SIMAGE_MICRO[]SIMAGE_BETA])
 
 m4_define([SIMAGE_ABI_CURRENT], [m4_eval(SIMAGE_MAJOR*20+SIMAGE_MINOR)])
 m4_define([SIMAGE_ABI_REVISION], [SIMAGE_MICRO])
 m4_define([SIMAGE_ABI_AGE], [SIMAGE_MINOR])
 
 # **************************************************************************
-AC_INIT(
-  [simage],
-  [v[]SIMAGE_MAJOR.SIMAGE_MINOR.SIMAGE_MICRO],
-  [coin-bugs@coin3d.org])
-AC_REVISION([$Revision$])
+AC_INIT([simage], [SIMAGE_VERSION_STRING], [coin-bugs@coin3d.org])
 
 AC_CONFIG_AUX_DIR([cfg])
 AC_CONFIG_SRCDIR([src/simage.c])
@@ -44,6 +43,16 @@ SIM_AC_SETUP_MSVC_IFELSE([], [
     ;;
   esac
 ])
+
+if $BUILD_WITH_MSVC; then
+  SIM_AC_SETUP_MSVCRT([
+    CPPFLAGS="$CPPFLAGS $sim_ac_msvcrt_CPPFLAGS"
+    CFLAGS="$CFLAGS $sim_ac_msvcrt_CFLAGS"
+    CXXFLAGS="$CXXFLAGS $sim_ac_msvcrt_CXXFLAGS"
+    LDFLAGS="$LDFLAGS $sim_ac_msvcrt_LDFLAGS"
+    LIBS="$LIBS $sim_ac_msvcrt_LIBS"
+  ])
+fi
 
 # **************************************************************************
 # Check to see if the compiler supports the ANSI standard, and
@@ -79,24 +88,15 @@ AC_EXEEXT
 
 # **************************************************************************
 
-SIMAGE_MAJOR_VERSION=SIMAGE_MAJOR
-SIMAGE_MINOR_VERSION=SIMAGE_MINOR
-SIMAGE_MICRO_VERSION=SIMAGE_MICRO
-SIMAGE_VERSION=$SIMAGE_MAJOR_VERSION.$SIMAGE_MINOR_VERSION.$SIMAGE_MICRO_VERSION
+AC_SUBST([SIMAGE_MAJOR_VERSION], [SIMAGE_MAJOR])
+AC_SUBST([SIMAGE_MINOR_VERSION], [SIMAGE_MINOR])
+AC_SUBST([SIMAGE_MICRO_VERSION], [SIMAGE_MICRO])
+AC_SUBST([SIMAGE_VERSION], [SIMAGE_VERSION_STRING])
 VERSION=$SIMAGE_VERSION
 
-AC_SUBST(SIMAGE_MAJOR_VERSION)
-AC_SUBST(SIMAGE_MINOR_VERSION)
-AC_SUBST(SIMAGE_MICRO_VERSION)
-AC_SUBST(SIMAGE_VERSION)
-
-LT_CURRENT=SIMAGE_ABI_CURRENT
-LT_REVISION=SIMAGE_ABI_REVISION
-LT_AGE=SIMAGE_ABI_AGE
-
-AC_SUBST(LT_CURRENT)
-AC_SUBST(LT_REVISION)
-AC_SUBST(LT_AGE)
+AC_SUBST([LT_CURRENT], [SIMAGE_ABI_CURRENT])
+AC_SUBST([LT_REVISION], [SIMAGE_ABI_REVISION])
+AC_SUBST([LT_AGE], [SIMAGE_ABI_AGE])
 
 #  These are for include/simage.h.
 
@@ -129,14 +129,10 @@ else
 fi
 
 # These are used for constructing the simage-config file.
-SIMAGE_EXTRA_CPPFLAGS=$CPPFLAGS
-SIMAGE_EXTRA_CFLAGS=
-SIMAGE_EXTRA_LDFLAGS=$LDFLAGS
-SIMAGE_EXTRA_LIBS=$LIBS
-AC_SUBST(SIMAGE_EXTRA_CPPFLAGS)
-AC_SUBST(SIMAGE_EXTRA_CFLAGS)
-AC_SUBST(SIMAGE_EXTRA_LDFLAGS)
-AC_SUBST(SIMAGE_EXTRA_LIBS)
+AC_SUBST([SIMAGE_EXTRA_CPPFLAGS], [$CPPFLAGS])
+AC_SUBST([SIMAGE_EXTRA_CFLAGS], [])
+AC_SUBST([SIMAGE_EXTRA_LDFLAGS], [$LDFLAGS])
+AC_SUBST([SIMAGE_EXTRA_LIBS], [$LIBS])
 
 SIM_AC_COMPILE_DEBUG([
   CPPFLAGS="$CPPFLAGS -DSIMAGE_DEBUG=1"
@@ -149,13 +145,6 @@ SIM_AC_DEBUGSYMBOLS
 # This is at least used to allow static compilation on Cygwin + MSWindows
 # without hitting the SIMAGE_DLL / SIMAGE_NOT_DLL safety check.
 CPPFLAGS="$CPPFLAGS -DSIMAGE_INTERNAL"
-
-# **************************************************************************
-# don't overwrite unchanged header files
-
-INSTALL_HEADER="\
-INSTALL='\$(INSTALL_DATA)' \$(SHELL) \$(top_srcdir)/cfg/install-header"
-AC_SUBST(INSTALL_HEADER)
 
 # **************************************************************************
 # Want to configure an alternate installation?
@@ -498,11 +487,14 @@ LIBFLAGS=
 
 # AC_SUBST(SIMAGE_STATIC)
 # AC_SUBST(SIMAGE_SHARED)
-AC_SUBST(LIBFLAGS)
+AC_SUBST([LIBFLAGS], [])
 
 AM_CONDITIONAL(BUILD_WITH_MSVC, $BUILD_WITH_MSVC)
 
 if $BUILD_WITH_MSVC; then
+  rm -f vc60.pdb
+  LIBFLAGS="$LIBFLAGS $sim_ac_msvcrt_LIBLDFLAGS"
+  LIBS="$LIBS $sim_ac_msvcrt_LIBLIBS"
   if $SIMAGE_STATIC; then
     SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS -DSIMAGE_NOT_DLL"
   else
@@ -513,21 +505,25 @@ if $BUILD_WITH_MSVC; then
   debugfile=`pwd`/src/simage${SIMAGE_MAJOR_VERSION}${SUFFIX}.pdb
   debugfile=`cygpath -w "$debugfile" | sed 's,\\\\,\\\\\\\\,g'`
   if $SIMAGE_STATIC; then
-    LIBFLAGS="-LIB"
+    LIBFLAGS="-LIB $LIBFLAGS"
     LIBFLAGS="$LIBFLAGS /OUT:simage$SIMAGE_MAJOR_VERSION$SUFFIX.lib"
+    SIM_AC_CONFIGURATION_SETTING([Simage Build Type], [Static .LIB])
   else
-    LIBFLAGS="-DLL /INCREMENTAL:NO"
+    LIBFLAGS="-DLL /INCREMENTAL:NO $LIBFLAGS"
     case $enable_symbols in
     no | false)
       LIBFLAGS="$LIBFLAGS /RELEASE"
+      SIM_AC_CONFIGURATION_SETTING([Simage Build Type], [Dynamic .DLL])
       ;;
     *)
       CFLAGS="/Fd$debugfile $CFLAGS"
       LIBFLAGS="$LIBFLAGS /DEBUG /PDB:simage$SIMAGE_MAJOR_VERSION$SUFFIX.pdb"
+      SIM_AC_CONFIGURATION_SETTING([Simage Build Type], [Dynamic .DLL + .PDB])
       ;;
     esac
     LIBFLAGS="$LIBFLAGS /OUT:simage$SIMAGE_MAJOR_VERSION$SUFFIX.dll"
   fi
+  SIM_AC_CONFIGURATION_SETTING([C Library Version], [$sim_ac_msvcrt])
 
   # We use a version suffix on the .dll-file, so several incompatible
   # (major) versions can be installed on a system.
