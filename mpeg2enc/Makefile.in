@@ -175,7 +175,7 @@ depcomp = $(SHELL) $(top_srcdir)/cfg/depcomp
 @AMDEP@ $(DEPDIR)/putvlc.Plo $(DEPDIR)/quantize.Plo \
 @AMDEP@ $(DEPDIR)/ratectl.Plo $(DEPDIR)/readpic.Plo $(DEPDIR)/stats.Plo \
 @AMDEP@ $(DEPDIR)/transfrm.Plo $(DEPDIR)/writepic.Plo
-DIST_COMMON = Makefile.am Makefile.in
+DIST_COMMON = README Makefile.am Makefile.in
 
 SOURCES = $(libmpeg2enc_la_SOURCES)
 OBJECTS = $(am_libmpeg2enc_la_OBJECTS)
