@@ -14,45 +14,46 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define WIDTH 640
-#define HEIGHT 480
-#define NUMFRAMES 30
-
-void error_cb(void * userdata, const char *text)
+static void
+error_cb(void * userdata, const char *text)
 {
-  printf("c2m Error  : %s\n", text);
-};
+  (void)fprintf(stderr, "c2m Error  : %s\n", text);
+  (void)fflush(stderr);
+}
 
-void warning_cb(void * userdata, const char *text)
+static void
+warning_cb(void * userdata, const char *text)
 {
-  printf("c2m Warning: %s\n", text);
-};
+  (void)fprintf(stderr, "c2m Warning: %s\n", text);
+  (void)fflush(stderr);
+}
 
-int  progress_cb(void * userdata, float sub, int current_frame, int num_frames)
+static int
+progress_cb(void * userdata, float sub, int current_frame, int num_frames)
 {
-  printf("c2m Progress: sub: %3.0f, curr: %d, tot:%d\n", sub*100.0, current_frame, num_frames);
+  (void)fprintf(stdout, "c2m Progress: sub: %3.0f, curr: %d, tot:%d\n",
+                sub * 100.0, current_frame, num_frames);
+  (void)fflush(stdout);
   return 1;
-};
-
-SoOffscreenRenderer * renderer;
-SoPerspectiveCamera * camera;
-SoSeparator * root;
-
-float x,y,z;
-char fname[256];
+}
 
 int
-main(
-  int argc,
-  char ** argv )
+main(int argc, char ** argv)
 {
+  const int WIDTH = 640;
+  const int HEIGHT = 480;
+  const int NUMFRAMES = 30;
+
   QWidget * window = SoQt::init( argv[0] );
   if ( window == NULL )
     return -1;
 
-  root = new SoSeparator;
+  SoSeparator * root = new SoSeparator;
   root->ref();
-  root->addChild( camera = new SoPerspectiveCamera );
+
+  SoPerspectiveCamera * camera = new SoPerspectiveCamera;
+  root->addChild( camera );
+
   root->addChild( new SoDirectionalLight );
   SoMaterial *myMaterial = new SoMaterial;
   myMaterial->diffuseColor.setValue(1.0, 0.0, 0.0);
@@ -63,14 +64,11 @@ main(
   SbViewportRegion vp;
   vp.setWindowSize(SbVec2s(WIDTH, HEIGHT));
   
-  renderer = new SoOffscreenRenderer( vp );
+  SoOffscreenRenderer * renderer = new SoOffscreenRenderer( vp );
 
   renderer->setBackgroundColor( SbColor( 0.1f, 0.2f, 0.3f )  );
 
   camera->viewAll( node, renderer->getViewportRegion() );
-
-  bool ret;
-  SbVec3f cpos;
 
   s_params * params = s_params_create();
   s_params_set(params, 
@@ -112,7 +110,8 @@ main(
   int imax = NUMFRAMES;
   for (int i=0; i<imax; i++)
   { 
-    cpos = camera->position.getValue();
+    SbVec3f cpos = camera->position.getValue();
+    float x, y, z;
     cpos.getValue(x, y, z);
     x=1.0-(float)i/(float)imax *1.0*2.0;
     camera->position.setValue(x, y, z);
@@ -120,8 +119,9 @@ main(
     renderer->render(root);
 
     /* just save jpeg images for debugging */
+    char fname[256];
     sprintf(fname, "renderarea%0d.jpg", i+10);
-    ret = renderer->writeToFile(fname, "jpg");
+    SbBool ret = renderer->writeToFile(fname, "jpg");
 
     if (image == NULL) {
       image = s_image_create(WIDTH, HEIGHT, 3, renderer->getBuffer());
@@ -134,5 +134,4 @@ main(
   s_movie_close(movie);
   s_movie_destroy(movie);
   return 0;
-} // main()
-
+}
