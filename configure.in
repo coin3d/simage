@@ -205,6 +205,10 @@ if test "$want_pic" = yes; then
   AC_DEFINE(SIMAGE_PIC_SUPPORT, 1)
 fi
 
+
+SIM_EXPAND_DIR_VARS
+
+
 dnl *******************************************************************
 dnl * List all files configure shall generate.
 dnl *******************************************************************

@@ -29,10 +29,10 @@ while test $# -gt 0; do
       echo @SIMAGE_VERSION@
       ;;
     --cppflags)
-      echo -I@prefix@@includedir@ @SIMAGE_EXTRA_CPPFLAGS@
+      echo -I@includedir@ @SIMAGE_EXTRA_CPPFLAGS@
       ;;
     --ldflags)
-      echo -L@prefix@@libdir@ @SIMAGE_EXTRA_LDFLAGS@
+      echo -L@libdir@ @SIMAGE_EXTRA_LDFLAGS@
       ;;
     --libs)
       echo -lsimage @SIMAGE_EXTRA_LIBS@
