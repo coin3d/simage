@@ -131,31 +131,35 @@ static int getInt16(unsigned char *ptr)
 /* */
 /* decode a new rle packet */
 /* */
-static void 
-rle_new_packet(unsigned char ** src,
+static unsigned char * 
+rle_new_packet(unsigned char * src,
 	       int * rleRemaining, 
 	       int * rleIsCompressed,
 	       unsigned char *rleCurrent,
 	       const int rleEntrySize)
 {
   int i;
-  unsigned char code = *(*src)++;
+  unsigned char code;
+  
+  code = *src++;
+
   *rleRemaining = (code & 127) + 1; /* number of bytes left in this packet */
   if (code & 128) { /* rle */
     *rleIsCompressed = 1;
     for (i = 0; i < rleEntrySize; i++)
-      rleCurrent[i] = *(*src)++;
+      rleCurrent[i] = *src++;
   }
   else { /* uncompressed */
     *rleIsCompressed = 0;
   }
+  return src;
 }
 
 /* */
 /* decode the # of specified bytes */
 /* */
-static void 
-rle_decode(unsigned char ** src, 
+static unsigned char * 
+rle_decode(unsigned char * src, 
 	   unsigned char *dest, 
 	   const int numbytes,
 	   int * rleRemaining,
@@ -164,25 +168,33 @@ rle_decode(unsigned char ** src,
 	   const int rleEntrySize)
 {
   int i;
-  int size = rleEntrySize;
+  int remain, compress, size;
   unsigned char *stop = dest + numbytes;
+  
+  size = rleEntrySize;
+  remain = *rleRemaining;
+  compress = *rleIsCompressed;
+  
   while (dest < stop) {
-    if (*rleRemaining == 0) /* start new packet */
-      rle_new_packet(src, rleRemaining, rleIsCompressed, 
-		     rleCurrent, rleEntrySize);
-    
-    if (*rleIsCompressed) {
+    if (remain == 0) {/* start new packet */
+      src = rle_new_packet(src, &remain, &compress,
+                           rleCurrent, rleEntrySize);
+    }
+    if (compress) {
       for (i = 0; i < size; i++) {
 	*dest++ = rleCurrent[i];
       }
     }
     else {
       for (i = 0; i < size; i++) {
-	*dest++ = *(*src)++;
+	*dest++ = *src++;
       }
     }
-    *rleRemaining--;
+    remain--;
   }
+  *rleRemaining = remain;
+  *rleIsCompressed = compress;
+  return src;
 }
 
 unsigned char *
@@ -260,7 +272,6 @@ simage_tga_load(const char *filename,
   /*    SoDebugError::postInfo("simage_tga_load", "TARGA file: %d %d %d %d %d\n",  */
   /*  			 type, width, height, depth, format); */
 
-
   rleIsCompressed = 0;
   rleRemaining = 0;
   rleEntrySize = depth;
@@ -323,8 +334,8 @@ simage_tga_load(const char *filename,
 	break;
       }
       for (y = 0; y < height; y++) {
-	rle_decode(&src, linebuf, width*depth, &rleRemaining,
-		   &rleIsCompressed, rleCurrent, rleEntrySize);
+	src = rle_decode(src, linebuf, width*depth, &rleRemaining,
+                         &rleIsCompressed, rleCurrent, rleEntrySize);
 	assert(src <= buf + size);
 	for (x = 0; x < width; x++) {
 	  convert_data(linebuf, dest, x, depth, format); 
@@ -349,6 +360,7 @@ simage_tga_load(const char *filename,
   *width_ret = width;
   *height_ret = height;
   *numComponents_ret = format;
+
   return buffer;
 }
 
