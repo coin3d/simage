@@ -1,91 +1,24 @@
-//////////////////////////////////////////////////////
-//
-//             COMPILING SIMAGE ON WIN32
-//
-//////////////////////////////////////////////////////
-//
-//  Author:    Marius B. Monsen
-//  E-mail:    mariusbu@sim.no
-//
-//  Started:   2000.06.09
-//  Current:   2000.06.09
-//
+You should be able to build the simage library if you have these
+components installed on your system:
 
-* 1 Introduction *
+        * Cygwin[1], latest release (we've at least tested with net
+          release v1.1.4)
 
-1.1 Simage is a library for loading different image formats.
-    It supports Targa, RGB and Pic internally, but can be compiled
-    with support for external libraries like 'jpg.lib' (se below for
-    full listing).
+        * Microsoft Visual C++ v6.0
 
 
-* 2 Environment *
+Configure and build the same way as you would on UNIX-based systems,
+i.e.
 
-2.1 Throughout this file we assume using CygWin and MSVC++.
-
-2.2 Download CygWin from <URL:http://sourceware.cygnus.com/>.
-
-2.3 Throughout this file we assume that '[your_install_path]/include'
-    is set in the INCLUDE variable, '[your_install_path]/lib' is set in
-    your LIB variable and '[your_install_path]/bin' is in your PATH
-    variable.
-    If you omit the --prefix option, the default installation path is
-    set to '/usr/local/'.
+        $ [srcdir]/configure
+        $ make install
 
 
-* 3 Simage support libs (optional) *
+Note that if you encounter any problems when trying to build on
+MSWindows, it is expected that you are able to do a minimum of
+troubleshooting yourself before contacting us. If you are confident
+that configure and/or build fails due to a mistake on our part, we
+will be happy to assist.
 
-3.1 Simage can use one or more of the following libs:
-
-    jpeg.lib (libJpeg)
-    ungif.lib (libUngif)
-    tiff.lib (libTiff)
-    png.lib (libPng)
-
-3.2 LibPng needs 'zlib.lib' (libZ).
-
-3.3 Download and install the libs you need.
-
-3.4 The configure script will detect if any libs are installed.
-
-
-* 4 Compiling Simage *
-
-4.1 Write the following into the command line
-
-      cd [your_build_path]
-      CC=cl CXX=cl /[your_src_path]/configure --prefix=[your_install_path]
-      cd build
-      nmake simage.mak CFG="simage - Win32 Debug"
-      cd ..
-      make install-data
-      make install-exec-am
-
-
-* 5 Linking with Simage *
-
-5.1 When building programs using Simage, be sure to link in both simage.lib
-    and any support libs you are using (like jpeg.lib).
-
-5.2 Note that tiff.lib uses message-boxes to display error messages under
-    Win32, so you need to link user32.lib if you are using tiff.lib.
-
-5.3 If you are using png.lib, you also have to link zlib.lib.
-
-5.4 If you need to load gifs files your program, you need to check out 
-    the latest libUnGif CVS snapshot, not the libungif-4.1.0b1.
-
-Done!
-
-
-
-
-
-
-
-
-
-
-
-
-
+---
+[1] <URL:http://sources.redhat.com/cygwin/>
