@@ -406,11 +406,14 @@ if $BUILD_WITH_MSVC; then
   SIMAGE_EXTRA_LIBS="-lsimage$SIMAGE_MAJOR_VERSION $SIMAGE_EXTRA_LIBS"
 
   # These are for the .iwz InstallShield Express file under build/.
-  win_includedir=`cygpath -w $includedir`
+  win_includedir=`cygpath -w "$includedir"`
   AC_SUBST(win_includedir)
-  win_libdir=`cygpath -w $libdir`
+  win_libdir=`cygpath -w "$libdir"`
   AC_SUBST(win_libdir)
 
+  # For the SuperPIMP (makensis) config file.
+  win_srcdir=`cygpath -w "$srcdir"`
+  AC_SUBST(win_srcdir)
 else
   SIMAGE_EXTRA_LIBS="-lsimage $SIMAGE_EXTRA_LIBS"
 
@@ -418,9 +421,6 @@ else
   SIM_AC_ISO8601_DATE(simage_configure_date)
   AC_SUBST(simage_configure_date)
 fi
-
-simage_srcdir_dos=`cygpath -w "$srcdir"`
-AC_SUBST(simage_srcdir_dos)
 
 # **************************************************************************
 
@@ -433,8 +433,5 @@ AC_OUTPUT([
 ], [
 	chmod a+x simage-config
 ])
-
-sed 's/$/
-/g' < $srcdir/COPYING > COPYING.DOS
 
 # **************************************************************************

@@ -4226,9 +4226,12 @@ if $BUILD_WITH_MSVC; then
   SIMAGE_EXTRA_LIBS="-lsimage$SIMAGE_MAJOR_VERSION $SIMAGE_EXTRA_LIBS"
 
   # These are for the .iwz InstallShield Express file under build/.
-  win_includedir=`cygpath -w $includedir`
+  win_includedir=`cygpath -w "$includedir"`
 
-  win_libdir=`cygpath -w $libdir`
+  win_libdir=`cygpath -w "$libdir"`
+
+  # For the SuperPIMP (makensis) config file.
+  win_srcdir=`cygpath -w "$srcdir"`
 
 else
   SIMAGE_EXTRA_LIBS="-lsimage $SIMAGE_EXTRA_LIBS"
@@ -4238,8 +4241,6 @@ else
   eval "simage_configure_date=\"`date +%Y%m%d`\""
 
 fi
-
-simage_srcdir_dos=`cygpath -w "$srcdir"`
 
 # **************************************************************************
 
@@ -4361,7 +4362,7 @@ sed '/^$/d' confdefs.h >&5
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
-{ echo "$as_me:4364: creating $CONFIG_STATUS" >&5
+{ echo "$as_me:4365: creating $CONFIG_STATUS" >&5
 echo "$as_me: creating $CONFIG_STATUS" >&6;}
 cat >$CONFIG_STATUS <<\_ACEOF
 #! /bin/sh
@@ -4531,7 +4532,7 @@ cat >>$CONFIG_STATUS <<\EOF
     echo "$ac_cs_version"; exit 0 ;;
   --he | --h)
     # Conflict between --help and --header
-    { { echo "$as_me:4534: error: ambiguous option: $1
+    { { echo "$as_me:4535: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -4562,12 +4563,12 @@ Try \`$0 --help' for more information." >&2;}
   'include/simage.h' ) CONFIG_HEADERS="$CONFIG_HEADERS include/simage.h" ;;
 
   # This is an error.
-  -*) { { echo "$as_me:4565: error: unrecognized option: $1
+  -*) { { echo "$as_me:4566: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&2;}
    { (exit 1); exit; }; } ;;
-  *) { { echo "$as_me:4570: error: invalid argument: $1" >&5
+  *) { { echo "$as_me:4571: error: invalid argument: $1" >&5
 echo "$as_me: error: invalid argument: $1" >&2;}
    { (exit 1); exit; }; };;
   esac
@@ -4736,8 +4737,8 @@ s,@PIC_SUPPORT_FALSE@,$PIC_SUPPORT_FALSE,;t t
 s,@DLLFLAGS@,$DLLFLAGS,;t t
 s,@win_includedir@,$win_includedir,;t t
 s,@win_libdir@,$win_libdir,;t t
+s,@win_srcdir@,$win_srcdir,;t t
 s,@simage_configure_date@,$simage_configure_date,;t t
-s,@simage_srcdir_dos@,$simage_srcdir_dos,;t t
 CEOF
 
 EOF
@@ -4843,7 +4844,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:4846: creating $ac_file" >&5
+    { echo "$as_me:4847: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -4864,7 +4865,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]* | ?:[\\/]*)
          # Absolute
-         test -f "$f" || { { echo "$as_me:4867: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:4868: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit; }; }
          echo $f;;
@@ -4877,7 +4878,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $ac_given_srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:4880: error: cannot find input file: $f" >&5
+           { { echo "$as_me:4881: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit; }; }
          fi;;
@@ -4938,7 +4939,7 @@ for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
   * )   ac_file_in=$ac_file.in ;;
   esac
 
-  test x"$ac_file" != x- && { echo "$as_me:4941: creating $ac_file" >&5
+  test x"$ac_file" != x- && { echo "$as_me:4942: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
 
   # First look for the input files in the build tree, otherwise in the
@@ -4949,7 +4950,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]* | ?:[\\/]*)
          # Absolute
-         test -f "$f" || { { echo "$as_me:4952: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:4953: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit; }; }
          echo $f;;
@@ -4962,7 +4963,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $ac_given_srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:4965: error: cannot find input file: $f" >&5
+           { { echo "$as_me:4966: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit; }; }
          fi;;
@@ -5079,7 +5080,7 @@ cat >>$CONFIG_STATUS <<\EOF
   rm -f $tmp/in
   if test x"$ac_file" != x-; then
     if cmp -s $ac_file $tmp/config.h 2>/dev/null; then
-      { echo "$as_me:5082: $ac_file is unchanged" >&5
+      { echo "$as_me:5083: $ac_file is unchanged" >&5
 echo "$as_me: $ac_file is unchanged" >&6;}
     else
       ac_dir=`$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
@@ -5179,8 +5180,5 @@ chmod +x $CONFIG_STATUS
 ac_clean_files=$ac_clean_files_save
 
 test "$no_create" = yes || $SHELL $CONFIG_STATUS || { (exit 1); exit; }
-
-sed 's/$/
-/g' < $srcdir/COPYING > COPYING.DOS
 
 # **************************************************************************

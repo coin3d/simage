@@ -96,9 +96,9 @@ SIMAGE_VERSION = @SIMAGE_VERSION@
 VERSION = @VERSION@
 install_sh = @install_sh@
 simage_configure_date = @simage_configure_date@
-simage_srcdir_dos = @simage_srcdir_dos@
 win_includedir = @win_includedir@
 win_libdir = @win_libdir@
+win_srcdir = @win_srcdir@
 
 
 SUBDIRS = src
@@ -503,7 +503,10 @@ maintainer-clean
 simage-config: simage-config.in
 
 simage-installer.exe:
-	makensis build\\simage.nsi
+	@sed 's/$$/
+/g' <$(srcdir)/COPYING >COPYING.DOS; \
+	makensis build\\simage.nsi; \
+	rm COPYING.DOS
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

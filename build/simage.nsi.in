@@ -12,7 +12,7 @@ CRCCheck "on"
 UninstallExeName "simage-uninstaller.exe"
 
 LicenseText "Public Domain"
-LicenseData COPYING.DOS
+LicenseData "COPYING.DOS"
 
 ComponentText "simage library"
 InstType "Binary SDK"
@@ -60,53 +60,53 @@ SetCompress auto
 SetOverwrite on
 
 SetOutPath $INSTDIR\source\simage-@SIMAGE_VERSION@
-File @simage_srcdir_dos@\AUTHORS
-File @simage_srcdir_dos@\COPYING
-File @simage_srcdir_dos@\ChangeLog
-File @simage_srcdir_dos@\ChangeLog.sh
-File @simage_srcdir_dos@\INSTALL
-File @simage_srcdir_dos@\Makefile.am
-File @simage_srcdir_dos@\Makefile.in
-File @simage_srcdir_dos@\NEWS
-File @simage_srcdir_dos@\README
-File @simage_srcdir_dos@\README.WIN32
-File @simage_srcdir_dos@\aclocal.m4
-File @simage_srcdir_dos@\bootstrap
-File @simage_srcdir_dos@\config.h.in
-File @simage_srcdir_dos@\configure
-File @simage_srcdir_dos@\configure.in
-File @simage_srcdir_dos@\simage-config.in
+File @win_srcdir@\AUTHORS
+File @win_srcdir@\COPYING
+File @win_srcdir@\ChangeLog
+File @win_srcdir@\ChangeLog.sh
+File @win_srcdir@\INSTALL
+File @win_srcdir@\Makefile.am
+File @win_srcdir@\Makefile.in
+File @win_srcdir@\NEWS
+File @win_srcdir@\README
+File @win_srcdir@\README.WIN32
+File @win_srcdir@\aclocal.m4
+File @win_srcdir@\bootstrap
+File @win_srcdir@\config.h.in
+File @win_srcdir@\configure
+File @win_srcdir@\configure.in
+File @win_srcdir@\simage-config.in
 SetOutPath $INSTDIR\source\simage-@SIMAGE_VERSION@\build
-File @simage_srcdir_dos@\build\README
-File @simage_srcdir_dos@\build\simage.nsi.in
-File @simage_srcdir_dos@\build\simage.spec.in
+File @win_srcdir@\build\README
+File @win_srcdir@\build\simage.nsi.in
+File @win_srcdir@\build\simage.spec.in
 SetOutPath $INSTDIR\source\simage-@SIMAGE_VERSION@\cfg
-File @simage_srcdir_dos@\cfg\README
-File @simage_srcdir_dos@\cfg\config.guess
-File @simage_srcdir_dos@\cfg\config.sub
-File @simage_srcdir_dos@\cfg\depcomp
-File @simage_srcdir_dos@\cfg\install-sh
-File @simage_srcdir_dos@\cfg\ltconfig
-File @simage_srcdir_dos@\cfg\ltmain.sh
-File @simage_srcdir_dos@\cfg\missing
-File @simage_srcdir_dos@\cfg\mkinstalldirs
+File @win_srcdir@\cfg\README
+File @win_srcdir@\cfg\config.guess
+File @win_srcdir@\cfg\config.sub
+File @win_srcdir@\cfg\depcomp
+File @win_srcdir@\cfg\install-sh
+File @win_srcdir@\cfg\ltconfig
+File @win_srcdir@\cfg\ltmain.sh
+File @win_srcdir@\cfg\missing
+File @win_srcdir@\cfg\mkinstalldirs
 SetOutPath $INSTDIR\source\simage-@SIMAGE_VERSION@\cfg\m4
-File @simage_srcdir_dos@\cfg\m4\ChangeLog
-File @simage_srcdir_dos@\cfg\m4\ChangeLog.sh
-File @simage_srcdir_dos@\cfg\m4\README
-File @simage_srcdir_dos@\cfg\m4\TODO
-File @simage_srcdir_dos@\cfg\m4\*.m4
-File @simage_srcdir_dos@\cfg\m4\msvccc
-File @simage_srcdir_dos@\cfg\m4\cl-opts.txt
+File @win_srcdir@\cfg\m4\ChangeLog
+File @win_srcdir@\cfg\m4\ChangeLog.sh
+File @win_srcdir@\cfg\m4\README
+File @win_srcdir@\cfg\m4\TODO
+File @win_srcdir@\cfg\m4\*.m4
+File @win_srcdir@\cfg\m4\msvccc
+File @win_srcdir@\cfg\m4\cl-opts.txt
 SetOutPath $INSTDIR\source\simage-@SIMAGE_VERSION@\include
-File @simage_srcdir_dos@\include\simage.h.in
-File @simage_srcdir_dos@\include\*.h
+File @win_srcdir@\include\simage.h.in
+File @win_srcdir@\include\*.h
 SetOutPath $INSTDIR\source\simage-@SIMAGE_VERSION@\src
-File @simage_srcdir_dos@\src\Makefile.*
-File @simage_srcdir_dos@\src\*.c
+File @win_srcdir@\src\Makefile.*
+File @win_srcdir@\src\*.c
 SetOutPath $INSTDIR\source\simage-@SIMAGE_VERSION@\tests
-File @simage_srcdir_dos@\tests\img.*
-File @simage_srcdir_dos@\tests\loaders.c
+File @win_srcdir@\tests\img.*
+File @win_srcdir@\tests\loaders.c
 
 # **************************************************************************
 # Section "Extra Libraries"

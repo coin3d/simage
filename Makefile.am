@@ -12,5 +12,8 @@ m4datadir = $(datadir)/aclocal
 m4data_DATA = cfg/m4/simage.m4
 
 simage-installer.exe:
-	makensis build\\simage.nsi
+	@sed 's/$$/
+/g' <$(srcdir)/COPYING >COPYING.DOS; \
+	makensis build\\simage.nsi; \
+	rm COPYING.DOS
 
