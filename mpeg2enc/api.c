@@ -204,6 +204,7 @@ SimpegWrite_encode(const char *output_filename,
   /* open output file */
   if (!(context->outfile=fopen(output_filename,"wb")))
   {
+    /* FIXME: can overflow context->errortext buffer. 20010918 mortene. */
     sprintf(context->errortext,"Couldn't create output file %s",output_filename);
     simpeg_encode_error(context,context->errortext);
   }
@@ -1233,4 +1234,3 @@ static void init_context_data(simpeg_encode_context * context)
 
   context->statname[0] = '%';
 }
-

@@ -199,7 +199,6 @@ simpeg_encode_profile_and_level_checks(simpeg_encode_context * context)
   {
     if (!context->quiet)
       SimpegWrite_warning(context,"profile uses a reserved value, conformance checks skipped");
-    /* fprintf(stderr,"Warning: profile uses a reserved value, conformance checks skipped\n"); */
     return;
   }
 
@@ -216,7 +215,7 @@ simpeg_encode_profile_and_level_checks(simpeg_encode_context * context)
 
   /* check profile@level combination */
   if(!profile_level_defined[context->profile-1][(context->level-4) >> 1])
-    simpeg_encode_error(context, "undefined profile@level combination");
+    simpeg_encode_error(context, "unsupported profile + level combination");
   
 
   /* profile (syntax) constraints */

@@ -45,6 +45,8 @@ struct simage_movie_exporter {
   struct simage_movie_exporter * next;
 };
 
+// FIXME: convert access to these variables into the singleton
+// pattern. 20010917 mortene.
 static struct simage_movie_importer * importers;
 static struct simage_movie_exporter * exporters;
 
