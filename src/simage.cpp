@@ -1,3 +1,7 @@
+/*
+ *
+ */
+
 #include "simage.h"
 #include <assert.h>
 #include <stdio.h>
