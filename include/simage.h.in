@@ -209,6 +209,13 @@
 extern "C" {
 #endif
 
+  /* Note specifically for MSWindows that by leaving out the APIENTRY
+     keyword for the function definitions, we default to the __cdecl
+     calling convention. This is important to take into consideration
+     when explicitly linking to the library at run-time: when using
+     the wrong calling convention, obscure errors due to stack
+     corruption can occur under certain (possibly rare) conditions. */
+
   /* run-time version checking */
   SIMAGE_DLL_API void simage_version(int * major, int * minor, int * micro);
 
@@ -218,8 +225,8 @@ extern "C" {
   /* reading and parsing image files */
   /* returned image buffer must be freed by simage_free_image() */
   SIMAGE_DLL_API unsigned char * simage_read_image(const char * filename,
-                                                      int * w, int * h,
-                                                      int * numcomponents);
+                                                   int * w, int * h,
+                                                   int * numcomponents);
 
   /* check this if simage_read_image returns NULL or simage_write_image returns 0 */
   SIMAGE_DLL_API const char * simage_get_last_error(void);
@@ -235,9 +242,9 @@ extern "C" {
   /* scale the input image and return a new image with the given dimensions */
   /* returned image buffer must be freed by simage_free_image() */
   SIMAGE_DLL_API unsigned char * simage_resize(unsigned char * imagedata,
-                                                  int width, int height,
-                                                  int numcomponents,
-                                                  int newwidth, int newheight);
+                                               int width, int height,
+                                               int numcomponents,
+                                               int newwidth, int newheight);
 
   /* use the plugin interface described below for extending simage to
      handle more file formats */
@@ -252,7 +259,7 @@ extern "C" {
   };
 
   SIMAGE_DLL_API void * simage_add_loader(const struct simage_plugin * l,
-                                             int addbefore);
+                                          int addbefore);
   SIMAGE_DLL_API void simage_remove_loader(void * handle);
 
 
@@ -352,12 +359,13 @@ extern "C" {
   /**** NOTE: new methods for simage version 1.3 *******************/
   /*****************************************************************/
 
+  /* returned image buffer must be freed by simage_free_image() */
   SIMAGE_DLL_API unsigned char * simage_resize3d(unsigned char * imagedata,
-						 int width, int height,
-						 int numcomponents,
-						 int layers,
-						 int newwidth, int newheight,
-						 int newlayers);
+                                                 int width, int height,
+                                                 int numcomponents,
+                                                 int layers,
+                                                 int newwidth, int newheight,
+                                                 int newlayers);
 
   /*****************************************************************/
   /**** NOTE: new methods for simage version 1.4 *******************/
@@ -375,23 +383,23 @@ extern "C" {
   SIMAGE_DLL_API s_stream * s_stream_create(const char * filename, 
                                             s_params * params /* | NULL */);
   SIMAGE_DLL_API void * s_stream_get_buffer(s_stream * stream, 
-                                           void * prealloc /* | NULL */,
-                                           int *size /* | NULL */,
-                                           s_params * params /* | NULL */);
+                                            void * prealloc /* | NULL */,
+                                            int *size /* | NULL */,
+                                            s_params * params /* | NULL */);
   SIMAGE_DLL_API int s_stream_put_buffer(s_stream * stream, void * buffer, 
-                                        int size, 
-                                        s_params * params /* | NULL */);
+                                         int size, 
+                                         s_params * params /* | NULL */);
   SIMAGE_DLL_API void s_stream_close(s_stream * stream);
   SIMAGE_DLL_API void s_stream_destroy(s_stream * stream);
   SIMAGE_DLL_API s_params * s_stream_params(s_stream * stream);
   
   SIMAGE_DLL_API void s_stream_importer_add(s_stream_open_func * open,
-                                           s_stream_get_func * get,
-                                           s_stream_close_func * close);
+                                            s_stream_get_func * get,
+                                            s_stream_close_func * close);
   
   SIMAGE_DLL_API void s_stream_exporter_add(s_stream_create_func * create,
-                                           s_stream_put_func * put,
-                                           s_stream_close_func * close);
+                                            s_stream_put_func * put,
+                                            s_stream_close_func * close);
 
 
 #ifdef __cplusplus
