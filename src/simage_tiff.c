@@ -82,9 +82,9 @@ remap_row(unsigned char *ptr, unsigned char *data, int n,
   unsigned int ix;
   while (n--) {
     ix = *data++;
-    *ptr++ = rmap[ix];
-    *ptr++ = gmap[ix];
-    *ptr++ = bmap[ix];
+    *ptr++ = (unsigned char) rmap[ix];
+    *ptr++ = (unsigned char) gmap[ix];
+    *ptr++ = (unsigned char) bmap[ix];
   }
 }
 
@@ -297,7 +297,7 @@ simage_tiff_load(const char *filename,
     for (row = 0; !tifferror && row < h; row++) {
       int s;
       for (s = 0; s < 3; s++) {
-	if (TIFFReadScanline(in, inbuf+s*rowsize, row, s) < 0) {
+	if (TIFFReadScanline(in, (tdata_t)inbuf+s*rowsize, (uint32)row, (tsample_t)s) < 0) {
 	  tifferror = ERR_READ; break;
 	}
       }

@@ -68,8 +68,8 @@ decode_row(GifFileType * giffile,
   
   while (len--) {
     col = *rowdata++;
-    cmentry = colormap ? &colormap->Colors[col] : NULL;
     if (col >= colormapsize) col = 0; /* just in case */
+    cmentry = colormap ? &colormap->Colors[col] : NULL;
     if (cmentry) {
       *ptr++ = cmentry->Red;
       *ptr++ = cmentry->Green;
@@ -90,9 +90,8 @@ simage_gif_load(const char *filename,
                 int *height_ret,
                 int *numComponents_ret)
 {
-  int i, j, n, row, col, width, height, extcode, colormapsize;
+  int i, j, n, row, col, width, height, extcode;
   unsigned char * rowdata;
-  unsigned char * image;
   unsigned char * buffer, * ptr;
   unsigned char bg;
   int transparent;
