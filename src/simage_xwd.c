@@ -5,10 +5,16 @@
  * This implementation is far from complete and kind of "ad hoc".
  */
 
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif /* HAVE_CONFIG_H */
+
 #include <simage_xwd.h>
 
 #include <sys/stat.h>
+#if HAVE_UNISTD_H
 #include <unistd.h>
+#endif /* HAVE_UNISTD_H */
 
 #include <stdio.h>
 #include <stdlib.h>

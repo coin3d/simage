@@ -21,6 +21,9 @@
 /* define to support the ungif library */
 #undef HAVE_UNGIFLIB
 
+/* Define if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
 /* Name of package */
 #undef PACKAGE
 

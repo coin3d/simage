@@ -289,6 +289,11 @@ AC_ARG_WITH(
 AC_SUBST([SUFFIX])
 
 # **************************************************************************
+# general configuration queries
+
+AC_CHECK_HEADERS([unistd.h])
+
+# **************************************************************************
 # libtiff and libpng uses math library functions.
 
 SIM_AC_CHECK_MATHLIB(SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_libm",
