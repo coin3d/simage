@@ -69,9 +69,12 @@ simage_jpeg_identify(const char * ptr,
 		     int headerlen)
 {
   static unsigned char jpgcmp[] = {'J', 'F', 'I', 'F' };
-  if (headerlen < 4) return 0;
+  static unsigned char jpgcmp2[] = {'E', 'x', 'i', 'f' };
+  if (headerlen < 10) return 0;
   if (memcmp((const void*)&header[6], 
 	     (const void*)jpgcmp, 4) == 0) return 1;
+  if (memcmp((const void*)&header[6], 
+	     (const void*)jpgcmp2, 4) == 0) return 1;
   return 0;
 }
 
