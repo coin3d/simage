@@ -3,7 +3,7 @@
 
 m4_define([SIMAGE_MAJOR], [1])
 m4_define([SIMAGE_MINOR], [2])
-m4_define([SIMAGE_MICRO], [1])
+m4_define([SIMAGE_MICRO], [0])
 
 # **************************************************************************
 AC_INIT([simage], [v[]SIMAGE_MAJOR.SIMAGE_MINOR.SIMAGE_MICRO])
