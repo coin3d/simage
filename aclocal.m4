@@ -1423,8 +1423,8 @@ true)
   sim_ac_libungif_debug=false
   test -n "`echo -- $CPPFLAGS $CFLAGS $CXXFLAGS | grep -- '-g\\>'`" &&
     sim_ac_libungif_debug=true
-  test -z "$sim_ac_libungif_path" -a x"$prefix" != xNONE &&
-    sim_ac_libungif_path=$prefix
+  # test -z "$sim_ac_libungif_path" -a x"$prefix" != xNONE &&
+  #   sim_ac_libungif_path=$prefix
   sim_ac_libungif_name=ungif
   if test -n "$sim_ac_libungif_path"; then
     for sim_ac_libungif_candidate in \
@@ -1627,8 +1627,8 @@ true)
   sim_ac_libjpeg_debug=false
   test -n "`echo -- $CPPFLAGS $CFLAGS $CXXFLAGS | grep -- '-g\\>'`" &&
     sim_ac_libjpeg_debug=true
-  test -z "$sim_ac_libjpeg_path" -a x"$prefix" != xNONE &&
-    sim_ac_libjpeg_path=$prefix
+  # test -z "$sim_ac_libjpeg_path" -a x"$prefix" != xNONE &&
+  #   sim_ac_libjpeg_path=$prefix
   sim_ac_libjpeg_name=jpeg
   if test -n "$sim_ac_libjpeg_path"; then
     for sim_ac_libjpeg_candidate in \
@@ -1731,8 +1731,8 @@ true)
   sim_ac_libzlib_debug=false
   test -n "`echo -- $CPPFLAGS $CFLAGS $CXXFLAGS | grep -- '-g\\>'`" &&
     sim_ac_libzlib_debug=true
-  test -z "$sim_ac_libzlib_path" -a x"$prefix" != xNONE &&
-    sim_ac_libzlib_path=$prefix
+  # test -z "$sim_ac_libzlib_path" -a x"$prefix" != xNONE &&
+  #   sim_ac_libzlib_path=$prefix
   sim_ac_libzlib_name=z
   if test -n "$sim_ac_libzlib_path"; then
     for sim_ac_libzlib_candidate in \
@@ -1852,8 +1852,8 @@ true)
   sim_ac_libpng_debug=false
   test -n "`echo -- $CPPFLAGS $CFLAGS $CXXFLAGS | grep -- '-g\\>'`" &&
     sim_ac_libpng_debug=true
-  test -z "$sim_ac_libpng_path" -a x"$prefix" != xNONE &&
-    sim_ac_libpng_path=$prefix
+  # test -z "$sim_ac_libpng_path" -a x"$prefix" != xNONE &&
+  #   sim_ac_libpng_path=$prefix
   sim_ac_libpng_name=png
   if test -n "$sim_ac_libpng_path"; then
     for sim_ac_libpng_candidate in \
@@ -1971,8 +1971,8 @@ true)
   sim_ac_libtiff_debug=false
   test -n "`echo -- $CPPFLAGS $CFLAGS $CXXFLAGS | grep -- '-g\\>'`" &&
     sim_ac_libtiff_debug=true
-  test -z "$sim_ac_libtiff_path" -a x"$prefix" != xNONE &&
-    sim_ac_libtiff_path=$prefix
+  # test -z "$sim_ac_libtiff_path" -a x"$prefix" != xNONE &&
+  #   sim_ac_libtiff_path=$prefix
   sim_ac_libtiff_name=tiff
   if test -n "$sim_ac_libtiff_path"; then
     for sim_ac_libtiff_candidate in \
