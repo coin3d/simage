@@ -10,13 +10,14 @@ dist_m4data_DATA = cfg/m4/simage.m4
 cfgdatadir = $(datadir)/Coin/conf
 cfgdata_DATA = simage-@CONFIG@.cfg
 
-dist_SCRIPTS = \
+noinst_SCRIPTS = \
 	cfg/m4/msvccc
 
 EXTRA_DIST = \
 	simage.cfg.in \
 	cfg/depcomp \
 	cfg/ltconfig \
+	cfg/m4/msvccc \
 	build/simage.spec.in \
 	README.WIN32
 
