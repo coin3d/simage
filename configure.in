@@ -130,8 +130,8 @@ fi
 # (to be written)
 #
 # **************************************************************************
-# Binary releases
-# ===============
+# Binaries
+# ========
 #
 #  * MSWindows SDK: this is constructed as a self-extracting InstallShield
 #    package. Run ``configure'' and ``make install'' on an MSWin-box with
@@ -144,6 +144,8 @@ fi
 #    A self-extracting executable SETUPEX.EXE with the InstallShield install
 #    should then be available under [simage_builddir]/build/simage/. Move
 #    this to <ftp://ftp.sim.no/pub/coin/simage-sdk-@SIMAGE_VERSION@.exe>.
+#
+#  * RPM package: (to be written)
 #
 # **************************************************************************
 # Release history
