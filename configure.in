@@ -114,16 +114,19 @@ AM_CONDITIONAL(SIMAGE_JPEG_SUPPORT, test x"$sim_ac_jpegdev_avail" = xyes)
 # **************************************************************************
 # Check if UNGIF support is wanted (and if so, available).
 
-SIM_AC_CHECK_UNGIFLIB([
-  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_ungifdev_cppflags"
-  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_ungifdev_ldflags"
-  SIMAGE_EXTRA_LIBS="$sim_ac_ungifdev_libs $SIMAGE_EXTRA_LIBS"
+SIM_AC_HAVE_LIBUNGIF_IFELSE([
   AC_DEFINE(HAVE_UNGIFLIB)
+  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libungif_cppflags"
+  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libungif_ldflags"
+  SIMAGE_EXTRA_LIBS="$sim_ac_libungif_libs $SIMAGE_EXTRA_LIBS"
+  CPPFLAGS="$CPPFLAGS $sim_ac_libungif_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_libungif_ldflags"
+  LIBS="$sim_ac_libungif_libs $LIBS"
 ], [
-  AC_MSG_WARN(libungif development system not found)
+  AC_MSG_WARN(libungif will not be used)
 ])
 
-AM_CONDITIONAL(SIMAGE_UNGIF_SUPPORT, test x"$sim_ac_ungifdev_avail" = xyes)
+AM_CONDITIONAL(SIMAGE_UNGIF_SUPPORT, test x"$sim_ac_have_libungif" = xtrue)
 
 # **************************************************************************
 # Check if TIFF support is wanted (and if so, available).
@@ -261,7 +264,7 @@ shift
 shift
 SIMAGE_EXTRA_CPPFLAGS=$@
 
-SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LDFLAGS, -I$includedir $SIMAGE_EXTRA_LDFLAGS)
+SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LDFLAGS, -L$libdir $SIMAGE_EXTRA_LDFLAGS)
 set : $SIMAGE_EXTRA_LDFLAGS
 shift
 shift

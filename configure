@@ -530,6 +530,10 @@ Program names:
   --program-suffix=SUFFIX            append SUFFIX to installed program names
   --program-transform-name=PROGRAM   run sed PROGRAM on installed program names
 
+X features:
+  --x-includes=DIR    X include files are in DIR
+  --x-libraries=DIR   X library files are in DIR
+
 System types:
   --build=BUILD     configure for building on BUILD [guessed]
   --host=HOST       build programs to run on HOST [BUILD]
@@ -558,7 +562,8 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-gnu-ld           assume the C compiler uses GNU ld default=no
   --with-jpeg=DIR         include support for JPEG images default=yes
-  --with-ungif=DIR        include support for GIF images default=yes
+  --with-ungif=PATH     enable use of libungif
+  --with-x                use the X Window System
   --with-tiff=DIR         include support for TIFF images default=yes
   --with-zlib=DIR         zlib installation directory
   --with-png=DIR          include support for PNG images default=yes
@@ -793,7 +798,7 @@ ac_gnu_compiler=$ac_cv_prog_gcc
 
 # Extract the first word of "${ac_tool_prefix}gcc", so it can be a program name with args.
 set dummy ${ac_tool_prefix}gcc; ac_word=$2
-echo "configure:796: checking for $ac_word" >&5
+echo "configure:801: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_prog_CC+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -817,10 +822,10 @@ fi
 fi
 CC=$ac_cv_prog_CC
 if test -n "$CC"; then
-  echo "configure:820: result: $CC" >&5
+  echo "configure:825: result: $CC" >&5
 echo "${ECHO_T}$CC" >&6
 else
-  echo "configure:823: result: no" >&5
+  echo "configure:828: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
@@ -828,7 +833,7 @@ if test -z "$ac_cv_prog_CC"; then
   if test -n "$ac_tool_prefix"; then
     # Extract the first word of "gcc", so it can be a program name with args.
 set dummy gcc; ac_word=$2
-echo "configure:831: checking for $ac_word" >&5
+echo "configure:836: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_prog_ac_ct_CC+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -852,10 +857,10 @@ fi
 fi
 ac_ct_CC=$ac_cv_prog_ac_ct_CC
 if test -n "$ac_ct_CC"; then
-  echo "configure:855: result: $ac_ct_CC" >&5
+  echo "configure:860: result: $ac_ct_CC" >&5
 echo "${ECHO_T}$ac_ct_CC" >&6
 else
-  echo "configure:858: result: no" >&5
+  echo "configure:863: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
@@ -868,7 +873,7 @@ fi
 if test -z "$CC"; then
   # Extract the first word of "${ac_tool_prefix}cc", so it can be a program name with args.
 set dummy ${ac_tool_prefix}cc; ac_word=$2
-echo "configure:871: checking for $ac_word" >&5
+echo "configure:876: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_prog_CC+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -892,10 +897,10 @@ fi
 fi
 CC=$ac_cv_prog_CC
 if test -n "$CC"; then
-  echo "configure:895: result: $CC" >&5
+  echo "configure:900: result: $CC" >&5
 echo "${ECHO_T}$CC" >&6
 else
-  echo "configure:898: result: no" >&5
+  echo "configure:903: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
@@ -903,7 +908,7 @@ if test -z "$ac_cv_prog_CC"; then
   if test -n "$ac_tool_prefix"; then
     # Extract the first word of "cc", so it can be a program name with args.
 set dummy cc; ac_word=$2
-echo "configure:906: checking for $ac_word" >&5
+echo "configure:911: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_prog_ac_ct_CC+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -927,10 +932,10 @@ fi
 fi
 ac_ct_CC=$ac_cv_prog_ac_ct_CC
 if test -n "$ac_ct_CC"; then
-  echo "configure:930: result: $ac_ct_CC" >&5
+  echo "configure:935: result: $ac_ct_CC" >&5
 echo "${ECHO_T}$ac_ct_CC" >&6
 else
-  echo "configure:933: result: no" >&5
+  echo "configure:938: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
@@ -944,7 +949,7 @@ fi
 if test -z "$CC"; then
   # Extract the first word of "cc", so it can be a program name with args.
 set dummy cc; ac_word=$2
-echo "configure:947: checking for $ac_word" >&5
+echo "configure:952: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_prog_CC+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -986,10 +991,10 @@ fi
 fi
 CC=$ac_cv_prog_CC
 if test -n "$CC"; then
-  echo "configure:989: result: $CC" >&5
+  echo "configure:994: result: $CC" >&5
 echo "${ECHO_T}$CC" >&6
 else
-  echo "configure:992: result: no" >&5
+  echo "configure:997: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
@@ -999,7 +1004,7 @@ if test -z "$CC"; then
 do
   # Extract the first word of "$ac_tool_prefix$ac_prog", so it can be a program name with args.
 set dummy $ac_tool_prefix$ac_prog; ac_word=$2
-echo "configure:1002: checking for $ac_word" >&5
+echo "configure:1007: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_prog_CC+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1023,10 +1028,10 @@ fi
 fi
 CC=$ac_cv_prog_CC
 if test -n "$CC"; then
-  echo "configure:1026: result: $CC" >&5
+  echo "configure:1031: result: $CC" >&5
 echo "${ECHO_T}$CC" >&6
 else
-  echo "configure:1029: result: no" >&5
+  echo "configure:1034: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
@@ -1037,7 +1042,7 @@ if test "$CC" = ""; then
 do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
-echo "configure:1040: checking for $ac_word" >&5
+echo "configure:1045: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_prog_CC+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1061,10 +1066,10 @@ fi
 fi
 CC=$ac_cv_prog_CC
 if test -n "$CC"; then
-  echo "configure:1064: result: $CC" >&5
+  echo "configure:1069: result: $CC" >&5
 echo "${ECHO_T}$CC" >&6
 else
-  echo "configure:1067: result: no" >&5
+  echo "configure:1072: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
@@ -1077,10 +1082,10 @@ fi
 
 test -z "$CC" && { echo "configure: error: no acceptable cc found in \$PATH" >&2; exit 1; }
 
-echo "configure:1080: checking whether the C compiler works" >&5
+echo "configure:1085: checking whether the C compiler works" >&5
 echo $ECHO_N "checking whether the C compiler works... $ECHO_C" >&6
 cat >conftest.$ac_ext <<_ACEOF
-#line 1083 "configure"
+#line 1088 "configure"
 #include "confdefs.h"
 
 int
@@ -1091,11 +1096,11 @@ main ()
   return 0;
 }
 _ACEOF
-if { (eval echo configure:1094: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:1099: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   # FIXME: these cross compiler hacks should be removed for autoconf 3.0
 # If not cross compiling, check that we can run a simple program.
 if test "$cross_compiling" != yes; then
-  if { ac_try='./conftest'; { (eval echo configure:1098: \"$ac_try\") >&5; (eval $ac_try) 2>&5; }; }; then
+  if { ac_try='./conftest'; { (eval echo configure:1103: \"$ac_try\") >&5; (eval $ac_try) 2>&5; }; }; then
     cross_compiling=no
   else
     if test "$cross_compiling" = maybe; then
@@ -1106,21 +1111,21 @@ To enable cross compilation, use \`--host'." >&2; exit 1; }
     fi
   fi
 fi
-echo "configure:1109: result: yes" >&5
+echo "configure:1114: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 else
   echo "configure: failed program was:" >&5
   cat conftest.$ac_ext >&5
-  echo "configure:1114: result: no" >&5
+  echo "configure:1119: result: no" >&5
 echo "${ECHO_T}no" >&6
 { echo "configure: error: C compiler cannot create executables" >&2; exit 77; }
 fi
-rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_extecho "configure:1118: checking whether we are cross compiling" >&5
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_extecho "configure:1123: checking whether we are cross compiling" >&5
 echo $ECHO_N "checking whether we are cross compiling... $ECHO_C" >&6
-echo "configure:1120: result: $cross_compiling" >&5
+echo "configure:1125: result: $cross_compiling" >&5
 echo "${ECHO_T}$cross_compiling" >&6
 
-echo "configure:1123: checking whether we are using GNU C" >&5
+echo "configure:1128: checking whether we are using GNU C" >&5
 echo $ECHO_N "checking whether we are using GNU C... $ECHO_C" >&6
 if test "${ac_cv_prog_gcc+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1131,13 +1136,13 @@ cat >conftest.$ac_ext <<_ACEOF
   yes;
 #endif
 _ACEOF
-if { ac_try='${CC-cc} -E conftest.$ac_ext'; { (eval echo configure:1134: \"$ac_try\") >&5; (eval $ac_try) 2>&5; }; } | grep yes >/dev/null; then
+if { ac_try='${CC-cc} -E conftest.$ac_ext'; { (eval echo configure:1139: \"$ac_try\") >&5; (eval $ac_try) 2>&5; }; } | grep yes >/dev/null; then
   ac_cv_prog_gcc=yes
 else
   ac_cv_prog_gcc=no
 fi
 fi
-echo "configure:1140: result: $ac_cv_prog_gcc" >&5
+echo "configure:1145: result: $ac_cv_prog_gcc" >&5
 echo "${ECHO_T}$ac_cv_prog_gcc" >&6
 ac_gnu_compiler=$ac_cv_prog_gcc
 if test $ac_gnu_compiler = yes; then
@@ -1148,13 +1153,13 @@ fi
 ac_test_CFLAGS=${CFLAGS+set}
 ac_save_CFLAGS=$CFLAGS
 CFLAGS=
-echo "configure:1151: checking whether ${CC-cc} accepts -g" >&5
+echo "configure:1156: checking whether ${CC-cc} accepts -g" >&5
 echo $ECHO_N "checking whether ${CC-cc} accepts -g... $ECHO_C" >&6
 if test "${ac_cv_prog_cc_g+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 1157 "configure"
+#line 1162 "configure"
 #include "confdefs.h"
 
 int
@@ -1173,7 +1178,7 @@ fi
 rm -f conftest*
 
 fi
-echo "configure:1176: result: $ac_cv_prog_cc_g" >&5
+echo "configure:1181: result: $ac_cv_prog_cc_g" >&5
 echo "${ECHO_T}$ac_cv_prog_cc_g" >&6
 if test "$ac_test_CFLAGS" = set; then
   CFLAGS=$ac_save_CFLAGS
@@ -1190,13 +1195,13 @@ else
     CFLAGS=
   fi
 fi
-echo "configure:1193: checking for Cygwin environment" >&5
+echo "configure:1198: checking for Cygwin environment" >&5
 echo $ECHO_N "checking for Cygwin environment... $ECHO_C" >&6
 if test "${ac_cv_cygwin+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 1199 "configure"
+#line 1204 "configure"
 #include "confdefs.h"
 
 int
@@ -1210,7 +1215,7 @@ return __CYGWIN__;
   return 0;
 }
 _ACEOF
-if { (eval echo configure:1213: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; } && test -s conftest.$ac_objext; then
+if { (eval echo configure:1218: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; } && test -s conftest.$ac_objext; then
   ac_cv_cygwin=yes
 else
   echo "configure: failed program was:" >&5
@@ -1219,16 +1224,16 @@ else
 fi
 rm -f conftest.$ac_objext conftest.$ac_ext
 fi
-echo "configure:1222: result: $ac_cv_cygwin" >&5
+echo "configure:1227: result: $ac_cv_cygwin" >&5
 echo "${ECHO_T}$ac_cv_cygwin" >&6
 test "$ac_cv_cygwin" = yes && CYGWIN=yes
-echo "configure:1225: checking for mingw32 environment" >&5
+echo "configure:1230: checking for mingw32 environment" >&5
 echo $ECHO_N "checking for mingw32 environment... $ECHO_C" >&6
 if test "${ac_cv_mingw32+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 1231 "configure"
+#line 1236 "configure"
 #include "confdefs.h"
 
 int
@@ -1239,7 +1244,7 @@ return __MINGW32__;
   return 0;
 }
 _ACEOF
-if { (eval echo configure:1242: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; } && test -s conftest.$ac_objext; then
+if { (eval echo configure:1247: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; } && test -s conftest.$ac_objext; then
   ac_cv_mingw32=yes
 else
   echo "configure: failed program was:" >&5
@@ -1248,16 +1253,16 @@ else
 fi
 rm -f conftest.$ac_objext conftest.$ac_ext
 fi
-echo "configure:1251: result: $ac_cv_mingw32" >&5
+echo "configure:1256: result: $ac_cv_mingw32" >&5
 echo "${ECHO_T}$ac_cv_mingw32" >&6
 test "$ac_cv_mingw32" = yes && MINGW32=yes
-echo "configure:1254: checking for EMX OS/2 environment" >&5
+echo "configure:1259: checking for EMX OS/2 environment" >&5
 echo $ECHO_N "checking for EMX OS/2 environment... $ECHO_C" >&6
 if test "${ac_cv_emxos2+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 1260 "configure"
+#line 1265 "configure"
 #include "confdefs.h"
 
 int
@@ -1268,7 +1273,7 @@ return __EMX__;
   return 0;
 }
 _ACEOF
-if { (eval echo configure:1271: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; } && test -s conftest.$ac_objext; then
+if { (eval echo configure:1276: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; } && test -s conftest.$ac_objext; then
   ac_cv_emxos2=yes
 else
   echo "configure: failed program was:" >&5
@@ -1277,10 +1282,10 @@ else
 fi
 rm -f conftest.$ac_objext conftest.$ac_ext
 fi
-echo "configure:1280: result: $ac_cv_emxos2" >&5
+echo "configure:1285: result: $ac_cv_emxos2" >&5
 echo "${ECHO_T}$ac_cv_emxos2" >&6
 test "$ac_cv_emxos2" = yes && EMXOS2=yes
-echo "configure:1283: checking for executable suffix" >&5
+echo "configure:1288: checking for executable suffix" >&5
 echo $ECHO_N "checking for executable suffix... $ECHO_C" >&6
 if test "${ac_cv_exeext+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1289,7 +1294,7 @@ else
   ac_cv_exeext=.exe
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 1292 "configure"
+#line 1297 "configure"
 #include "confdefs.h"
 
 int
@@ -1300,7 +1305,7 @@ main ()
   return 0;
 }
 _ACEOF
-if { (eval echo configure:1303: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:1308: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   for ac_file in conftest.*; do
      case $ac_file in
        *.$ac_ext | *.o | *.obj | *.xcoff) ;;
@@ -1316,19 +1321,19 @@ rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
   test -n "$ac_cv_exeext" && ac_cv_exeext=no
 fi
 fi
-echo "configure:1319: result: $ac_cv_exeext" >&5
+echo "configure:1324: result: $ac_cv_exeext" >&5
 echo "${ECHO_T}$ac_cv_exeext" >&6
 EXEEXT=
 test "$ac_cv_exeext" != no && EXEEXT=$ac_cv_exeext
 ac_exeext=$EXEEXT
 
-echo "configure:1325: checking for object suffix" >&5
+echo "configure:1330: checking for object suffix" >&5
 echo $ECHO_N "checking for object suffix... $ECHO_C" >&6
 if test "${ac_cv_objext+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 1331 "configure"
+#line 1336 "configure"
 #include "confdefs.h"
 
 int
@@ -1339,24 +1344,24 @@ main ()
   return 0;
 }
 _ACEOF
-if { (eval echo configure:1342: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; } && test -s conftest.$ac_objext; then
-  for ac_file in conftest.*; do
-    case $ac_file in
-      *.$ac_ext) ;;
-      *) ac_cv_objext=`echo $ac_file | sed s/conftest.//` ;;
-    esac
-  done
-else
-  echo "configure: failed program was:" >&5
-  cat conftest.$ac_ext >&5
-  { echo "configure: error: cannot compile" >&2; exit 1; }
+ if { (eval echo configure:1347: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; }; then
+   for ac_file in conftest.*; do
+   case $ac_file in
+     *.$ac_ext) ;;
+     *) ac_cv_objext=`echo $ac_file | sed s/conftest.//` ;;
+   esac
+   done
+ else
+   rm -f conftest.$ac_ext
+   { echo "configure: error: cannot compile" >&2; exit 1; }
+ fi
+
 fi
-rm -f conftest.$ac_objext conftest.$ac_ext
-fi
-echo "configure:1356: result: $ac_cv_objext" >&5
+echo "configure:1360: result: $ac_cv_objext" >&5
 echo "${ECHO_T}$ac_cv_objext" >&6
 OBJEXT=$ac_cv_objext
 ac_objext=$ac_cv_objext
+rm -f conftest.$ac_objext conftest.$ac_ext
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -1364,7 +1369,7 @@ ac_compile='${CC-cc} -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='${CC-cc} -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_gnu_compiler=$ac_cv_prog_gcc
 
-echo "configure:1367: checking for ${CC-cc} option to accept ANSI C" >&5
+echo "configure:1372: checking for ${CC-cc} option to accept ANSI C" >&5
 echo $ECHO_N "checking for ${CC-cc} option to accept ANSI C... $ECHO_C" >&6
 if test "${am_cv_prog_cc_stdc+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1382,7 +1387,7 @@ for ac_arg in "" -qlanglvl=ansi -std1 -Ae "-Aa -D_HPUX_SOURCE" "-Xc -D__EXTENSIO
 do
   CC="$ac_save_CC $ac_arg"
   cat >conftest.$ac_ext <<_ACEOF
-#line 1385 "configure"
+#line 1390 "configure"
 #include "confdefs.h"
 #include <stdarg.h>
 #include <stdio.h>
@@ -1423,7 +1428,7 @@ return f (e, argv, 0) != argv[0]  ||  f (e, argv, 1) != argv[1];
   return 0;
 }
 _ACEOF
-if { (eval echo configure:1426: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; } && test -s conftest.$ac_objext; then
+if { (eval echo configure:1431: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; } && test -s conftest.$ac_objext; then
   am_cv_prog_cc_stdc="$ac_arg"; break
 else
   echo "configure: failed program was:" >&5
@@ -1437,10 +1442,10 @@ CC="$ac_save_CC"
 fi
 
 if test -z "$am_cv_prog_cc_stdc"; then
-  echo "configure:1440: result: none needed" >&5
+  echo "configure:1445: result: none needed" >&5
 echo "${ECHO_T}none needed" >&6
 else
-  echo "configure:1443: result: $am_cv_prog_cc_stdc" >&5
+  echo "configure:1448: result: $am_cv_prog_cc_stdc" >&5
 echo "${ECHO_T}$am_cv_prog_cc_stdc" >&6
 fi
 case "x$am_cv_prog_cc_stdc" in
@@ -1508,7 +1513,7 @@ ac_configure="$SHELL $ac_aux_dir/configure" # This should be Cygnus configure.
 $ac_config_sub sun4 >/dev/null 2>&1 ||
   { echo "configure: error: cannot run $ac_config_sub" >&2; exit 1; }
 
-echo "configure:1511: checking build system type" >&5
+echo "configure:1516: checking build system type" >&5
 echo $ECHO_N "checking build system type... $ECHO_C" >&6
 if test "${ac_cv_build+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1521,14 +1526,14 @@ test -z "$ac_cv_build_alias" &&
 ac_cv_build=`$ac_config_sub $ac_cv_build_alias` || exit 1
 
 fi
-echo "configure:1524: result: $ac_cv_build" >&5
+echo "configure:1529: result: $ac_cv_build" >&5
 echo "${ECHO_T}$ac_cv_build" >&6
 build=$ac_cv_build
 build_cpu=`echo $ac_cv_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
 build_vendor=`echo $ac_cv_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
 build_os=`echo $ac_cv_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 
-echo "configure:1531: checking host system type" >&5
+echo "configure:1536: checking host system type" >&5
 echo $ECHO_N "checking host system type... $ECHO_C" >&6
 if test "${ac_cv_host+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1539,14 +1544,14 @@ test -z "$ac_cv_host_alias" &&
 ac_cv_host=`$ac_config_sub $ac_cv_host_alias` || exit 1
 
 fi
-echo "configure:1542: result: $ac_cv_host" >&5
+echo "configure:1547: result: $ac_cv_host" >&5
 echo "${ECHO_T}$ac_cv_host" >&6
 host=$ac_cv_host
 host_cpu=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
 host_vendor=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
 host_os=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 
-echo "configure:1549: checking target system type" >&5
+echo "configure:1554: checking target system type" >&5
 echo $ECHO_N "checking target system type... $ECHO_C" >&6
 if test "${ac_cv_target+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1557,7 +1562,7 @@ test "x$ac_cv_target_alias" = "x" &&
 ac_cv_target=`$ac_config_sub $ac_cv_target_alias` || exit 1
 
 fi
-echo "configure:1560: result: $ac_cv_target" >&5
+echo "configure:1565: result: $ac_cv_target" >&5
 echo "${ECHO_T}$ac_cv_target" >&6
 target=$ac_cv_target
 target_cpu=`echo $ac_cv_target | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
@@ -1581,7 +1586,7 @@ test -n "$target_alias" &&
 # AFS /usr/afsws/bin/install, which mishandles nonexistent args
 # SVR4 /usr/ucb/install, which tries to use the nonexistent group "staff"
 # ./install, which can be erroneously created by make from ./install.sh.
-echo "configure:1584: checking for a BSD compatible install" >&5
+echo "configure:1589: checking for a BSD compatible install" >&5
 echo $ECHO_N "checking for a BSD compatible install... $ECHO_C" >&6
 if test -z "$INSTALL"; then
 if test "${ac_cv_path_install+set}" = set; then
@@ -1628,7 +1633,7 @@ fi
     INSTALL=$ac_install_sh
   fi
 fi
-echo "configure:1631: result: $INSTALL" >&5
+echo "configure:1636: result: $INSTALL" >&5
 echo "${ECHO_T}$INSTALL" >&6
 
 # Use test -z because SunOS4 sh mishandles braces in ${var-val}.
@@ -1639,7 +1644,7 @@ test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
 
 test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
-echo "configure:1642: checking whether build environment is sane" >&5
+echo "configure:1647: checking whether build environment is sane" >&5
 echo $ECHO_N "checking whether build environment is sane... $ECHO_C" >&6
 # Just in case
 sleep 1
@@ -1676,7 +1681,7 @@ else
 Check your system clock" >&2; exit 1; }
 fi
 rm -f conftest*
-echo "configure:1679: result: yes" >&5
+echo "configure:1684: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 if test "$program_transform_name" = s,x,x,; then
   program_transform_name=
@@ -1711,7 +1716,7 @@ for ac_prog in mawk gawk nawk awk
 do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
-echo "configure:1714: checking for $ac_word" >&5
+echo "configure:1719: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_prog_AWK+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1735,17 +1740,17 @@ fi
 fi
 AWK=$ac_cv_prog_AWK
 if test -n "$AWK"; then
-  echo "configure:1738: result: $AWK" >&5
+  echo "configure:1743: result: $AWK" >&5
 echo "${ECHO_T}$AWK" >&6
 else
-  echo "configure:1741: result: no" >&5
+  echo "configure:1746: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
 test -n "$AWK" && break
 done
 
-echo "configure:1748: checking whether ${MAKE-make} sets \${MAKE}" >&5
+echo "configure:1753: checking whether ${MAKE-make} sets \${MAKE}" >&5
 echo $ECHO_N "checking whether ${MAKE-make} sets \${MAKE}... $ECHO_C" >&6
 set dummy ${MAKE-make}; ac_make=`echo "$2" | sed 'y,./+-,__p_,'`
 if eval "test \"\${ac_cv_prog_make_${ac_make}_set+set}\" = set"; then
@@ -1765,11 +1770,11 @@ fi
 rm -f conftestmake
 fi
 if eval "test \"`echo '$ac_cv_prog_make_'${ac_make}_set`\" = yes"; then
-  echo "configure:1768: result: yes" >&5
+  echo "configure:1773: result: yes" >&5
 echo "${ECHO_T}yes" >&6
   SET_MAKE=
 else
-  echo "configure:1772: result: no" >&5
+  echo "configure:1777: result: no" >&5
 echo "${ECHO_T}no" >&6
   SET_MAKE="MAKE=${MAKE-make}"
 fi
@@ -1804,7 +1809,7 @@ fi
 
 ac_config_commands="$ac_config_commands default-1"
 
-echo "configure:1807: checking how to run the C preprocessor" >&5
+echo "configure:1812: checking how to run the C preprocessor" >&5
 echo $ECHO_N "checking how to run the C preprocessor... $ECHO_C" >&6
 # On Suns, sometimes $CPP names a directory.
 if test -n "$CPP" && test -d "$CPP"; then
@@ -1822,13 +1827,13 @@ else
   # Use a header file that comes with gcc, so configuring glibc
   # with a fresh cross-compiler works.
   cat >conftest.$ac_ext <<_ACEOF
-#line 1825 "configure"
+#line 1830 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
 _ACEOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1831: \"$ac_try\") >&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1836: \"$ac_try\") >&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.$ac_ext\$"`
 if test -z "$ac_err"; then
   :
@@ -1838,13 +1843,13 @@ else
   cat conftest.$ac_ext >&5
   CPP="${CC-cc} -E -traditional-cpp"
   cat >conftest.$ac_ext <<_ACEOF
-#line 1841 "configure"
+#line 1846 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
 _ACEOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1847: \"$ac_try\") >&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1852: \"$ac_try\") >&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.$ac_ext\$"`
 if test -z "$ac_err"; then
   :
@@ -1854,13 +1859,13 @@ else
   cat conftest.$ac_ext >&5
   CPP="${CC-cc} -nologo -E"
   cat >conftest.$ac_ext <<_ACEOF
-#line 1857 "configure"
+#line 1862 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
 _ACEOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1863: \"$ac_try\") >&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1868: \"$ac_try\") >&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.$ac_ext\$"`
 if test -z "$ac_err"; then
   :
@@ -1881,7 +1886,7 @@ fi
 else
   ac_cv_prog_CPP=$CPP
 fi
-echo "configure:1884: result: $CPP" >&5
+echo "configure:1889: result: $CPP" >&5
 echo "${ECHO_T}$CPP" >&6
 
 # test to see if srcdir already configured
@@ -1926,7 +1931,7 @@ fi
 
 depcc="$CC"
 depcpp="$CPP"
-echo "configure:1929: checking dependency style of $depcc" >&5
+echo "configure:1934: checking dependency style of $depcc" >&5
 echo $ECHO_N "checking dependency style of $depcc... $ECHO_C" >&6
 if test "${am_cv_CC_dependencies_compiler_type+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1967,7 +1972,7 @@ fi
 
 fi
 
-echo "configure:1970: result: $am_cv_CC_dependencies_compiler_type" >&5
+echo "configure:1975: result: $am_cv_CC_dependencies_compiler_type" >&5
 echo "${ECHO_T}$am_cv_CC_dependencies_compiler_type" >&6
 CCDEPMODE="depmode=$am_cv_CC_dependencies_compiler_type"
 
@@ -2003,7 +2008,7 @@ else
 fi
 
 # Turn off default maintainer make-rules -- use ./autogen.sh instead.
-echo "configure:2006: checking whether to enable maintainer-specific portions of Makefiles" >&5
+echo "configure:2011: checking whether to enable maintainer-specific portions of Makefiles" >&5
 echo $ECHO_N "checking whether to enable maintainer-specific portions of Makefiles... $ECHO_C" >&6
     # Check whether --enable-maintainer-mode or --disable-maintainer-mode was given.
 if test "${enable_maintainer_mode+set}" = set; then
@@ -2012,7 +2017,7 @@ if test "${enable_maintainer_mode+set}" = set; then
 else
   USE_MAINTAINER_MODE=no
 fi
-  echo "configure:2015: result: $USE_MAINTAINER_MODE" >&5
+  echo "configure:2020: result: $USE_MAINTAINER_MODE" >&5
 echo "${ECHO_T}$USE_MAINTAINER_MODE" >&6
 
 if test $USE_MAINTAINER_MODE = yes; then
@@ -2071,7 +2076,7 @@ else
 fi
 # Extract the first word of "${ac_tool_prefix}ranlib", so it can be a program name with args.
 set dummy ${ac_tool_prefix}ranlib; ac_word=$2
-echo "configure:2074: checking for $ac_word" >&5
+echo "configure:2079: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_prog_RANLIB+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -2095,10 +2100,10 @@ fi
 fi
 RANLIB=$ac_cv_prog_RANLIB
 if test -n "$RANLIB"; then
-  echo "configure:2098: result: $RANLIB" >&5
+  echo "configure:2103: result: $RANLIB" >&5
 echo "${ECHO_T}$RANLIB" >&6
 else
-  echo "configure:2101: result: no" >&5
+  echo "configure:2106: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
@@ -2106,7 +2111,7 @@ if test -z "$ac_cv_prog_RANLIB"; then
   if test -n "$ac_tool_prefix"; then
     # Extract the first word of "ranlib", so it can be a program name with args.
 set dummy ranlib; ac_word=$2
-echo "configure:2109: checking for $ac_word" >&5
+echo "configure:2114: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_prog_ac_ct_RANLIB+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -2131,10 +2136,10 @@ fi
 fi
 ac_ct_RANLIB=$ac_cv_prog_ac_ct_RANLIB
 if test -n "$ac_ct_RANLIB"; then
-  echo "configure:2134: result: $ac_ct_RANLIB" >&5
+  echo "configure:2139: result: $ac_ct_RANLIB" >&5
 echo "${ECHO_T}$ac_ct_RANLIB" >&6
 else
-  echo "configure:2137: result: no" >&5
+  echo "configure:2142: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
@@ -2154,7 +2159,7 @@ fi
 ac_prog=ld
 if test "$ac_cv_prog_gcc" = yes; then
   # Check if gcc -print-prog-name=ld gives a path.
-  echo "configure:2157: checking for ld used by GCC" >&5
+  echo "configure:2162: checking for ld used by GCC" >&5
 echo $ECHO_N "checking for ld used by GCC... $ECHO_C" >&6
   ac_prog=`($CC -print-prog-name=ld) 2>&5`
   case "$ac_prog" in
@@ -2178,10 +2183,10 @@ echo $ECHO_N "checking for ld used by GCC... $ECHO_C" >&6
     ;;
   esac
 elif test "$with_gnu_ld" = yes; then
-  echo "configure:2181: checking for GNU ld" >&5
+  echo "configure:2186: checking for GNU ld" >&5
 echo $ECHO_N "checking for GNU ld... $ECHO_C" >&6
 else
-  echo "configure:2184: checking for non-GNU ld" >&5
+  echo "configure:2189: checking for non-GNU ld" >&5
 echo $ECHO_N "checking for non-GNU ld... $ECHO_C" >&6
 fi
 if test "${ac_cv_path_LD+set}" = set; then
@@ -2211,14 +2216,14 @@ fi
 
 LD="$ac_cv_path_LD"
 if test -n "$LD"; then
-  echo "configure:2214: result: $LD" >&5
+  echo "configure:2219: result: $LD" >&5
 echo "${ECHO_T}$LD" >&6
 else
-  echo "configure:2217: result: no" >&5
+  echo "configure:2222: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 test -z "$LD" && { echo "configure: error: no acceptable ld found in \$PATH" >&2; exit 1; }
-echo "configure:2221: checking if the linker ($LD) is GNU ld" >&5
+echo "configure:2226: checking if the linker ($LD) is GNU ld" >&5
 echo $ECHO_N "checking if the linker ($LD) is GNU ld... $ECHO_C" >&6
 if test "${ac_cv_prog_gnu_ld+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -2230,10 +2235,10 @@ else
   ac_cv_prog_gnu_ld=no
 fi
 fi
-echo "configure:2233: result: $ac_cv_prog_gnu_ld" >&5
+echo "configure:2238: result: $ac_cv_prog_gnu_ld" >&5
 echo "${ECHO_T}$ac_cv_prog_gnu_ld" >&6
 
-echo "configure:2236: checking for BSD-compatible nm" >&5
+echo "configure:2241: checking for BSD-compatible nm" >&5
 echo $ECHO_N "checking for BSD-compatible nm... $ECHO_C" >&6
 if test "${ac_cv_path_NM+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -2267,10 +2272,10 @@ fi
 fi
 
 NM="$ac_cv_path_NM"
-echo "configure:2270: result: $NM" >&5
+echo "configure:2275: result: $NM" >&5
 echo "${ECHO_T}$NM" >&6
 
-echo "configure:2273: checking whether ln -s works" >&5
+echo "configure:2278: checking whether ln -s works" >&5
 echo $ECHO_N "checking whether ln -s works... $ECHO_C" >&6
 if test "${ac_cv_prog_LN_S+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -2285,10 +2290,10 @@ fi
 fi
 LN_S=$ac_cv_prog_LN_S
 if test "$ac_cv_prog_LN_S" = "ln -s"; then
-  echo "configure:2288: result: yes" >&5
+  echo "configure:2293: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 else
-  echo "configure:2291: result: no" >&5
+  echo "configure:2296: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 
@@ -2318,8 +2323,8 @@ test x"$silent" = xyes && libtool_flags="$libtool_flags --silent"
 case "$lt_target" in
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 2321 "configure"' > conftest.$ac_ext
-  if { (eval echo configure:2322: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; }; then
+  echo '#line 2326 "configure"' > conftest.$ac_ext
+  if { (eval echo configure:2327: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; }; then
     case "`/usr/bin/file conftest.o`" in
     *32-bit*)
       LD="${LD-ld} -32"
@@ -2339,13 +2344,13 @@ case "$lt_target" in
   # On SCO OpenServer 5, we need -belf to get full-featured binaries.
   SAVE_CFLAGS="$CFLAGS"
   CFLAGS="$CFLAGS -belf"
-  echo "configure:2342: checking whether the C compiler needs -belf" >&5
+  echo "configure:2347: checking whether the C compiler needs -belf" >&5
 echo $ECHO_N "checking whether the C compiler needs -belf... $ECHO_C" >&6
 if test "${lt_cv_cc_needs_belf+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 2348 "configure"
+#line 2353 "configure"
 #include "confdefs.h"
 
 int
@@ -2356,7 +2361,7 @@ main ()
   return 0;
 }
 _ACEOF
-if { (eval echo configure:2359: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:2364: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   lt_cv_cc_needs_belf=yes
 else
   echo "configure: failed program was:" >&5
@@ -2365,7 +2370,7 @@ else
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 fi
-echo "configure:2368: result: $lt_cv_cc_needs_belf" >&5
+echo "configure:2373: result: $lt_cv_cc_needs_belf" >&5
 echo "${ECHO_T}$lt_cv_cc_needs_belf" >&6
   if test x"$lt_cv_cc_needs_belf" != x"yes"; then
     # this is probably gcc 2.8.0, egcs 1.0 or newer; no need for -belf
@@ -2468,7 +2473,7 @@ SIMAGE_EXTRA_LIBS=$LIBS
 # configure.in.
 sim_ac_libm=
 
-echo "configure:2471: checking for math functions library" >&5
+echo "configure:2476: checking for math functions library" >&5
 echo $ECHO_N "checking for math functions library... $ECHO_C" >&6
 if test "${sim_cv_lib_math+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -2482,7 +2487,7 @@ else
       sim_ac_store_libs=$LIBS
       LIBS="$sim_ac_store_libs $sim_ac_math_chk"
       cat >conftest.$ac_ext <<_ACEOF
-#line 2485 "configure"
+#line 2490 "configure"
 #include "confdefs.h"
 #include <math.h>
                   #include <stdlib.h>
@@ -2510,7 +2515,7 @@ char s[16];
   return 0;
 }
 _ACEOF
-if { (eval echo configure:2513: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:2518: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   sim_cv_lib_math=$sim_ac_math_chk
 else
   echo "configure: failed program was:" >&5
@@ -2523,7 +2528,7 @@ rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
   done
 
 fi
-echo "configure:2526: result: $sim_cv_lib_math" >&5
+echo "configure:2531: result: $sim_cv_lib_math" >&5
 echo "${ECHO_T}$sim_cv_lib_math" >&6
 
 if test x"$sim_cv_lib_math" != xUNDEFINED; then
@@ -2540,13 +2545,13 @@ fi
 sim_ac_save_ldflags=$LDFLAGS
 LDFLAGS="$LDFLAGS version.lib"
 
-echo "configure:2543: checking if linking should be done \"MSWin-style\"" >&5
+echo "configure:2548: checking if linking should be done \"MSWin-style\"" >&5
 echo $ECHO_N "checking if linking should be done \"MSWin-style\"... $ECHO_C" >&6
 if test "${sim_cv_mswin_linking+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 2549 "configure"
+#line 2554 "configure"
 #include "confdefs.h"
 #include <windows.h>
 #include <version.h>
@@ -2558,7 +2563,7 @@ main ()
   return 0;
 }
 _ACEOF
-if { (eval echo configure:2561: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; } && test -s conftest.$ac_objext; then
+if { (eval echo configure:2566: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; } && test -s conftest.$ac_objext; then
   sim_cv_mswin_linking=yes
 else
   echo "configure: failed program was:" >&5
@@ -2568,7 +2573,7 @@ fi
 rm -f conftest.$ac_objext conftest.$ac_ext
 
 fi
-echo "configure:2571: result: $sim_cv_mswin_linking" >&5
+echo "configure:2576: result: $sim_cv_mswin_linking" >&5
 echo "${ECHO_T}$sim_cv_mswin_linking" >&6
 
 LDFLAGS=$sim_ac_save_ldflags
@@ -2620,13 +2625,13 @@ if test x"$with_jpeg" != xno; then
   LDFLAGS="$LDFLAGS $sim_ac_jpegdev_ldflags"
   LIBS="$sim_ac_jpegdev_libs $LIBS"
 
-  echo "configure:2623: checking whether the libjpeg development system is available" >&5
+  echo "configure:2628: checking whether the libjpeg development system is available" >&5
 echo $ECHO_N "checking whether the libjpeg development system is available... $ECHO_C" >&6
 if test "${sim_cv_lib_jpegdev_avail+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 2629 "configure"
+#line 2634 "configure"
 #include "confdefs.h"
 #include <stdio.h>
                   #include <jpeglib.h>
@@ -2638,7 +2643,7 @@ main ()
   return 0;
 }
 _ACEOF
-if { (eval echo configure:2641: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:2646: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   sim_cv_lib_jpegdev_avail=yes
 else
   echo "configure: failed program was:" >&5
@@ -2647,7 +2652,7 @@ else
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 fi
-echo "configure:2650: result: $sim_cv_lib_jpegdev_avail" >&5
+echo "configure:2655: result: $sim_cv_lib_jpegdev_avail" >&5
 echo "${ECHO_T}$sim_cv_lib_jpegdev_avail" >&6
 
   if test x"$sim_cv_lib_jpegdev_avail" = xyes; then
@@ -2681,43 +2686,224 @@ fi
 # **************************************************************************
 # Check if UNGIF support is wanted (and if so, available).
 
+echo "configure:2689: checking for X" >&5
+echo $ECHO_N "checking for X... $ECHO_C" >&6
+
+# Check whether --with-x or --without-x was given.
+if test "${with_x+set}" = set; then
+  withval="$with_x"
+
+fi
+# $have_x is `yes', `no', `disabled', or empty when we do not yet know.
+if test "x$with_x" = xno; then
+  # The user explicitly disabled X.
+  have_x=disabled
+else
+  if test "x$x_includes" != xNONE && test "x$x_libraries" != xNONE; then
+    # Both variables are already set.
+    have_x=yes
+  else
+if test "${ac_cv_have_x+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  # One or both of the vars are not set, and there is no cached value.
+ac_x_includes=no ac_x_libraries=no
+rm -fr conftestdir
+if mkdir conftestdir; then
+  cd conftestdir
+  # Make sure to not put "make" in the Imakefile rules, since we grep it out.
+  cat >Imakefile <<'EOF'
+acfindx:
+	@echo 'ac_im_incroot="${INCROOT}"; ac_im_usrlibdir="${USRLIBDIR}"; ac_im_libdir="${LIBDIR}"'
+EOF
+  if (xmkmf) >/dev/null 2>/dev/null && test -f Makefile; then
+    # GNU make sometimes prints "make[1]: Entering...", which would confuse us.
+    eval `${MAKE-make} acfindx 2>/dev/null | grep -v make`
+    # Open Windows xmkmf reportedly sets LIBDIR instead of USRLIBDIR.
+    for ac_extension in a so sl; do
+      if test ! -f $ac_im_usrlibdir/libX11.$ac_extension &&
+         test -f $ac_im_libdir/libX11.$ac_extension; then
+        ac_im_usrlibdir=$ac_im_libdir; break
+      fi
+    done
+    # Screen out bogus values from the imake configuration.  They are
+    # bogus both because they are the default anyway, and because
+    # using them would break gcc on systems where it needs fixed includes.
+    case $ac_im_incroot in
+	/usr/include) ;;
+	*) test -f "$ac_im_incroot/X11/Xos.h" && ac_x_includes=$ac_im_incroot;;
+    esac
+    case $ac_im_usrlibdir in
+	/usr/lib | /lib) ;;
+	*) test -d "$ac_im_usrlibdir" && ac_x_libraries=$ac_im_usrlibdir ;;
+    esac
+  fi
+  cd ..
+  rm -fr conftestdir
+fi
+
+# Standard set of common directories for X headers.
+# Check X11 before X11Rn because it is often a symlink to the current release.
+ac_x_header_dirs='
+/usr/X11/include
+/usr/X11R6/include
+/usr/X11R5/include
+/usr/X11R4/include
+
+/usr/include/X11
+/usr/include/X11R6
+/usr/include/X11R5
+/usr/include/X11R4
+
+/usr/local/X11/include
+/usr/local/X11R6/include
+/usr/local/X11R5/include
+/usr/local/X11R4/include
+
+/usr/local/include/X11
+/usr/local/include/X11R6
+/usr/local/include/X11R5
+/usr/local/include/X11R4
+
+/usr/X386/include
+/usr/x386/include
+/usr/XFree86/include/X11
+
+/usr/include
+/usr/local/include
+/usr/unsupported/include
+/usr/athena/include
+/usr/local/x11r5/include
+/usr/lpp/Xamples/include
+
+/usr/openwin/include
+/usr/openwin/share/include'
+
+if test "$ac_x_includes" = no; then
+  # Guess where to find include files, by looking for Intrinsic.h.
+  # First, try using that file with no special directory specified.
+  cat >conftest.$ac_ext <<_ACEOF
+#line 2786 "configure"
+#include "confdefs.h"
+#include <X11/Intrinsic.h>
+_ACEOF
+ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
+{ (eval echo configure:2791: \"$ac_try\") >&5; (eval $ac_try) 2>&5; }
+ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.$ac_ext\$"`
+if test -z "$ac_err"; then
+  # We can compile using X headers with no special include directory.
+ac_x_includes=
+else
+  echo "$ac_err" >&5
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  for ac_dir in $ac_x_header_dirs; do
+  if test -r "$ac_dir/X11/Intrinsic.h"; then
+    ac_x_includes=$ac_dir
+    break
+  fi
+done
+fi
+rm -f conftest*
+fi # $ac_x_includes = no
+
+if test "$ac_x_libraries" = no; then
+  # Check for the libraries.
+  # See if we find them without any special options.
+  # Don't add to $LIBS permanently.
+  ac_save_LIBS=$LIBS
+  LIBS="-lXt $LIBS"
+  cat >conftest.$ac_ext <<_ACEOF
+#line 2817 "configure"
+#include "confdefs.h"
+#include <X11/Intrinsic.h>
+int
+main ()
+{
+XtMalloc (0)
+  ;
+  return 0;
+}
+_ACEOF
+if { (eval echo configure:2828: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+  LIBS=$ac_save_LIBS
+# We can link X programs with no special library path.
+ac_x_libraries=
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  LIBS=$ac_save_LIBS
+for ac_dir in `echo "$ac_x_includes $ac_x_header_dirs" | sed s/include/lib/g`
+do
+  # Don't even attempt the hair of trying to link an X program!
+  for ac_extension in a so sl; do
+    if test -r $ac_dir/libXt.$ac_extension; then
+      ac_x_libraries=$ac_dir
+      break 2
+    fi
+  done
+done
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+fi # $ac_x_libraries = no
+
+if test "$ac_x_includes" = no || test "$ac_x_libraries" = no; then
+  # Didn't find X anywhere.  Cache the known absence of X.
+  ac_cv_have_x="have_x=no"
+else
+  # Record where we found X for the cache.
+  ac_cv_have_x="have_x=yes \
+	        ac_x_includes=$ac_x_includes ac_x_libraries=$ac_x_libraries"
+fi
+fi
+  fi
+  eval "$ac_cv_have_x"
+fi # $with_x != no
+
+if test "$have_x" != yes; then
+  echo "configure:2864: result: $have_x" >&5
+echo "${ECHO_T}$have_x" >&6
+  no_x=yes
+else
+  # If each of the values was on the command line, it overrides each guess.
+  test "x$x_includes" = xNONE && x_includes=$ac_x_includes
+  test "x$x_libraries" = xNONE && x_libraries=$ac_x_libraries
+  # Update the cache value to reflect the command line values.
+  ac_cv_have_x="have_x=yes \
+		ac_x_includes=$x_includes ac_x_libraries=$x_libraries"
+  echo "configure:2874: result: libraries $x_libraries, headers $x_includes" >&5
+echo "${ECHO_T}libraries $x_libraries, headers $x_includes" >&6
+fi
+
+: ${sim_ac_want_libungif=true}
+sim_ac_have_libungif=false
+sim_ac_libungif_extrapath=
+
 # Check whether --with-ungif or --without-ungif was given.
 if test "${with_ungif+set}" = set; then
   withval="$with_ungif"
+  case $withval in
+  no)  sim_ac_want_libungif=false ;;
+  yes) sim_ac_want_libungif=true ;;
+  *)   sim_ac_want_libungif=true
+       sim_ac_libungif_extrapath=$withval ;;
+  esac
 
-else
-  with_ungif=yes
 fi
 
-sim_ac_ungifdev_avail=no
+echo "configure:2894: checking use of libungif for gif support" >&5
+echo $ECHO_N "checking use of libungif for gif support... $ECHO_C" >&6
 
-if test x"$with_ungif" != xno; then
-  if test x"$with_ungif" != xyes; then
-    sim_ac_ungifdev_cppflags="-I${with_ungif}/include"
-    sim_ac_ungifdev_ldflags="-L${with_ungif}/lib"
-  fi
+if $sim_ac_want_libungif; then
+  sim_ac_libungif_save_cppflags=$CPPFLAGS
+  sim_ac_libungif_save_ldflags=$LDFLAGS
+  sim_ac_libungif_save_libs=$LIBS
 
-  if test x"$sim_ac_linking_style" = xmswin; then
-    sim_ac_ungifdev_libs=ungif.lib
-  else
-    sim_ac_ungifdev_libs=-lungif
-  fi
-
-  sim_ac_save_cppflags=$CPPFLAGS
-  sim_ac_save_ldflags=$LDFLAGS
-  sim_ac_save_libs=$LIBS
-
-  CPPFLAGS="$CPPFLAGS $sim_ac_ungifdev_cppflags"
-  LDFLAGS="$LDFLAGS $sim_ac_ungifdev_ldflags"
-  LIBS="$sim_ac_ungifdev_libs $LIBS"
-
-  echo "configure:2714: checking whether the libungif development system is available" >&5
-echo $ECHO_N "checking whether the libungif development system is available... $ECHO_C" >&6
-if test "${sim_cv_lib_ungifdev_avail+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-#line 2720 "configure"
+: ${sim_ac_have_libungif=false}
+sim_ac_libungif_save_libs=$LIBS
+LIBS="-lungif $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+#line 2906 "configure"
 #include "confdefs.h"
 #include <gif_lib.h>
 int
@@ -2728,39 +2914,154 @@ main ()
   return 0;
 }
 _ACEOF
-if { (eval echo configure:2731: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
-  sim_cv_lib_ungifdev_avail=yes
+if { (eval echo configure:2917: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+  sim_ac_have_libungif=true
 else
   echo "configure: failed program was:" >&5
   cat conftest.$ac_ext >&5
-  sim_cv_lib_ungifdev_avail=no
+
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+LIBS=$sim_ac_libungif_save_libs
+if $sim_ac_have_libungif; then
+
+    sim_ac_libungif_cppflags=
+    sim_ac_libungif_ldflags=
+    sim_ac_libungif_libs="-lungif"
+
+else
+
+    # libungif sometimes needs libX11
+
+: ${sim_ac_have_libx11=false}
+
+# prevent multiple runs
+$sim_ac_have_libx11 || {
+  if test x"$no_x" != xyes; then
+    sim_ac_libx11_cppflags=
+    sim_ac_libx11_ldflags=
+    test x"$x_includes" != x && sim_ac_libx11_cppflags="-I$x_includes"
+    test x"$x_libraries" != x && sim_ac_libx11_ldflags="-L$x_libraries"
+    sim_ac_libx11_libs="-lX11"
+
+    sim_ac_libx11_save_cppflags=$CPPFLAGS
+    sim_ac_libx11_save_ldflags=$LDFLAGS
+    sim_ac_libx11_save_libs=$LIBS
+
+    CPPFLAGS="$CPPFLAGS $sim_ac_libx11_cppflags"
+    LDFLAGS="$LDFLAGS $sim_ac_libx11_ldflags"
+    LIBS="$sim_ac_libx11_libs $LIBS"
+
+    cat >conftest.$ac_ext <<_ACEOF
+#line 2956 "configure"
+#include "confdefs.h"
+#include <X11/Xlib.h>
+int
+main ()
+{
+(void)XOpenDisplay(0L);
+  ;
+  return 0;
+}
+_ACEOF
+if { (eval echo configure:2967: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+  sim_ac_have_libx11=true
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+
 fi
-echo "configure:2740: result: $sim_cv_lib_ungifdev_avail" >&5
-echo "${ECHO_T}$sim_cv_lib_ungifdev_avail" >&6
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 
-  if test x"$sim_cv_lib_ungifdev_avail" = xyes; then
-    sim_ac_ungifdev_avail=yes
+    CPPFLAGS=$sim_ac_libx11_save_cppflags
+    LDFLAGS=$sim_ac_libx11_save_ldflags
+    LIBS=$sim_ac_libx11_save_libs
+  fi
+}
 
-  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_ungifdev_cppflags"
-  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_ungifdev_ldflags"
-  SIMAGE_EXTRA_LIBS="$sim_ac_ungifdev_libs $SIMAGE_EXTRA_LIBS"
+if $sim_ac_have_libx11; then
+
+      CPPFLAGS="$sim_ac_libx11_cppflags $sim_ac_libungif_save_cppflags"
+      LDFLAGS="$sim_ac_libx11_ldflags $sim_ac_libungif_save_ldflags"
+      LIBS="$sim_ac_libx11_libs $sim_ac_libungif_save_libs"
+
+: ${sim_ac_have_libungif=false}
+sim_ac_libungif_save_libs=$LIBS
+LIBS="-lungif $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+#line 2992 "configure"
+#include "confdefs.h"
+#include <gif_lib.h>
+int
+main ()
+{
+(void)EGifOpenFileName(0L, 0);
+  ;
+  return 0;
+}
+_ACEOF
+if { (eval echo configure:3003: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+  sim_ac_have_libungif=true
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+LIBS=$sim_ac_libungif_save_libs
+if $sim_ac_have_libungif; then
+
+        sim_ac_libungif_cppflags="$sim_ac_libx11_cppflags"
+        sim_ac_libungif_ldflags="$sim_ac_libx11_ldflags"
+        sim_ac_libungif_libs="-lungif $sim_ac_libx11_libs"
+
+else
+  :
+fi
+
+else
+  :
+fi
+
+fi
+
+  CPPFLAGS=$sim_ac_libungif_save_cppflags
+  LDFLAGS=$sim_ac_libungif_save_ldflags
+  LIBS=$sim_ac_libungif_save_libs
+fi
+
+if $sim_ac_want_libungif; then
+  if $sim_ac_have_libungif; then
+    echo "configure:3035: result: success" >&5
+echo "${ECHO_T}success" >&6
+
   cat >>confdefs.h <<\EOF
 #define HAVE_UNGIFLIB 1
 EOF
 
-  else
-    CPPFLAGS=$sim_ac_save_cppflags
-    LDFLAGS=$sim_ac_save_ldflags
-    LIBS=$sim_ac_save_libs
+  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libungif_cppflags"
+  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libungif_ldflags"
+  SIMAGE_EXTRA_LIBS="$sim_ac_libungif_libs $SIMAGE_EXTRA_LIBS"
+  CPPFLAGS="$CPPFLAGS $sim_ac_libungif_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_libungif_ldflags"
+  LIBS="$sim_ac_libungif_libs $LIBS"
 
-  echo "configure: WARNING: libungif development system not found" >&2
+  else
+    echo "configure:3050: result: failure" >&5
+echo "${ECHO_T}failure" >&6
+
+  echo "configure: WARNING: libungif will not be used" >&2
 
   fi
+else
+  echo "configure:3057: result: disabled" >&5
+echo "${ECHO_T}disabled" >&6
+
+  echo "configure: WARNING: libungif will not be used" >&2
+
 fi
 
-if test x"$sim_ac_ungifdev_avail" = xyes; then
+if test x"$sim_ac_have_libungif" = xtrue; then
   SIMAGE_UNGIF_SUPPORT_TRUE=
   SIMAGE_UNGIF_SUPPORT_FALSE='#'
 else
@@ -2801,13 +3102,13 @@ if test x"$with_tiff" != xno; then
   LDFLAGS="$LDFLAGS $sim_ac_tiffdev_ldflags"
   LIBS="$sim_ac_tiffdev_libs $LIBS"
 
-  echo "configure:2804: checking whether the libtiff development system is available" >&5
+  echo "configure:3105: checking whether the libtiff development system is available" >&5
 echo $ECHO_N "checking whether the libtiff development system is available... $ECHO_C" >&6
 if test "${sim_cv_lib_tiffdev_avail+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 2810 "configure"
+#line 3111 "configure"
 #include "confdefs.h"
 #include <tiffio.h>
 int
@@ -2818,7 +3119,7 @@ main ()
   return 0;
 }
 _ACEOF
-if { (eval echo configure:2821: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:3122: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   sim_cv_lib_tiffdev_avail=yes
 else
   echo "configure: failed program was:" >&5
@@ -2827,7 +3128,7 @@ else
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 fi
-echo "configure:2830: result: $sim_cv_lib_tiffdev_avail" >&5
+echo "configure:3131: result: $sim_cv_lib_tiffdev_avail" >&5
 echo "${ECHO_T}$sim_cv_lib_tiffdev_avail" >&6
 
   if test x"$sim_cv_lib_tiffdev_avail" = x"yes"; then
@@ -2900,13 +3201,13 @@ if test x"$with_zlib" != xno; then
   LDFLAGS="$LDFLAGS $sim_ac_zlib_ldflags"
   LIBS="$sim_ac_zlib_libs $LIBS"
 
-  echo "configure:2903: checking whether the zlib development system is available" >&5
+  echo "configure:3204: checking whether the zlib development system is available" >&5
 echo $ECHO_N "checking whether the zlib development system is available... $ECHO_C" >&6
 if test "${sim_cv_lib_zlib_avail+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 2909 "configure"
+#line 3210 "configure"
 #include "confdefs.h"
 #include <zlib.h>
 int
@@ -2917,7 +3218,7 @@ main ()
   return 0;
 }
 _ACEOF
-if { (eval echo configure:2920: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:3221: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   sim_cv_lib_zlib_avail=yes
 else
   echo "configure: failed program was:" >&5
@@ -2926,7 +3227,7 @@ else
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 fi
-echo "configure:2929: result: $sim_cv_lib_zlib_avail" >&5
+echo "configure:3230: result: $sim_cv_lib_zlib_avail" >&5
 echo "${ECHO_T}$sim_cv_lib_zlib_avail" >&6
 
   if test x"$sim_cv_lib_zlib_avail" = xyes; then
@@ -2978,13 +3279,13 @@ if test x"$with_png" != xno; then
   LDFLAGS="$LDFLAGS $sim_ac_pngdev_ldflags"
   LIBS="$sim_ac_pngdev_libs $LIBS"
 
-  echo "configure:2981: checking whether the libpng development system is available" >&5
+  echo "configure:3282: checking whether the libpng development system is available" >&5
 echo $ECHO_N "checking whether the libpng development system is available... $ECHO_C" >&6
 if test "${sim_cv_lib_pngdev_avail+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 2987 "configure"
+#line 3288 "configure"
 #include "confdefs.h"
 #include <png.h>
 int
@@ -2995,7 +3296,7 @@ main ()
   return 0;
 }
 _ACEOF
-if { (eval echo configure:2998: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
+if { (eval echo configure:3299: \"$ac_link\") >&5; (eval $ac_link) 2>&5; } && test -s conftest$ac_exeext; then
   sim_cv_lib_pngdev_avail=yes
 else
   echo "configure: failed program was:" >&5
@@ -3004,7 +3305,7 @@ else
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 fi
-echo "configure:3007: result: $sim_cv_lib_pngdev_avail" >&5
+echo "configure:3308: result: $sim_cv_lib_pngdev_avail" >&5
 echo "${ECHO_T}$sim_cv_lib_pngdev_avail" >&6
 
   if test x"$sim_cv_lib_pngdev_avail" = x"yes"; then
@@ -3188,7 +3489,7 @@ shift
 SIMAGE_EXTRA_CPPFLAGS=$@
 
 sim_ac_uniqued_list=
-for sim_ac_item in -I$includedir $SIMAGE_EXTRA_LDFLAGS; do
+for sim_ac_item in -L$libdir $SIMAGE_EXTRA_LDFLAGS; do
   if test x"$sim_ac_uniqued_list" = x; then
     sim_ac_uniqued_list="$sim_ac_item"
   else
