@@ -382,7 +382,7 @@ simage_tiff_save(const char *filename,
   bytesperrow = width * numcomponents;
 
   for (y = 0; y < height; y++) {
-    if (TIFFWriteScanline(out, (tdata_t) bytes + bytesperrow * (height-y-1), y, 0) < 0) {
+    if (TIFFWriteScanline(out, (tdata_t) (bytes + bytesperrow * (height-y-1)), y, 0) < 0) {
       TIFFClose(out);
       tifferror = ERR_WRITE;
       return 0;
