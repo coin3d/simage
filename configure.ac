@@ -259,18 +259,15 @@ if $sim_ac_qimage_support_wanted; then
     # real issue, or?  20041021 larsa
     if $SIMAGE_STATIC; then
       if $BUILD_WITH_MSVC; then
-        SIM_AC_CONFIGURATION_SETTING([LIBS], [not added])
 	echo "LIBS: $LIBS";
         :
       else
         LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
         LIBS="$sim_ac_qt_libs $LIBS"
-        SIM_AC_CONFIGURATION_SETTING([LIBS], [added 1])
       fi
     else
       LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
       LIBS="$sim_ac_qt_libs $LIBS"
-      SIM_AC_CONFIGURATION_SETTING([LIBS], [added 2])
     fi
     sim_ac_qimage_support=true
   ], [
