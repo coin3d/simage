@@ -10829,7 +10829,6 @@ if test x"$with_libsndfile" != xno; then
     sim_ac_libsndfile_cppflags="-I${with_libsndfile}/src"
     sim_ac_libsndfile_ldflags="-L${with_libsndfile}"
   fi
-  sim_ac_libsndfile_libs="-lsndfile"
 
   sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
@@ -10837,14 +10836,19 @@ if test x"$with_libsndfile" != xno; then
 
   CPPFLAGS="$CPPFLAGS $sim_ac_libsndfile_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_libsndfile_ldflags"
-  LIBS="$sim_ac_libsndfile_libs $LIBS"
 
   echo "$as_me:$LINENO: checking for libsndfile" >&5
 echo $ECHO_N "checking for libsndfile... $ECHO_C" >&6
 if test "${sim_cv_lib_libsndfile_avail+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  cat >conftest.$ac_ext <<_ACEOF
+
+      sim_ac_lsf_libs="-lsndfile -llibsndfile"
+      sim_ac_lsfchk_hit=false
+      for sim_ac_lsf_lib in "" $sim_ac_lsf_libs; do
+        if ! $sim_ac_lsfchk_hit; then
+          LIBS="$sim_ac_lsf_lib $sim_ac_save_libs"
+          cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 #include "confdefs.h"
 #include <sndfile.h>
@@ -10874,13 +10878,21 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-  sim_cv_lib_libsndfile_avail=yes
+
+                        sim_ac_lsfchk_hit=true
+                        LIBS="$sim_ac_lsf_lib $LIBS"
+                        sim_cv_lib_libsndfile_avail=yes
+
 else
   echo "$as_me: failed program was:" >&5
 cat conftest.$ac_ext >&5
 sim_cv_lib_libsndfile_avail=no
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+        fi
+      done
+
+
 fi
 echo "$as_me:$LINENO: result: $sim_cv_lib_libsndfile_avail" >&5
 echo "${ECHO_T}$sim_cv_lib_libsndfile_avail" >&6

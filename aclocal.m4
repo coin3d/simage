@@ -6693,7 +6693,6 @@ if test x"$with_libsndfile" != xno; then
     sim_ac_libsndfile_cppflags="-I${with_libsndfile}/src"
     sim_ac_libsndfile_ldflags="-L${with_libsndfile}"
   fi
-  sim_ac_libsndfile_libs="-lsndfile"
 
   sim_ac_save_cppflags=$CPPFLAGS
   sim_ac_save_ldflags=$LDFLAGS
@@ -6701,15 +6700,28 @@ if test x"$with_libsndfile" != xno; then
 
   CPPFLAGS="$CPPFLAGS $sim_ac_libsndfile_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_libsndfile_ldflags"
-  LIBS="$sim_ac_libsndfile_libs $LIBS"
 
   AC_CACHE_CHECK(
     [for libsndfile],
     sim_cv_lib_libsndfile_avail,
-    [AC_TRY_LINK([#include <sndfile.h>],
-                 [(void)sf_open(0, 0, 0);],
-                 [sim_cv_lib_libsndfile_avail=yes],
-                 [sim_cv_lib_libsndfile_avail=no])])
+    [
+      sim_ac_lsf_libs="-lsndfile -llibsndfile"
+      sim_ac_lsfchk_hit=false
+      for sim_ac_lsf_lib in "" $sim_ac_lsf_libs; do
+        if ! $sim_ac_lsfchk_hit; then
+          LIBS="$sim_ac_lsf_lib $sim_ac_save_libs"
+          AC_TRY_LINK([#include <sndfile.h>],
+                      [(void)sf_open(0, 0, 0);],
+                      [
+                        sim_ac_lsfchk_hit=true
+                        LIBS="$sim_ac_lsf_lib $LIBS"
+                        sim_cv_lib_libsndfile_avail=yes
+                      ],
+                      [sim_cv_lib_libsndfile_avail=no])
+        fi
+      done
+    ]
+  )
 
   if test x"$sim_cv_lib_libsndfile_avail" = xyes; then
     sim_ac_libsndfile_avail=yes
