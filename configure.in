@@ -334,8 +334,8 @@ SIM_AC_HAVE_LIBJPEG_IFELSE([
   SIM_AC_CONFIGURATION_SETTING([JPEG image format support], [No])
 ])
 
-: ${sim_ac_have_libjpeg=false}
-AM_CONDITIONAL(SIMAGE_JPEG_SUPPORT, $sim_ac_have_libjpeg)
+# : ${sim_ac_have_libjpeg=false}
+# AM_CONDITIONAL(SIMAGE_JPEG_SUPPORT, $sim_ac_have_libjpeg)
 
 # **************************************************************************
 
@@ -368,8 +368,8 @@ SIM_AC_HAVE_LIBPNG_IFELSE([
   fi
 ])
 
-: ${sim_ac_have_libpng=false}
-AM_CONDITIONAL(SIMAGE_PNG_SUPPORT, $sim_ac_have_libpng)
+# : ${sim_ac_have_libpng=false}
+# AM_CONDITIONAL(SIMAGE_PNG_SUPPORT, $sim_ac_have_libpng)
 
 # **************************************************************************
 # Check if TIFF support is wanted (and if so, available).
@@ -387,8 +387,8 @@ SIM_AC_HAVE_LIBTIFF_IFELSE([
   SIM_AC_CONFIGURATION_SETTING([TIFF image format support], [No])
 ])
 
-: ${sim_ac_have_libtiff=false}
-AM_CONDITIONAL(SIMAGE_TIFF_SUPPORT, $sim_ac_have_libtiff)
+# : ${sim_ac_have_libtiff=false}
+# AM_CONDITIONAL(SIMAGE_TIFF_SUPPORT, $sim_ac_have_libtiff)
 
 # **************************************************************************
 # Check if TARGA support is wanted.
@@ -403,7 +403,7 @@ AC_ARG_WITH(
   esac],
   [sim_ac_want_tga=true])
 
-AM_CONDITIONAL(SIMAGE_TGA_SUPPORT, $sim_ac_want_tga)
+# AM_CONDITIONAL(SIMAGE_TGA_SUPPORT, $sim_ac_want_tga)
 if $sim_ac_want_tga; then
   AC_DEFINE(SIMAGE_TGA_SUPPORT, , [define to enable targa support])
   SIM_AC_CONFIGURATION_SETTING([TGA image format support], [Yes])
@@ -424,7 +424,7 @@ AC_ARG_WITH(
   esac],
   [sim_ac_want_rgb=true])
 
-AM_CONDITIONAL(SIMAGE_RGB_SUPPORT, $sim_ac_want_rgb)
+# AM_CONDITIONAL(SIMAGE_RGB_SUPPORT, $sim_ac_want_rgb)
 if $sim_ac_want_rgb; then
   AC_DEFINE(SIMAGE_RGB_SUPPORT, , [Define to enable rgb support])
   SIM_AC_CONFIGURATION_SETTING([RGB image format support], [Yes])
@@ -445,7 +445,7 @@ AC_ARG_WITH(
   esac],
   [sim_ac_want_pic=true])
 
-AM_CONDITIONAL(SIMAGE_PIC_SUPPORT, $sim_ac_want_pic)
+# AM_CONDITIONAL(SIMAGE_PIC_SUPPORT, $sim_ac_want_pic)
 if $sim_ac_want_pic; then
   AC_DEFINE(SIMAGE_PIC_SUPPORT, , [define to enable pic support])
   SIM_AC_CONFIGURATION_SETTING([PIC image format support], [Yes])
@@ -466,7 +466,7 @@ AC_ARG_WITH(
   esac],
   [sim_ac_want_xwd=false])
 
-AM_CONDITIONAL(SIMAGE_XWD_SUPPORT, $sim_ac_want_xwd)
+# AM_CONDITIONAL(SIMAGE_XWD_SUPPORT, $sim_ac_want_xwd)
 if $sim_ac_want_xwd; then
   AC_DEFINE(SIMAGE_XWD_SUPPORT, , [define to enable xwd support])
   SIM_AC_CONFIGURATION_SETTING([XWD support (experimental)], [Yes])

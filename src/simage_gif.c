@@ -2,6 +2,10 @@
   GIF loader, using libungif.
   Based, in part, on source code found in libungif, gif2rgb.c
 */
+
+#include <config.h>
+#ifdef HAVE_UNGIFLIB
+
 #include <simage_gif.h>
 #include <stdlib.h>
 #include <string.h>
@@ -240,3 +244,4 @@ simage_gif_load(const char *filename,
   return buffer;
 }
 
+#endif /* HAVE_UNGIFLIB */

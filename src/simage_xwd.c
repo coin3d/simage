@@ -5,9 +5,8 @@
  * This implementation is far from complete and kind of "ad hoc".
  */
 
-#if HAVE_CONFIG_H
 #include <config.h>
-#endif /* HAVE_CONFIG_H */
+#ifdef SIMAGE_XWD_SUPPORT
 
 #include <simage_xwd.h>
 
@@ -311,4 +310,5 @@ simage_xwd_save(
   return 0;
 } /* simage_xwd_save() */
 
+#endif /* SIMAGE_XWD_SUPPORT */
 /* EOF ****************************************************************** */

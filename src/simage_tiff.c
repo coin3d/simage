@@ -3,6 +3,9 @@
  * 
  */
 
+#include <config.h>
+#ifdef HAVE_TIFFLIB
+
 #include <simage_tiff.h>
 #include <stdio.h>
 
@@ -392,3 +395,5 @@ simage_tiff_save(const char *filename,
   TIFFClose(out);
   return 1;
 }
+
+#endif /* HAVE_TIFFLIB */

@@ -3,6 +3,9 @@
  *
  */
 
+#include <config.h>
+#ifdef SIMAGE_TGA_SUPPORT
+
 #include <simage_tga.h>
 #include <stdio.h>
 #include <assert.h>
@@ -386,3 +389,5 @@ simage_tga_identify(const char *filename,
   /* not a TGA, or not supported type */
   return 0;
 }
+
+#endif /* SIMAGE_TGA_SUPPORT */

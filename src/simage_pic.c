@@ -1,3 +1,6 @@
+#include <config.h>
+#ifdef SIMAGE_PIC_SUPPORT
+
 #include <simage_pic.h>
 #include <stdio.h>
 #include <string.h>
@@ -138,3 +141,5 @@ simage_pic_load(const char *filename,
   *numComponents_ret = format;
   return buffer;
 }
+
+#endif /* SIMAGE_PIC_SUPPORT */

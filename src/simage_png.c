@@ -2,6 +2,9 @@
  * Based heavily on example code in libpng. Some bugs fixed though.
  */
 
+#include <config.h>
+#ifdef HAVE_PNGLIB
+
 #include <simage_png.h>
 #include <stdio.h>
 #include <string.h>
@@ -415,3 +418,5 @@ simage_png_save(const char *filename,
   /* that's it */
   return 1;
 }
+
+#endif /* HAVE_PNGLIB */

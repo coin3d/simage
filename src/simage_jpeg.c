@@ -3,12 +3,14 @@
  *
  */
 
-#include <simage_jpeg.h>
+#include <config.h>
+#ifdef HAVE_JPEGLIB
 
 #include <stdio.h>
 #include <setjmp.h>
 #include <string.h>
 #include <stdlib.h>
+#include <simage_jpeg.h>
 
 /* The geniuses that made the libjpeg forgot to add this wrapper
    around the header file. */
@@ -439,3 +441,5 @@ simage_jpeg_save(const char * filename,
   /* And we're done! */
   return 1;
 }
+
+#endif /* HAVE_JPEGLIB */

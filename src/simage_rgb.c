@@ -1,3 +1,6 @@
+#include <config.h>
+#ifdef SIMAGE_RGB_SUPPORT
+
 #include <simage_rgb.h>
 
 /*
@@ -11,9 +14,6 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #include <string.h>
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
 #ifdef HAVE_WINDOWS_H
 /* FIXME: what the heck do we need this for? Code compiles just fine
    and dandy without this include under MSVC++ 6.0. 20001026
@@ -441,3 +441,5 @@ simage_rgb_save(const char *filename,
   fclose(fp);
   return 1;
 }
+
+#endif /* SIMAGE_RGB_SUPPORT */

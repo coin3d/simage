@@ -2,53 +2,14 @@
 
 INCLUDES = -I$(top_srcdir)/include -I$(top_builddir)/include
 
-if SIMAGE_JPEG_SUPPORT
 JPEGSOURCES = simage_jpeg.c $(top_srcdir)/include/simage_jpeg.h
-else
-JPEGSOURCES =
-endif
-
-if SIMAGE_UNGIF_SUPPORT
 UNGIFSOURCES = simage_gif.c $(top_srcdir)/include/simage_gif.h
-else
-UNGIFSOURCES =
-endif
-
-if SIMAGE_TIFF_SUPPORT
 TIFFSOURCES = simage_tiff.c $(top_srcdir)/include/simage_tiff.h
-else
-TIFFSOURCES =
-endif
-
-if SIMAGE_PNG_SUPPORT
 PNGSOURCES = simage_png.c $(top_srcdir)/include/simage_png.h
-else
-PNGSOURCES =
-endif
-
-if SIMAGE_TGA_SUPPORT
 TGASOURCES = simage_tga.c $(top_srcdir)/include/simage_tga.h
-else
-TGASOURCES =
-endif
-
-if SIMAGE_RGB_SUPPORT
 RGBSOURCES = simage_rgb.c $(top_srcdir)/include/simage_rgb.h
-else
-RGBSOURCES =
-endif
-
-if SIMAGE_PIC_SUPPORT
 PICSOURCES = simage_pic.c $(top_srcdir)/include/simage_pic.h
-else
-PICSOURCES =
-endif
-
-if SIMAGE_XWD_SUPPORT
 XWDSOURCES = simage_xwd.c $(top_srcdir)/include/simage_xwd.h
-else
-XWDSOURCES =
-endif
 
 lib_LTLIBRARIES = libsimage@SUFFIX@.la
 
