@@ -2403,7 +2403,9 @@ png_dev=no
 fi
 
 fi
-if test "$png_dev" = no; then
+  if test "$png_dev" = yes; then
+    LIBS="$LIBS -lz"
+  else
   echo "configure: warning: libpng development system not found -- no PNG support" 1>&2
 fi
 fi

@@ -163,7 +163,9 @@ AC_CHECK_HEADER(png.h, png_dev=yes, png_dev=no)
 if test "$png_dev" = yes; then
   AC_CHECK_LIB(png, png_read_info, , png_dev=no, -lz -lm)
 fi
-if test "$png_dev" = no; then
+  if test "$png_dev" = yes; then
+    LIBS="$LIBS -lz -lm"
+  else
   AC_MSG_WARN(libpng development system not found -- no PNG support)
 fi
 fi

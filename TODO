@@ -5,6 +5,9 @@ Todo
 (format is: "* [author:conceived-date] item", listed in approx
 prioritized order)
 
+* [mortene:19990822] add zlib in the configure checks -- as it is
+  needed for the png library.
+
 * [mortene:19990822] write simage-specific information in the INSTALL
   and README files.
 
@@ -18,7 +21,8 @@ prioritized order)
   a test for imlib within the Coin library, at the same way as we'll
   do for simage (when the autoconf-based build is in place in Coin)?
 
-* [mortene:19990901] make an example/test application
+* [mortene:19990901] make an example/test application, which operates
+  on testimages in all the different formats which might be supported.
 
 ===============================================================================
 Done
