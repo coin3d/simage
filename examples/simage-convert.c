@@ -28,6 +28,7 @@ int main(int argc, char ** argv)
   const char * ext;
   int ret;
   int alphathreshold = -1;
+  int gray = 0;
 
   if (argc < 3) {
     usage(argv[0]);
@@ -74,6 +75,10 @@ int main(int argc, char ** argv)
       else if (strcmp(argv[i], "-alphathreshold") == 0 && i < argc-1) {
         i++;
         alphathreshold = atoi(argv[i++]);
+      }
+      else if (strcmp(argv[i], "-gray") == 0) {
+        gray = 1;
+        i++;
       }
       else {
         usage(argv[0]);
@@ -154,6 +159,18 @@ int main(int argc, char ** argv)
       p++;
     }
     fprintf(stderr,"alpha threshold changed %d pixels\n", cnt);
+  }
+
+  if (gray && nc >= 3) {
+    unsigned char * src = buf;
+    unsigned char * dst = buf;
+    
+    for (i = 0; i < w*h; i++) {
+      *dst++ = (unsigned char) ((src[0]*77 + src[1]*150 + src[2] * 28) >> 8);
+      src += 3;
+      if (nc == 4) *dst++ = *src++;
+    }
+    nc = nc == 3 ? 1 : 2;
   }
 
   fprintf(stderr,"save image '%s'...", outfile);
