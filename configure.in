@@ -680,7 +680,7 @@ if $BUILD_WITH_MSVC; then
       SIM_AC_CONFIGURATION_SETTING([Simage Build Type], [Dynamic .DLL])
       ;;
     *)
-      CFLAGS="/Fd$debugfile $CFLAGS"
+      CFLAGS="/Fd$debugfile -g $CFLAGS"
       LIBFLAGS="$LIBFLAGS /DEBUG /PDB:simage$SIMAGE_MAJOR_VERSION$SUFFIX.pdb"
       SIM_AC_CONFIGURATION_SETTING([Simage Build Type], [Dynamic .DLL + .PDB])
       ;;

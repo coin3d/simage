@@ -11907,7 +11907,7 @@ fi
 
       ;;
     *)
-      CFLAGS="/Fd$debugfile $CFLAGS"
+      CFLAGS="/Fd$debugfile -g $CFLAGS"
       LIBFLAGS="$LIBFLAGS /DEBUG /PDB:simage$SIMAGE_MAJOR_VERSION$SUFFIX.pdb"
       if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|Simage Build Type:Dynamic .DLL + .PDB"
