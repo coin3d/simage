@@ -277,46 +277,6 @@ simage_remove_loader(void * handle)
   }
 }
 
-#if 0 /* obsoleted */
-
-/* A better resize-function can now be found in resize.c
- */
-
-/*
- * a pretty lame resize-function
- */
-unsigned char *
-simage_resize(unsigned char *src, int width,
-	      int height, int num_comp,
-	      int newwidth, int newheight)
-{
-  float sx, sy, dx, dy;
-  int src_bpr, dest_bpr, xstop, ystop, x, y, offset, i;
-  unsigned char *dest = 
-    (unsigned char*) malloc(newwidth*newheight*num_comp);
-  
-  dx = ((float)width)/((float)newwidth);
-  dy = ((float)height)/((float)newheight);
-  src_bpr = width * num_comp;
-  dest_bpr = newwidth * num_comp;
-  
-  sy = 0.0f;
-  ystop = newheight * dest_bpr;
-  xstop = newwidth * num_comp;   
-  for (y = 0; y < ystop; y += dest_bpr) {
-    sx = 0.0f;
-    for (x = 0; x < xstop; x += num_comp) {
-      offset = ((int)sy)*src_bpr + ((int)sx)*num_comp;
-      for (i = 0; i < num_comp; i++) dest[x+y+i] = src[offset+i];
-      sx += dx;
-    }
-    sy += dy;
-  }
-  return dest;
-}
-
-#endif /* obsoleted */
-
 /*
  * a helpful function
  */

@@ -243,19 +243,24 @@ zoom(Image * dst,               /* destination image structure */
   unsigned char * raster;	/* a row or column of pixels */
   double pixel[4];              /* one pixel */
   int bpp;
-  
+  unsigned char * dstptr;
+  int dstxsize, dstysize;
+
   bpp = src->bpp;
+  dstxsize = dst->xsize;
+  dstysize = dst->ysize;
+
   /* create intermediate image to hold horizontal zoom */
-  tmp = new_image(dst->xsize, src->ysize, dst->bpp, NULL);
-  xscale = (double) dst->xsize / (double) src->xsize;
-  yscale = (double) dst->ysize / (double) src->ysize;
+  tmp = new_image(dstxsize, src->ysize, dst->bpp, NULL);
+  xscale = (double) dstxsize / (double) src->xsize;
+  yscale = (double) dstysize / (double) src->ysize;
 
   /* pre-calculate filter contributions for a row */
-  contrib = (CLIST *)calloc(dst->xsize, sizeof(CLIST));
+  contrib = (CLIST *)calloc(dstxsize, sizeof(CLIST));
   if(xscale < 1.0) {
     width = fwidth / xscale;
     fscale = 1.0 / xscale;
-    for(i = 0; i < dst->xsize; i++) {
+    for(i = 0; i < dstxsize; i++) {
       contrib[i].n = 0;
       contrib[i].p = (CONTRIB *)calloc((int) (width * 2 + 1),
                                        sizeof(CONTRIB));
@@ -281,7 +286,7 @@ zoom(Image * dst,               /* destination image structure */
     }
   } 
   else {
-    for(i = 0; i < dst->xsize; i++) {
+    for(i = 0; i < dstxsize; i++) {
       contrib[i].n = 0;
       contrib[i].p = (CONTRIB *)calloc((int) (fwidth * 2 + 1),
                                        sizeof(CONTRIB));
@@ -310,6 +315,8 @@ zoom(Image * dst,               /* destination image structure */
   /* apply filter to zoom horizontally from src to tmp */
   raster = (unsigned char *)calloc(src->xsize, src->bpp);
 
+  dstptr = tmp->data;
+
   for(k = 0; k < tmp->ysize; k++) {
     get_row(raster, src, k);
     for(i = 0; i < tmp->xsize; i++) {
@@ -320,7 +327,16 @@ zoom(Image * dst,               /* destination image structure */
             * contrib[i].p[j].weight;
         }
       }
+#if 1 /* obsoleted 2001-11-18 pederb. Too slow */
       put_pixel(tmp, i, k, pixel);
+#else /* new code */
+      for (b = 0; b < bpp; b++) {
+        double val = pixel[b];
+        if (val < 0.0) val = 0.0;
+        else if (val > 255.0) val = 255.0;
+        *dstptr++ = (unsigned char ) val;
+      }
+#endif /* new, faster code */
     }
   }
   free(raster);
@@ -332,11 +348,11 @@ zoom(Image * dst,               /* destination image structure */
   free(contrib);
   
   /* pre-calculate filter contributions for a column */
-  contrib = (CLIST *)calloc(dst->ysize, sizeof(CLIST));
+  contrib = (CLIST *)calloc(dstysize, sizeof(CLIST));
   if(yscale < 1.0) {
     width = fwidth / yscale;
     fscale = 1.0 / yscale;
-    for(i = 0; i < dst->ysize; i++) {
+    for(i = 0; i < dstysize; i++) {
       contrib[i].n = 0;
       contrib[i].p = (CONTRIB *)calloc((int) (width * 2 + 1),
                                        sizeof(CONTRIB));
@@ -362,7 +378,7 @@ zoom(Image * dst,               /* destination image structure */
     }
   } 
   else {
-    for(i = 0; i < dst->ysize; i++) {
+    for(i = 0; i < dstysize; i++) {
       contrib[i].n = 0;
       contrib[i].p = (CONTRIB *)calloc((int) (fwidth * 2 + 1),
                                        sizeof(CONTRIB));
@@ -390,9 +406,10 @@ zoom(Image * dst,               /* destination image structure */
   
   /* apply filter to zoom vertically from tmp to dst */
   raster = (unsigned char *) calloc(tmp->ysize, tmp->bpp);
-  for(k = 0; k < dst->xsize; k++) {
+  for(k = 0; k < dstxsize; k++) {
     get_column(raster, tmp, k);
-    for(i = 0; i < dst->ysize; i++) {
+    dstptr = dst->data + k * bpp;
+    for(i = 0; i < dstysize; i++) {
       for (b = 0; b < bpp; b++) pixel[b] = 0.0;
       for(j = 0; j < contrib[i].n; ++j) {
         for (b = 0; b < bpp; b++) { 
@@ -400,20 +417,64 @@ zoom(Image * dst,               /* destination image structure */
             * contrib[i].p[j].weight;
         }
       }
+#if 1 /* obsoleted 2001-11-18 pederb. Too slow */
       put_pixel(dst, k, i, pixel);
+#else /* new code */
+      for (b = 0; b < bpp; b++) {
+        double val = pixel[b];
+        if (val < 0.0) val = 0.0;
+        else if (val > 255.0) val = 255.0;
+        dstptr[b] = (unsigned char) val;
+      }
+#endif /* new, faster code */
+      dstptr += bpp * dstxsize;
     }
   }
 
   free(raster);
   
   /* free the memory allocated for vertical filter weights */
-  for(i = 0; i < dst->ysize; ++i) {
+  for(i = 0; i < dstysize; ++i) {
     free(contrib[i].p);
   }
   free(contrib);
   free(tmp->data);
   free(tmp);
 }
+
+/*
+ * a pretty lame resize-function
+ */
+static unsigned char *
+simage_resize_fast(unsigned char *src, int width,
+                   int height, int num_comp,
+                   int newwidth, int newheight)
+{
+  float sx, sy, dx, dy;
+  int src_bpr, dest_bpr, xstop, ystop, x, y, offset, i;
+  unsigned char *dest = 
+    (unsigned char*) malloc(newwidth*newheight*num_comp);
+  
+  dx = ((float)width)/((float)newwidth);
+  dy = ((float)height)/((float)newheight);
+  src_bpr = width * num_comp;
+  dest_bpr = newwidth * num_comp;
+  
+  sy = 0.0f;
+  ystop = newheight * dest_bpr;
+  xstop = newwidth * num_comp;   
+  for (y = 0; y < ystop; y += dest_bpr) {
+    sx = 0.0f;
+    for (x = 0; x < xstop; x += num_comp) {
+      offset = ((int)sy)*src_bpr + ((int)sx)*num_comp;
+      for (i = 0; i < num_comp; i++) dest[x+y+i] = src[offset+i];
+      sx += dx;
+    }
+    sy += dy;
+  }
+  return dest;
+}
+
 
 // FIXME: pederb suspects that MSVC++ v6 mis-compiles some code in the
 // resize functionality -- which again causes a crash whenever (?) a
@@ -433,14 +494,19 @@ simage_resize(unsigned char * src, int width,
   unsigned char * dstdata;
   Image * srcimg, * dstimg;
 
+#if 0 /* for comparing speed of resize functions */
+  return simage_resize_fast(src, width,
+                            height, num_comp,
+                            newwidth, newheight);
+#endif /* testing only */
   srcimg = new_image(width, height, num_comp, src);
   dstimg = new_image(newwidth, newheight, num_comp, NULL);
 
-  zoom(dstimg, srcimg, Mitchell_filter, Mitchell_support);
+  //  zoom(dstimg, srcimg, Mitchell_filter, Mitchell_support);
+  zoom(dstimg, srcimg, filter, filter_support);
 
   dstdata = dstimg->data;
   free(srcimg);
   free(dstimg);
-  
   return dstdata;
 }
