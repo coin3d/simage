@@ -63,6 +63,8 @@
  *   need to resize your image to be able to use it in an OpenGL app.
  */  
 
+/***************************************************************************/
+
 /* A unique identifier to recognize in sourcecode whether or not this
  * file is included.
  */
@@ -93,28 +95,28 @@
 #undef SIMAGE_VERSION
 #endif /* !SIMAGE_VERSION */
 
+/***************************************************************************/
+
 /* Precaution to avoid an error easily made by the application programmer. */
 #ifdef SIMAGE_DLL_API
-# error Leave the simage-internal SIMAGE_DLL_API define alone.
+# error Leave the internal SIMAGE_DLL_API define alone.
 #endif /* SIMAGE_DLL_API */
 
 /*
-  On MSWindows platforms, one of these defines must always be set:
+  On MSWindows platforms, one of these defines must always be set when
+  building application programs:
 
-   - "SIMAGE_MAKE_DLL", only when building the library itself. Taken
-     care of automatically by the configure / build process.
-
-   - "SIMAGE_DLL", when application programmers are using the simage
+   - "SIMAGE_DLL", when the application programmer is using the
      library in the form of a dynamic link library (DLL)
 
-   - "SIMAGE_NOT_DLL", when application programmers are using the simage
+   - "SIMAGE_NOT_DLL", when the application programmer is using the
      library in the form of a static object library (LIB)
 
-  Note that either SIMAGE_DLL or SIMAGE_NOT_DLL _must_ be defined by the
-  application programmer on MSWindows platforms, or else the #error
-  statement will hit. Set up one or the other of these two defines in
-  your compiler environment according to how the simage library was
-  built -- as a DLL (use "SIMAGE_DLL") or as a LIB (use
+  Note that either SIMAGE_DLL or SIMAGE_NOT_DLL _must_ be defined by
+  the application programmer on MSWindows platforms, or else the
+  #error statement will hit. Set up one or the other of these two
+  defines in your compiler environment according to how the library
+  was built -- as a DLL (use "SIMAGE_DLL") or as a LIB (use
   "SIMAGE_NOT_DLL").
 
   (Setting up defines for the compiler is typically done by either
@@ -126,29 +128,31 @@
   define)).
 
   It is extremely important that the application programmer uses the
-  correct define, as using "SIMAGE_NOT_DLL" when "SIMAGE_DLL" is correct
-  will cause mysterious crashes for certain simage functions.
+  correct define, as using "SIMAGE_NOT_DLL" when "SIMAGE_DLL" is
+  correct will cause mysterious crashes.
  */
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-/* Enable to generate SIMAGE.DLL (under Win32). */
-# ifdef SIMAGE_MAKE_DLL
-#  define SIMAGE_DLL_API __declspec(dllexport)
-# else /* !SIMAGE_MAKE_DLL */
-/* Enable to build against SIMAGE.DLL (under Win32). */
+# ifdef SIMAGE_INTERNAL
+#  ifdef SIMAGE_MAKE_DLL
+#   define SIMAGE_DLL_API __declspec(dllexport)
+#  endif /* SIMAGE_MAKE_DLL */
+# else /* !SIMAGE_INTERNAL */
 #  ifdef SIMAGE_DLL
 #   define SIMAGE_DLL_API __declspec(dllimport)
 #  else /* !SIMAGE_DLL */
 #   ifndef SIMAGE_NOT_DLL
-#    error Define either SIMAGE_DLL or SIMAGE_NOT_DLL as appropriate for your simage linkage!
+#    error Define either SIMAGE_DLL or SIMAGE_NOT_DLL as appropriate for your linkage!
 #   endif /* SIMAGE_NOT_DLL */
 #  endif /* !SIMAGE_DLL */
-# endif /* !SIMAGE_MAKE_DLL */
+# endif /* !SIMAGE_INTERNAL */
 #endif /* Microsoft Windows */
 
 /* Empty define to avoid errors when _not_ compiling an MSWindows DLL. */
 #ifndef SIMAGE_DLL_API
 # define SIMAGE_DLL_API
 #endif /* !SIMAGE_DLL_API */
+
+/***************************************************************************/
 
 #ifdef __cplusplus
 extern "C" {

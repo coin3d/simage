@@ -268,6 +268,10 @@ SIM_AC_COMPILE_DEBUG([
 
 SIM_AC_DEBUGSYMBOLS
 
+# This is at least used to allow static compilation on Cygwin + MSWindows
+# without hitting the SIMAGE_DLL / SIMAGE_NOT_DLL safety check.
+CPPFLAGS="$CPPFLAGS -DSIMAGE_INTERNAL"
+
 # **************************************************************************
 # don't overwrite unchanged header files
 
