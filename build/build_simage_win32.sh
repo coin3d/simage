@@ -14,7 +14,7 @@
 #
 
 # FIXME 2003-10-10 thammer:
-# Verify that everuthing works if cygwin was built with Unix-style newlines
+# Verify that everything works if cygwin was built with Unix-style newlines
 # instead of dos-style. Check lars' windows-packages stuff for unix2dos
 
 SIMAGE_CRT_LIST="md mdd"
@@ -779,7 +779,7 @@ for SIMAGE_SOUND in $SIMAGE_SOUND_LIST; do
         SIMAGE_EXTRAFLAGS2="--with-oggvorbis=$SIMAGE_SDK/oggvorbis/$SIMAGE_CRT/ --with-libsndfile=$SIMAGE_SDK/libsndfile/$SIMAGE_CRT"
       fi
 
-      $SIMAGE_CHECKOUT/simage/configure --with-jpeg=$SIMAGE_SDK/libjpeg/$SIMAGE_CRT --with-zlib=$SIMAGE_SDK/zlib/$SIMAGE_CRT --with-png=$SIMAGE_SDK/libpng/$SIMAGE_CRT --with-tiff=$SIMAGE_SDK/libtiff/$SIMAGE_CRT --with-pic --with-rgb --with-targa --with-avienc --enable-dependency-tracking --with-msvcrt=$SIMAGE_CRT --with-suffix=$SIMAGE_SUFFIX --with-alternate=$SIMAGE_SOUND_NAME$SIMAGE_CRT --prefix=$SIMAGE_INSTALL --enable-static $SIMAGE_EXTRAFLAGS1 $SIMAGE_EXTRAFLAGS2
+      $SIMAGE_CHECKOUT/simage/configure --with-jpeg=$SIMAGE_SDK/libjpeg/$SIMAGE_CRT --with-zlib=$SIMAGE_SDK/zlib/$SIMAGE_CRT --with-png=$SIMAGE_SDK/libpng/$SIMAGE_CRT --with-tiff=$SIMAGE_SDK/libtiff/$SIMAGE_CRT --with-ungif=$SIMAGE_SDK/libungif/$SIMAGE_CRT --with-pic --with-rgb --with-targa --with-avienc --enable-dependency-tracking --with-msvcrt=$SIMAGE_CRT --with-suffix=$SIMAGE_SUFFIX --with-alternate=$SIMAGE_SOUND_NAME$SIMAGE_CRT --prefix=$SIMAGE_INSTALL --enable-static $SIMAGE_EXTRAFLAGS1 $SIMAGE_EXTRAFLAGS2
 
     fi
 
