@@ -475,7 +475,7 @@ extern "C" {
                                        unsigned char * buf);
 
   /*****************************************************************/
-  /**** NOTE: new methods for simage version 1.6 *******************/
+  /**** NOTE: new methods for simage version 1.7 *******************/
   /*****************************************************************/
 
   typedef void * s_dlopen_func(const char * filename);
