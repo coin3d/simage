@@ -53,8 +53,8 @@
  *   A convenience function that can be used to resize an image.
  *   Since OpenGL textures must have width and height equal to 2^n,
  *   this is often needed. A pointer to the new image data is returned. 
- *   imagedata is not freed. BTW: If you need a high quality resize 
- *   function, don't use this one :-) 
+ *   imagedata is not freed. Uses the algorithm "Filtered Image
+ *   Rescaling" by Dale Schumacher, from GGems III. 
  *
  * simage_next_power_of_two(int val)
  * 

@@ -254,6 +254,11 @@ simage_remove_loader(void * handle)
   }
 }
 
+#if 0 /* obsoleted */
+
+/* A better resize-function can now be found in resize.c
+ */
+
 /*
  * a pretty lame resize-function
  */
@@ -287,6 +292,7 @@ simage_resize(unsigned char *src, int width,
   return dest;
 }
 
+#endif /* obsoleted */
 
 /*
  * a helpful function
