@@ -460,6 +460,8 @@ if $BUILD_WITH_MSVC; then
   CFLAGS="/Fd$debugfile $CFLAGS"
   DLLFLAGS="/dll"
   DLLFLAGS="$DLLFLAGS /PDB:$debugfile"
+  test -n "`echo $CFLAGS $CPPFLAGS $CXXFLAGS | grep -- '-g\\>'`" &&
+    DLLFLAGS="$DLLFLAGS /DEBUG"
   AC_SUBST(DLLFLAGS)
 
   # We use a version suffix on the .dll-file, so several incompatible
