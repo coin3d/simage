@@ -252,3 +252,12 @@ AC_SUBST(simage_src_dir)
 
 AC_OUTPUT([Makefile src/Makefile simage-config build/simage.dsp build/simage.mak],
           [chmod a+x simage-config])
+
+if test x"$sim_ac_linking_style" = xmswin; then
+  for sim_ac_winfile in build/simage.dsp build/simage.mak; do
+    mv $sim_ac_winfile $sim_ac_winfile.bak
+    echo "(Win)DOS-ifying $sim_ac_winfile"
+    sed -e 's/$/
+/' < $sim_ac_winfile.bak > $sim_ac_winfile
+  done
+fi

@@ -3134,3 +3134,12 @@ trap 'exit 1' 1 2 15
 
 test "$no_create" = yes || $SHELL $CONFIG_STATUS || exit 1
 
+
+if test x"$sim_ac_linking_style" = xmswin; then
+  for sim_ac_winfile in build/simage.dsp build/simage.mak; do
+    mv $sim_ac_winfile $sim_ac_winfile.bak
+    echo "(Win)DOS-ifying $sim_ac_winfile"
+    sed -e 's/$/
+/' < $sim_ac_winfile.bak > $sim_ac_winfile
+  done
+fi
