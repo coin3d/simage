@@ -93,19 +93,62 @@
 #undef SIMAGE_VERSION
 #endif /* !SIMAGE_VERSION */
 
+/* Precaution to avoid an error easily made by the application programmer. */
+#ifdef SIMAGE_DLL_API
+# error Leave the simage-internal SIMAGE_DLL_API define alone.
+#endif /* SIMAGE_DLL_API */
 
-/* Enable to generate SIMAGE.DLL (under Win32). */
-#ifdef SIMAGE_MAKE_DLL
-#define SIMAGE_DLL_API __declspec(dllexport)
-#else
-#ifdef SIMAGE_DLL
-#define SIMAGE_DLL_API __declspec(dllimport)
-#else
-/* Empty define to avoid errors when _not_ compiling as a DLL. */
-#define SIMAGE_DLL_API
-#endif
-#endif /* !SIMAGE_MAKE_DLL */
+/*
+  On MSWindows platforms, one of these defines must always be set:
 
+   - "SIMAGE_MAKE_DLL", only when building the library itself. Taken
+     care of automatically by the configure / build process.
+
+   - "SIMAGE_DLL", when application programmers are using the simage
+     library in the form of a dynamic link library (DLL)
+
+   - "SIMAGE_NOT_DLL", when application programmers are using the simage
+     library in the form of a static object library (LIB)
+
+  Note that either SIMAGE_DLL or SIMAGE_NOT_DLL _must_ be defined by the
+  application programmer on MSWindows platforms, or else the #error
+  statement will hit. Set up one or the other of these two defines in
+  your compiler environment according to how the simage library was
+  built -- as a DLL (use "SIMAGE_DLL") or as a LIB (use
+  "SIMAGE_NOT_DLL").
+
+  (Setting up defines for the compiler is typically done by either
+  adding something like "/DSIMAGE_DLL" to the compiler's argument line
+  (for command-line build processes), or by adding the define to the
+  list of preprocessor symbols in your IDE GUI (in the MSVC IDE, this
+  is done from the "Project"->"Settings" menu, choose the "C/C++" tab,
+  then "Preprocessor" from the dropdown box and add the appropriate
+  define)).
+
+  It is extremely important that the application programmer uses the
+  correct define, as using "SIMAGE_NOT_DLL" when "SIMAGE_DLL" is correct
+  will cause mysterious crashes for certain simage functions.
+ */
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+/* Enable to generate COIN.DLL (under Win32). */
+# ifdef SIMAGE_MAKE_DLL
+#  define SIMAGE_DLL_API __declspec(dllexport)
+# else /* !SIMAGE_MAKE_DLL */
+/* Enable to build against COIN.DLL (under Win32). */
+#  ifdef SIMAGE_DLL
+#   define SIMAGE_DLL_API __declspec(dllimport)
+#  else /* !SIMAGE_DLL */
+#   ifndef SIMAGE_NOT_DLL
+#    error Define either SIMAGE_DLL or SIMAGE_NOT_DLL as appropriate for your simage linkage!
+#   endif /* SIMAGE_NOT_DLL */
+#  endif /* !SIMAGE_DLL */
+# endif /* !SIMAGE_MAKE_DLL */
+#endif /* Microsoft Windows */
+
+/* Empty define to avoid errors when _not_ compiling an MSWindows DLL. */
+#ifndef SIMAGE_DLL_API
+# define SIMAGE_DLL_API
+#endif /* !SIMAGE_DLL_API */
 
 #ifdef __cplusplus
 extern "C" {
@@ -167,18 +210,18 @@ extern "C" {
   
   /* save image. use simage_check_write_supported first, please */
   SIMAGE_DLL_API int simage_save_image(const char * filename,
-                                          const unsigned char * bytes,
-                                          int w, int h, int numcomponents,
-                                          const char * filenameextension);
+                                       const unsigned char * bytes,
+                                       int w, int h, int numcomponents,
+                                       const char * filenameextension);
   
   SIMAGE_DLL_API void * simage_add_saver(int (*save_func)(const char * name,
-                                                             const unsigned char * bytes,
-                                                             int width, int height, int nc),
-                                            int (*error_func)(char * textbuffer, int bufferlen),
-                                            const char * extensions,
-                                            const char * fullname,
-                                            const char * description,
-                                            int addbefore);
+                                                          const unsigned char * bytes,
+                                                          int width, int height, int nc),
+                                         int (*error_func)(char * textbuffer, int bufferlen),
+                                         const char * extensions,
+                                         const char * fullname,
+                                         const char * description,
+                                         int addbefore);
   
   SIMAGE_DLL_API void simage_remove_saver(void * handle);
   SIMAGE_DLL_API int simage_get_num_savers(void);
@@ -186,7 +229,7 @@ extern "C" {
   SIMAGE_DLL_API const char * simage_get_saver_extensions(void * handle);
   SIMAGE_DLL_API const char * simage_get_saver_fullname(void * handle);
   SIMAGE_DLL_API const char * simage_get_saver_description(void * handle);
-
+  
 
   /*****************************************************************/
   /**** NOTE: new methods for simage version 1.2 *******************/
@@ -215,7 +258,7 @@ extern "C" {
   SIMAGE_DLL_API s_image * s_image_load(const char * filename, s_image * prealloc /* | NULL */);
   SIMAGE_DLL_API int s_image_save(const char * filename, s_image * image,
                                   s_params * params /* | NULL */);
-
+  
   SIMAGE_DLL_API s_movie * s_movie_open(const char * filename);
   SIMAGE_DLL_API s_movie * s_movie_create(const char * filename, s_params * params /* | NULL */);
   SIMAGE_DLL_API s_image * s_movie_get_image(s_movie * movie, s_image * prealloc /* | NULL */,
