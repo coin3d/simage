@@ -44,34 +44,12 @@ else
 PICSOURCES =
 endif
 
-if SIMAGE_DEBUG_BUILD
-SIMAGELIB = libsimage_g.la
-else
-SIMAGELIB = libsimage.la
-endif
+lib_LTLIBRARIES = libsimage@SUFFIX@.la
 
-DLLNAME = simage@SIMAGE_MAJOR_VERSION@@DSUFFIX@
-
-lib_LTLIBRARIES = $(SIMAGELIB)
-
-libsimage_la_LDFLAGS = \
+libsimage@SUFFIX@_la_LDFLAGS = \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
-libsimage_g_la_LDFLAGS = \
-	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
-
-libsimage_la_SOURCES = \
-	simage.c \
-	simage.h \
-	$(JPEGSOURCES) \
-	$(UNGIFSOURCES) \
-	$(PNGSOURCES) \
-	$(TIFFSOURCES) \
-	$(TGASOURCES) \
-	$(RGBSOURCES) \
-	$(PICSOURCES)
-
-libsimage_g_la_SOURCES = \
+libsimage@SUFFIX@_la_SOURCES = \
 	simage.c \
 	simage.h \
 	$(JPEGSOURCES) \
@@ -83,7 +61,7 @@ libsimage_g_la_SOURCES = \
 	$(PICSOURCES)
 
 # all the conditionally compiled source files must be added here...
-EXTRA_libsimage_la_SOURCES = \
+EXTRA_libsimage@SUFFIX@_la_SOURCES = \
 	simage_jpeg.h \
 	simage_jpeg.c \
 	simage_gif.h \
@@ -99,61 +77,42 @@ EXTRA_libsimage_la_SOURCES = \
 	simage_pic.h \
 	simage_pic.c
 
-EXTRA_libsimage_g_la_SOURCES = \
-	simage_jpeg.h \
-	simage_jpeg.c \
-	simage_gif.h \
-	simage_gif.c \
-	simage_tiff.h \
-	simage_tiff.c \
-	simage_png.h \
-	simage_png.c \
-	simage_tga.h \
-	simage_tga.c \
-	simage_rgb.h \
-	simage_rgb.c \
-	simage_pic.h \
-	simage_pic.c
-
-libsimageincdir = $(includedir)
-libsimageinc_HEADERS = \
-	$(top_builddir)/include/simage.h
-
-libsimage_gincdir = $(includedir)
-libsimage_ginc_HEADERS = \
+libsimage@SUFFIX@incdir = $(includedir)
+libsimage@SUFFIX@inc_HEADERS = \
 	$(top_builddir)/include/simage.h
 
 # **************************************************************************
 # Additional Make rules not supported by Automake
 
 # Rule for linking up a .DLL on MSWindows with MSVC++.
-$(DLLNAME).dll: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDENCIES)
-	@rm -f $(DLLNAME).dll; \
+simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll: $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_DEPENDENCIES)
+	@rm -f simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; \
 	if @BUILD_WITH_MSVC@; then \
-	  $(CC) $(LDFLAGS) @DLLFLAGS@ /out:$(DLLNAME).dll \
-	    `echo $(libsimage_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
-	    $(libsimage_la_LIBADD) $(LIBS); \
+	  $(CC) $(LDFLAGS) @DLLFLAGS@ \
+	    /out:simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll \
+	    `echo $(libsimage@SUFFIX@_la_OBJECTS) | sed 's%\.lo%.obj%g'` \
+	    $(libsimage@SUFFIX@_la_LIBADD) $(LIBS); \
 	else \
-	  rm -f $(DLLNAME).dll; \
-	  touch $(DLLNAME).dll; \
+	  rm -f simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; \
+	  touch simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; \
 	fi
 
 ## This hook will be run at the end of a ``make install''.
-install-exec-hook: $(DLLNAME).dll
-	if test -s $(DLLNAME).dll; then \
-	  $(INSTALL_DATA) $(DLLNAME).dll $(DESTDIR)$(bindir)/$(DLLNAME).dll; \
-	  $(INSTALL_DATA) $(DLLNAME).lib $(DESTDIR)$(libdir)/$(DLLNAME).lib; \
-	  if test -s $(DLLNAME).pdb; then \
-	    $(INSTALL_DATA) $(DLLNAME).pdb $(DESTDIR)$(libdir)/$(DLLNAME).pdb; \
+install-exec-hook: simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll
+	if test -s simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; then \
+	  $(INSTALL_DATA) simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll $(DESTDIR)$(bindir)/simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; \
+	  $(INSTALL_DATA) simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib $(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib; \
+	  if test -s simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.pdb; then \
+	    $(INSTALL_DATA) simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.pdb $(DESTDIR)$(libdir)/simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.pdb; \
 	  fi \
 	fi
 
 ## should have been uninstall-hook, but that doesn't work
 uninstall: uninstall-am
-	@file="$(DESTDIR)$(bindir)"/$(DLLNAME).dll; \
+	@file="$(DESTDIR)$(bindir)"/simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.dll; \
 	test -f $$file && rm -f $$file && echo rm -f $$file; \
 	for ext in lib pdb; do \
-	  file="$(DESTDIR)$(libdir)"/$(DLLNAME).$$ext; \
+	  file="$(DESTDIR)$(libdir)"/simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.$$ext; \
 	  test -f $$file && rm -f $$file && echo rm -f $$file; \
 	done
 
