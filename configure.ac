@@ -164,11 +164,6 @@ darwin* )
   sim_ac_macosx=false ;;
 esac
 
-if test x"$sim_ac_macosx_10_2ff" = x"true"; then
-  # Defines how undefined symbols are handled (used in libtool.m4)
-  LD_TWOLEVEL_NAMESPACE=1
-fi
-
 # Initialize libtool
 if $BUILD_WITH_MSVC; then
   RANLIB=:
@@ -775,11 +770,18 @@ else
   SIM_AC_ISO8601_DATE(simage_configure_date)
   AC_SUBST(simage_configure_date)
 
+
   # Mac OS X needs to call gcc as g++ when linking C++
   case $host_os in 
   darwin*) COIN_COMPILER="$CXX";;
   *) COIN_COMPILER="$CC";;
   esac
+
+  if test x"$sim_ac_macosx_10_2ff" = x"true"; then
+    # No undefined symbols allowed in two-level namespace shared libs.
+    LDFLAGS="$LDFLAGS -no-undefined"
+  fi
+
 fi
 
 AC_SUBST(COIN_COMPILER)
