@@ -8,22 +8,23 @@ DIE=0
 PROJECT=simage
 
 # FIXME: check for minimum version number? 19990822 mortene.
-(autoconf --version) < /dev/null > /dev/null 2>&1 || {
-        echo
-        echo "You must have autoconf installed to generate"
-	echo "configure information and Makefiles for $PROJECT."
-        echo "Get ftp://ftp.gnu.org/pub/gnu/autoconf-*.tar.gz"
-        DIE=1
-}
+AUTOCONF_VER=2.13
+if test -z "`autoconf --version | grep \" $AUTOCONF_VER\" 2> /dev/null`"; then
+    echo
+    echo "You must have autoconf version $AUTOCONF_VER installed to"
+    echo "generate configure information and Makefiles for $PROJECT." 
+    echo "Get ftp://ftp.gnu.org/pub/gnu/autoconf-*.tar.gz"
+    DIE=1
+fi
 
-# FIXME: check for minimum version number? 19990822 mortene.
-(libtool --version) < /dev/null > /dev/null 2>&1 || {
-        echo
-        echo "You must have libtool installed to generate"
-	echo "configure information and Makefiles for $PROJECT."
-        echo "Get ftp://ftp.gnu.org/pub/gnu/libtool-*.tar.gz"
-        DIE=1
-}
+LIBTOOL_VER=1.3.4
+if test -z "`libtool --version | grep \" $LIBTOOL_VER \" 2> /dev/null`"; then
+    echo
+    echo "You must have libtool version $LIBTOOL_VER installed to"
+    echo "generate configure information and Makefiles for $PROJECT." 
+    echo "Get ftp://ftp.gnu.org/pub/gnu/libtool-*.tar.gz"
+    DIE=1
+fi
 
 # FIXME: check for minimum version number? 19990822 mortene.
 (automake --version) < /dev/null > /dev/null 2>&1 || {
@@ -40,25 +41,21 @@ if test "$DIE" -eq 1; then
         exit 1
 fi
 
-echo "Running aclocal..."
+echo "Running aclocal (generating aclocal.m4)..."
 # /usr/local/share/aclocal is default install directory for libtool.m4
 # from the ftp://ftp.gnu.org/pub/gnu/libtool-*.tar.gz distribution.
 # mortene.
-aclocal -I /usr/local/share/aclocal
+aclocal
+# -I /usr/local/share/aclocal
 
-echo
-echo "Running autoheader..."
+echo "Running autoheader (generating config.h.in)..."
 autoheader
 
-echo
-echo "Running automake..."
-echo "(NB: if you're compiling with gcc, you might wish to"
-echo "run automake by hand without the --include-deps argument"
-echo "to get dependency tracking. 19990908 mortene.)"
-automake --include-deps
+echo "Running automake (generating the Makefile.in files)..."
+#automake --include-deps
+automake --add-missing
 
-echo
-echo "Running autoconf..."
+echo "Running autoconf (generating ./configure and the Makefile files)..."
 autoconf
 
 echo
