@@ -15,6 +15,15 @@
 /* Name of package */
 #undef PACKAGE
 
+/* define this to the simage major version number */
+#undef SIMAGE_MAJOR_VERSION
+
+/* define this to the simage release version number */
+#undef SIMAGE_MICRO_VERSION
+
+/* define this to the simage minor version number */
+#undef SIMAGE_MINOR_VERSION
+
 /* Define to enable pic support */
 #undef SIMAGE_PIC_SUPPORT
 
@@ -23,6 +32,9 @@
 
 /* Define to enable targa support */
 #undef SIMAGE_TGA_SUPPORT
+
+/* define this to the full simage major.minor.release version number */
+#undef SIMAGE_VERSION
 
 /* Version number of package */
 #undef VERSION

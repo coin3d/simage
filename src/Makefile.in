@@ -101,7 +101,7 @@ simage_configure_date = @simage_configure_date@
 
 lib_LTLIBRARIES = libsimage.la
 
-INCLUDES = -I$(top_srcdir)/include/
+INCLUDES = -I$(top_srcdir)/include/ -I$(top_builddir)/include/
 @SIMAGE_JPEG_SUPPORT_TRUE@JPEGSOURCES = @SIMAGE_JPEG_SUPPORT_TRUE@simage_jpeg.c simage_jpeg.h
 @SIMAGE_JPEG_SUPPORT_FALSE@JPEGSOURCES = 
 @SIMAGE_UNGIF_SUPPORT_TRUE@UNGIFSOURCES = @SIMAGE_UNGIF_SUPPORT_TRUE@simage_gif.c simage_gif.h
@@ -141,16 +141,16 @@ libsimage_la_LDFLAGS = \
 
 
 libsimageinc_HEADERS = \
-	$(top_srcdir)/include/simage.h
+	$(top_builddir)/include/simage.h
 
 subdir = src
 mkinstalldirs = $(SHELL) $(top_srcdir)/cfg/mkinstalldirs
-CONFIG_HEADER = ../config.h
+CONFIG_HEADER = ../config.h ../include/simage.h
 CONFIG_CLEAN_FILES = 
 LTLIBRARIES =  $(lib_LTLIBRARIES)
 
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I..
+DEFS = @DEFS@ -I. -I$(srcdir) -I.. -I../include
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
@@ -952,8 +952,10 @@ install-libsimageincHEADERS: $(libsimageinc_HEADERS)
 	@list='$(libsimageinc_HEADERS)'; for p in $$list; do \
 	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
 	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimageincdir)/$$f"; \
-	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimageincdir)/$$f; \
+	  if cmp -s $$d$$p $(DESTDIR)$(libsimageincdir)/$$f; then :; else \
+	    echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimageincdir)/$$f"; \
+	    $(INSTALL_DATA) $$d$$p $(DESTDIR)$(libsimageincdir)/$$f; \
+	  fi; \
 	done
 
 uninstall-libsimageincHEADERS:
@@ -1033,7 +1035,7 @@ maintainer-clean-depend:
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 
 distdir: $(DISTFILES)
-	$(mkinstalldirs) $(distdir)/$(top_srcdir)/include
+	$(mkinstalldirs) $(distdir)/$(top_builddir)/include
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -1126,6 +1128,8 @@ uninstall-am uninstall all-redirect all-am all install-strip \
 installdirs mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
+
+#### Additional "native" Make rules #########################################
 
 simage.dll: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDENCIES)
 	@rm -f simage.dll && if test x"`$(CC) 2>/dev/null | egrep '^The Microsoft Visual C\+\+ wrapper'`" = x""; then rm -f simage.dll; touch simage.dll; else $(CC) /dll `echo $(libsimage_la_OBJECTS) | sed 's%\.lo%.obj%g'` $(libsimage_la_LIBADD) $(LIBS); fi

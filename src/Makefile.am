@@ -2,7 +2,7 @@
 
 lib_LTLIBRARIES = libsimage.la
 
-INCLUDES = -I$(top_srcdir)/include/
+INCLUDES = -I$(top_srcdir)/include/ -I$(top_builddir)/include/
 
 ## All source files used when building the libraries, including all
 ## headers.
@@ -72,13 +72,22 @@ libsimage_la_LDFLAGS = \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 libsimageinc_HEADERS = \
-	$(top_srcdir)/include/simage.h
+	$(top_builddir)/include/simage.h
+
+
+
+#### Additional "native" Make rules #########################################
+
 
 ## For linking up a .DLL on MSWindows with MSVC++.
 simage.dll: $(libsimage_la_OBJECTS) $(libsimage_la_DEPENDENCIES)
 	@rm -f simage.dll && if test x"`$(CC) 2>/dev/null | egrep '^The Microsoft Visual C\+\+ wrapper'`" = x""; then rm -f simage.dll; touch simage.dll; else $(CC) /dll `echo $(libsimage_la_OBJECTS) | sed 's%\.lo%.obj%g'` $(libsimage_la_LIBADD) $(LIBS); fi
 
+
 ## This hook will be run at the end of a ``make install''.
+##
+## The single action taken is to install the simage.dll and simage.lib
+## files (if they have been built properly).
 install-exec-hook: simage.dll
 	@if test -s simage.dll; then \
 	  echo "Installing simage@SIMAGE_MAJOR_VERSION@.dll"; \

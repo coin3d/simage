@@ -223,8 +223,7 @@ simage_check_supported(const char *filename)
 }
 
 void *
-simage_add_plugin_loader(const struct simage_plugin *plugin, int addbefore)
-  
+simage_add_loader(const struct simage_plugin * plugin, int addbefore)
 {
   add_internal_loaders();
   return add_loader((loader_data *)malloc(sizeof(loader_data)), 
@@ -235,7 +234,7 @@ simage_add_plugin_loader(const struct simage_plugin *plugin, int addbefore)
 }
 
 void 
-simage_remove_plugin_loader(void *handle)
+simage_remove_loader(void * handle)
 {
   loader_data *prev = NULL;
   loader_data *loader = first_loader;
@@ -313,4 +312,12 @@ simage_next_power_of_two(int val)
     return 1<<highbit;
   }
   return val;  
+}
+
+void
+simage_version(int * major, int * minor, int * micro)
+{
+  *major = SIMAGE_MAJOR_VERSION;
+  *minor = SIMAGE_MINOR_VERSION;
+  *micro = SIMAGE_MICRO_VERSION;
 }

@@ -1,5 +1,5 @@
 # **************************************************************************
-AC_INIT(include/simage.h)
+AC_INIT(src/simage.c)
 AC_CONFIG_AUX_DIR(cfg)
 
 # **************************************************************************
@@ -91,14 +91,21 @@ AC_SUBST(LT_AGE)
 
 VERSION=$SIMAGE_VERSION
 
+#  These are for include/simage.h.
+
+AC_DEFINE_UNQUOTED(SIMAGE_MAJOR_VERSION, $SIMAGE_MAJOR_VERSION, [define this to the simage major version number])
+AC_DEFINE_UNQUOTED(SIMAGE_MINOR_VERSION, $SIMAGE_MINOR_VERSION, [define this to the simage minor version number])
+AC_DEFINE_UNQUOTED(SIMAGE_MICRO_VERSION, $SIMAGE_MICRO_VERSION, [define this to the simage release version number])
+AC_DEFINE_UNQUOTED(SIMAGE_VERSION, "$SIMAGE_VERSION", [define this to the full simage major.minor.release version number])
+
 # **************************************************************************
 # Miscellaneous options and initializations.
 
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE(libsimage, $VERSION)
 
-# File to cram the configure tests into.
-AM_CONFIG_HEADER(config.h)
+# Files to cram the configure tests into.
+AM_CONFIG_HEADER(config.h include/simage.h)
 
 # Default to not building a static library.
 # Can be overridden by the user with --enable-static.
@@ -118,9 +125,7 @@ AC_SUBST(SIMAGE_EXTRA_CPPFLAGS)
 AC_SUBST(SIMAGE_EXTRA_LDFLAGS)
 AC_SUBST(SIMAGE_EXTRA_LIBS)
 
-# libtiff and libpng uses math library functions. Important note:
-# configure in Coin depends on this check being made here in simage
-# configure.in.
+# libtiff and libpng uses math library functions.
 SIM_AC_CHECK_MATHLIB(SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_libm",
                      AC_MSG_ERROR(could not find a way to use math library))
 
