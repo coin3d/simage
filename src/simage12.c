@@ -11,7 +11,7 @@
 struct simage_image_s {
   int width;
   int height;
-  int numcomponents;
+  int components;
   int didalloc;
   unsigned char * data;
 };
@@ -23,7 +23,7 @@ s_image_create(int w, int h, int components,
   s_image * image = (s_image*) malloc(sizeof(s_image));
   image->width = w;
   image->height = h;
-  image->numcomponents = components;
+  image->components = components;
   image->didalloc = 0;
   image->data = prealloc;
   if (image->data == NULL) {
@@ -59,7 +59,7 @@ s_image_height(s_image * image)
 int 
 s_image_components(s_image * image)
 {
-  if (image) return image->numcomponents;
+  if (image) return image->components;
   return 0;
 }
 
@@ -68,6 +68,42 @@ s_image_data(s_image * image)
 {
   if (image) return image->data;
   return NULL;
+}
+
+void 
+s_image_set(s_image * image, int w, int h, int components,
+            unsigned char * data, int copydata)
+{
+  if (image->width == w && image->height == h && image->components == components) {
+    if (copydata) {
+      if (!image->didalloc) {
+        /* we shouldn't overwrite preallocated data */
+        image->data = (unsigned char*) malloc(w*h*components);
+        image->didalloc = 1;
+      }
+      memcpy(image->data, data, w*h*components);
+    }
+    else {
+      if (image->didalloc) free((void*) image->data);
+      image->data = data;
+      image->didalloc = 0;
+    }
+  }
+  else {
+    if (image->didalloc) free((void*) image->data);
+    image->width = w;
+    image->height = h;
+    image->components = components;
+    if (copydata) {
+      image->data = (unsigned char *) malloc(w*h*components);
+      image->didalloc = 1;
+      memcpy(image->data, data, w*h*components);
+    }
+    else {
+      image->data = data;
+      image->didalloc = 0;
+    }
+  }
 }
 
 s_image * 
@@ -81,7 +117,7 @@ s_image_load(const char * filename, s_image * prealloc /* | NULL */)
   if (prealloc == NULL || 
       prealloc->width != w || 
       prealloc->height != h ||
-      prealloc->numcomponents != nc) {
+      prealloc->components != nc) {
     prealloc = s_image_create(w, h, nc, data);
     prealloc->didalloc = 1; /* we did alloc this data */
   }
@@ -117,7 +153,7 @@ s_image_save(const char * filename, s_image * image,
                            image->data, 
                            image->width,
                            image->height,
-                           image->numcomponents,
+                           image->components,
                            ext+1);
 }
 

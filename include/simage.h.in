@@ -202,13 +202,15 @@ extern "C" {
   typedef void s_movie_close_func(s_movie *);
 
   SIMAGE_DLL_API s_image * s_image_create(int w, int h, int components,
-                                          unsigned char * prealloc /* | NULL */ );
+                                          unsigned char * prealloc /* | NULL */);
   SIMAGE_DLL_API void s_image_destroy(s_image * image);
   
   SIMAGE_DLL_API int s_image_width(s_image * image);
   SIMAGE_DLL_API int s_image_height(s_image * image);
   SIMAGE_DLL_API int s_image_components(s_image * image);
   SIMAGE_DLL_API unsigned char * s_image_data(s_image * image);
+  SIMAGE_DLL_API void s_image_set(s_image * image, int w, int h, int components,
+                                  unsigned char * data, int copydata);
   
   SIMAGE_DLL_API s_image * s_image_load(const char * filename, s_image * prealloc /* | NULL */);
   SIMAGE_DLL_API int s_image_save(const char * filename, s_image * image,
