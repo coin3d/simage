@@ -99,13 +99,15 @@ win_includedir = @win_includedir@
 win_libdir = @win_libdir@
 win_srcdir = @win_srcdir@
 
+# **************************************************************************
+
 
 SUBDIRS = src
 
 bin_SCRIPTS = simage-config
 BUILT_SOURCES = simage-config
 
-EXTRA_DIST = cfg/m4/simage.m4
+EXTRA_DIST = $(m4data_DATA)
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = cfg/m4/simage.m4
@@ -499,13 +501,8 @@ mostlyclean-tags tags tags-recursive uninstall uninstall-am \
 uninstall-binSCRIPTS uninstall-data-recursive uninstall-exec-recursive \
 uninstall-m4dataDATA uninstall-recursive uninstalldirs-recursive
 
-simage-config: simage-config.in
 
-simage-installer.exe:
-	@sed 's/$$/
-/g' <$(srcdir)/COPYING >COPYING.DOS; \
-	( cd ..; makensis debug\\build\\simage.nsi ); \
-	rm COPYING.DOS
+simage-config: simage-config.in
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
