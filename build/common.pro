@@ -18,3 +18,4 @@ SOURCES       =	\
 		../src/simage_rgb.cpp \
 		../src/simage_tga.cpp \
 		../src/simage_tiff.cpp
+
