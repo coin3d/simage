@@ -41,4 +41,51 @@ install-exec-local: $(srcdir)/cfg/m4/wrapmsvc.exe
 	  $(INSTALL_PROGRAM) $(srcdir)/cfg/m4/$$p $(DESTDIR)$(bindir)/$$p; \
 	fi
 
+# **************************************************************************
+
+simage1_$(VERSION):
+	$(MAKE) VERSION=dist distdir
+	mv simage-dist simage1_$(VERSION)
+
+simage1-dev_$(VERSION): simage1_$(VERSION)
+	cp -p -R simage1_$(VERSION) simage1-dev_$(VERSION)
+
+debian-setup: simage1_$(VERSION) simage1-dev_$(VERSION)
+	debdir=simage1_$(VERSION)/debian; \
+	conf=./config.status; \
+	test -d $$debdir || mkdir $$debdir; \
+	for f in packaging/debian/*.in; do \
+	  file=`echo $$f | sed 's/.*\///g; s/\.in$$//g'`; \
+	  $$conf --file=$$debdir/$$file:$$f; \
+	done; \
+	for f in rules preinst prerm postinst postrm; do \
+	  if test -f $$debdir/$$f; then \
+	    echo " chmod +x $$debdir/$$f"; \
+	    chmod +x $$debdir/$$f; \
+	  fi; \
+	done;
+	debdir=simage1-dev_$(VERSION)/debian; \
+	conf=./config.status; \
+	test -d $$debdir || mkdir $$debdir; \
+	for f in packaging/debian/*.in; do \
+	  file=`echo $$f | sed 's/.*\///g; s/\.in$$//g'`; \
+	  $$conf --file=$$debdir/$$file:$$f; \
+	done; \
+	for f in rules preinst prerm postinst postrm; do \
+	  if test -f $$debdir/$$f; then \
+	    echo " chmod +x $$debdir/$$f"; \
+	    chmod +x $$debdir/$$f; \
+	  fi; \
+	done;
+#	perl -pi -e 's/^simage$(SIMAGE_MAJOR_VERSION)\b/simage$(SIMAGE_MAJOR_VERSION)-dev/g;' simage1-dev_$(VERSION)/debian/changelog
+#	echo "pkgversion=$(VERSION)" >$$debdir/substvars
+
+debian-packages: debian-setup
+	cd simage1_$(VERSION); \
+	dpkg-buildpackage -S -uc -us;
+	cd simage1_$(VERSION); \
+	dpkg-buildpackage -b -uc;
+	cd simage1-dev_$(VERSION); \
+	dpkg-buildpackage -b -uc;
+
 # EOF ######################################################################
