@@ -1,3 +1,12 @@
+/*
+ * Demonstrates how to use the simage API to write MPEG movies of
+ * frames from the SoOffscreenRenderer.
+ *
+ * Note that at the moment, the executable generated from this code
+ * must be run from the same directory as the parameters file
+ * 'ntsc_coin.par'.
+ */
+
 #include <Inventor/SoInteraction.h>
 #include <Inventor/SoOffscreenRenderer.h>
 #include <Inventor/nodekits/SoNodeKit.h>
@@ -100,7 +109,7 @@ main(int argc, char ** argv)
                /* "mpeg1", S_BOOL_PARAM_TYPE, 1, */
 
                /* use to specify a parameter file */
-               /* "parameter file", S_STRING_PARAM_TYPE, "ntsc_coin.par", */
+               "parameter file", S_STRING_PARAM_TYPE, "ntsc_coin.par",
 
                /* use to specify constraints coded parameter constraints for mpeg2 files, 
                   such as bitrate, sample rate, and maximum allowed motion vector range.
@@ -112,7 +121,7 @@ main(int argc, char ** argv)
                   8     Main Level      CCIR 601 rates: e.g. 720 x 480 x 30 Hz
                   10    Low Level       SIF video rate: e.g. 352 x 240 x 30 Hz
                */
-               /* "level", S_INTEGER_PARAM_TYPE, 6, */
+//                 "level", S_INTEGER_PARAM_TYPE, 6,
 
                /* NULL means no more params */
                NULL);
@@ -125,21 +134,22 @@ main(int argc, char ** argv)
 
   s_image * image = NULL;
 
-  int imax = NUMFRAMES;
-  for (int i=0; i<imax; i++)
+  for (int i=0; i<NUMFRAMES; i++)
   { 
     SbVec3f cpos = camera->position.getValue();
     float x, y, z;
     cpos.getValue(x, y, z);
-    x=1.0-(float)i/(float)imax *1.0*2.0;
+    x=1.0-(float)i/(float)NUMFRAMES *1.0*2.0;
     camera->position.setValue(x, y, z);
 
     renderer->render(root);
 
+#if DEBUG_SAVE_FRAMES // debug
     /* just save jpeg images for debugging */
     char fname[256];
     sprintf(fname, "renderarea%0d.jpg", i);
     SbBool ret = renderer->writeToFile(fname, "jpg");
+#endif // debug
 
     if (image == NULL) {
       image = s_image_create(WIDTH, HEIGHT, 3, renderer->getBuffer());
