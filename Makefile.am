@@ -11,9 +11,8 @@ m4datadir = $(datadir)/aclocal
 m4data_DATA = cfg/m4/simage.m4
 
 install-exec-hook: simage.cfg
-	@target=simage.cfg; \
-	@SIMAGE_DEBUG_BUILD@ && target=simage-debug.cfg; \
+	@target=simage-@CONFIG@.cfg; \
 	echo "Installing $$target"; \
 	$(mkinstalldirs) $(DESTDIR)$(datadir)/Coin/conf && \
-	$(INSTALL_DATA) simage.cfg $(DESTDIR)$(datadir)/Coin/conf/$$target;
+	  $(INSTALL_DATA) simage.cfg $(DESTDIR)$(datadir)/Coin/conf/$$target;
 

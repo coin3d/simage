@@ -70,6 +70,7 @@ AS = @AS@
 AWK = @AWK@
 BUILD_WITH_MSVC = @BUILD_WITH_MSVC@
 CC = @CC@
+CONFIG = @CONFIG@
 DEPDIR = @DEPDIR@
 DLLFLAGS = @DLLFLAGS@
 DLLTOOL = @DLLTOOL@
@@ -93,6 +94,7 @@ SIMAGE_MAJOR_VERSION = @SIMAGE_MAJOR_VERSION@
 SIMAGE_MICRO_VERSION = @SIMAGE_MICRO_VERSION@
 SIMAGE_MINOR_VERSION = @SIMAGE_MINOR_VERSION@
 SIMAGE_VERSION = @SIMAGE_VERSION@
+SUFFIX = @SUFFIX@
 VERSION = @VERSION@
 install_sh = @install_sh@
 simage_configure_date = @simage_configure_date@
@@ -253,7 +255,6 @@ uninstall-m4dataDATA:
 # (1) if the variable is set in `config.status', edit `config.status'
 #     (which will cause the Makefiles to be regenerated when you run `make');
 # (2) otherwise, pass the desired values on the `make' command line.
-
 all-recursive install-data-recursive install-exec-recursive \
 installdirs-recursive install-recursive uninstall-recursive  \
 check-recursive installcheck-recursive info-recursive dvi-recursive:
@@ -488,7 +489,7 @@ maintainer-clean-am:  maintainer-clean-hdr maintainer-clean-tags \
 maintainer-clean: maintainer-clean-recursive
 	-rm -f config.status
 
-.PHONY: all all-am all-recursive all-recursive-am all-redirect check \
+.PHONY:  all all-am all-recursive all-recursive-am all-redirect check \
 check-am check-recursive clean clean-generic clean-hdr clean-recursive \
 clean-tags distclean distclean-generic distclean-hdr \
 distclean-recursive distclean-tags distdir dvi dvi-am dvi-recursive \
@@ -501,16 +502,14 @@ maintainer-clean maintainer-clean-generic maintainer-clean-hdr \
 maintainer-clean-recursive maintainer-clean-tags mostlyclean \
 mostlyclean-generic mostlyclean-hdr mostlyclean-recursive \
 mostlyclean-tags tags tags-recursive uninstall uninstall-am \
-uninstall-binSCRIPTS uninstall-data-recursive uninstall-exec-recursive \
-uninstall-m4dataDATA uninstall-recursive uninstalldirs-recursive
+uninstall-binSCRIPTS uninstall-m4dataDATA uninstall-recursive
 
 
 install-exec-hook: simage.cfg
-	@target=simage.cfg; \
-	@SIMAGE_DEBUG_BUILD@ && target=simage-debug.cfg; \
+	@target=simage-@CONFIG@.cfg; \
 	echo "Installing $$target"; \
 	$(mkinstalldirs) $(DESTDIR)$(datadir)/Coin/conf && \
-	$(INSTALL_DATA) simage.cfg $(DESTDIR)$(datadir)/Coin/conf/$$target;
+	  $(INSTALL_DATA) simage.cfg $(DESTDIR)$(datadir)/Coin/conf/$$target;
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

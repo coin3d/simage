@@ -253,6 +253,26 @@ SIM_AC_CHECK_MATHLIB(SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_libm",
                      AC_MSG_ERROR(could not find a way to use math library))
 
 # **************************************************************************
+# Want to configure an alternate installation?
+
+AC_ARG_WITH(
+  [alternate],
+  [AC_HELP_STRING([--with-alternate=string],
+                  [specify name of alternate configuration])],
+  [CONFIG=$withval],
+  [CONFIG=default])
+
+AC_ARG_WITH(
+  [suffix],
+  [AC_HELP_STRING([--with-suffix=string],
+                  [specify library name suffix (e.g. "_g")])],
+  [SUFFIX=$withval],
+  [SUFFIX=])
+
+AC_SUBST(SUFFIX)
+AC_SUBST(CONFIG)
+
+# **************************************************************************
 # Check if UNGIF support is wanted (and if so, available).
 
 SIM_AC_HAVE_LIBUNGIF_IFELSE([
@@ -435,8 +455,7 @@ if $BUILD_WITH_MSVC; then
   CPPFLAGS="-DSIMAGE_MAKE_DLL $CPPFLAGS"
   SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS -DSIMAGE_DLL"
 
-  # FIXME: only when -g is used...
-  debugfile=`pwd`/src/simage$SIMAGE_MAJOR_VERSION$DSUFFIX.pdb
+  debugfile=`pwd`/src/simage${SIMAGE_MAJOR_VERSION}${SUFFIX}.pdb
   debugfile=`cygpath -w "$debugfile" | sed 's,\\\\,\\\\\\\\,g'`
   CFLAGS="/Fd$debugfile $CFLAGS"
   DLLFLAGS="/dll"
@@ -451,11 +470,8 @@ if $BUILD_WITH_MSVC; then
   # list all libs used upon `simage-config --libs`, as we can then
   # also use them from "parent" code (remember that their interfaces
   # is not exposed from the DLL) without any fuss.
-  if $SIMAGE_DEBUG_BUILD; then
-    SIMAGE_EXTRA_LIBS="-lsimage${SIMAGE_MAJOR_VERSION}d $SIMAGE_EXTRA_LIBS"
-  else
-    SIMAGE_EXTRA_LIBS="-lsimage$SIMAGE_MAJOR_VERSION $SIMAGE_EXTRA_LIBS"
-  fi
+
+  SIMAGE_EXTRA_LIBS="-lsimage${SIMAGE_MAJOR_VERSION}${SUFFIX} $SIMAGE_EXTRA_LIBS"
 
   # These are for the .iwz InstallShield Express file under build/.
   win_includedir=`cygpath -w "$includedir"`
@@ -467,11 +483,7 @@ if $BUILD_WITH_MSVC; then
   win_srcdir=`cygpath -w "$srcdir"`
   AC_SUBST(win_srcdir)
 else
-  if $SIMAGE_DEBUG_BUILD; then
-    SIMAGE_EXTRA_LIBS="-lsimage_g $SIMAGE_EXTRA_LIBS"
-  else
-    SIMAGE_EXTRA_LIBS="-lsimage $SIMAGE_EXTRA_LIBS"
-  fi
+  SIMAGE_EXTRA_LIBS="-lsimage${SUFFIX} $SIMAGE_EXTRA_LIBS"
 
   # For the build/simage.spec RPM specification file.
   SIM_AC_ISO8601_DATE(simage_configure_date)
