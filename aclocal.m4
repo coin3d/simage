@@ -4846,17 +4846,24 @@ recommend you to upgrade.])
         sim_ac_qt_suffix=d
       fi
 
+      # Note that we need to always check for -lqt-mt before -lqt, because
+      # at least the most recent Debian platforms (as of 2003-02-20) comes
+      # with a -lqt which is missing QGL support, while it also has a
+      # -lqt-mt *with* QGL support. The reason for this is because the
+      # default GL (Mesa) library on Debian is built in mt-safe mode,
+      # so a non-mt-safe Qt can't use it.
+
       for sim_ac_qt_cppflags_loop in "" "-DQT_DLL"; do
         for sim_ac_qt_libcheck in \
             "-lqt-gl" \
-            "-lqt" \
             "-lqt-mt" \
-            "-lqt -lqtmain -lgdi32" \
-            "-lqt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
-            "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32" \
+            "-lqt" \
             "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32" \
             "-lqt-mt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
-            "-lqt-mt${sim_ac_qt_version}nc${sim_ac_qt_suffix} -lqtmain -lgdi32"
+            "-lqt-mt${sim_ac_qt_version}nc${sim_ac_qt_suffix} -lqtmain -lgdi32" \
+            "-lqt -lqtmain -lgdi32" \
+            "-lqt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
+            "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32"
         do
           if test "x$sim_ac_qt_libs" = "xUNRESOLVED"; then
             CPPFLAGS="$sim_ac_qt_incflags $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"
@@ -4907,9 +4914,13 @@ fi
 #  variable $sim_ac_qgl_avail is set to "yes" if the QGL extension
 #  library is found.
 #
+# Note that all "modern" variants of Qt should come with QGL embedded.
+# There's one important deviation: Debian comes with a -lqt which is
+# missing QGL support, while it also has a -lqt-mt *with* QGL support.
+# The reason for this is because the default GL (Mesa) library on Debian
+# is built in mt-safe mode.
 #
 # Author: Morten Eriksen, <mortene@sim.no>.
-#
 
 AC_DEFUN([SIM_AC_CHECK_QGL], [
 sim_ac_qgl_avail=no
@@ -4920,7 +4931,7 @@ sim_ac_qgl_libs=
 if test x"$with_qt" != xno; then
   # first check if we can link with the QGL widget already
   AC_CACHE_CHECK(
-    [whether the QGL widget is part of libqt],
+    [whether the QGL widget is part of main Qt library],
     sim_cv_lib_qgl_integrated,
     [AC_TRY_LINK([#include <qgl.h>],
                  [QGLFormat * f = new QGLFormat; f->setDepth(true); ],
@@ -5202,7 +5213,7 @@ if test x"$with_opengl" != x"no"; then
     sim_ac_glu_header=GL/glu.h
     AC_DEFINE([HAVE_GL_GLU_H], 1, [define if the GLU header should be included as GL/glu.h])
   ], [
-    SIM_AC_CHECK_HEADER_SILENT([OpenGL/gl.h], [
+    SIM_AC_CHECK_HEADER_SILENT([OpenGL/glu.h], [
       sim_ac_glu_header_avail=true
       sim_ac_glu_header=OpenGL/glu.h
       AC_DEFINE([HAVE_OPENGL_GLU_H], 1, [define if the GLU header should be included as OpenGL/glu.h])
@@ -6839,6 +6850,52 @@ exec_prefix=$sim_ac_save_exec_prefix
 # unset sim_ac_eval_item
 # unset sim_ac_eval_uniq
 ]) # SIM_AC_UNIQIFY_OPTION_LIST
+
+
+# CPP_AC_SEARCH_ORDER_FILTER( VARIABLE, LIST )
+#
+# This macro filters out system directories from a list. This macro was made
+# to avoid passing -I options to the gcc3 compiler that are possibly already
+# one of gcc3's system directories. This would cause the preprocessor to
+# issue a "warning: changing search order for system directory ..." message
+# that could break some configure scripts and produce annoying warning
+# messages for every source file compiled.
+#
+# Authors:
+#   Tamer Fahmy <tamer@tammura.at>
+#
+
+AC_DEFUN([CPP_AC_SEARCH_ORDER_FILTER], [
+if test x"$GCC" = x"yes"; then
+ sim_ac_save_cpp=$CPP
+ CPP="cpp"
+ case $host_os in
+  darwin*) CPP="cpp3"
+    ;;
+  esac
+  cpp_sys_dirs=`$CPP -v <<EOF 2>&1 | sed -n -e \
+  '/#include <...> search starts here:/,/End of search list./{
+    /#include <...> search starts here:/b
+    /End of search list./b
+    s/ /-I/
+    p
+  }'
+  EOF`
+  result=
+  for inc_path in $2; do
+    additem=true
+    for sys_dir in $cpp_sys_dirs; do
+      if test x$inc_path = x$sys_dir; then
+        additem=false
+        break
+      fi
+    done
+    $additem && result="$result $inc_path"
+  done
+  $1=$result
+  CPP=$sim_ac_save_cpp
+fi
+]) # CPP_AC_SEARCH_ORDER_FILTER
 
 
 # Usage:
