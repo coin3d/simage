@@ -130,6 +130,22 @@ fi
 # (to be written)
 #
 # **************************************************************************
+# Binary releases
+# ===============
+#
+#  * MSWindows SDK: this is constructed as a self-extracting InstallShield
+#    package. Run ``configure'' and ``make install'' on an MSWin-box with
+#    the correct setup (latest Cygwin, MSVC++ v6.0 and InstallShield Express
+#    v2.12), then execute
+#
+#         $ cd [simage_builddir]
+#         $ IsxBuild.exe build/simage.iwz -E -O
+#
+#    A self-extracting executable SETUPEX.EXE with the InstallShield install
+#    should then be available under [simage_builddir]/build/simage/. Move
+#    this to <ftp://ftp.sim.no/pub/coin/simage-sdk-@SIMAGE_VERSION@.exe>.
+#
+# **************************************************************************
 # Release history
 # ===============
 #
