@@ -6,109 +6,110 @@
 #   Lars J. Aas, <larsa@sim.no>.
 #
 
-DIE=false
+PROJECT=simage
 
-# Autoconf snapshot from ftp://alpha.gnu.org/pub/gnu/autoconf/autoconf-2.49a.tar.gz
-AUTOCONF_VER=2.49a
+wd=`echo $0 | sed 's,[^\\/]*$,,g'`;
+cd $wd
+if test ! -f autogen.sh; then
+  echo "unexpected problem with your shell - bailing out"
+  exit 1
+fi
+
+AUTOCONF_VER=2.49b  # Autoconf from CVS
 AUTOMAKE_VER=1.4a   # Automake from CVS
 LIBTOOL_VER=1.3.5
 
-PROJECT=simage
-MACRODIR=conf-macros
+MACRODIR=cfg/m4
 AUTOMAKE_ADD=
 
-if test "$1" = "--clean"; then
-  rm -f aclocal.m4 \
-        config.guess \
-        config.h.in \
-        config.sub \
-        configure \
-        depcomp \
-        install-sh \
-        ltconfig \
-        ltmain.sh \
-        missing \
-        mkinstalldirs \
-        stamp-h*
+if test x"$1" = x"--clean"; then
+  rm -f config.h.in configure stamp-h*
+  find . -name Makefile.in | xargs rm
   exit
-elif test "$1" = "--add"; then
-  AUTOMAKE_ADD="--add-missing --gnu --copy"
+elif test x"$1" = x"--add"; then
+  AUTOMAKE_ADD=""
 fi
 
-
-echo "Checking the installed configuration tools..."
+echo "Checking installed configuration tools..."
 
 if test -z "`autoconf --version | grep \" $AUTOCONF_VER\" 2> /dev/null`"; then
-  cat <<EOF
+  cat <<END
 
-  You must have autoconf version $AUTOCONF_VER installed to
-  generate configure information and Makefiles for $PROJECT.
+  You must have autoconf version $AUTOCONF_VER installed to generate the
+  configure script and Makefile templates for $PROJECT.
 
-  The Autoconf version we are using is a development pre-release
-  of the next version of Autoconf.  You can get it here:
+  Autoconf $AUTOCONF_VER is the CVS development version of Autoconf, which you
+  can retrieve from here:
 
-  ftp://alpha.gnu.org/gnu/autoconf/autoconf-2.49a.tar.gz
-EOF
+    :pserver:anoncvs@subversions.gnu.org:/cvs (no password, module "autoconf")
+END
   DIE=true
 fi
 
 if test -z "`automake --version | grep \" $AUTOMAKE_VER\" 2> /dev/null`"; then
-    echo
-    echo "You must have automake version $AUTOMAKE_VER installed to"
-    echo "generate configure information and Makefiles for $PROJECT."
-    echo ""
-    echo "The Automake version we are using is a development version"
-    echo "\"frozen\" from the CVS repository. You can get it here:"
-    echo ""
-    echo "   ftp://ftp.sim.no/pub/coin/automake-1.4a-coin.tar.gz"
-    echo ""
+  cat <<END
+
+  You must have automake version $AUTOMAKE_VER installed to generate the
+  configure script and Makefile templates for $PROJECT.
+
+  Automake $AUTOMAKE_VER is the CVS developmentn version of Automake, which you
+  can retrieve from here:
+
+    :pserver:anoncvs@anoncvs.cygnus.com:/cvs/automake (no password, module automake)
+END
     DIE=true
 fi
 
 if test -z "`libtool --version | egrep \"$LIBTOOL_VER\" 2> /dev/null`"; then
-    echo
-    echo "You must have libtool version $LIBTOOL_VER installed to"
-    echo "generate configure information and Makefiles for $PROJECT."
-    echo ""
-    echo "Get ftp://ftp.gnu.org/pub/libtool/libtool-${LIBTOOL_VER}.tar.gz"
-    echo ""
+  cat <<END
+
+  You must have libtool version $LIBTOOL_VER installed to generate the
+  configure script and Makefile templates for $PROJECT.  You can fetch it from
+  here:
+
+    ftp://ftp.gnu.org/pub/libtool/libtool-${LIBTOOL_VER}.tar.gz
+END
     DIE=true
 fi
-
 
 # The separate $MACRODIR module was added late in the project, and
 # since we need to do a cvs checkout to obtain it (cvs update won't do
 # with modules), we run this check.
 
-if test ! -d $MACRODIR
-then
-    cvs -z3 checkout -P $MACRODIR
-    if test ! -d $MACRODIR; then
-	echo "Couldn't fetch $MACRODIR module!"
-        echo
-        echo "Directory ``$MACRODIR'' (a separate CVS module) seems to be missing."
-        echo "You probably checked out $PROJECT before ``$MACRODIR'' was added."
-        echo "Run 'cvs -d :pserver:cvs@cvs.sim.no:/export/cvsroot co $MACRODIR'"
-        echo "to try again."
-	DIE=true
-    fi
+if test ! -d $MACRODIR; then
+  cvs -z3 checkout -P simage-macros
+  if test ! -d $MACRODIR; then
+    cat <<END
+
+  Couldn't fetch $MACRODIR module!
+
+  Directory ``$MACRODIR'' (a separate CVS module) seems to be missing.
+  You probably checked out $PROJECT before ``$MACRODIR'' was added.
+  Run 'cvs -d :pserver:cvs@cvs.sim.no:/export/cvsroot co simage-macros'
+  to try again.
+END
+    DIE=true
+  fi
 fi
 
-$DIE && exit 1
+# abnormal exit?
+${DIE=false} && echo "" && exit 1
 
-echo "Running aclocal (generating aclocal.m4)..."
+# generate aclocal.m4
+echo "Running aclocal..."
 aclocal -I $MACRODIR
 
-echo "Running autoheader (generating config.h.in)..."
+# generate config.h.in
+echo "Running autoheader..."
 autoheader
 
-echo "Running automake (generating the Makefile.in files)..."
+# generate Makefile.in templates
+echo "Running automake..."
 automake $AUTOMAKE_ADD
 
-echo "Running autoconf (generating ./configure and the Makefile files)..."
+# generate configure
+echo "Running autoconf..."
 autoconf
 
-echo
-echo "Done. Now run './configure' and 'make install' to build $PROJECT."
-echo
+echo "Done."
 

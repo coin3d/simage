@@ -146,7 +146,7 @@ libsimageinc_HEADERS = \
 	$(top_srcdir)/include/simage.h
 
 subdir = src
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/cfg/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
 LTLIBRARIES =  $(lib_LTLIBRARIES)
@@ -874,7 +874,7 @@ LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDF
 DIST_SOURCES =  $(libsimage_la_SOURCES) $(EXTRA_libsimage_la_SOURCES)
 HEADERS =  $(libsimageinc_HEADERS)
 
-depcomp = $(SHELL) $(top_srcdir)/depcomp
+depcomp = $(SHELL) $(top_srcdir)/cfg/depcomp
 DEP_FILES =  @AMDEP@ $(DEPDIR)/simage.Plo $(DEPDIR)/simage_gif.Plo \
 $(DEPDIR)/simage_jpeg.Plo $(DEPDIR)/simage_pic.Plo \
 $(DEPDIR)/simage_png.Plo $(DEPDIR)/simage_rgb.Plo \

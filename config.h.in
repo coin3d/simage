@@ -1,14 +1,28 @@
 /* config.h.in.  Generated automatically from configure.in by autoheader.  */
+
+/* Define to use jpeg library */
 #undef HAVE_JPEGLIB
-#undef HAVE_UNGIFLIB
-#undef HAVE_TIFFLIB
+
+/* Define to use png library */
 #undef HAVE_PNGLIB
-#undef SIMAGE_PIC_SUPPORT
-#undef SIMAGE_RGB_SUPPORT
-#undef SIMAGE_TGA_SUPPORT
+
+/* Define to use tiff library */
+#undef HAVE_TIFFLIB
+
+/* Define to use ungif library */
+#undef HAVE_UNGIFLIB
 
 /* Name of package */
 #undef PACKAGE
+
+/* Define to enable pic support */
+#undef SIMAGE_PIC_SUPPORT
+
+/* Define to enable rgb support */
+#undef SIMAGE_RGB_SUPPORT
+
+/* Define to enable targa support */
+#undef SIMAGE_TGA_SUPPORT
 
 /* Version number of package */
 #undef VERSION

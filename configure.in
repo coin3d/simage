@@ -1,5 +1,6 @@
 # **************************************************************************
 AC_INIT(include/simage.h)
+AC_CONFIG_AUX_DIR(cfg)
 
 # **************************************************************************
 # Check to see if the compiler supports the ANSI standard, and
@@ -101,7 +102,7 @@ AC_SUBST(SIMAGE_LIBNAME)
 # Check if UNGIF support is wanted (and if so, available).
 
 SIM_AC_HAVE_LIBUNGIF_IFELSE([
-  AC_DEFINE(HAVE_UNGIFLIB)
+  AC_DEFINE(HAVE_UNGIFLIB, 1, [Define to use ungif library])
   SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libungif_cppflags"
   SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libungif_ldflags"
   SIMAGE_EXTRA_LIBS="$sim_ac_libungif_libs $SIMAGE_EXTRA_LIBS"
@@ -118,10 +119,10 @@ AM_CONDITIONAL(SIMAGE_UNGIF_SUPPORT, test x"$sim_ac_have_libungif" = xtrue)
 # Check if JPEG support is wanted (and if so, available).
 
 SIM_CHECK_JPEGLIB([
+  AC_DEFINE(HAVE_JPEGLIB, 1, [Define to use jpeg library])
   SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_jpegdev_cppflags"
   SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_jpegdev_ldflags"
   SIMAGE_EXTRA_LIBS="$sim_ac_jpegdev_libs $SIMAGE_EXTRA_LIBS"
-  AC_DEFINE(HAVE_JPEGLIB)
 ], [
   AC_MSG_WARN(libjpeg development system not found)
 ])
@@ -132,7 +133,7 @@ AM_CONDITIONAL(SIMAGE_JPEG_SUPPORT, test x"$sim_ac_jpegdev_avail" = xyes)
 # Check if TIFF support is wanted (and if so, available).
 
 SIM_CHECK_TIFFLIB([
-  AC_DEFINE(HAVE_TIFFLIB)
+  AC_DEFINE(HAVE_TIFFLIB, 1, [Define to use tiff library])
   SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_tiffdev_cppflags"
   SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_tiffdev_ldflags"
   SIMAGE_EXTRA_LIBS="$sim_ac_tiffdev_libs $SIMAGE_EXTRA_LIBS"
@@ -164,7 +165,7 @@ if test x"$with_png" != xno; then
   if test x"$sim_ac_zlib_avail" = xyes; then
     SIM_CHECK_PNGLIB([
       simage_ac_pnglib=yes
-      AC_DEFINE(HAVE_PNGLIB)
+      AC_DEFINE(HAVE_PNGLIB, 1, [Define to use png library])
       SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_pngdev_cppflags"
       SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_pngdev_ldflags"
       SIMAGE_EXTRA_LIBS="$sim_ac_pngdev_libs $SIMAGE_EXTRA_LIBS"
@@ -195,7 +196,7 @@ AC_ARG_WITH(
 
 AM_CONDITIONAL(TGA_SUPPORT, $want_tga)
 if $want_tga; then
-  AC_DEFINE(SIMAGE_TGA_SUPPORT, 1)
+  AC_DEFINE(SIMAGE_TGA_SUPPORT, 1, [Define to enable targa support])
 fi
 
 # **************************************************************************
@@ -214,7 +215,7 @@ AC_ARG_WITH(
 
 AM_CONDITIONAL(RGB_SUPPORT, $want_rgb)
 if $want_rgb; then
-  AC_DEFINE(SIMAGE_RGB_SUPPORT, 1)
+  AC_DEFINE(SIMAGE_RGB_SUPPORT, 1, [Define to enable rgb support])
 fi
 
 # **************************************************************************
@@ -232,7 +233,7 @@ AC_ARG_WITH(
 
 AM_CONDITIONAL(PIC_SUPPORT, $want_pic)
 if $want_pic; then
-  AC_DEFINE(SIMAGE_PIC_SUPPORT, 1)
+  AC_DEFINE(SIMAGE_PIC_SUPPORT, 1, [Define to enable pic support])
 fi
 
 SIM_EXPAND_DIR_VARS
