@@ -869,8 +869,8 @@ AC_ARG_WITH(jpeg, AC_HELP_STRING([--with-jpeg=DIR], [include support for JPEG im
 
 sim_ac_jpegdev_avail=no
 
-if ! test x"$with_jpeg" = xno; then
-  if ! test x"$with_jpeg" = xyes; then
+if test x"$with_jpeg" != xno; then
+  if test x"$with_jpeg" != xyes; then
     sim_ac_jpegdev_cppflags="-I${with_jpeg}/include"
     sim_ac_jpegdev_ldflags="-L${with_jpeg}/lib"
   fi
@@ -934,8 +934,8 @@ AC_ARG_WITH(tiff, AC_HELP_STRING([--with-tiff=DIR], [include support for TIFF im
 
 sim_ac_tiffdev_avail=no
 
-if ! test x"$with_tiff" = xno; then
-  if ! test x"$with_tiff" = xyes; then
+if test x"$with_tiff" != xno; then
+  if test x"$with_tiff" != xyes; then
     sim_ac_tiffdev_cppflags="-I${with_tiff}/include"
     sim_ac_tiffdev_ldflags="-L${with_tiff}/lib"
   fi
@@ -998,8 +998,8 @@ AC_ARG_WITH(zlib, AC_HELP_STRING([--with-zlib=DIR], [zlib installation directory
 
 sim_ac_zlib_avail=no
 
-if ! test x"$with_zlib" = xno; then
-  if ! test x"$with_zlib" = xyes; then
+if test x"$with_zlib" != xno; then
+  if test x"$with_zlib" != xyes; then
     sim_ac_zlib_cppflags="-I${with_zlib}/include"
     sim_ac_zlib_ldflags="-L${with_zlib}/lib"
   fi
@@ -1062,8 +1062,8 @@ AC_ARG_WITH(png, AC_HELP_STRING([--with-png=DIR], [include support for PNG image
 
 sim_ac_pngdev_avail=no
 
-if ! test x"$with_png" = xno; then
-  if ! test x"$with_png" = xyes; then
+if test x"$with_png" != xno; then
+  if test x"$with_png" != xyes; then
     sim_ac_pngdev_cppflags="-I${with_png}/include"
     sim_ac_pngdev_ldflags="-L${with_png}/lib"
   fi

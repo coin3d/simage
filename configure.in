@@ -127,7 +127,7 @@ simage_ac_pnglib=no
 dnl Yep, we can actually check for a negative with_png here, as the
 dnl default is "yes" and the user therefore must explicitly specify
 dnl if he/she does _not_ want the PNG support.
-if ! test x"$with_png" = xno; then
+if test x"$with_png" != xno; then
   SIM_CHECK_ZLIB([SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_zlib_cppflags"
                   SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_zlib_ldflags"
                   SIMAGE_EXTRA_LIBS="$sim_ac_zlib_libs $SIMAGE_EXTRA_LIBS"],
