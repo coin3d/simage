@@ -1,7 +1,8 @@
-New in v1.6 (2003-12-09)
+New in v1.6 (2003-12-12)
 * Added support for reading an image one line at a time
 * Added functions for setting external dynamic loader interface
   (not currently in use)
+* Disabled dysfunctional guile support
 
 New in v1.5
 * Extended streaming interface to support seeking in a stream

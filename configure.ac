@@ -616,6 +616,13 @@ if $sim_ac_have_dlfcn_h; then
     fi
   fi
 fi
+
+if $HAVE_GUILE; then
+  SIM_AC_CONFIGURATION_WARNING(
+    [simage does not support Guile at the moment])
+  HAVE_GUILE=false
+fi
+
 if $HAVE_GUILE; then
   SIM_AC_CONFIGURATION_SETTING([Guile module], [Build])
 else
