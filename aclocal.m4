@@ -1976,6 +1976,14 @@ true)
     [#include <tiffio.h>],
     [(void)TIFFOpen(0L, 0L);],
     [sim_ac_have_libtiff=true])
+  if test x"$sim_ac_have_libtiff" = xfalse; then
+    sim_ac_libtiff_libs="-l$sim_ac_libtiff_name -luser32"
+    LIBS="$sim_ac_libtiff_libs $sim_ac_libtiff_save_LIBS"
+    AC_TRY_LINK(
+      [#include <tiffio.h>],
+      [(void)TIFFOpen(0L, 0L);],
+      [sim_ac_have_libtiff=true])
+  fi
   CPPFLAGS=$sim_ac_libtiff_save_CPPFLAGS
   LDFLAGS=$sim_ac_libtiff_save_LDFLAGS
   LIBS=$sim_ac_libtiff_save_LIBS
