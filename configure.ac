@@ -604,6 +604,12 @@ if $sim_ac_have_dlfcn_h; then
     AC_CHECK_HEADERS([libguile.h guile/gh.h],
       [sim_ac_have_guile_sdk=true],
       [sim_ac_have_guile_sdk=false])
+      if $sim_ac_have_guile_sdk; then
+        # This routine is not present in Guile 1.4
+        AC_CHECK_LIB(guile, scm_c_define_gsubr, 
+          [sim_ac_have_guile_sdk=true], 
+          [sim_ac_have_guile_sdk=false])
+      fi
     if $sim_ac_have_guile_sdk; then
       HAVE_GUILE=true
     fi
