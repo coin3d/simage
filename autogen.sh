@@ -41,7 +41,10 @@ if test "$DIE" -eq 1; then
 fi
 
 echo "Running aclocal..."
-aclocal
+# /usr/local/share/aclocal is default install directory for libtool.m4
+# from the ftp://ftp.gnu.org/pub/gnu/libtool-*.tar.gz distribution.
+# mortene.
+aclocal -I /usr/local/share/aclocal
 
 echo
 echo "Running autoheader..."

@@ -5,6 +5,10 @@ Todo
 (format is: "* [author:conceived-date] item", listed in approx
 prioritized order)
 
+* [mortene:20000112] construct an m4 macro for autoconf which detects
+  the presence of libsimage and adds the propriate flags and stuff for
+  application programmers, and install it in $prefix/share/aclocal/.
+
 * [mortene:19990822] add zlib in the configure checks -- as it is
   needed for the png library.
 
