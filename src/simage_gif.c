@@ -49,21 +49,63 @@ simage_gif_identify(const char *filename,
   return 0;
 }
 
+static void
+decode_row(GifFileType * giffile, 
+           unsigned char * buffer, 
+           unsigned char * rowdata,
+           int x, int y, int len, 
+           int transparent)
+{
+  GifColorType * cmentry;
+  ColorMapObject * colormap;
+  int colormapsize;
+  unsigned char col;
+  unsigned char * ptr;
+  y = giffile->SHeight - (y+1);
+  ptr = buffer + (giffile->SWidth * y + x) * 4;
+
+  colormap = (giffile->Image.ColorMap
+              ? giffile->Image.ColorMap
+              : giffile->SColorMap);
+  colormapsize = colormap ? colormap->ColorCount : 255;
+  
+  while (len--) {
+    col = *rowdata++;
+    cmentry = colormap ? &colormap->Colors[col] : NULL;
+    if (col >= colormapsize) {
+      fprintf(stderr,"GIF index clamped\n");
+      col = 0; /* just in case */
+    }
+    if (cmentry) {
+      *ptr++ = cmentry->Red;
+      *ptr++ = cmentry->Green;
+      *ptr++ = cmentry->Blue;
+    }
+    else {
+      *ptr++ = col;
+      *ptr++ = col;
+      *ptr++ = col;
+    }
+    *ptr++ = (col == transparent ? 0x00 : 0xff);
+  }
+}
+
 unsigned char *
 simage_gif_load(const char *filename,
                 int *width_ret,
                 int *height_ret,
                 int *numComponents_ret)
 {
-  int i, j, n, row, col, width, height, extcode, count, colormapsize;
+  int i, j, n, row, col, width, height, extcode, colormapsize;
+  unsigned char * rowdata;
   unsigned char * image;
   unsigned char * buffer, * ptr;
   unsigned char bg;
+  int transparent;
   GifRecordType recordtype;
   GifByteType * extension;
   GifFileType * giffile;
-  GifColorType * cmentry;
-  ColorMapObject * colormap;
+  GifColorType * bgcol;
   
   /* The way an interlaced image should be read - offsets and jumps */
   int interlacedoffset[] = { 0, 4, 2, 1 }; 
@@ -75,25 +117,48 @@ simage_gif_load(const char *filename,
     return NULL;
   }
   
+  transparent = -1; /* no transparenct color by default */
+  
   n = giffile->SHeight * giffile->SWidth;
-  buffer = malloc(n * 3);
+  buffer = malloc(n * 4);
   if (!buffer) {
     giferror = ERR_MEM;
     return NULL;
   }
+  rowdata = malloc(giffile->SWidth);
+  if (!rowdata) {
+    giferror = ERR_MEM;
+    free(buffer);
+    return NULL;
+  }
   
-  /* use last part of buffer to store paletted image */
-  image = buffer + 2 * n; 
-
-  /* set all pixels to the background color */
   bg = giffile->SBackGroundColor;
-  for (i = 0; i < n; i++) image[i] = bg;
-  
+  if (giffile->SColorMap && bg < giffile->SColorMap->ColorCount) {
+    bgcol = &giffile->SColorMap->Colors[bg];
+  }
+  else bgcol = NULL;  
+  ptr = buffer;
+  for (i = 0; i < n; i++) {
+    if (bgcol) {
+      *ptr++ = bgcol->Red;
+      *ptr++ = bgcol->Green;
+      *ptr++ = bgcol->Blue;
+      *ptr++ = 0xff;
+    }
+    else {
+      *ptr++ = 0x00;
+      *ptr++ = 0x00;
+      *ptr++ = 0x00;
+      *ptr++ = 0xff;
+    }
+  }
+ 
   /* Scan the content of the GIF file and load the image(s) in: */
   do {
     if (DGifGetRecordType(giffile, &recordtype) == GIF_ERROR) {
       giferror = ERR_READ;
       free(buffer);
+      free(rowdata);
       return NULL;
     }
     switch (recordtype) {
@@ -101,6 +166,7 @@ simage_gif_load(const char *filename,
       if (DGifGetImageDesc(giffile) == GIF_ERROR) {
         giferror = ERR_READ;
         free(buffer);
+        free(rowdata);
         return NULL;
       }
       row = giffile->Image.Top; /* subimage position in composite image */
@@ -112,30 +178,34 @@ simage_gif_load(const char *filename,
         /* image is not confined to screen dimension */
         giferror = ERR_READ;
         free(buffer);
+        free(rowdata);
         return NULL;
       }
       if (giffile->Image.Interlace) {
+        fprintf(stderr,"interlace\n");
         /* Need to perform 4 passes on the images: */
-        for (count = i = 0; i < 4; i++) {
+        for (i = 0; i < 4; i++) {
           for (j = row + interlacedoffset[i]; j < row + height;
                j += interlacedjumps[i]) {
-            if (DGifGetLine(giffile, image + (j*giffile->SWidth) + col,
-                            width) == GIF_ERROR) {
+            if (DGifGetLine(giffile, rowdata, width) == GIF_ERROR) {
               giferror = ERR_READ;
               free(buffer);
+              free(rowdata);
               return NULL;
             }
+            else decode_row(giffile, buffer, rowdata, col, j, width, transparent);
           }
         }
       }
       else {
-        for (i = 0; i < height; i++) {
-          if (DGifGetLine(giffile, image + (row++ * giffile->SWidth) + col,
-                          width) == GIF_ERROR) {
+        for (i = 0; i < height; i++, row++) {
+          if (DGifGetLine(giffile, rowdata, width) == GIF_ERROR) {
             giferror = ERR_READ;
             free(buffer);
+            free(rowdata);
             return NULL;
           }
+          else decode_row(giffile, buffer, rowdata, col, row, width, transparent);
         }
       }
       break;
@@ -144,12 +214,19 @@ simage_gif_load(const char *filename,
       if (DGifGetExtension(giffile, &extcode, &extension) == GIF_ERROR) {
         giferror = ERR_READ;
         free(buffer);
+        free(rowdata);
         return NULL;
+      }
+      /* transparent test from the gimp gif-plugin. Open Source rulez! */
+      else if (extcode == 0xf9) { 
+        if (extension[0] >= 4 && extension[1] & 0x1) transparent = extension[4];
+        else transparent = -1;
       }
       while (extension != NULL) {
         if (DGifGetExtensionNext(giffile, &extension) == GIF_ERROR) {
           giferror = ERR_READ;
           free(buffer);
+          free(rowdata);
           return NULL;
         }
       }
@@ -162,26 +239,11 @@ simage_gif_load(const char *filename,
   }
   while (recordtype != TERMINATE_RECORD_TYPE);
 
-  /* whizz through image, and convert to RGB */
-  colormap = (giffile->Image.ColorMap
-              ? giffile->Image.ColorMap
-              : giffile->SColorMap);
-  colormapsize = colormap->ColorCount;
-
-  ptr = buffer;
-  for (i = 0; i < n; i++) {
-    if (*image < colormapsize) /* just in case */
-      cmentry = &colormap->Colors[*image++];
-    else
-      cmentry = &colormap->Colors[bg];
-    *ptr++ = cmentry->Red;
-    *ptr++ = cmentry->Green;
-    *ptr++ = cmentry->Blue;
-  }
+  free(rowdata);
   DGifCloseFile(giffile);
   *width_ret = giffile->SWidth;
   *height_ret = giffile->SHeight;
-  *numComponents_ret = 3;
+  *numComponents_ret = 4;
   return buffer;
 }
 
