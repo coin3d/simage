@@ -147,11 +147,9 @@
                image */
 #define SIMAGE_VERSION_1_5
 
-/* version 1.6 added API for reading images line-by-line */
+/* version 1.6 added API for reading images line-by-line
+               added API for loading dynamic libraries at run-time */
 #define SIMAGE_VERSION_1_6
-
-/* version 1.7 added API for loading dynamic libraries at run-time */
-#define SIMAGE_VERSION_1_7
 
 /* These are available for adding or omitting features based on simage
  * version numbers in "client" sources. NB: they are automatically
@@ -473,10 +471,6 @@ extern "C" {
   SIMAGE_DLL_API int s_image_read_line(s_image * image, 
                                        int line,
                                        unsigned char * buf);
-
-  /*****************************************************************/
-  /**** NOTE: new methods for simage version 1.7 *******************/
-  /*****************************************************************/
 
   typedef void * s_dlopen_func(const char * filename);
   typedef void * s_dlsym_func(void * handle, const char * symbolname);
