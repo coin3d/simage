@@ -102,7 +102,6 @@ else
 fi
 AC_SUBST(SIMAGE_LIBNAME)
 
-
 dnl *******************************************************************
 dnl * Check if JPEG support is wanted (and if so, available).
 dnl *******************************************************************
@@ -240,5 +239,14 @@ dnl *******************************************************************
 dnl * List all files configure shall generate.
 dnl *******************************************************************
 
-AC_OUTPUT([Makefile src/Makefile simage-config],
+dnl Set simage_build_dir so we can change simage.dsp
+simage_current_dir=`pwd`
+SIM_AC_DOBACKSLASH(simage_build_dir,$simage_current_dir)
+AC_SUBST(simage_build_dir)
+
+dnl Set simage_src_dir so we can change simage.dsp
+SIM_AC_DOBACKSLASH(simage_src_dir,$srcdir)
+AC_SUBST(simage_src_dir)
+
+AC_OUTPUT([Makefile src/Makefile simage-config build/simage.dsp build/simage.mak],
           [chmod a+x simage-config])

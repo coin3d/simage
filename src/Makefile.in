@@ -92,6 +92,8 @@ SIMAGE_MINOR_VERSION = @SIMAGE_MINOR_VERSION@
 SIMAGE_VERSION = @SIMAGE_VERSION@
 VERSION = @VERSION@
 install_sh = @install_sh@
+simage_build_dir = @simage_build_dir@
+simage_src_dir = @simage_src_dir@
 
 
 lib_LTLIBRARIES = libsimage.la

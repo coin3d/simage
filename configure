@@ -2071,7 +2071,6 @@ fi
 
 
 
-
 # Check whether --with-jpeg or --without-jpeg was given.
 if test "${with_jpeg+set}" = set; then
   withval="$with_jpeg"
@@ -2104,12 +2103,12 @@ if test x"$with_jpeg" != xno; then
   LIBS="$sim_ac_jpegdev_libs $LIBS"
 
   echo $ac_n "checking whether the libjpeg development system is available... $ac_c" 1>&6
-echo "configure:2108: checking whether the libjpeg development system is available" 1>&5
+echo "configure:2107: checking whether the libjpeg development system is available" 1>&5
 if test "${sim_cv_lib_jpegdev_avail+set}" = set; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2113 "configure"
+#line 2112 "configure"
 #include "confdefs.h"
 #include <stdio.h>
                   #include <jpeglib.h>
@@ -2117,7 +2116,7 @@ int main() {
 (void)jpeg_read_header(0L, 0);
 ; return 0; }
 EOF
-if { (eval echo configure:2121: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2120: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   sim_cv_lib_jpegdev_avail=yes
 else
@@ -2194,19 +2193,19 @@ if test x"$with_ungif" != xno; then
   LIBS="$sim_ac_ungifdev_libs $LIBS"
 
   echo $ac_n "checking whether the libungif development system is available... $ac_c" 1>&6
-echo "configure:2198: checking whether the libungif development system is available" 1>&5
+echo "configure:2197: checking whether the libungif development system is available" 1>&5
 if test "${sim_cv_lib_ungifdev_avail+set}" = set; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2203 "configure"
+#line 2202 "configure"
 #include "confdefs.h"
 #include <gif_lib.h>
 int main() {
 (void)EGifOpenFileName(0L, 0);
 ; return 0; }
 EOF
-if { (eval echo configure:2210: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2209: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   sim_cv_lib_ungifdev_avail=yes
 else
@@ -2284,19 +2283,19 @@ if test x"$with_tiff" != xno; then
   LIBS="$sim_ac_tiffdev_libs $LIBS"
 
   echo $ac_n "checking whether the libtiff development system is available... $ac_c" 1>&6
-echo "configure:2288: checking whether the libtiff development system is available" 1>&5
+echo "configure:2287: checking whether the libtiff development system is available" 1>&5
 if test "${sim_cv_lib_tiffdev_avail+set}" = set; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2293 "configure"
+#line 2292 "configure"
 #include "confdefs.h"
 #include <tiffio.h>
 int main() {
 (void)TIFFOpen(0L, 0L);
 ; return 0; }
 EOF
-if { (eval echo configure:2300: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2299: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   sim_cv_lib_tiffdev_avail=yes
 else
@@ -2377,19 +2376,19 @@ if test x"$with_zlib" != xno; then
   LIBS="$sim_ac_zlib_libs $LIBS"
 
   echo $ac_n "checking whether the zlib development system is available... $ac_c" 1>&6
-echo "configure:2381: checking whether the zlib development system is available" 1>&5
+echo "configure:2380: checking whether the zlib development system is available" 1>&5
 if test "${sim_cv_lib_zlib_avail+set}" = set; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2386 "configure"
+#line 2385 "configure"
 #include "confdefs.h"
 #include <zlib.h>
 int main() {
 (void)zlibVersion();
 ; return 0; }
 EOF
-if { (eval echo configure:2393: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2392: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   sim_cv_lib_zlib_avail=yes
 else
@@ -2452,19 +2451,19 @@ if test x"$with_png" != xno; then
   LIBS="$sim_ac_pngdev_libs $LIBS"
 
   echo $ac_n "checking whether the libpng development system is available... $ac_c" 1>&6
-echo "configure:2456: checking whether the libpng development system is available" 1>&5
+echo "configure:2455: checking whether the libpng development system is available" 1>&5
 if test "${sim_cv_lib_pngdev_avail+set}" = set; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 2461 "configure"
+#line 2460 "configure"
 #include "confdefs.h"
 #include <png.h>
 int main() {
 (void)png_read_info(0L, 0L);
 ; return 0; }
 EOF
-if { (eval echo configure:2468: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2467: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   sim_cv_lib_pngdev_avail=yes
 else
@@ -2614,6 +2613,17 @@ libdir="`eval echo $libdir`"
 
 
 
+simage_current_dir=`pwd`
+
+eval "simage_build_dir=\"`echo $simage_current_dir | sed -e 's%\\/%\\\\%g'`\""
+
+
+
+
+eval "simage_src_dir=\"`echo $srcdir | sed -e 's%\\/%\\\\%g'`\""
+
+
+
 trap '' 1 2 15
 cat >confcache <<\EOF
 # This file is a shell script that caches the results of configure
@@ -2697,7 +2707,7 @@ cat >$CONFIG_STATUS <<EOF
 
 # Files that config.status was made for.
 config_files="\\
-    Makefile src/Makefile simage-config"
+    Makefile src/Makefile simage-config build/simage.dsp build/simage.mak"
 config_headers="\\
     config.h"
 
@@ -2744,6 +2754,8 @@ do
   'Makefile' ) CONFIG_FILES="\$CONFIG_FILES Makefile" ;;
   'src/Makefile' ) CONFIG_FILES="\$CONFIG_FILES src/Makefile" ;;
   'simage-config' ) CONFIG_FILES="\$CONFIG_FILES simage-config" ;;
+  'build/simage.dsp' ) CONFIG_FILES="\$CONFIG_FILES build/simage.dsp" ;;
+  'build/simage.mak' ) CONFIG_FILES="\$CONFIG_FILES build/simage.mak" ;;
   'config.h' ) CONFIG_HEADERS="\$CONFIG_HEADERS config.h" ;;
   # This is an error.
   *) echo "$CONFIG_STATUS: invalid argument: \$ac_option"; exit 1 ;;
@@ -2865,6 +2877,8 @@ s%@RGB_SUPPORT_TRUE@%$RGB_SUPPORT_TRUE%;t t
 s%@RGB_SUPPORT_FALSE@%$RGB_SUPPORT_FALSE%;t t
 s%@PIC_SUPPORT_TRUE@%$PIC_SUPPORT_TRUE%;t t
 s%@PIC_SUPPORT_FALSE@%$PIC_SUPPORT_FALSE%;t t
+s%@simage_build_dir@%$simage_build_dir%;t t
+s%@simage_src_dir@%$simage_src_dir%;t t
 CEOF
 
 EOF
@@ -3140,14 +3154,16 @@ for mf in $CONFIG_FILES; do
   grep '^DEP_FILES *= *[^ #]' < "$mf" > /dev/null || continue
   # Extract the definition of DEP_FILES from the Makefile without
   # running `make'.
-  DEPDIR=`sed -n -e '/^DEPDIR = / s///p' < "$mf"`
+  DEPDIR=`tr -d "
+" < "$mf" | sed -n -e '/^DEPDIR = / s///p'`
   test -z "$DEPDIR" && continue
   # When using ansi2knr, U may be empty or an underscore; expand it
   U=`sed -n -e '/^U = / s///p' < "$mf"`
   test -d "$dirpart/$DEPDIR" || mkdir "$dirpart/$DEPDIR"
   # We invoke sed twice because it is the simplest approach to
   # changing $(DEPDIR) to its actual value in the expansion.
-  for file in `sed -n -e '
+  for file in `tr -d "
+" < "$mf" | sed -n -e '
     /^DEP_FILES = .*\\\\$/ {
       s/^DEP_FILES = //
       :loop
@@ -3157,7 +3173,7 @@ for mf in $CONFIG_FILES; do
 	/\\\\$/ b loop
       p
     }
-    /^DEP_FILES = / s/^DEP_FILES = //p' < "$mf" | \
+    /^DEP_FILES = / s/^DEP_FILES = //p' | \
        sed -e 's/\$(DEPDIR)/'"$DEPDIR"'/g' -e 's/\$U/'"$U"'/g'`; do
     # Make sure the directory exists.
     test -f "$dirpart/$file" && continue
