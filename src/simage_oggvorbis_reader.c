@@ -124,10 +124,10 @@ oggvorbis_reader_read(oggvorbis_reader_context *context,
   The code below changes the endian-ness of the buffer.
   
   unsigned char tmp;
-  for (int i=0; i<size/2; i++) {
-    tmp = buffer[i*2]; 
-    buffer[i*2] = buffer[i*2+1];
-    buffer[i*2+1] = tmp;
+  for (int i=0; i<size; i+=2) {
+    tmp = buffer[i]; 
+    buffer[i] = buffer[i+1];
+    buffer[i+1] = tmp;
   }
 
   2003-01-10 thammer
