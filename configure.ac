@@ -28,16 +28,6 @@ AC_CANONICAL_TARGET
 SIM_AC_MSVC_DSP_ENABLE_OPTION
 SIM_AC_SETUP_MSVCPP_IFELSE
 
-if $BUILD_WITH_MSVC; then
-  SIM_AC_SETUP_MSVCRT([
-    CPPFLAGS="$CPPFLAGS $sim_ac_msvcrt_CPPFLAGS"
-    CFLAGS="$CFLAGS $sim_ac_msvcrt_CFLAGS"
-    CXXFLAGS="$CXXFLAGS $sim_ac_msvcrt_CXXFLAGS"
-    LDFLAGS="$LDFLAGS $sim_ac_msvcrt_LDFLAGS"
-    LIBS="$LIBS $sim_ac_msvcrt_LIBS"
-  ])
-fi
-
 # **************************************************************************
 # Check to see if the compiler supports the ANSI standard, and
 # automatically add the necessary options if the compiler defaults
@@ -52,6 +42,29 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG(C++)
 
+# The next part screwed up default compiler flags when set up above AC_PROG_CC
+# et al.  20041021 larsa
+if $BUILD_WITH_MSVC; then
+  SIM_AC_SETUP_MSVCRT([
+    CPPFLAGS="$CPPFLAGS $sim_ac_msvcrt_CPPFLAGS"
+    CFLAGS="$CFLAGS $sim_ac_msvcrt_CFLAGS"
+    CXXFLAGS="$CXXFLAGS $sim_ac_msvcrt_CXXFLAGS"
+    LDFLAGS="$LDFLAGS $sim_ac_msvcrt_LDFLAGS"
+    LIBS="$LIBS $sim_ac_msvcrt_LIBS"
+  ])
+fi
+
+# Figure out if we want a static or shared library.
+case $enable_static in
+true | yes) SIMAGE_STATIC=true
+            enable_shared=no ;; # fix --enable-static problem.  20041021 larsa
+*)          SIMAGE_STATIC=false ;;
+esac
+
+case $enable_shared in
+true | yes) SIMAGE_SHARED=true ;;
+*)          SIMAGE_SHARED=false ;;
+esac
 
 # **************************************************************************
 # Check to see if fink is installed on the system
@@ -675,16 +688,6 @@ CPP_AC_SEARCH_ORDER_FILTER(SIMAGE_EXTRA_CPPFLAGS, $SIMAGE_EXTRA_CPPFLAGS)
 # **************************************************************************
 # Section related to building with MS Visual C++ on Windows
 
-case $enable_static in
-true | yes)  SIMAGE_STATIC=true;;
-*)           SIMAGE_STATIC=false;;
-esac
-
-case $enable_shared in
-true | yes)  SIMAGE_SHARED=true;;
-*)           SIMAGE_SHARED=false;;
-esac
-
 LIBFLAGS=
 
 # AC_SUBST(SIMAGE_STATIC)
@@ -718,7 +721,8 @@ if $BUILD_WITH_MSVC; then
       SIM_AC_CONFIGURATION_SETTING([Simage Build Type], [Dynamic .DLL])
       ;;
     *)
-      CFLAGS="/Fd$debugfile -g $CFLAGS"
+      CFLAGS="/Fd$debugfile $CFLAGS"
+      CXXFLAGS="/Fd$debugfile $CXXFLAGS"
       LIBFLAGS="$LIBFLAGS /DEBUG /PDB:simage$SIMAGE_MAJOR_VERSION$SUFFIX.pdb"
       SIM_AC_CONFIGURATION_SETTING([Simage Build Type], [Dynamic .DLL + .PDB])
       ;;
