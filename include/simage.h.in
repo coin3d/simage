@@ -96,6 +96,19 @@
  *   - "allow image modification" <int> : Set to "1" to allow the encoder
  *     to modify the image buffer. If this parameter is not set, the encoder
  *     will make a local copy of the image before it is encoded.
+ * 
+ *   Example code:
+ *
+ *   s_params *imgparams = s_params_create();
+ *   s_params_set(imgparams, 
+ *                "allow image modification", S_INTEGER_PARAM_TYPE, 1,
+ *                NULL);
+ *   for(;;) {
+ *     s_image_set(image, width, height, 1, <get image from somewhere>);
+ *     for (int i=0; i<repeatCount;i++)
+ *       s_movie_put_image(movie, image, imgparams);
+ *   }
+ *   s_params_destroy(imgparams);
  *
  *   Returns 1 on success, 0 on failure
  *
@@ -129,7 +142,9 @@
 #define SIMAGE_VERSION_1_4
 
 /* version 1.5 added API for seeking and getting ("telling") the 
-   current position in a stream */
+               current position in a stream
+               added API for setting and getting component order of an
+               image */
 #define SIMAGE_VERSION_1_5
 
 /* These are available for adding or omitting features based on simage
@@ -436,6 +451,13 @@ extern "C" {
                                                s_stream_seek_func * seek,
                                                s_stream_tell_func * tell,
                                                s_stream_close_func * close);
+
+  enum {
+    SIMAGE_ORDER_RGB = 0,
+    SIMAGE_ORDER_BGR
+  };
+  SIMAGE_DLL_API int s_image_set_component_order(s_image * image, int order);
+  SIMAGE_DLL_API int s_image_get_component_order(s_image * image);
 
 #ifdef __cplusplus
 }

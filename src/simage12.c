@@ -13,6 +13,7 @@ struct simage_image_s {
   int height;
   int components;
   int didalloc;
+  int order;
   unsigned char * data;
 };
 
@@ -24,6 +25,7 @@ s_image_create(int w, int h, int components,
   image->width = w;
   image->height = h;
   image->components = components;
+  image->order = SIMAGE_ORDER_RGB; 
   image->didalloc = 0;
   image->data = prealloc;
   if (image->data == NULL) {
@@ -61,6 +63,21 @@ s_image_components(s_image * image)
 {
   if (image) return image->components;
   return 0;
+}
+
+
+int 
+s_image_set_component_order(s_image * image, int order)
+{
+  int oldorder = image->order;
+  image->order = order;
+  return oldorder;
+}
+
+int 
+s_image_get_component_order(s_image * image)
+{
+  return image->order;
 }
 
 unsigned char * 
@@ -104,6 +121,7 @@ s_image_set(s_image * image, int w, int h, int components,
       image->didalloc = 0;
     }
   }
+  image->order = SIMAGE_ORDER_RGB;
 }
 
 s_image * 
@@ -128,6 +146,7 @@ s_image_load(const char * filename, s_image * prealloc /* | NULL */)
     /* we don't need this copy any more */
     simage_free_image(data);
   }
+  prealloc->order = SIMAGE_ORDER_RGB;
   return prealloc;
 }
 
