@@ -7,19 +7,19 @@ INCLUDES = -I$(top_srcdir)/include/
 ## All source files used when building the libraries, including all
 ## headers.
 
-if JPEG_SUPPORT
+if SIMAGE_JPEG_SUPPORT
 JPEGSOURCES = simage_jpeg.c simage_jpeg.h
 else
 JPEGSOURCES =
 endif
 
-if TIFF_SUPPORT
+if SIMAGE_TIFF_SUPPORT
 TIFFSOURCES = simage_tiff.c simage_tiff.h
 else
 TIFFSOURCES =
 endif
 
-if PNG_SUPPORT
+if SIMAGE_PNG_SUPPORT
 PNGSOURCES = simage_png.c simage_png.h
 else
 PNGSOURCES =

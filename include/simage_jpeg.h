@@ -3,9 +3,9 @@
 
 #include <config.h>
 
-#ifndef SIMAGE_JPEG_SUPPORT
+#ifndef HAVE_JPEGLIB
 #error "This file should not be used under the current configuration!"
-#endif /* !SIMAGE_JPEG_SUPPORT */
+#endif /* !HAVE_JPEGLIB */
 
 
 unsigned char *simage_jpeg_load(const char *filename,

@@ -1,20 +1,17 @@
 /* config.h.in.  Generated automatically from configure.in by autoheader.  */
 
-#undef SIMAGE_JPEG_SUPPORT
+#undef HAVE_JPEGLIB
+#undef HAVE_TIFFLIB
+#undef HAVE_PNGLIB
 #undef SIMAGE_PIC_SUPPORT
-#undef SIMAGE_PNG_SUPPORT
 #undef SIMAGE_RGB_SUPPORT
 #undef SIMAGE_TGA_SUPPORT
-#undef SIMAGE_TIFF_SUPPORT
 
-/* Define if you have the `jpeg' library (-ljpeg). */
-#undef HAVE_LIBJPEG
+/* Define if you have the `m' library (-lm). */
+#undef HAVE_LIBM
 
-/* Define if you have the `png' library (-lpng). */
-#undef HAVE_LIBPNG
-
-/* Define if you have the `tiff' library (-ltiff). */
-#undef HAVE_LIBTIFF
+/* Define if you have the `mw' library (-lmw). */
+#undef HAVE_LIBMW
 
 /* Name of package */
 #undef PACKAGE

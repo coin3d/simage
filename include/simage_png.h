@@ -3,9 +3,9 @@
 
 #include <config.h>
 
-#ifndef SIMAGE_PNG_SUPPORT
+#ifndef HAVE_PNGLIB
 #error "This file should not be used under the current configuration!"
-#endif /* !SIMAGE_PNG_SUPPORT */
+#endif /* !HAVE_PNGLIB */
 
 unsigned char *simage_png_load(const char *filename,
 				int *width,

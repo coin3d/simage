@@ -20,22 +20,22 @@ struct _loader_data
 typedef struct _loader_data loader_data;
 
 /* built in image loaders */ 
-#ifdef SIMAGE_JPEG_SUPPORT
+#ifdef HAVE_JPEGLIB
 #include "simage_jpeg.h"
 static loader_data jpeg_loader;
-#endif /* SIMAGE_JPEG_SUPPORT */
-#ifdef SIMAGE_PNG_SUPPORT
+#endif /* HAVE_JPEGLIB */
+#ifdef HAVE_PNGLIB
 #include "simage_png.h"
 static loader_data png_loader;
-#endif /* SIMAGE_PNG_SUPPORT */
+#endif /* HAVE_PNGLIB */
 #ifdef SIMAGE_TGA_SUPPORT
 #include "simage_tga.h"
 static loader_data targa_loader;
 #endif /* SIMAGE_TGA_SUPPORT */
-#ifdef SIMAGE_TIFF_SUPPORT
+#ifdef HAVE_TIFFLIB
 #include "simage_tiff.h"
 static loader_data tiff_loader;
-#endif /* SIMAGE_TIFF_SUPPORT */
+#endif /* HAVE_TIFFLIB */
 #ifdef SIMAGE_PIC_SUPPORT
 #include "simage_pic.h"
 static loader_data pic_loader;
@@ -123,20 +123,20 @@ add_internal_loaders()
   static int first = 1;
   if (first) {
     first = 0;
-#ifdef SIMAGE_JPEG_SUPPORT
+#ifdef HAVE_JPEGLIB
     add_loader(&jpeg_loader, 
 	       simage_jpeg_load,
 	       simage_jpeg_identify,
 	       simage_jpeg_error,
 	       1, 0);
-#endif /* SIMAGE_JPEG_SUPPORT */
-#ifdef SIMAGE_PNG_SUPPORT
+#endif /* HAVE_JPEGLIB */
+#ifdef HAVE_PNGLIB
     add_loader(&png_loader, 
 	       simage_png_load,
 	       simage_png_identify,
 	       simage_png_error,
 	       1, 0);
-#endif /* SIMAGE_PNG_SUPPORT */
+#endif /* HAVE_PNGLIB */
 #ifdef SIMAGE_TGA_SUPPORT
     add_loader(&targa_loader, 
 	       simage_tga_load,
@@ -144,13 +144,13 @@ add_internal_loaders()
 	       simage_tga_error,
 	       1, 0);
 #endif /* SIMAGE_TGA_SUPPORT */
-#ifdef SIMAGE_TIFF_SUPPORT
+#ifdef HAVE_TIFFLIB
     add_loader(&tiff_loader, 
 	       simage_tiff_load,
 	       simage_tiff_identify,
 	       simage_tiff_error,
 	       1, 0);
-#endif /* SIMAGE_TIFF_SUPPORT */
+#endif /* HAVE_TIFFLIB */
 #ifdef SIMAGE_RGB_SUPPORT
     add_loader(&rgb_loader, 
 	       simage_rgb_load,

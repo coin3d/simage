@@ -9,9 +9,6 @@ prioritized order)
   the presence of libsimage and adds the propriate flags and stuff for
   application programmers, and install it in $prefix/share/aclocal/.
 
-* [mortene:19990822] add zlib in the configure checks -- as it is
-  needed for the png library.
-
 * [mortene:19990822] write simage-specific information in the INSTALL
   and README files.
 
@@ -33,6 +30,11 @@ Done
 ====
 
 (format is: "* [author:conceived-date][implementer:finished-date] item")
+
+* [mortene:19990822][mortene:20000122] add zlib in the configure
+  checks -- as it is needed for the png library. Take a look at the
+  CHECK_ZLIB macro from the autoconf macro archives to see if it can
+  be used.
 
 * [mortene:19990826][mortene:19990908] have the build process put
   generated architecture specific files (object files etc) into their

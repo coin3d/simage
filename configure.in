@@ -10,7 +10,7 @@ dnl *******************************************************************
 AC_PROG_CC
 AM_PROG_CC_STDC
 
-if test "x$am_cv_prog_cc_stdc" = "xno"; then
+if test x"$am_cv_prog_cc_stdc" = xno; then
   AC_MSG_ERROR(you need an ANSI compatible C compiler to build simage!)
 fi
 
@@ -75,105 +75,80 @@ dnl Initialize libtool
 AC_PROG_LIBTOOL
 
 
-dnl *******************************************************************
-dnl * Check if JPEG support is wanted.
-dnl *******************************************************************
+dnl  These are used for constructing the simage-config file.
+SIMAGE_EXTRA_CFLAGS=
+SIMAGE_EXTRA_LDFLAGS=
+SIMAGE_EXTRA_LIBS=
+AC_SUBST(SIMAGE_EXTRA_CFLAGS)
+AC_SUBST(SIMAGE_EXTRA_LDFLAGS)
+AC_SUBST(SIMAGE_EXTRA_LIBS)
 
-AC_ARG_WITH(jpeg,
-	[  --with-jpeg             include support for JPEG images [default=yes]],
-	[case "${withval}" in
-		yes) want_jpeg=yes ;;
-		no)  want_jpeg=no ;;
-		*) AC_MSG_ERROR(bad value \"${withval}\" for --with-jpeg) ;;
-	esac],
-	[want_jpeg=yes])
 
-dnl *******************************************************************
-dnl * Check if libjpeg development system is installed.
-dnl *******************************************************************
-
-if test "$want_jpeg" = yes; then
-AC_CHECK_HEADER(jpeglib.h, jpeg_dev=yes, jpeg_dev=no)
-if test "$jpeg_dev" = yes; then
-  AC_CHECK_LIB(jpeg, jpeg_read_header, , jpeg_dev=no)
-fi
-if test "$jpeg_dev" = no; then
-  AC_MSG_WARN(libjpeg development system not found -- no JPEG support)
-fi
-fi
-
-AM_CONDITIONAL(JPEG_SUPPORT, test "x$jpeg_dev" = "xyes")
-if test "$jpeg_dev" = yes; then
-  AC_DEFINE(SIMAGE_JPEG_SUPPORT, 1)
-fi
+dnl  libtiff and libpng uses math library functions.
+AC_CHECK_LIBM
+LIBS="$LIBM $LIBS"
+SIMAGE_EXTRA_LIBS="$LIBM $SIMAGE_EXTRA_LIBS"
 
 
 dnl *******************************************************************
-dnl * Check if TIFF supported is wanted.
+dnl * Check if JPEG support is wanted (and if so, available).
 dnl *******************************************************************
 
-AC_ARG_WITH(tiff,
-	[  --with-tiff             include support for TIFF images [default=yes]],
-	[case "${withval}" in
-		yes) want_tiff=yes ;;
-		no)  want_tiff=no ;;
-		*) AC_MSG_ERROR(bad value \"${withval}\" for --with-tiff) ;;
-	esac],
-	[want_tiff=yes])
+SIM_CHECK_JPEGLIB([AC_DEFINE(HAVE_JPEGLIB)
+                   SIMAGE_EXTRA_CFLAGS="$SIMAGE_EXTRA_CFLAGS $sim_ac_jpegdev_cflags"
+                   SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_jpegdev_ldflags"
+                   SIMAGE_EXTRA_LIBS="$sim_ac_jpegdev_libs $SIMAGE_EXTRA_LIBS"],
+                  [AC_MSG_WARN(libjpeg development system not found)])
 
-dnl *******************************************************************
-dnl * Check if libtiff development system is installed.
-dnl *******************************************************************
+AM_CONDITIONAL(SIMAGE_JPEG_SUPPORT, test x"$sim_cv_lib_jpegdev_avail" = xyes)
 
-if test "$want_tiff" = yes; then
-AC_CHECK_HEADER(tiffio.h, tiff_dev=yes, tiff_dev=no)
-if test "$tiff_dev" = yes; then
-  AC_CHECK_LIB(tiff, TIFFOpen, , tiff_dev=no, -lm)
-fi
-if test "$tiff_dev" = no; then
-  AC_MSG_WARN(libtiff development system not found -- no TIFF support)
-fi
-fi
-
-AM_CONDITIONAL(TIFF_SUPPORT, test "x$tiff_dev" = "xyes")
-if test "$tiff_dev" = yes; then
-  AC_DEFINE(SIMAGE_TIFF_SUPPORT, 1)
-fi
 
 
 dnl *******************************************************************
-dnl * Check if PNG support is wanted.
+dnl * Check if TIFF support is wanted (and if so, available).
 dnl *******************************************************************
 
-AC_ARG_WITH(png,
-	[  --with-png              include support for PNG images [default=yes]],
-	[case "${withval}" in
-		yes) want_png=yes ;;
-		no)  want_png=no ;;
-		*) AC_MSG_ERROR(bad value \"${withval}\" for --with-png) ;;
-	esac],
-	[want_png=yes])
+SIM_CHECK_TIFFLIB([AC_DEFINE(HAVE_TIFFLIB)
+                   SIMAGE_EXTRA_CFLAGS="$SIMAGE_EXTRA_CFLAGS $sim_ac_tiffdev_cflags"
+                   SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_tiffdev_ldflags"
+                   SIMAGE_EXTRA_LIBS="$sim_ac_tiffdev_libs $SIMAGE_EXTRA_LIBS"],
+                  [AC_MSG_WARN(libtiff development system not found)])
+
+AM_CONDITIONAL(SIMAGE_TIFF_SUPPORT, test x"$sim_cv_lib_tiffdev_avail" = xyes)
+
+
 
 dnl *******************************************************************
-dnl * Check if libpng development system is installed.
+dnl * Check if PNG support is wanted (and if so, available).
 dnl *******************************************************************
 
-if test "$want_png" = yes; then
-AC_CHECK_HEADER(png.h, png_dev=yes, png_dev=no)
-if test "$png_dev" = yes; then
-  AC_CHECK_LIB(png, png_read_info, , png_dev=no, -lz -lm)
-fi
-  if test "$png_dev" = yes; then
-    LIBS="$LIBS -lz -lm"
+simage_ac_pnglib=no
+
+dnl Yep, we can actually check for a negative with-png here, as the
+dnl default is "yes" and the user therefore must explicitly specify
+dnl if he/she does _not_ want the PNG support.
+if ! test x"$with_png" = xno; then
+  simage_ac_zlib=no
+  SIM_CHECK_ZLIB([simage_ac_zlib=yes
+                  SIMAGE_EXTRA_CFLAGS="$SIMAGE_EXTRA_CFLAGS $sim_ac_zlib_cflags"
+                  SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_zlib_ldflags"
+                  SIMAGE_EXTRA_LIBS="$sim_ac_zlib_libs $SIMAGE_EXTRA_LIBS"],
+                  [AC_MSG_WARN(zlib development system not found)])
+  
+  if test x"$simage_ac_zlib" = xyes; then
+    SIM_CHECK_PNGLIB([simage_ac_pnglib=yes
+                      AC_DEFINE(HAVE_PNGLIB)
+                      SIMAGE_EXTRA_CFLAGS="$SIMAGE_EXTRA_CFLAGS $sim_ac_pngdev_cflags"
+                      SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_pngdev_ldflags"
+                      SIMAGE_EXTRA_LIBS="$sim_ac_pngdev_libs $SIMAGE_EXTRA_LIBS"],
+                     [AC_MSG_WARN(libpng development system not found)])
   else
-  AC_MSG_WARN(libpng development system not found -- no PNG support)
-fi
+    AC_MSG_WARN(can't use libpng without zlib)
+  fi
 fi
 
-AM_CONDITIONAL(PNG_SUPPORT, test "x$png_dev" = "xyes")
-if test "$png_dev" = yes; then
-  AC_DEFINE(SIMAGE_PNG_SUPPORT, 1)
-fi
+AM_CONDITIONAL(SIMAGE_PNG_SUPPORT, test x"$simage_ac_pnglib" = xyes)
+
 
 
 dnl *******************************************************************
@@ -181,7 +156,7 @@ dnl * Check if Targa support is wanted.
 dnl *******************************************************************
 
 AC_ARG_WITH(targa,
-	[  --with-targa            include support for Targa images [default=yes]],
+        AC_HELP_STRING([--with-targa], [include support for Targa images [default=yes]]),
 	[case "${withval}" in
 		yes) want_tga=yes ;;
 		no)  want_tga=no ;;
@@ -200,7 +175,7 @@ dnl * Check if RGB support is wanted.
 dnl *******************************************************************
 
 AC_ARG_WITH(rgb,
-	[  --with-rgb              include support for SGI RGB images [default=yes]],
+        AC_HELP_STRING([--with-rgb], [include support for SGI RGB images [default=yes]]),
 	[case "${withval}" in
 		yes) want_rgb=yes ;;
 		no)  want_rgb=no ;;
@@ -219,7 +194,7 @@ dnl * Check if PIC support is wanted.
 dnl *******************************************************************
 
 AC_ARG_WITH(pic,
-	[  --with-pic              include support for PIC images [default=yes]],
+        AC_HELP_STRING([--with-pic], [include support for PIC images [default=yes]]),
 	[case "${withval}" in
 		yes) want_pic=yes ;;
 		no)  want_pic=no ;;
@@ -236,4 +211,5 @@ dnl *******************************************************************
 dnl * List all files configure shall generate.
 dnl *******************************************************************
 
-AC_OUTPUT(Makefile src/Makefile)
+AC_OUTPUT([Makefile src/Makefile simage-config],
+          [chmod a+x simage-config])

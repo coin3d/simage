@@ -3,9 +3,9 @@
 
 #include <config.h>
 
-#ifndef SIMAGE_TIFF_SUPPORT
+#ifndef HAVE_TIFFLIB
 #error "This file should not be used under the current configuration!"
-#endif /* !SIMAGE_TIFF_SUPPORT */
+#endif /* !HAVE_TIFFLIB */
 
 unsigned char *simage_tiff_load(const char *filename,
 				 int *width,
