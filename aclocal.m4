@@ -7375,12 +7375,8 @@ AC_ARG_ENABLE(
 # 20020104 larsa
 if test x"$enable_symbols" = x"no"; then
   # CPPFLAGS="`echo $CPPFLAGS | sed 's/-g\>//'`"
-  CFLAGS="`echo $CFLAGS | sed 's/ -g //'`"
-  CFLAGS="`echo $CFLAGS | sed 's/^-g//'`"
-  CFLAGS="`echo $CFLAGS | sed 's/-g$//'`"
-  CXXFLAGS="`echo $CXXFLAGS | sed 's/ -g //'`"
-  CXXFLAGS="`echo $CXXFLAGS | sed 's/^-g//'`"
-  CXXFLAGS="`echo $CXXFLAGS | sed 's/-g$//'`"
+  CFLAGS="`echo $CFLAGS | sed 's/ -g //' | sed 's/^-g //' | sed 's/ -g$//'`"
+  CXXFLAGS="`echo $CXXFLAGS | sed 's/ -g //' | sed 's/^-g //' | sed 's/ -g$//'`"
 fi
 ]) # SIM_AC_DEBUGSYMBOLS
 
@@ -7518,7 +7514,6 @@ if $sim_ac_with_qt; then
     AC_MSG_CHECKING([value of the QTDIR environment variable])
     if test x"$sim_ac_qtdir" = x""; then
       AC_MSG_RESULT([empty])
-      AC_MSG_WARN([QTDIR environment variable not set -- this might be an indication of a problem])
     else
       AC_MSG_RESULT([$sim_ac_qtdir])
 
@@ -7551,6 +7546,9 @@ if $sim_ac_with_qt; then
 
   AC_PATH_PROG([$1], $2, false, $sim_ac_path)
   if test x"$$1" = x"false"; then
+    if test -z "$QTDIR"; then
+      AC_MSG_WARN([QTDIR environment variable not set -- this might be an indication of a problem])
+    fi
     AC_MSG_WARN([the ``$2'' Qt pre-processor tool not found])
   fi
 else
@@ -7763,7 +7761,14 @@ recommend you to upgrade.])
       ##   (update: "ws2_32.lib" seems to be a new dependency for Qt 3.1.2)
       ##
       ## * "-lqt-mt-eval": the Qt/Mac evaluation version
+      ##
+      ## * "-lqt-mtnc{version}": the non-commercial Qt version that
+      ##   comes on the CD with the book "C++ Gui Programming with Qt 3"
+      ##   (version==321 there)
 
+      ## FIXME: could probably improve check to not have to go through
+      ## all of the above. See bug item #028 in SoQt/BUGS.txt.
+      ## 20040805 mortene.
 
       sim_ac_qt_suffix=
       if $sim_ac_qt_debug; then
@@ -7789,7 +7794,8 @@ recommend you to upgrade.])
             "-lqt -lqtmain -lgdi32" \
             "-lqt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
             "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32" \
-            "-lqt-mt-eval"
+            "-lqt-mt-eval" \
+            "-lqt-mtnc${sim_ac_qt_version}"
         do
           if test "x$sim_ac_qt_libs" = "xUNRESOLVED"; then
             CPPFLAGS="$sim_ac_qt_incflags $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"
@@ -7829,6 +7835,9 @@ recommend you to upgrade.])
     LIBS="$sim_ac_qt_libs $sim_ac_save_libs"
     $1
   else
+    if test -z "$QTDIR"; then
+      AC_MSG_WARN([QTDIR environment variable not set -- this might be an indication of a problem])
+    fi
     CPPFLAGS=$sim_ac_save_cppflags
     LDFLAGS=$sim_ac_save_ldflags
     LIBS=$sim_ac_save_libs
@@ -8067,6 +8076,50 @@ if $sim_cv_def_qt_keypad; then
             [Define this if Qt::Keypad is available])
 fi
 ]) # SIM_AC_QT_KEYPAD_DEFINE
+
+
+# SIM_AC_QWIDGET_HASSETWINDOWSTATE
+# --------------------------------
+# QWidget->setWindowState() was added around Qt 3.3
+
+AC_DEFUN([SIM_AC_QWIDGET_HASSETWINDOWSTATE], [
+AC_CACHE_CHECK(
+  [whether QWidget::setWindowState() exists],
+  sim_cv_exists_qwidget_setwindowstate,
+
+  [AC_TRY_LINK([#include <qapplication.h>],
+               [QWidget * w = NULL; w->setWindowState(0);],
+               [sim_cv_exists_qwidget_setwindowstate=true],
+               [sim_cv_exists_qwidget_setwindowstate=false])])
+
+if $sim_cv_exists_qwidget_setwindowstate; then
+  AC_DEFINE([HAVE_QWIDGET_SETWINDOWSTATE], 1,
+            [Define this if QWidget::setWindowState() is available])
+fi
+]) # SIM_AC_QWIDGET_HASSETWINDOWSTATE
+
+
+
+# SIM_AC_QLINEEDIT_HASSETINPUTMASK
+# --------------------------------
+# QLineEdit->setInputMask() was added around Qt 3.3
+
+AC_DEFUN([SIM_AC_QLINEEDIT_HASSETINPUTMASK], [
+AC_CACHE_CHECK(
+  [whether QLineEdit::setInputMask() exists],
+  sim_cv_exists_qlineedit_setinputmask,
+
+  [AC_TRY_LINK([#include <qlineedit.h>],
+               [QLineEdit * le = NULL; le->setInputMask(0);],
+               [sim_cv_exists_qlineedit_setinputmask=true],
+               [sim_cv_exists_qlineedit_setinputmask=false])])
+
+if $sim_cv_exists_qlineedit_setinputmask; then
+  AC_DEFINE([HAVE_QLINEEDIT_SETINPUTMASK], 1,
+            [Define this if QLineEdit::setInputMask() is available])
+fi
+]) # SIM_AC_QLINEEDIT_HASSETINPUTMASK
+
 
 # **************************************************************************
 # SIM_AC_CHECK_HEADER_SILENT([header], [if-found], [if-not-found], [includes])
@@ -8351,7 +8404,7 @@ if test x"$with_opengl" != xno; then
 
   sim_ac_glchk_hit=false
   for sim_ac_tmp_outerloop in barebones withpthreads; do
-    if ! $sim_ac_glchk_hit; then
+    if $sim_ac_glchk_hit; then :; else
 
       sim_ac_oglchk_pthreadslib=""
       if test "$sim_ac_tmp_outerloop" = "withpthreads"; then
@@ -8369,7 +8422,7 @@ if test x"$with_opengl" != xno; then
       AC_MSG_CHECKING([for OpenGL library dev-kit])
       # Mac OS X uses nada (only LDFLAGS), which is why "" was set first
       for sim_ac_ogl_libcheck in "" $sim_ac_ogl_first $sim_ac_ogl_second; do
-        if ! $sim_ac_glchk_hit; then
+        if $sim_ac_glchk_hit; then :; else
           LIBS="$sim_ac_ogl_libcheck $sim_ac_oglchk_pthreadslib $sim_ac_save_libs"
           AC_TRY_LINK(
             [#ifdef HAVE_WINDOWS_H
@@ -8946,7 +8999,7 @@ if test x"$with_pthread" != xno; then
   AC_MSG_CHECKING([for POSIX threads])
   # At least under FreeBSD, we link to pthreads library with -pthread.
   for sim_ac_pthreads_libcheck in "-lpthread" "-pthread"; do
-    if ! $sim_ac_pthread_avail; then
+    if $sim_ac_pthread_avail; then :; else
       LIBS="$sim_ac_pthreads_libcheck $sim_ac_save_libs"
       AC_TRY_LINK([#include <pthread.h>],
                   [(void)pthread_create(0L, 0L, 0L, 0L);],
@@ -9716,7 +9769,7 @@ if test x"$with_libsndfile" != xno; then
       sim_ac_lsf_libs="-lsndfile -llibsndfile"
       sim_ac_lsfchk_hit=false
       for sim_ac_lsf_lib in "" $sim_ac_lsf_libs; do
-        if ! $sim_ac_lsfchk_hit; then
+        if $sim_ac_lsfchk_hit; then :; else
           LIBS="$sim_ac_lsf_lib $sim_ac_save_libs"
           AC_TRY_LINK([#include <sndfile.h>],
                       [(void)sf_open(0, 0, 0);],

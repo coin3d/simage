@@ -90,8 +90,10 @@ LTLIBOBJS = @LTLIBOBJS@
 LT_AGE = @LT_AGE@
 LT_CURRENT = @LT_CURRENT@
 LT_REVISION = @LT_REVISION@
-MACOSX_10_2_FALSE = @MACOSX_10_2_FALSE@
-MACOSX_10_2_TRUE = @MACOSX_10_2_TRUE@
+MACOSX_10_2FF_FALSE = @MACOSX_10_2FF_FALSE@
+MACOSX_10_2FF_TRUE = @MACOSX_10_2FF_TRUE@
+MACOSX_FALSE = @MACOSX_FALSE@
+MACOSX_TRUE = @MACOSX_TRUE@
 MAINT = @MAINT@
 MAINTAINER_MODE_FALSE = @MAINTAINER_MODE_FALSE@
 MAINTAINER_MODE_TRUE = @MAINTAINER_MODE_TRUE@
@@ -245,9 +247,12 @@ SIMAGESOURCES = \
 @BUILD_WITH_MSVC_TRUE@lib_LIBRARIES = simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
 @BUILD_WITH_MSVC_FALSE@lib_LTLIBRARIES = libsimage@SUFFIX@.la
 
-# we are dealing with the Mac OS X 10.2 gcc compiler toolset...
-@MACOSX_10_2_TRUE@LibtoolLinkArgs = -Wl,-twolevel_namespace -Wl,-undefined,error 
-@MACOSX_10_2_FALSE@LibtoolLinkArgs = -no-undefined
+@MACOSX_FALSE@LibtoolLinkArgs = -no-undefined 
+# On Mac OS X, pad the install_name to make it possible to change it
+# later (e.g. to include the library in an app bundle).On Mac OS 10.2
+# or later, also create two-level namespace binaries.
+@MACOSX_10_2FF_TRUE@@MACOSX_TRUE@LibtoolLinkArgs = -Wl,-twolevel_namespace -Wl,-undefined,error -Wl,-headerpad_max_install_names 
+@MACOSX_10_2FF_FALSE@@MACOSX_TRUE@LibtoolLinkArgs = 
 
 simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_SOURCES = \
 	$(SIMAGESOURCES)
