@@ -217,7 +217,7 @@ AC_DEFINE_UNQUOTED([SIMAGE_VERSION], ["$SIMAGE_VERSION"],
 # **************************************************************************
 # Miscellaneous options and initializations.
 
-AM_INIT_AUTOMAKE(libsimage, $VERSION)
+AM_INIT_AUTOMAKE(simage, $VERSION)
 
 # Files to cram the configure tests into.
 AM_CONFIG_HEADER(config.h include/simage.h)
@@ -234,9 +234,11 @@ AC_PROG_LIBTOOL
 
 # These are used for constructing the simage-config file.
 SIMAGE_EXTRA_CPPFLAGS=$CPPFLAGS
+SIMAGE_EXTRA_CFLAGS=
 SIMAGE_EXTRA_LDFLAGS=$LDFLAGS
 SIMAGE_EXTRA_LIBS=$LIBS
 AC_SUBST(SIMAGE_EXTRA_CPPFLAGS)
+AC_SUBST(SIMAGE_EXTRA_CFLAGS)
 AC_SUBST(SIMAGE_EXTRA_LDFLAGS)
 AC_SUBST(SIMAGE_EXTRA_LIBS)
 
@@ -440,8 +442,6 @@ AM_CONDITIONAL(SIMAGE_DEBUG_BUILD, $SIMAGE_DEBUG_BUILD)
 # **************************************************************************
 # Remove redundant options from environment variable option lists.
 
-SIM_EXPAND_DIR_VARS
-
 SIM_AC_UNIQIFY_LIST(CPPFLAGS, $CPPFLAGS)
 SIM_AC_UNIQIFY_LIST(LDFLAGS, $LDFLAGS)
 SIM_AC_UNIQIFY_LIST(LIBS, $LIBS)
@@ -452,18 +452,49 @@ SIM_AC_UNIQIFY_LIST(SIMAGE_EXTRA_LIBS, $SIMAGE_EXTRA_LIBS)
 
 AC_SUBST(LDFLAGS)
 
+# **************************************************************************
+# Section related to building with MS Visual C++ on Windows
+
+case $enable_static in
+yes) SIMAGE_STATIC=true;;
+*)   SIMAGE_STATIC=false;;
+esac
+
+case $enable_shared in
+yes) SIMAGE_SHARED=true;;
+*)   SIMAGE_SHARED=false;;
+esac
+
+LIBFLAGS=
+
+AC_SUBST(SIMAGE_STATIC)
+AC_SUBST(SIMAGE_SHARED)
+AC_SUBST(LIBFLAGS)
+
 if $BUILD_WITH_MSVC; then
-  CPPFLAGS="-DSIMAGE_MAKE_DLL $CPPFLAGS"
-  SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS -DSIMAGE_DLL"
+  if $SIMAGE_STATIC; then
+    # static overrides shared
+    :
+  else
+    CPPFLAGS="-DSIMAGE_MAKE_DLL $CPPFLAGS"
+    SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS -DSIMAGE_DLL"
+  fi
 
   debugfile=`pwd`/src/simage${SIMAGE_MAJOR_VERSION}${SUFFIX}.pdb
   debugfile=`cygpath -w "$debugfile" | sed 's,\\\\,\\\\\\\\,g'`
   CFLAGS="/Fd$debugfile $CFLAGS"
-  DLLFLAGS="/dll"
-  DLLFLAGS="$DLLFLAGS /PDB:$debugfile"
-  test -n "`echo $CFLAGS $CPPFLAGS $CXXFLAGS | grep -- '-g\\>'`" &&
-    DLLFLAGS="$DLLFLAGS /DEBUG"
-  AC_SUBST(DLLFLAGS)
+  if $SIMAGE_STATIC; then
+    LIBFLAGS="-LIB"
+    LIBFLAGS="$LIBFLAGS /OUT:simage$SIMAGE_MAJOR_VERSION$SUFFIX.lib"
+  else
+    LIBFLAGS="-DLL /INCREMENTAL:NO"
+    if test x"$enable_debug" = xno; then
+      LIBFLAGS="$LIBFLAGS /RELEASE"
+    else
+      LIBFLAGS="$LIBFLAGS /DEBUG /PDB:$debugfile"
+    fi
+    LIBFLAGS="$LIBFLAGS /OUT:simage$SIMAGE_MAJOR_VERSION$SUFFIX.dll"
+  fi
 
   # We use a version suffix on the .dll-file, so several incompatible
   # (major) versions can be installed on a system.
@@ -474,7 +505,11 @@ if $BUILD_WITH_MSVC; then
   # also use them from "parent" code (remember that their interfaces
   # is not exposed from the DLL) without any fuss.
 
-  SIMAGE_EXTRA_LIBS="-lsimage${SIMAGE_MAJOR_VERSION}${SUFFIX} $SIMAGE_EXTRA_LIBS"
+  if test -n "$SIMAGE_EXTRA_LIBS"; then
+    SIMAGE_EXTRA_LIBS="-lsimage${SIMAGE_MAJOR_VERSION}${SUFFIX} $SIMAGE_EXTRA_LIBS"
+  else
+    SIMAGE_EXTRA_LIBS="-lsimage${SIMAGE_MAJOR_VERSION}${SUFFIX}"
+  fi
 
   # These are for the .iwz InstallShield Express file under build/.
   win_includedir=`cygpath -w "$includedir"`
