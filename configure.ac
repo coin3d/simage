@@ -130,17 +130,22 @@ AM_DISABLE_STATIC
 # Turn off default maintainer make-rules -- use ./autogen.sh instead.
 AM_MAINTAINER_MODE
 
+case $host_os in
+darwin6.* ) sim_ac_macosx_10_2=true ;;
+* )         sim_ac_macosx_10_2=false ;;
+esac
+
+if test x"$sim_ac_macosx_10_2" = x"true"; then
+  # Defines how undefined symbols are handled (used in libtool.m4)
+  LD_TWOLEVEL_NAMESPACE=1
+fi
+
 # Initialize libtool
 if $BUILD_WITH_MSVC; then
   RANLIB=:
 else
   AC_PROG_LIBTOOL
 fi
-
-case $host_os in
-darwin6.* ) sim_ac_macosx_10_2=true ;;
-* )         sim_ac_macosx_10_2=false ;;
-esac
   
 AM_CONDITIONAL([MACOSX_10_2], [$sim_ac_macosx_10_2])
 
