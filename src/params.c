@@ -178,7 +178,7 @@ s_params_set(s_params * params, ...)
   va_start(ap, params);
    
   name = va_arg(ap, const char*);
-  if (name) {
+  while (name) {
     type = va_arg(ap, int);
     argerr = 0;
     switch (type) {
@@ -209,6 +209,10 @@ s_params_set(s_params * params, ...)
       argerr = 1;
       break;
     }
+    if (argerr) break; /* whoa, get out of here */
+
+    /* process next token */
+    name = va_arg(ap, const char*);
   }
   va_end(ap);
 }
