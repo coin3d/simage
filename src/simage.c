@@ -400,4 +400,17 @@ s_image_read_line(s_image * image,
   return 0;
 }
 
+/* new simage 1.7 methods */
+
+s_dlopen_func *dlopen = NULL;
+s_dlsym_func *dlsym = NULL;
+s_dlclose_func *dlclose = NULL;
+
+void 
+s_set_dynamic_loader_interface(s_dlopen_func *dlopen,
+                               s_dlsym_func *dlsym,
+                               s_dlclose_func *dlclose)
+{
+}
+
 
