@@ -17,6 +17,10 @@ struct _loader_data
 
 typedef struct _loader_data loader_data;
 
+/* Note: if any more internal formats are added, please update the
+   documentation on the "filename" field of Coin's SoTexture2 node in
+   Coin/src/nodes/SoTexture2.cpp. */
+
 /* built in image loaders */ 
 #ifdef HAVE_JPEGLIB
 #include <simage_jpeg.h>
