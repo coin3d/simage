@@ -194,10 +194,13 @@ main(int argc, char ** argv)
                NULL);
                
   s_movie * movie = s_movie_create(MPGOUT, params);
+  s_params_destroy(params);
   if (movie == NULL) {
     error_cb(NULL, "could not create movie file");
+    if (simage_get_last_error()) { error_cb(NULL, simage_get_last_error()); }
     exit(1);
   }
+  
 
   s_image * image = NULL;
 
