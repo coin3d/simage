@@ -130,11 +130,11 @@
   will cause mysterious crashes for certain simage functions.
  */
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-/* Enable to generate COIN.DLL (under Win32). */
+/* Enable to generate SIMAGE.DLL (under Win32). */
 # ifdef SIMAGE_MAKE_DLL
 #  define SIMAGE_DLL_API __declspec(dllexport)
 # else /* !SIMAGE_MAKE_DLL */
-/* Enable to build against COIN.DLL (under Win32). */
+/* Enable to build against SIMAGE.DLL (under Win32). */
 #  ifdef SIMAGE_DLL
 #   define SIMAGE_DLL_API __declspec(dllimport)
 #  else /* !SIMAGE_DLL */
