@@ -69,7 +69,10 @@ simage_qimage_load(const char * filename,
     }
 
     if (c == 1) {
-      memcpy(buffer,image.bits(),w*h*c);
+      if (w%4 != 0)
+        for (int i = 0; i < image.height(); i++)
+          memcpy(buffer + i*w, image.scanLine(i), w);
+      else memcpy(buffer, image.bits(), w*h);
     }
     else { // (c == 3 || c == 4)
       QRgb * bits = (QRgb*) image.bits();
