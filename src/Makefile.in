@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4a from Makefile.am
+# Makefile.in generated automatically by automake 1.4a-SIM-20000531 from Makefile.am
 
 # Copyright (C) 1994, 1995-9, 2000 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
@@ -69,7 +69,6 @@ CXX = @CXX@
 CXXCPP = @CXXCPP@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
-EXEEXT = @EXEEXT@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 LT_AGE = @LT_AGE@
@@ -79,7 +78,6 @@ LT_REVISION = @LT_REVISION@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 OBJDUMP = @OBJDUMP@
-OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 SIMAGE_BINARY_AGE = @SIMAGE_BINARY_AGE@
@@ -91,7 +89,6 @@ SIMAGE_MAJOR_VERSION = @SIMAGE_MAJOR_VERSION@
 SIMAGE_MICRO_VERSION = @SIMAGE_MICRO_VERSION@
 SIMAGE_MINOR_VERSION = @SIMAGE_MINOR_VERSION@
 SIMAGE_VERSION = @SIMAGE_VERSION@
-STRIP = @STRIP@
 VERSION = @VERSION@
 install_sh = @install_sh@
 
@@ -860,7 +857,7 @@ DEP_FILES =  @AMDEP@ $(DEPDIR)/simage.Plo $(DEPDIR)/simage_gif.Plo \
 $(DEPDIR)/simage_jpeg.Plo $(DEPDIR)/simage_pic.Plo \
 $(DEPDIR)/simage_png.Plo $(DEPDIR)/simage_rgb.Plo \
 $(DEPDIR)/simage_tga.Plo $(DEPDIR)/simage_tiff.Plo
-DIST_COMMON =  $(libsimageinc_HEADERS) Makefile.am Makefile.in
+DIST_COMMON =  $(libsimageinc_HEADERS) Makefile.am Makefile.in depcomp
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -871,7 +868,7 @@ OBJECTS = $(am_libsimage_la_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .c .h .lo .o .obj
+.SUFFIXES: .c .h .lo .o
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile
 
@@ -908,7 +905,6 @@ uninstall-libLTLIBRARIES:
 
 mostlyclean-compile:
 	-rm -f *.o core *.core
-	-rm -f *.$(OBJEXT)
 
 clean-compile:
 
@@ -994,12 +990,6 @@ maintainer-clean-depend:
 @AMDEP@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
 @AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
-
-.c.obj:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c -o $@ `cygpath -w $<`
 
 
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)

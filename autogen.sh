@@ -58,16 +58,13 @@ if test -z "`automake --version | grep \" $AUTOMAKE_VER\" 2> /dev/null`"; then
     DIE=1
 fi
 
-LIBTOOL_VER="1.3c \(1.725 2000/05/30 00:37:48\)"  # libtool from CVS
+LIBTOOL_VER=1.3.5
 if test -z "`libtool --version | egrep \"$LIBTOOL_VER\" 2> /dev/null`"; then
     echo
     echo "You must have libtool version $LIBTOOL_VER installed to"
     echo "generate configure information and Makefiles for $PROJECT."
     echo ""
-    echo "The libtool version we are using is a development version"
-    echo "\"frozen\" from the CVS repository. You can get it here:"
-    echo ""
-    echo "Get ftp://ftp.sim.no/pub/coin/libtool-1.3c-coin.tar.gz"
+    echo "Get ftp://ftp.gnu.org/pub/libtool/libtool-1.3.5.tar.gz"
     echo ""
     DIE=1
 fi

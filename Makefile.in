@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4a from Makefile.am
+# Makefile.in generated automatically by automake 1.4a-SIM-20000531 from Makefile.am
 
 # Copyright (C) 1994, 1995-9, 2000 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
@@ -69,7 +69,6 @@ CXX = @CXX@
 CXXCPP = @CXXCPP@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
-EXEEXT = @EXEEXT@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 LT_AGE = @LT_AGE@
@@ -79,7 +78,6 @@ LT_REVISION = @LT_REVISION@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 OBJDUMP = @OBJDUMP@
-OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 SIMAGE_BINARY_AGE = @SIMAGE_BINARY_AGE@
@@ -91,7 +89,6 @@ SIMAGE_MAJOR_VERSION = @SIMAGE_MAJOR_VERSION@
 SIMAGE_MICRO_VERSION = @SIMAGE_MICRO_VERSION@
 SIMAGE_MINOR_VERSION = @SIMAGE_MINOR_VERSION@
 SIMAGE_VERSION = @SIMAGE_VERSION@
-STRIP = @STRIP@
 VERSION = @VERSION@
 install_sh = @install_sh@
 
