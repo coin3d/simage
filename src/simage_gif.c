@@ -1,9 +1,6 @@
 /*!
   GIF loader, using libungif.
   Based, in part, on source code found in libungif, gif2rgb.c
-
-  TODO:
-  - figure out when background should be set to transparent...
 */
 #include "simage_gif.h"
 #include <stdlib.h>
