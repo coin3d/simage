@@ -49,6 +49,9 @@ static saver_data eps_saver;
 #ifdef SIMAGE_QIMAGE_SUPPORT
 #include <simage_qimage.h>
 #endif /* SIMAGE_QIMAGE_SUPPORT */
+#ifdef SIMAGE_QUICKTIME_SUPPORT
+#include <simage_quicktime.h>
+#endif /* SIMAGE_QUICKTIME_SUPPORT */
 
 #include <assert.h>
 
@@ -226,7 +229,7 @@ add_internal_savers(void)
 {
   static int first = 1;
   if (first) {
-#ifdef SIMAGE_QIMAGE_SUPPORT
+#if defined(SIMAGE_QIMAGE_SUPPORT) || defined(SIMAGE_QUICKTIME_SUPPORT)
     char * qtext = NULL;
 #endif
     first = 0;
@@ -286,9 +289,7 @@ add_internal_savers(void)
         str = strchr(ext, ',');
         if (str) *str = 0;      
         str_tolower(ext);
-
         saver = (saver_data*) malloc(sizeof(saver_data));
-
         add_saver_ext(saver,
                       simage_qimage_save,
                       simage_qimage_error,
@@ -299,10 +300,33 @@ add_internal_savers(void)
         
         if (str) ext = str + 1;
       } while (str);
-      
       free(qtext);
     }
 #endif /* SIMAGE_QIMAGE_SUPPORT */
+#ifdef SIMAGE_QUICKTIME_SUPPORT
+    qtext = simage_quicktime_get_savers();
+    if (qtext) {
+      saver_data * saver;
+      char * str;
+      char * ext = qtext;
+      do {
+        str = strchr(ext, ',');
+        if (str) *str = 0;      
+        str_tolower(ext);
+        saver = (saver_data*) malloc(sizeof(saver_data));
+        add_saver_ext(saver,
+                      simage_quicktime_save,
+                      simage_quicktime_error,
+                      ext,
+                      "QuickTime saver",
+                      NULL,
+                      0, 1);
+        if (str) ext = str + 1;
+      } while (str);
+      
+      free(qtext);
+    }
+#endif /* SIMAGE_QUICKTIME_SUPPORT */
   }
 }
 

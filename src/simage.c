@@ -58,6 +58,10 @@ static loader_data xwd_loader;
 #include <simage_qimage.h>
 static loader_data qimage_loader;
 #endif /* SIMAGE_QIMAGE_SUPPORT */
+#ifdef SIMAGE_QUICKTIME_SUPPORT
+#include <simage_quicktime.h>
+static loader_data quicktime_loader;
+#endif /* SIMAGE_QUICKTIME */
 
 #include <assert.h>
 
@@ -199,7 +203,15 @@ add_internal_loaders(void)
                simage_qimage_identify,
                simage_qimage_error,
                1, 0);
-#endif /* SIMAGE_XWD_SUPPORT */
+#endif /* SIMAGE_QIMAGE_SUPPORT */
+#ifdef SIMAGE_QUICKTIME_SUPPORT
+    add_loader(&quicktime_loader,
+               simage_quicktime_load,
+               simage_quicktime_identify,
+               simage_quicktime_error,
+               1, 
+               1); // add_before -- if we can use QuickTime, makeitso
+#endif /* SIMAGE_QUICKTIME_SUPPORT */
   }
 }
 
