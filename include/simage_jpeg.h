@@ -7,7 +7,7 @@ unsigned char *simage_jpeg_load(const char *filename,
 				 int *numComponents);
 int simage_jpeg_identify(const char *filename,
 			  const unsigned char *header,
-			  const int headerlen);
+			  int headerlen);
 
 int simage_jpeg_error(char *textbuffer, int buffersize);
 

@@ -70,7 +70,7 @@ simage_jpeg_identify(const char *,
 		      const unsigned char *header,
 		      int headerlen)
 {
-  if (headerlen < 4) return 10;
+  if (headerlen < 4) return 0;
   static unsigned char jpgcmp[] = {'J', 'F', 'I', 'F' };
   if (memcmp((const void*)&header[6], 
 	     (const void*)jpgcmp, 4) == 0) return 1;
