@@ -36,13 +36,7 @@ SIM_AC_CVS_CHANGES([
 
 AC_CANONICAL_TARGET
 
-SIM_AC_SETUP_MSVC_IFELSE([], [
-  case $host in
-  *-cygwin)
-    AC_MSG_ERROR([You need Microsoft Visual C++ to build simage on Cygwin])
-    ;;
-  esac
-])
+SIM_AC_SETUP_MSVCPP_IFELSE
 
 if $BUILD_WITH_MSVC; then
   SIM_AC_SETUP_MSVCRT([
