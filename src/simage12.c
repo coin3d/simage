@@ -88,7 +88,7 @@ s_image_data(s_image * image)
   if (image) {
     if (image->opendata && image->data == NULL) {
       int i;
-      image->data = malloc(image->width*image->height*image->components);
+      image->data = (unsigned char *) malloc(image->width*image->height*image->components);
       image->didalloc = 1;
       for (i = 0; i < image->height; i++) {
         (void) image->openfuncs.read_line_func(image->opendata, i, 
