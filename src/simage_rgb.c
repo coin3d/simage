@@ -11,12 +11,15 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #include <string.h>
-#ifdef _WIN32
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /* HAVE_CONFIG_H */
+#ifdef HAVE_WINDOWS_H
+/* FIXME: what the heck do we need this for? Code compiles just fine
+   and dandy without this include under MSVC++ 6.0. 20001026
+   mortene. */
 #include <windows.h> /* sigh */
-#endif
-
-#include <assert.h>
-
+#endif /* HAVE_WINDOWS_H */
 
 #define ERR_NO_ERROR          0
 #define ERR_OPEN              1

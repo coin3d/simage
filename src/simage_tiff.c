@@ -10,7 +10,6 @@
 
 #include <string.h>
 #include <stdarg.h>
-#include <assert.h>
 #include <stdlib.h>
 
 #define ERR_NO_ERROR    0

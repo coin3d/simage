@@ -6,13 +6,20 @@
 #include <simage_jpeg.h>
 
 #include <stdio.h>
-
-#include <jpeglib.h>
-
 #include <setjmp.h>
 #include <string.h>
-#include <assert.h>
 #include <stdlib.h>
+
+/* The geniuses that made the libjpeg forgot to add this wrapper
+   around the header file. */
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+#include <jpeglib.h>
+#ifdef __cplusplus
+}
+#endif
+
 
 #define ERR_NO_ERROR 0
 #define ERR_OPEN     1

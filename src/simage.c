@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if HAVE_CONFIG_H
+#ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 #include <simage.h>
@@ -119,7 +119,7 @@ find_loader(const char *filename)
 
 
 static void
-add_internal_loaders()
+add_internal_loaders(void)
 {
   static int first = 1;
   if (first) {
@@ -175,7 +175,6 @@ add_internal_loaders()
 #endif /* HAVE_UNGIFLIB */
   }
 }
-
 
 #define SIMAGE_ERROR_BUFSIZE 512
 static char simage_error_msg[SIMAGE_ERROR_BUFSIZE+1];

@@ -5,7 +5,6 @@
 #include <simage_png.h>
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
 #include <stdlib.h>
 
 #include <png.h>
@@ -24,12 +23,15 @@ static jmp_buf setjmp_buffer;
 static void 
 warn_callback(png_structp ps, png_const_charp pc)
 {
+  fprintf(stderr,"PNG warn: %s\n", pc);
   /*FIXME: notify? */
 }
 
 static void 
 err_callback(png_structp ps, png_const_charp pc)
 {
+  fprintf(stderr,"PNG error: %s\n", pc);
+
   /* FIXME: store error message? */
   longjmp(setjmp_buffer, 1);
 }
@@ -77,10 +79,10 @@ simage_png_load(const char *filename,
   int bit_depth, color_type, interlace_type;
   FILE *fp;
   unsigned char *buffer;
-  int bytes_per_row;
-  int number_passes;
+  int y, bytes_per_row;
   int channels;
   int format;
+  png_bytepp row_pointers;
 
   if ((fp = fopen(filename, "rb")) == NULL) {
     pngerror = ERR_OPEN;
@@ -181,39 +183,29 @@ simage_png_load(const char *filename,
   /* Add filler (or alpha) byte (before/after each RGB triplet) */
   /* png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER); */
 
-  /* Turn on interlace handling.  REQUIRED if you are not using
-   * png_read_image().  To see how to handle interlacing passes,
-   * see the png_read_row() method below.
-   */
-
   png_read_update_info(png_ptr, info_ptr);
 
-  number_passes = png_set_interlace_handling(png_ptr);
   channels = png_get_channels(png_ptr, info_ptr);
 
   /* allocate the memory to hold the image using the fields of info_ptr. */
   
   bytes_per_row = png_get_rowbytes(png_ptr, info_ptr);
+
   
   buffer = (unsigned char*) malloc(bytes_per_row*height);
 
-  format = channels; /* this is safer than the above */
+  format = channels;
 
-  if (buffer) {
-    int pass, y;
-    unsigned char *dummytab[1];
-    for (pass = 0; pass < number_passes; pass++) {
-      for ( y = 0; (unsigned int) y < height; y++ ) {
-	/* flips image upside down */
-	dummytab[0] = &buffer[bytes_per_row*(height-1-y)];
-	png_read_rows(png_ptr, dummytab, NULL, 1);
-      }
-    }
-    
-    /* read rest of file, and get additional chunks in info_ptr - REQUIRED */
-    png_read_end(png_ptr, info_ptr);
+  row_pointers = malloc(height*sizeof(png_bytep));
+  for (y = 0; y < height; y++) {
+    row_pointers[height-y-1] = buffer + y*bytes_per_row;
   }
   
+  png_read_image(png_ptr, row_pointers);
+  png_read_end(png_ptr, info_ptr);
+  
+  free(row_pointers);
+
   /* clean up after the read, and free any memory allocated - REQUIRED */
   png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 
