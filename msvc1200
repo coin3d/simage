@@ -1,0 +1,47 @@
+#!/bin/sh
+
+# XXX debug
+echo >> msvc.txt
+date +%H:%M:%S >> msvc.txt
+echo "in: \"$@\"" >> msvc.txt
+
+cl_options="/nologo"
+cl_c_is_used=false
+cl_next_is_object=false
+
+for msvc_option in $@
+do
+  # Flip all slashes to backslashes.
+  msvc_option=`echo $msvc_option | sed 's%/%\\\\%g'`
+  # Convert "-" option prefix to "/".
+  msvc_option=`echo $msvc_option | sed 's%^-%/%'`
+
+  case $msvc_option in
+  /c)
+    cl_c_is_used=true
+    cl_options="$cl_options /c"
+    ;;
+  /o)
+    if $cl_c_is_used; then
+      cl_options="$cl_options /Fo" # name object file
+    else
+      cl_options="$cl_options /Fe" # name executable file
+    fi
+    cl_next_is_object=true
+    ;;
+  *)
+    if $cl_next_is_object; then
+      cl_options="$cl_options$msvc_option"
+      cl_next_is_object=false
+    else
+      cl_options="$cl_options $msvc_option"
+    fi
+    ;;
+  esac
+done
+
+# XXX debug
+echo "out: \"$cl_options\"" >> msvc.txt
+
+cl.exe $cl_options
+exit $?
