@@ -1,5 +1,4 @@
 /* config.h.in.  Generated automatically from configure.in by autoheader.  */
-
 #undef HAVE_JPEGLIB
 #undef HAVE_UNGIFLIB
 #undef HAVE_TIFFLIB

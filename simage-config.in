@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 ###### SUBROUTINES ########################################################
 
 usage()
@@ -19,15 +18,8 @@ EOF
 
 ###### MAIN ###############################################################
 
-if test $# -eq 0; then
-  usage 1 1>&2
-fi
-
 while test $# -gt 0; do
   case $1 in
-    --version)
-      echo @SIMAGE_VERSION@
-      ;;
     --cppflags)
       echo -I@includedir@ @SIMAGE_EXTRA_CPPFLAGS@
       ;;
@@ -36,6 +28,12 @@ while test $# -gt 0; do
       ;;
     --libs)
       echo @SIMAGE_LIBNAME@ @SIMAGE_EXTRA_LIBS@
+      ;;
+    --version)
+      echo @SIMAGE_VERSION@
+      ;;
+    --help | --usage)
+      usage 1
       ;;
     *)
       echo "Unknown option: \"$1\""
@@ -46,3 +44,4 @@ while test $# -gt 0; do
 done
 
 exit 0
+

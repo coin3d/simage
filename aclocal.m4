@@ -1,4 +1,4 @@
-dnl aclocal.m4 generated automatically by aclocal 1.4a-SIM-20000531
+dnl aclocal.m4 generated automatically by aclocal 1.4a
 
 dnl Copyright (C) 1994, 1995-9, 2000 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
@@ -366,16 +366,14 @@ for mf in $CONFIG_FILES; do
   grep '^DEP_FILES *= *[^ #]' < "$mf" > /dev/null || continue
   # Extract the definition of DEP_FILES from the Makefile without
   # running `make'.
-  DEPDIR=`tr -d "
-" < "$mf" | sed -n -e '/^DEPDIR = / s///p'`
+  DEPDIR=`sed -n -e '/^DEPDIR = / s///p' < "$mf"`
   test -z "$DEPDIR" && continue
   # When using ansi2knr, U may be empty or an underscore; expand it
   U=`sed -n -e '/^U = / s///p' < "$mf"`
   test -d "$dirpart/$DEPDIR" || mkdir "$dirpart/$DEPDIR"
   # We invoke sed twice because it is the simplest approach to
   # changing $(DEPDIR) to its actual value in the expansion.
-  for file in `tr -d "
-" < "$mf" | sed -n -e '
+  for file in `sed -n -e '
     /^DEP_FILES = .*\\\\$/ {
       s/^DEP_FILES = //
       :loop
@@ -385,7 +383,7 @@ for mf in $CONFIG_FILES; do
 	/\\\\$/ b loop
       p
     }
-    /^DEP_FILES = / s/^DEP_FILES = //p' | \
+    /^DEP_FILES = / s/^DEP_FILES = //p' < "$mf" | \
        sed -e 's/\$(DEPDIR)/'"$DEPDIR"'/g' -e 's/\$U/'"$U"'/g'`; do
     # Make sure the directory exists.
     test -f "$dirpart/$file" && continue
