@@ -128,6 +128,12 @@ EPSSOURCES = simage_eps.c $(top_srcdir)/include/simage_eps.h
 AVISOURCES = simage_avi.c $(top_srcdir)/include/simage_avi.h \
              avi_encode.c $(top_srcdir)/include/avi_encode.h
 
+OGGVORBISSOURCES = simage_oggvorbis_reader.c \
+                   $(top_srcdir)/include/simage_oggvorbis.h
+
+LIBSNDFILESOURCES = simage_libsndfile.c \
+                   $(top_srcdir)/include/simage_libsndfile.h
+
 
 SIMAGESOURCES = \
 	$(top_builddir)/include/simage.h \
@@ -137,6 +143,7 @@ SIMAGESOURCES = \
 	simage12.c \
 	simage13.c \
 	movie.c \
+	stream.c \
 	params.c \
 	$(top_srcdir)/include/simage_private.h \
 	$(JPEGSOURCES) \
@@ -149,7 +156,9 @@ SIMAGESOURCES = \
 	$(XWDSOURCES) \
 	$(EPSSOURCES) \
 	$(QIMAGESOURCES) \
-        $(AVISOURCES)
+        $(AVISOURCES) \
+        $(OGGVORBISSOURCES) \
+        $(LIBSNDFILESOURCES)
 
 
 # we don't use libtool on Cygwin to generate lib
@@ -193,7 +202,7 @@ simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_AR = $(AR) cru
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_write.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	resize.$(OBJEXT) simage12.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage13.$(OBJEXT) movie.$(OBJEXT) \
-@SIMAGE_QIMAGE_SUPPORT_TRUE@	params.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	stream.$(OBJEXT) params.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_jpeg.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_gif.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_png.$(OBJEXT) \
@@ -205,14 +214,16 @@ simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_AR = $(AR) cru
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_eps.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_qimage.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_avi.$(OBJEXT) \
-@SIMAGE_QIMAGE_SUPPORT_TRUE@	avi_encode.$(OBJEXT)
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	avi_encode.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_oggvorbis_reader.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_libsndfile.$(OBJEXT)
 @SIMAGE_QIMAGE_SUPPORT_FALSE@am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS = \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_write.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	resize.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage12.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage13.$(OBJEXT) movie.$(OBJEXT) \
-@SIMAGE_QIMAGE_SUPPORT_FALSE@	params.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	stream.$(OBJEXT) params.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_jpeg.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_gif.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_png.$(OBJEXT) \
@@ -223,7 +234,9 @@ simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_AR = $(AR) cru
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_xwd.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_eps.$(OBJEXT) \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_avi.$(OBJEXT) \
-@SIMAGE_QIMAGE_SUPPORT_FALSE@	avi_encode.$(OBJEXT)
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	avi_encode.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_oggvorbis_reader.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_libsndfile.$(OBJEXT)
 simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS = \
 	$(am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS)
 LTLIBRARIES = $(lib_LTLIBRARIES)
@@ -236,22 +249,26 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 @SIMAGE_QIMAGE_SUPPORT_TRUE@am_libsimage@SUFFIX@_la_OBJECTS = simage.lo \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_write.lo resize.lo \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage12.lo simage13.lo movie.lo \
-@SIMAGE_QIMAGE_SUPPORT_TRUE@	params.lo simage_jpeg.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	stream.lo params.lo simage_jpeg.lo \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_gif.lo simage_png.lo \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_tiff.lo simage_tga.lo \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_rgb.lo simage_pic.lo \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_xwd.lo simage_eps.lo \
 @SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_qimage.lo simage_avi.lo \
-@SIMAGE_QIMAGE_SUPPORT_TRUE@	avi_encode.lo
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	avi_encode.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_oggvorbis_reader.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_libsndfile.lo
 @SIMAGE_QIMAGE_SUPPORT_FALSE@am_libsimage@SUFFIX@_la_OBJECTS = simage.lo \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_write.lo resize.lo \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage12.lo simage13.lo movie.lo \
-@SIMAGE_QIMAGE_SUPPORT_FALSE@	params.lo simage_jpeg.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	stream.lo params.lo simage_jpeg.lo \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_gif.lo simage_png.lo \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_tiff.lo simage_tga.lo \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_rgb.lo simage_pic.lo \
 @SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_xwd.lo simage_eps.lo \
-@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_avi.lo avi_encode.lo
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_avi.lo avi_encode.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_oggvorbis_reader.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_libsndfile.lo
 libsimage@SUFFIX@_la_OBJECTS = $(am_libsimage@SUFFIX@_la_OBJECTS)
 
 DEFS = @DEFS@
@@ -271,6 +288,10 @@ depcomp = $(SHELL) $(top_srcdir)/cfg/depcomp
 @AMDEP_TRUE@	$(DEPDIR)/simage_eps.Plo $(DEPDIR)/simage_eps.Po \
 @AMDEP_TRUE@	$(DEPDIR)/simage_gif.Plo $(DEPDIR)/simage_gif.Po \
 @AMDEP_TRUE@	$(DEPDIR)/simage_jpeg.Plo $(DEPDIR)/simage_jpeg.Po \
+@AMDEP_TRUE@	$(DEPDIR)/simage_libsndfile.Plo \
+@AMDEP_TRUE@	$(DEPDIR)/simage_libsndfile.Po \
+@AMDEP_TRUE@	$(DEPDIR)/simage_oggvorbis_reader.Plo \
+@AMDEP_TRUE@	$(DEPDIR)/simage_oggvorbis_reader.Po \
 @AMDEP_TRUE@	$(DEPDIR)/simage_pic.Plo $(DEPDIR)/simage_pic.Po \
 @AMDEP_TRUE@	$(DEPDIR)/simage_png.Plo $(DEPDIR)/simage_png.Po \
 @AMDEP_TRUE@	$(DEPDIR)/simage_qimage.Plo \
@@ -279,7 +300,8 @@ depcomp = $(SHELL) $(top_srcdir)/cfg/depcomp
 @AMDEP_TRUE@	$(DEPDIR)/simage_tga.Po $(DEPDIR)/simage_tiff.Plo \
 @AMDEP_TRUE@	$(DEPDIR)/simage_tiff.Po $(DEPDIR)/simage_write.Plo \
 @AMDEP_TRUE@	$(DEPDIR)/simage_write.Po $(DEPDIR)/simage_xwd.Plo \
-@AMDEP_TRUE@	$(DEPDIR)/simage_xwd.Po
+@AMDEP_TRUE@	$(DEPDIR)/simage_xwd.Po $(DEPDIR)/stream.Plo \
+@AMDEP_TRUE@	$(DEPDIR)/stream.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
@@ -406,6 +428,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_gif.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_jpeg.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_jpeg.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_libsndfile.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_libsndfile.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_oggvorbis_reader.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_oggvorbis_reader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_pic.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_pic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_png.Plo@am__quote@
@@ -422,6 +448,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_write.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_xwd.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_xwd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/stream.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/stream.Po@am__quote@
 
 distclean-depend:
 	-rm -rf $(DEPDIR)

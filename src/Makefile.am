@@ -19,6 +19,10 @@ XWDSOURCES = simage_xwd.c $(top_srcdir)/include/simage_xwd.h
 EPSSOURCES = simage_eps.c $(top_srcdir)/include/simage_eps.h
 AVISOURCES = simage_avi.c $(top_srcdir)/include/simage_avi.h \
              avi_encode.c $(top_srcdir)/include/avi_encode.h
+OGGVORBISSOURCES = simage_oggvorbis_reader.c \
+                   $(top_srcdir)/include/simage_oggvorbis.h
+LIBSNDFILESOURCES = simage_libsndfile.c \
+                   $(top_srcdir)/include/simage_libsndfile.h
 
 SIMAGESOURCES = \
 	$(top_builddir)/include/simage.h \
@@ -28,6 +32,7 @@ SIMAGESOURCES = \
 	simage12.c \
 	simage13.c \
 	movie.c \
+	stream.c \
 	params.c \
 	$(top_srcdir)/include/simage_private.h \
 	$(JPEGSOURCES) \
@@ -40,7 +45,9 @@ SIMAGESOURCES = \
 	$(XWDSOURCES) \
 	$(EPSSOURCES) \
 	$(QIMAGESOURCES) \
-        $(AVISOURCES)
+        $(AVISOURCES) \
+        $(OGGVORBISSOURCES) \
+        $(LIBSNDFILESOURCES)
 
 if BUILD_WITH_MSVC
 # we don't use libtool on Cygwin to generate lib

@@ -1049,6 +1049,8 @@ Optional Packages:
                           export
   --with-mpeg2enc         enable/disable support for mpeg2 encoding
   --with-avienc           enable/disable support for avi encoding (Win32 only)
+  --with-oggvorbis=DIR    oggvorbis installation directory
+  --with-libsndfile=DIR   libsndfile installation directory
 
 Some influential environment variables:
   CC          C compiler command
@@ -5200,7 +5202,7 @@ test "x$enable_libtool_lock" != xno && enable_libtool_lock=yes
 case $host in
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5203 "configure"' > conftest.$ac_ext
+  echo '#line 5205 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -5736,7 +5738,7 @@ chmod -w .
 save_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -o out/conftest2.$ac_objext"
 compiler_c_o=no
-if { (eval echo configure:5739: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>out/conftest.err; } && test -s out/conftest2.$ac_objext; then
+if { (eval echo configure:5741: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>out/conftest.err; } && test -s out/conftest2.$ac_objext; then
   # The compiler can only warn and ignore the option if not recognized
   # So say no if there are warnings
   if test -s out/conftest.err; then
@@ -7529,7 +7531,7 @@ else
     lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 7532 "configure"
+#line 7534 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -7627,7 +7629,7 @@ else
     lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 7630 "configure"
+#line 7632 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -8916,7 +8918,7 @@ EOF
   # The " *"-parts of the last sed-expression on the next line are necessary
   # because at least the Solaris/CC preprocessor adds extra spaces before and
   # after the trailing semicolon.
-  sim_ac_qt_version=`$CXXCPP $CPPFLAGS conftest.c | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's% *; *$%%'`
+  sim_ac_qt_version=`$CXXCPP $CPPFLAGS conftest.c 2>/dev/null | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's% *; *$%%'`
 
   case $sim_ac_qt_version in
   0x* )
@@ -10595,6 +10597,9 @@ fi;
 
 # **************************************************************************
 # Check for VfW (Video for Windows) - used by the avi encoder
+#
+# fixme 20020920 thammer: Do proper library linking, not just the
+#                         visual c++ pragma hack
 
 echo "$as_me:$LINENO: checking for Video for Windows library" >&5
 echo $ECHO_N "checking for Video for Windows library... $ECHO_C" >&6
@@ -10688,6 +10693,228 @@ else
 fi
 
 fi
+
+# **************************************************************************
+# Check if oggvorbis is wanted.
+
+
+
+
+# Check whether --with-oggvorbis or --without-oggvorbis was given.
+if test "${with_oggvorbis+set}" = set; then
+  withval="$with_oggvorbis"
+
+else
+  with_oggvorbis=yes
+fi;
+
+sim_ac_oggvorbis_avail=no
+
+if test x"$with_oggvorbis" != xno; then
+  if test x"$with_oggvorbis" != xyes; then
+    sim_ac_oggvorbis_cppflags="-I${with_oggvorbis}/include"
+    sim_ac_oggvorbis_ldflags="-L${with_oggvorbis}/lib"
+  fi
+  sim_ac_oggvorbis_libs="-logg -lvorbis -lvorbisfile"
+
+  sim_ac_save_cppflags=$CPPFLAGS
+  sim_ac_save_ldflags=$LDFLAGS
+  sim_ac_save_libs=$LIBS
+
+  CPPFLAGS="$CPPFLAGS $sim_ac_oggvorbis_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_oggvorbis_ldflags"
+  LIBS="$sim_ac_oggvorbis_libs $LIBS"
+
+  echo "$as_me:$LINENO: checking for Ogg Vorbis" >&5
+echo $ECHO_N "checking for Ogg Vorbis... $ECHO_C" >&6
+if test "${sim_cv_lib_oggvorbis_avail+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <vorbis/vorbisfile.h>
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+(void)ov_open(NULL, NULL, NULL, 0);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  sim_cv_lib_oggvorbis_avail=yes
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+sim_cv_lib_oggvorbis_avail=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $sim_cv_lib_oggvorbis_avail" >&5
+echo "${ECHO_T}$sim_cv_lib_oggvorbis_avail" >&6
+
+  if test x"$sim_cv_lib_oggvorbis_avail" = xyes; then
+    sim_ac_oggvorbis_avail=yes
+
+  CPPFLAGS="$CPPFLAGS $sim_ac_oggvorbis_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_oggvorbis_ldflags"
+  LIBS="$sim_ac_oggvorbis_libs $LIBS"
+
+cat >>confdefs.h <<\_ACEOF
+#define SIMAGE_OGGVORBIS_SUPPORT 1
+_ACEOF
+
+  if test x${sim_ac_configuration_settings+set} != xset; then
+  sim_ac_configuration_settings="Ogg Vorbis support:Yes"
+else
+  sim_ac_configuration_settings="$sim_ac_configuration_settings|Ogg Vorbis support:Yes"
+fi
+
+
+  else
+    CPPFLAGS=$sim_ac_save_cppflags
+    LDFLAGS=$sim_ac_save_ldflags
+    LIBS=$sim_ac_save_libs
+
+  if test x${sim_ac_configuration_settings+set} != xset; then
+  sim_ac_configuration_settings="Ogg Vorbis support:No"
+else
+  sim_ac_configuration_settings="$sim_ac_configuration_settings|Ogg Vorbis support:No"
+fi
+
+
+  fi
+fi
+
+
+# **************************************************************************
+# Check if libsndfile is wanted.
+
+
+
+
+# Check whether --with-libsndfile or --without-libsndfile was given.
+if test "${with_libsndfile+set}" = set; then
+  withval="$with_libsndfile"
+
+else
+  with_libsndfile=yes
+fi;
+
+sim_ac_libsndfile_avail=no
+
+if test x"$with_libsndfile" != xno; then
+  if test x"$with_libsndfile" != xyes; then
+    sim_ac_libsndfile_cppflags="-I${with_libsndfile}/src"
+    sim_ac_libsndfile_ldflags="-L${with_libsndfile}"
+  fi
+  sim_ac_libsndfile_libs="-llibsndfile"
+
+  sim_ac_save_cppflags=$CPPFLAGS
+  sim_ac_save_ldflags=$LDFLAGS
+  sim_ac_save_libs=$LIBS
+
+  CPPFLAGS="$CPPFLAGS $sim_ac_libsndfile_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_libsndfile_ldflags"
+  LIBS="$sim_ac_libsndfile_libs $LIBS"
+
+  echo "$as_me:$LINENO: checking for libsndfile" >&5
+echo $ECHO_N "checking for libsndfile... $ECHO_C" >&6
+if test "${sim_cv_lib_libsndfile_avail+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <sndfile.h>
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+(void)sf_open(0, 0, 0);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  sim_cv_lib_libsndfile_avail=yes
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+sim_cv_lib_libsndfile_avail=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $sim_cv_lib_libsndfile_avail" >&5
+echo "${ECHO_T}$sim_cv_lib_libsndfile_avail" >&6
+
+  if test x"$sim_cv_lib_libsndfile_avail" = xyes; then
+    sim_ac_libsndfile_avail=yes
+
+  CPPFLAGS="$CPPFLAGS $sim_ac_libsndfile_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_libsndfile_ldflags"
+  LIBS="$sim_ac_libsndfile_libs $LIBS"
+
+cat >>confdefs.h <<\_ACEOF
+#define SIMAGE_LIBSNDFILE_SUPPORT 1
+_ACEOF
+
+  if test x${sim_ac_configuration_settings+set} != xset; then
+  sim_ac_configuration_settings="libsnd support:Yes"
+else
+  sim_ac_configuration_settings="$sim_ac_configuration_settings|libsnd support:Yes"
+fi
+
+
+  else
+    CPPFLAGS=$sim_ac_save_cppflags
+    LDFLAGS=$sim_ac_save_ldflags
+    LIBS=$sim_ac_save_libs
+
+  if test x${sim_ac_configuration_settings+set} != xset; then
+  sim_ac_configuration_settings="libsnd support:No"
+else
+  sim_ac_configuration_settings="$sim_ac_configuration_settings|libsnd support:No"
+fi
+
+
+  fi
+fi
+
 
 # **************************************************************************
 # check if we are compiling with debug symbols

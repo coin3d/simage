@@ -437,6 +437,9 @@ AC_ARG_WITH(
 
 # **************************************************************************
 # Check for VfW (Video for Windows) - used by the avi encoder
+#
+# fixme 20020920 thammer: Do proper library linking, not just the
+#                         visual c++ pragma hack
 
 AC_MSG_CHECKING([for Video for Windows library])
 AC_TRY_LINK([
@@ -468,6 +471,32 @@ if $sim_ac_want_avienc; then
 else
   SIM_AC_CONFIGURATION_SETTING([Avi encoding support], [No (default)])
 fi
+
+# **************************************************************************
+# Check if oggvorbis is wanted.
+
+SIM_AC_CHECK_OGGVORBIS([
+  CPPFLAGS="$CPPFLAGS $sim_ac_oggvorbis_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_oggvorbis_ldflags"
+  LIBS="$sim_ac_oggvorbis_libs $LIBS"
+  AC_DEFINE(SIMAGE_OGGVORBIS_SUPPORT, 1, [Ogg Vorbis extensions available])
+  SIM_AC_CONFIGURATION_SETTING([Ogg Vorbis support], [Yes])
+], [
+  SIM_AC_CONFIGURATION_SETTING([Ogg Vorbis support], [No])
+])
+
+# **************************************************************************
+# Check if libsndfile is wanted.
+
+SIM_AC_CHECK_LIBSNDFILE([
+  CPPFLAGS="$CPPFLAGS $sim_ac_libsndfile_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_libsndfile_ldflags"
+  LIBS="$sim_ac_libsndfile_libs $LIBS"
+  AC_DEFINE(SIMAGE_LIBSNDFILE_SUPPORT, 1, [libsndfile available])
+  SIM_AC_CONFIGURATION_SETTING([libsnd support], [Yes])
+], [
+  SIM_AC_CONFIGURATION_SETTING([libsnd support], [No])
+])
 
 # **************************************************************************
 # check if we are compiling with debug symbols

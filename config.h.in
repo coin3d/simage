@@ -75,6 +75,9 @@
 /* define to enable eps support */
 #undef SIMAGE_EPS_SUPPORT
 
+/* libsndfile available */
+#undef SIMAGE_LIBSNDFILE_SUPPORT
+
 /* define this to the simage major version number */
 #undef SIMAGE_MAJOR_VERSION
 
@@ -86,6 +89,9 @@
 
 /* define to enable mpeg2enc support */
 #undef SIMAGE_MPEG2ENC_SUPPORT
+
+/* Ogg Vorbis extensions available */
+#undef SIMAGE_OGGVORBIS_SUPPORT
 
 /* define to enable pic support */
 #undef SIMAGE_PIC_SUPPORT

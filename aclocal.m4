@@ -4719,7 +4719,7 @@ EOF
   # The " *"-parts of the last sed-expression on the next line are necessary
   # because at least the Solaris/CC preprocessor adds extra spaces before and
   # after the trailing semicolon.
-  sim_ac_qt_version=`$CXXCPP $CPPFLAGS conftest.c | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's% *; *$%%'`
+  sim_ac_qt_version=`$CXXCPP $CPPFLAGS conftest.c 2>/dev/null | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's% *; *$%%'`
 
   case $sim_ac_qt_version in
   0x* )
@@ -5362,99 +5362,60 @@ if test x"$with_opengl" != xno; then
   CPPFLAGS="$CPPFLAGS $sim_ac_ogl_cppflags"
   LDFLAGS="$LDFLAGS $sim_ac_ogl_ldflags"
 
-  SIM_AC_CHECK_HEADER_GL([
-    CPPFLAGS="$CPPFLAGS $sim_ac_gl_cppflags"
-  ], [
-    AC_MSG_WARN([could not find gl.h])
-  ])
+  SIM_AC_CHECK_HEADER_GL([CPPFLAGS="$CPPFLAGS $sim_ac_gl_cppflags"],
+                         [AC_MSG_WARN([could not find gl.h])])
 
-  AC_CACHE_CHECK(
-    [whether OpenGL library is available],
-    sim_cv_lib_gl,
-    [sim_cv_lib_gl=UNRESOLVED
+  sim_ac_glchk_hit=false
+  for sim_ac_tmp_outerloop in barebones withpthreads; do
+    if ! $sim_ac_glchk_hit; then
 
-    # Mac OS X uses nada, which is why "" was set first
-    for sim_ac_ogl_libcheck in "" $sim_ac_ogl_first $sim_ac_ogl_second; do
-      if test "x$sim_cv_lib_gl" = "xUNRESOLVED"; then
-        LIBS="$sim_ac_ogl_libcheck $sim_ac_save_libs"
-        AC_TRY_LINK([
-#ifdef HAVE_WINDOWS_H
-#include <windows.h>
-#endif /* HAVE_WINDOWS_H */
-#ifdef HAVE_GL_GL_H
-#include <GL/gl.h>
-#else
-#ifdef HAVE_OPENGL_GL_H
-/* Mac OS X */
-#include <OpenGL/gl.h>
-#endif
-#endif
-],
-                    [
-glPointSize(1.0f);
-], [
-          if test x"$sim_ac_ogl_libcheck" = x""; then
-            sim_cv_lib_gl="$sim_ac_ogl_ldflags"
-          else
-            sim_cv_lib_gl="$sim_ac_ogl_libcheck"
-          fi])
+      sim_ac_oglchk_pthreadslib=""
+      if test "$sim_ac_tmp_outerloop" = "withpthreads"; then
+        AC_MSG_WARN([couldn't compile or link with OpenGL library -- trying with pthread library in place...])
+        LIBS="$sim_ac_save_libs"
+        SIM_AC_CHECK_PTHREAD([
+          sim_ac_ogl_cppflags="$sim_ac_ogl_cppflags $sim_ac_pthread_cppflags"
+          sim_ac_ogl_ldflags="$sim_ac_ogl_ldflags $sim_ac_pthread_ldflags"
+          sim_ac_oglchk_pthreadslib="$sim_ac_pthread_libs"
+          ],
+          [AC_MSG_WARN([couldn't compile or link with pthread library])
+          ])
       fi
-    done
-  ])
 
-  case $sim_cv_lib_gl in
-  -Wl,-framework,OpenGL)
-    sim_ac_ogl_libs=
-    sim_ac_ogl_ldflags="$sim_cv_lib_gl"
-    ;;
-  -l*)
-    sim_ac_ogl_libs="$sim_cv_lib_gl"
-    ;;
-  *)
-    AC_MSG_WARN([couldn't compile or link with OpenGL library -- trying with pthread library in place...])
-    LIBS="$sim_ac_save_libs"
-
-    SIM_AC_CHECK_PTHREAD([
-      sim_ac_ogl_cppflags="$sim_ac_ogl_cppflags $sim_ac_pthread_cppflags"
-      sim_ac_ogl_ldflags="$sim_ac_ogl_ldflags $sim_ac_pthread_ldflags"],
-      [AC_MSG_WARN([couldn't compile or link with pthread library])])
-
-    if test "x$sim_ac_pthread_avail" = "xyes"; then
-      AC_CACHE_CHECK(
-        [whether OpenGL library can be linked with pthread library],
-        sim_cv_lib_gl_pthread,
-        [sim_cv_lib_gl_pthread=UNRESOLVED
-
-        for sim_ac_ogl_libcheck in $sim_ac_ogl_first $sim_ac_ogl_second; do
-          if test "x$sim_cv_lib_gl_pthread" = "xUNRESOLVED"; then
-            LIBS="$sim_ac_ogl_libcheck $sim_ac_pthread_libs $sim_ac_save_libs"
-            AC_TRY_LINK([
-#ifdef HAVE_GL_GL_H
-#include <GL/gl.h>
-#else
-#ifdef HAVE_OPENGL_GL_H
-#include <OpenGL/gl.h>
-#endif
-#endif
-],
-                        [
-glPointSize(1.0f);
-],
-                        [sim_cv_lib_gl_pthread="$sim_ac_ogl_libcheck"])
-          fi
-        done
-      ])
-
-      if test "x$sim_cv_lib_gl_pthread" != "xUNRESOLVED"; then
-        sim_ac_ogl_libs="$sim_cv_lib_gl_pthread $sim_ac_pthread_libs"
+      AC_MSG_CHECKING([for OpenGL library dev-kit])
+      # Mac OS X uses nada (only LDFLAGS), which is why "" was set first
+      for sim_ac_ogl_libcheck in "" $sim_ac_ogl_first $sim_ac_ogl_second; do
+        if ! $sim_ac_glchk_hit; then
+          LIBS="$sim_ac_ogl_libcheck $sim_ac_oglchk_pthreadslib $sim_ac_save_libs"
+          AC_TRY_LINK(
+            [#ifdef HAVE_WINDOWS_H
+             #include <windows.h>
+             #endif
+             #ifdef HAVE_GL_GL_H
+             #include <GL/gl.h>
+             #endif
+             #ifdef HAVE_OPENGL_GL_H
+             /* Mac OS X */
+             #include <OpenGL/gl.h>
+             #endif
+            ],
+            [glPointSize(1.0f);],
+            [
+             sim_ac_glchk_hit=true
+             sim_ac_ogl_libs="$sim_ac_ogl_libcheck $sim_ac_oglchk_pthreadslib"
+            ]
+          )
+        fi
+      done
+      if $sim_ac_glchk_hit; then
+        AC_MSG_RESULT($sim_ac_ogl_cppflags $sim_ac_ogl_ldflags $sim_ac_ogl_libs)
+      else
+        AC_MSG_RESULT([unresolved])
       fi
     fi
-    ;;
-  esac
+  done
 
-
-  # MacOS will have empty sim_ac_ogl_libs, so don't check if it is empty...
-  if test x"$sim_cv_gl_libs" != x"UNRESOLVED"; then
+  if $sim_ac_glchk_hit; then
     LIBS="$sim_ac_ogl_libs $sim_ac_save_libs"
     $1
   else
@@ -6633,6 +6594,134 @@ fi
 ])
 
 # EOF **********************************************************************
+
+# Usage:
+#  SIM_AC_CHECK_OGGVORBIS([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#
+#  Try to find the OggVorbis development system. If it is found, these
+#  shell variables are set:
+#
+#    $sim_ac_oggvorbis_cppflags (extra flags the compiler needs for oggvorbis)
+#    $sim_ac_oggvorbis_ldflags  (extra flags the linker needs for oggvorbis)
+#    $sim_ac_oggvorbis_libs     (link libraries the linker needs for oggvorbis)
+#
+#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
+#  In addition, the variable $sim_ac_oggvorbis_avail is set to "yes" if the
+#  oggvorbis development system is found.
+#
+#  Download Oggvorbis from http://www.xiph.org/ogg/vorbis/index.html
+#
+# Author: Thomas Hammer, <thammer@sim.no>
+
+AC_DEFUN([SIM_AC_CHECK_OGGVORBIS], [
+
+AC_ARG_WITH(
+  [oggvorbis],
+  AC_HELP_STRING([--with-oggvorbis=DIR],
+                 [oggvorbis installation directory]),
+  [],
+  [with_oggvorbis=yes])
+
+sim_ac_oggvorbis_avail=no
+
+if test x"$with_oggvorbis" != xno; then
+  if test x"$with_oggvorbis" != xyes; then
+    sim_ac_oggvorbis_cppflags="-I${with_oggvorbis}/include"
+    sim_ac_oggvorbis_ldflags="-L${with_oggvorbis}/lib"
+  fi
+  sim_ac_oggvorbis_libs="-logg -lvorbis -lvorbisfile"
+
+  sim_ac_save_cppflags=$CPPFLAGS
+  sim_ac_save_ldflags=$LDFLAGS
+  sim_ac_save_libs=$LIBS
+
+  CPPFLAGS="$CPPFLAGS $sim_ac_oggvorbis_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_oggvorbis_ldflags"
+  LIBS="$sim_ac_oggvorbis_libs $LIBS"
+
+  AC_CACHE_CHECK(
+    [for Ogg Vorbis],
+    sim_cv_lib_oggvorbis_avail,
+    [AC_TRY_LINK([#include <vorbis/vorbisfile.h>],
+                 [(void)ov_open(NULL, NULL, NULL, 0);],
+                 [sim_cv_lib_oggvorbis_avail=yes],
+                 [sim_cv_lib_oggvorbis_avail=no])])
+
+  if test x"$sim_cv_lib_oggvorbis_avail" = xyes; then
+    sim_ac_oggvorbis_avail=yes
+    $1
+  else
+    CPPFLAGS=$sim_ac_save_cppflags
+    LDFLAGS=$sim_ac_save_ldflags
+    LIBS=$sim_ac_save_libs
+    $2
+  fi
+fi
+])
+
+# Usage:
+#  SIM_AC_CHECK_LIBSNDFILE([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#
+#  Try to find the libsndfile library. If it is found, these
+#  shell variables are set:
+#
+#    $sim_ac_libsndfile_cppflags (extra flags the compiler needs for libsndfile)
+#    $sim_ac_libsndfile_ldflags  (extra flags the linker needs for libsndfile)
+#    $sim_ac_libsndfile_libs     (link libraries the linker needs for libsndfile)
+#
+#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
+#  In addition, the variable $sim_ac_libsndfile_avail is set to "yes" if the
+#  libsndfile development system is found.
+#
+#  Download libsndfile from http://www.zip.com.au/~erikd/libsndfile/
+#
+# Author: Thomas Hammer, <thammer@sim.no>
+
+AC_DEFUN([SIM_AC_CHECK_LIBSNDFILE], [
+
+AC_ARG_WITH(
+  [libsndfile],
+  AC_HELP_STRING([--with-libsndfile=DIR],
+                 [libsndfile installation directory]),
+  [],
+  [with_libsndfile=yes])
+
+sim_ac_libsndfile_avail=no
+
+if test x"$with_libsndfile" != xno; then
+  if test x"$with_libsndfile" != xyes; then
+    sim_ac_libsndfile_cppflags="-I${with_libsndfile}/src"
+    sim_ac_libsndfile_ldflags="-L${with_libsndfile}"
+  fi
+  sim_ac_libsndfile_libs="-llibsndfile"
+
+  sim_ac_save_cppflags=$CPPFLAGS
+  sim_ac_save_ldflags=$LDFLAGS
+  sim_ac_save_libs=$LIBS
+
+  CPPFLAGS="$CPPFLAGS $sim_ac_libsndfile_cppflags"
+  LDFLAGS="$LDFLAGS $sim_ac_libsndfile_ldflags"
+  LIBS="$sim_ac_libsndfile_libs $LIBS"
+
+  AC_CACHE_CHECK(
+    [for libsndfile],
+    sim_cv_lib_libsndfile_avail,
+    [AC_TRY_LINK([#include <sndfile.h>],
+                 [(void)sf_open(0, 0, 0);],
+                 [sim_cv_lib_libsndfile_avail=yes],
+                 [sim_cv_lib_libsndfile_avail=no])])
+
+  if test x"$sim_cv_lib_libsndfile_avail" = xyes; then
+    sim_ac_libsndfile_avail=yes
+    $1
+  else
+    CPPFLAGS=$sim_ac_save_cppflags
+    LDFLAGS=$sim_ac_save_ldflags
+    LIBS=$sim_ac_save_libs
+    $2
+  fi
+fi
+])
 
 # **************************************************************************
 # SIM_AC_UNIQIFY_LIST( VARIABLE, LIST )
