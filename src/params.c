@@ -186,7 +186,12 @@ s_params_set(s_params * params, ...)
       add_integer_param(params, name, va_arg(ap, int));
       break;
     case S_FLOAT_PARAM_TYPE:
+#if __GNUC__ == 2 && __GNUC_MINOR__ == 96
+      /* fix for silly bug in gcc 2.96 */
+      add_float_param(params, name, va_arg(ap, double));      
+#else /* ! gcc version 2.96 */
       add_float_param(params, name, va_arg(ap, float));
+#endif /* gcc version 2.96 */
       break;
     case S_DOUBLE_PARAM_TYPE:
       add_double_param(params, name, va_arg(ap, double));
