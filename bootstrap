@@ -19,7 +19,7 @@ fi
 libtoolize=false
 
 AUTOCONF_VER=2.5
-AUTOMAKE_VER=1.4[abcdefghik]  # Automake from CVS
+AUTOMAKE_VER=1.4
 LIBTOOL_VER=1.3.5            # old Libtool release
 
 MACRODIR=cfg/m4
