@@ -159,13 +159,17 @@ if test -z "$CC" -a -z "$CXX" && $sim_ac_wrapmsvc >/dev/null 2>&1; then
   BUILD_WITH_MSVC=true
 fi
 AC_SUBST(BUILD_WITH_MSVC)
-if $BUILD_WITH_MSVC; then
-  :
+
+case $CXX in
+*wrapmsvc.exe)
+  BUILD_WITH_MSVC=true
   $1
-else
-  :
+  ;;
+*)
+  BUILD_WITH_MSVC=false
   $2
-fi
+  ;;
+esac
 ]) # SIM_AC_SETUP_MSVC_IFELSE
 
 # **************************************************************************
@@ -236,7 +240,6 @@ AC_MSG_RESULT([$sim_ac_msvcrt])
 $1
 ]) # SIM_AC_SETUP_MSVCRT
 
-# EOF **********************************************************************
 # EOF **********************************************************************
 
 # **************************************************************************
@@ -4680,12 +4683,14 @@ if test x"$with_qt" != xno; then
 
   # Find version of the Qt library (MSWindows .dll is named with the
   # version number.)
+  AC_MSG_CHECKING([version of Qt library, if available])
   cat > conftest.c << EOF
 #include <qglobal.h>
 int VerQt = QT_VERSION;
 EOF
   sim_ac_qt_version=`$CPP $sim_ac_qt_incflags $CPPFLAGS conftest.c | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's%;$%%'`
   rm -f conftest.c
+  AC_MSG_RESULT($sim_ac_qt_version)
 
   sim_ac_qt_libs=UNRESOLVED
   sim_ac_qt_cppflags=
@@ -5123,7 +5128,15 @@ true)
   sim_ac_libungif_libs="-l$sim_ac_libungif_name"
   LIBS="$sim_ac_libungif_libs $LIBS"
   AC_TRY_LINK(
-    [#include <gif_lib.h>],
+    [
+#ifdef __cplusplus /* gif_lib.h (at least v4.0) has no C++ wrapper */
+extern "C" {
+#endif /* __cplusplus */
+#include <gif_lib.h>
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+],
     [(void)EGifOpenFileName(0L, 0);],
     [sim_ac_have_libungif=true])
   # libungif has become dependent on Xlib :(
@@ -5139,7 +5152,15 @@ true)
     sim_ac_libungif_libs="-l$sim_ac_libungif_name -lX11"
     LIBS="$sim_ac_libungif_libs $sim_ac_libungif_save_LIBS"
     AC_TRY_LINK(
-      [#include <gif_lib.h>],
+      [
+#ifdef __cplusplus /* gif_lib.h (at least v4.0) has no C++ wrapper */
+extern "C" {
+#endif /* __cplusplus */
+#include <gif_lib.h>
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+],
       [(void)EGifOpenFileName(0L, 0);],
       [sim_ac_have_libungif=true])
   fi
