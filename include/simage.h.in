@@ -61,6 +61,49 @@
  *   Will return the first 2^n bigger or equal to val. 
  *   If simage_next_power_of_two(size) != size, you'll typically
  *   need to resize your image to be able to use it in an OpenGL app.
+ *
+ * The movie functions:
+ *
+ * s_movie * s_movie_create(const char * filename, s_params * params)
+ *
+ *  Will create a new move file named filename and attempt to locate a 
+ *  suitable encoder based on the parameters (params) supplied.
+ *
+ *  Returns a pointer to the opened movie on success, NULL on failure
+ *
+ *  Common parameters:
+ *  - "mime-type" <string> : The requested encoder type. There are currently 
+ *    2 encoders available, with mime-types "video/mpeg" and "video/avi".  
+ *  - width <int> : Frame width (all input images must have this width)
+ *  - height <int> : Frame height (all input images must have this height)
+ *
+ *  Parameters specific for the avi encoder
+ *  - fps <int> : Number of frames per second in output file
+ *  - parameter file <int> : If this parameter is missing (or empty ""), 
+ *    a GUI will pop up each time this functions is run, asking the user
+ *    to specify compression settings. If a filename is specified and the 
+ *    file doesn't exist, a GUI pops up, and the compression settings are
+ *    saved in a new file with the specified filename. If the file exists,
+ *    no GUI pops up, and the compression settings are read from the file.
+ *    The format of the file is unspecified, and copying such a file between
+ *    different computers probably won't work.
+ *  - width and height must be divisible by 4
+ *
+ * int s_movie_put_image(s_movie * movie, s_image * image, s_params * params)
+ * 
+ *   Adds (encodes) the image as one frame to the movie. params is currently 
+ *   unused.
+ *
+ *   Returns 1 on success, 0 on failure
+ *
+ * void s_movie_close(s_movie * movie)
+ *
+ *   Closes the newly created movie file
+ *
+ * void s_movie_destroy(s_movie * movie)
+ *
+ *   Cleans up all resources allocated by s_movie_create(...)
+ *
  */  
 
 /***************************************************************************/
