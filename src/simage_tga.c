@@ -197,7 +197,6 @@ simage_tga_load(const char *filename,
   int flags;
   int format;
   unsigned char *colormap;
-  int firstindex;
   int indexsize;
   int rleIsCompressed;
   int rleRemaining;
@@ -242,7 +241,6 @@ simage_tga_load(const char *filename,
     fseek(fp, header[0], SEEK_CUR);
 
   colormap = NULL;
-  firstindex = getInt16(&header[3]);
   if (header[1] == 1) { /* there is a colormap */
     int len = getInt16(&header[5]);
     indexsize = header[7]>>3;
