@@ -10,7 +10,6 @@
 
 me=`echo "$0" | sed 's,^.*[/\\],,g'`
 wd=`echo "$0" | sed 's,/[^/]*$,,'`
-# wd=`cd "$wd"; pwd`
 prefix=`cd "$wd/.."; pwd`
 
 alternate=default
@@ -36,6 +35,7 @@ Usage: $me [OPTIONS]
 Options:
   --alternate=<string>
   --cppflags
+  --cflags
   --ldflags
   --libs
   --build <program> <sourcefile> [<sourcefile>]...
@@ -48,6 +48,7 @@ do
   --help | --usage) echo "$usage" ;;
   --version)        echo "$version" ;;
   --cppflags)       echo "$cppflags" ;;
+  --cflags)         echo "$cflags" ;;
   --ldflags)        echo "$ldflags" ;;
   --libs)           echo "$libs" ;;
   --build)
@@ -55,13 +56,15 @@ do
     program=$1
     shift
     exec $compiler \
-      $CPPFLAGS $cppflags \
-      $LDFLAGS $ldflags \
+      $cppflags $CPPFLAGS \
+      $cflags $CFLAGS \
+      $ldflags $LDFLAGS \
       -o $program $@ \
       $LIBS $libs
     ;;
   # ignore some options
   --alternate=*) ;;
+  --debug) ;;
   *)
     echo >&2 "$me: Invalid option: \"$1\""
     echo >&2 "$usage"
