@@ -2,6 +2,12 @@
 
 INCLUDES = -I$(top_srcdir)/include -I$(top_builddir)/include
 
+if SIMAGE_QIMAGE_SUPPORT
+QIMAGESOURCES = simage_qimage.cpp $(top_srcdir)/include/simage_qimage.h
+else
+QIMAGESOURCES =
+endif
+
 JPEGSOURCES = simage_jpeg.c $(top_srcdir)/include/simage_jpeg.h
 UNGIFSOURCES = simage_gif.c $(top_srcdir)/include/simage_gif.h
 TIFFSOURCES = simage_tiff.c $(top_srcdir)/include/simage_tiff.h
@@ -29,7 +35,8 @@ SIMAGESOURCES = \
 	$(RGBSOURCES) \
 	$(PICSOURCES) \
 	$(XWDSOURCES) \
-	$(EPSSOURCES)
+	$(EPSSOURCES) \
+	$(QIMAGESOURCES)
 
 if BUILD_WITH_MSVC
 # we don't use libtool on Cygwin to generate lib

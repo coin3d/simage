@@ -50,6 +50,11 @@ static loader_data gif_loader;
 #include <simage_xwd.h>
 static loader_data xwd_loader;
 #endif /* SIMAGE_XWD_SUPPORT */
+#ifdef SIMAGE_QIMAGE_SUPPORT
+#include <simage_qimage.h>
+static loader_data qimage_loader;
+#endif /* SIMAGE_QIMAGE_SUPPORT */
+
 #include <assert.h>
 
 static loader_data *first_loader = NULL;
@@ -182,6 +187,13 @@ add_internal_loaders(void)
                simage_xwd_load,
                simage_xwd_identify,
                simage_xwd_error,
+               1, 0);
+#endif /* SIMAGE_XWD_SUPPORT */
+#ifdef SIMAGE_QIMAGE_SUPPORT
+    add_loader(&qimage_loader,
+               simage_qimage_load,
+               simage_qimage_identify,
+               simage_qimage_error,
                1, 0);
 #endif /* SIMAGE_XWD_SUPPORT */
   }

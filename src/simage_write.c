@@ -13,6 +13,8 @@ struct _saver_data
 {
   int (*save_func)(const char * name, const unsigned char * bytes,
                    int width, int height, int numcomponents);
+  int (*save_func_ext)(const char * name, const unsigned char * bytes,
+                       int width, int height, int numcomponents, const char * ext);
   int (*error_func)(char * textbuffer, int bufferlen);
   char * extensions;
   char * fullname;
@@ -44,6 +46,9 @@ static saver_data rgb_saver;
 #include <simage_eps.h>
 static saver_data eps_saver;
 #endif /* SIMAGE_EPS_SUPPORT */
+#ifdef SIMAGE_QIMAGE_SUPPORT
+#include <simage_qimage.h>
+#endif /* SIMAGE_QIMAGE_SUPPORT */
 
 #include <assert.h>
 
@@ -86,26 +91,22 @@ simage_strcasecmp(const char * str1, const char * str2)
 }
 
 /*
- * internal function which adds a saver to the list of savers
+ * internal functions which adds a saver to the list of savers
  * returns a void pointer to the saver. addbefore specifies
  * if the saver should be added at the beginning or at the
  * end of the linked list. useful if a user program finds
  * a bug in this library (simply use addbefore) 
  */
-static void *
-add_saver(saver_data * saver,
-          int (*save_func)(const char *,
-                           const unsigned char *,
-                           int, int, int),
-          int (*error_func)(char *, int),
-          const char * extensions,
-          const char * fullname,
-          const char * description,
-          int is_internal,
-          int addbefore)
+
+static void
+add_saver_data(saver_data * saver,
+               int (*error_func)(char *, int),
+               const char * extensions,
+               const char * fullname,
+               const char * description,
+               int is_internal,
+               int addbefore)
 {
-  assert(saver);
-  saver->save_func = save_func;
   saver->extensions = is_internal ? (char*) extensions : safe_strdup(extensions);
   saver->fullname = is_internal ? (char*) fullname : safe_strdup(fullname);
   saver->description = is_internal ? (char*) description : safe_strdup(description);
@@ -124,8 +125,50 @@ add_saver(saver_data * saver,
       last_saver = saver;
     }
   }
-  return (void*) saver;
 }
+
+
+static void *
+add_saver(saver_data * saver,
+          int (*save_func)(const char *,
+                           const unsigned char *,
+                           int, int, int),
+          int (*error_func)(char *, int),
+          const char * extensions,
+          const char * fullname,
+          const char * description,
+          int is_internal,
+          int addbefore)
+{
+  assert(saver);
+  saver->save_func = save_func;
+  saver->save_func_ext = NULL;
+  add_saver_data(saver, error_func, extensions, fullname,
+                 description, is_internal, addbefore);
+  return saver;
+}
+
+static void *
+add_saver_ext(saver_data * saver,
+              int (*save_func)(const char *,
+                               const unsigned char *,
+                               int, int, int, const char *),
+              int (*error_func)(char *, int),
+              const char * extensions,
+              const char * fullname,
+              const char * description,
+              int is_internal,
+              int addbefore)
+{
+  assert(saver);
+  saver->save_func = NULL;
+  saver->save_func_ext = save_func;
+  add_saver_data(saver, error_func, extensions, fullname,
+                 description, is_internal, addbefore);
+  return saver;
+}
+
+
 
 /*
  * internal function which finds the correct saver. Returns
@@ -137,8 +180,10 @@ find_saver(const char * filenameextension)
   saver_data * saver;
   saver = first_saver;
   while (saver) {
+    char * str;
     char * ext = saver->extensions;
-    char * str = strchr(ext, ',');
+    str = strchr(ext, ',');
+
     while (str) {
       int cmp;
       /* modify string while comparing. string is a copy so it should be safe */
@@ -167,12 +212,21 @@ static const char rgbfull[] ="The SGI RGB file format";
 static char epsext[] = "eps,ps";
 static const char epsfull[] ="Encapsulated postscript";
 
+static void 
+str_tolower(char * str)
+{
+  while (*str) {
+    *str = tolower(*str);
+    str++;
+  }
+}
 
 static void
 add_internal_savers(void)
 {
   static int first = 1;
   if (first) {
+    char * qtext = NULL;
     first = 0;
 #ifdef HAVE_JPEGLIB
     add_saver(&jpeg_saver, 
@@ -219,7 +273,35 @@ add_internal_savers(void)
               NULL,
               1, 0);
 #endif /* SIMAGE_EPS_SUPPORT */
+
+#ifdef SIMAGE_QIMAGE_SUPPORT
+    qtext = simage_qimage_get_savers();
+    if (qtext) {
+      saver_data * saver;
+      char * str;
+      char * ext = qtext;
+      do {
+        str = strchr(ext, ',');
+        if (str) *str = 0;      
+        str_tolower(ext);
+
+        saver = (saver_data*) malloc(sizeof(saver_data));
+
+        add_saver_ext(saver,
+                      simage_qimage_save,
+                      simage_qimage_error,
+                      ext,
+                      "QImage saver",
+                      NULL,
+                      0, 0);
+        
+        if (str) ext = str + 1;
+      } while (str);
+      
+      free(qtext);
+    }
   }
+#endif /* SIMAGE_QIMAGE_SUPPORT */
 }
 
 #define SIMAGE_ERROR_BUFSIZE 512 /* hack warning. Must match define in simage.c */
@@ -235,13 +317,22 @@ simage_save_image(const char * filename,
   saver_data * saver;
 
   simage_error_msg[0] = 0; /* clear error msg */
+
   add_internal_savers();  
-
+  
   saver = find_saver(filenameextension);
-
+  
   if (saver) {
-    int ret = saver->save_func(filename, bytes, width,
-                                     height, numcomponents);
+    int ret = 0;
+    if (saver->save_func_ext) {
+      ret = saver->save_func_ext(filename, bytes, width,
+                                 height, numcomponents,
+                                 filenameextension);
+    }
+    else if (saver->save_func) {
+      ret = saver->save_func(filename, bytes, width,
+                             height, numcomponents);
+    }
     if (ret == 0) {
       (void) saver->error_func(simage_error_msg, SIMAGE_ERROR_BUFSIZE);
     }
@@ -290,10 +381,12 @@ simage_remove_saver(void * handle)
     }
     if (prev) prev->next = saver->next;
     else first_saver = saver->next;
-    safe_strfree(saver->extensions);
-    safe_strfree(saver->fullname);
-    safe_strfree(saver->description);
-    free(saver);
+    if (!saver->is_internal) {
+      safe_strfree(saver->extensions);
+      safe_strfree(saver->fullname);
+      safe_strfree(saver->description);
+      free(saver);
+    }
   }
 }
 

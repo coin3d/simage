@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4e from Makefile.am.
+# Makefile.in generated automatically by automake 1.5 from Makefile.am.
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -10,6 +10,10 @@
 # but WITHOUT ANY WARRANTY, to the extent permitted by law; without
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
+
+@SET_MAKE@
+
+# **************************************************************************
 
 SHELL = @SHELL@
 
@@ -31,11 +35,9 @@ infodir = @infodir@
 mandir = @mandir@
 includedir = @includedir@
 oldincludedir = /usr/include
-
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
-
 top_builddir = ..
 
 ACLOCAL = @ACLOCAL@
@@ -49,19 +51,14 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_HEADER = $(INSTALL_DATA)
 transform = @program_transform_name@
-
 NORMAL_INSTALL = :
 PRE_INSTALL = :
 POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-
 host_alias = @host_alias@
 host_triplet = @host@
-
-@SET_MAKE@
-AMDEP = @AMDEP@
 AMTAR = @AMTAR@
 AS = @AS@
 AWK = @AWK@
@@ -69,13 +66,14 @@ BUILD_WITH_MSVC = @BUILD_WITH_MSVC@
 CC = @CC@
 COIN_COMPILER = @COIN_COMPILER@
 CONFIG = @CONFIG@
+CPP = @CPP@
+CXX = @CXX@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSUFFIX = @DSUFFIX@
 EXEEXT = @EXEEXT@
 GUILE_PROG = @GUILE_PROG@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-INSTALL_STRIP_PROGRAM_ENV = @INSTALL_STRIP_PROGRAM_ENV@
 LDFLAGS = @LDFLAGS@
 LIBFLAGS = @LIBFLAGS@
 LIBTOOL = @LIBTOOL@
@@ -84,7 +82,7 @@ LT_AGE = @LT_AGE@
 LT_CURRENT = @LT_CURRENT@
 LT_REVISION = @LT_REVISION@
 MAINT = @MAINT@
-MAKEINFO = @MAKEINFO@
+MOC = @MOC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
@@ -98,20 +96,20 @@ SIMAGE_MAJOR_VERSION = @SIMAGE_MAJOR_VERSION@
 SIMAGE_MICRO_VERSION = @SIMAGE_MICRO_VERSION@
 SIMAGE_MINOR_VERSION = @SIMAGE_MINOR_VERSION@
 SIMAGE_VERSION = @SIMAGE_VERSION@
-STRIP = @STRIP@
 SUFFIX = @SUFFIX@
 VERSION = @VERSION@
-_am_include = @_am_include@
+am__include = @am__include@
+am__quote = @am__quote@
 install_sh = @install_sh@
 simage_configure_date = @simage_configure_date@
 win_includedir = @win_includedir@
 win_libdir = @win_libdir@
 win_srcdir = @win_srcdir@
 
-# **************************************************************************
-
-
 INCLUDES = -I$(top_srcdir)/include -I$(top_builddir)/include
+
+@SIMAGE_QIMAGE_SUPPORT_TRUE@QIMAGESOURCES = simage_qimage.cpp $(top_srcdir)/include/simage_qimage.h
+@SIMAGE_QIMAGE_SUPPORT_FALSE@QIMAGESOURCES = 
 
 JPEGSOURCES = simage_jpeg.c $(top_srcdir)/include/simage_jpeg.h
 UNGIFSOURCES = simage_gif.c $(top_srcdir)/include/simage_gif.h
@@ -140,7 +138,8 @@ SIMAGESOURCES = \
 	$(RGBSOURCES) \
 	$(PICSOURCES) \
 	$(XWDSOURCES) \
-	$(EPSSOURCES)
+	$(EPSSOURCES) \
+	$(QIMAGESOURCES)
 
 
 # we don't use libtool on Cygwin to generate lib
@@ -168,77 +167,143 @@ libsimage@SUFFIX@inc_HEADERS = \
 
 subdir = src
 mkinstalldirs = $(SHELL) $(top_srcdir)/cfg/mkinstalldirs
-CONFIG_HEADER = $(top_builddir)/config.h $(top_builddir)/include/simage.h
+CONFIG_HEADER = $(top_builddir)/config.h \
+	$(top_builddir)/include/simage.h
 CONFIG_CLEAN_FILES =
 LIBRARIES = $(lib_LIBRARIES)
 
-
-DEFS = @DEFS@ -I. -I$(srcdir) -I$(top_builddir) -I$(top_builddir)/include
-CPPFLAGS = @CPPFLAGS@
-LIBS = @LIBS@
 simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_AR = $(AR) cru
+@BUILD_WITH_MSVC_FALSE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_DEPENDENCIES =
+@BUILD_WITH_MSVC_FALSE@@SIMAGE_MPEG2ENC_SUPPORT_FALSE@simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_DEPENDENCIES =
 @BUILD_WITH_MSVC_TRUE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_DEPENDENCIES = \
-@BUILD_WITH_MSVC_TRUE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@ ../mpeg2enc/mpeg2enc.lst
-am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS = simage.$(OBJEXT) \
-simage_write.$(OBJEXT) resize.$(OBJEXT) simage12.$(OBJEXT) \
-movie.$(OBJEXT) params.$(OBJEXT) simage_jpeg.$(OBJEXT) \
-simage_gif.$(OBJEXT) simage_png.$(OBJEXT) simage_tiff.$(OBJEXT) \
-simage_tga.$(OBJEXT) simage_rgb.$(OBJEXT) simage_pic.$(OBJEXT) \
-simage_xwd.$(OBJEXT) simage_eps.$(OBJEXT)
+@BUILD_WITH_MSVC_TRUE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@	../mpeg2enc/mpeg2enc.lst
+@BUILD_WITH_MSVC_TRUE@@SIMAGE_MPEG2ENC_SUPPORT_FALSE@simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_DEPENDENCIES =
+@SIMAGE_QIMAGE_SUPPORT_TRUE@am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS = \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_write.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	resize.$(OBJEXT) simage12.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	movie.$(OBJEXT) params.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_jpeg.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_gif.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_png.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_tiff.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_tga.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_rgb.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_pic.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_xwd.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_eps.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_qimage.$(OBJEXT)
+@SIMAGE_QIMAGE_SUPPORT_FALSE@am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS = \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_write.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	resize.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage12.$(OBJEXT) movie.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	params.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_jpeg.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_gif.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_png.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_tiff.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_tga.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_rgb.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_pic.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_xwd.$(OBJEXT) \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_eps.$(OBJEXT)
 simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS = \
-$(am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS)
-AR = ar
+	$(am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 
 @BUILD_WITH_MSVC_FALSE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@libsimage@SUFFIX@_la_DEPENDENCIES = \
-@BUILD_WITH_MSVC_FALSE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@ ../mpeg2enc/libmpeg2enc.la
-am_libsimage@SUFFIX@_la_OBJECTS = simage.lo simage_write.lo resize.lo \
-simage12.lo movie.lo params.lo simage_jpeg.lo simage_gif.lo \
-simage_png.lo simage_tiff.lo simage_tga.lo simage_rgb.lo simage_pic.lo \
-simage_xwd.lo simage_eps.lo
+@BUILD_WITH_MSVC_FALSE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@	../mpeg2enc/libmpeg2enc.la
+@BUILD_WITH_MSVC_FALSE@@SIMAGE_MPEG2ENC_SUPPORT_FALSE@libsimage@SUFFIX@_la_DEPENDENCIES =
+@BUILD_WITH_MSVC_TRUE@@SIMAGE_MPEG2ENC_SUPPORT_TRUE@libsimage@SUFFIX@_la_DEPENDENCIES =
+@BUILD_WITH_MSVC_TRUE@@SIMAGE_MPEG2ENC_SUPPORT_FALSE@libsimage@SUFFIX@_la_DEPENDENCIES =
+@SIMAGE_QIMAGE_SUPPORT_TRUE@am_libsimage@SUFFIX@_la_OBJECTS = simage.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_write.lo resize.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage12.lo movie.lo params.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_jpeg.lo simage_gif.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_png.lo simage_tiff.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_tga.lo simage_rgb.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_pic.lo simage_xwd.lo \
+@SIMAGE_QIMAGE_SUPPORT_TRUE@	simage_eps.lo simage_qimage.lo
+@SIMAGE_QIMAGE_SUPPORT_FALSE@am_libsimage@SUFFIX@_la_OBJECTS = simage.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_write.lo resize.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage12.lo movie.lo params.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_jpeg.lo simage_gif.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_png.lo simage_tiff.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_tga.lo simage_rgb.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_pic.lo simage_xwd.lo \
+@SIMAGE_QIMAGE_SUPPORT_FALSE@	simage_eps.lo
 libsimage@SUFFIX@_la_OBJECTS = $(am_libsimage@SUFFIX@_la_OBJECTS)
-COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CFLAGS = @CFLAGS@
+
+DEFS = @DEFS@
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir) -I$(top_builddir)/include
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+depcomp = $(SHELL) $(top_srcdir)/cfg/depcomp
+@AMDEP_TRUE@DEP_FILES = $(DEPDIR)/movie.Plo $(DEPDIR)/movie.Po \
+@AMDEP_TRUE@	$(DEPDIR)/params.Plo $(DEPDIR)/params.Po \
+@AMDEP_TRUE@	$(DEPDIR)/resize.Plo $(DEPDIR)/resize.Po \
+@AMDEP_TRUE@	$(DEPDIR)/simage.Plo $(DEPDIR)/simage.Po \
+@AMDEP_TRUE@	$(DEPDIR)/simage12.Plo $(DEPDIR)/simage12.Po \
+@AMDEP_TRUE@	$(DEPDIR)/simage_eps.Plo $(DEPDIR)/simage_eps.Po \
+@AMDEP_TRUE@	$(DEPDIR)/simage_gif.Plo $(DEPDIR)/simage_gif.Po \
+@AMDEP_TRUE@	$(DEPDIR)/simage_jpeg.Plo $(DEPDIR)/simage_jpeg.Po \
+@AMDEP_TRUE@	$(DEPDIR)/simage_pic.Plo $(DEPDIR)/simage_pic.Po \
+@AMDEP_TRUE@	$(DEPDIR)/simage_png.Plo $(DEPDIR)/simage_png.Po \
+@AMDEP_TRUE@	$(DEPDIR)/simage_qimage.Plo \
+@AMDEP_TRUE@	$(DEPDIR)/simage_qimage.Po $(DEPDIR)/simage_rgb.Plo \
+@AMDEP_TRUE@	$(DEPDIR)/simage_rgb.Po $(DEPDIR)/simage_tga.Plo \
+@AMDEP_TRUE@	$(DEPDIR)/simage_tga.Po $(DEPDIR)/simage_tiff.Plo \
+@AMDEP_TRUE@	$(DEPDIR)/simage_tiff.Po $(DEPDIR)/simage_write.Plo \
+@AMDEP_TRUE@	$(DEPDIR)/simage_write.Po $(DEPDIR)/simage_xwd.Plo \
+@AMDEP_TRUE@	$(DEPDIR)/simage_xwd.Po
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
+	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
-LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+CFLAGS = @CFLAGS@
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+CXXFLAGS = @CXXFLAGS@
 DIST_SOURCES = $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_SOURCES) \
-$(libsimage@SUFFIX@_la_SOURCES)
+	$(libsimage@SUFFIX@_la_SOURCES)
 HEADERS = $(libsimage@SUFFIX@inc_HEADERS)
 
-depcomp = $(SHELL) $(top_srcdir)/cfg/depcomp
-@AMDEP@DEP_FILES = $(DEPDIR)/movie.Plo $(DEPDIR)/movie.Po \
-@AMDEP@ $(DEPDIR)/params.Plo $(DEPDIR)/params.Po $(DEPDIR)/resize.Plo \
-@AMDEP@ $(DEPDIR)/resize.Po $(DEPDIR)/simage.Plo $(DEPDIR)/simage.Po \
-@AMDEP@ $(DEPDIR)/simage12.Plo $(DEPDIR)/simage12.Po \
-@AMDEP@ $(DEPDIR)/simage_eps.Plo $(DEPDIR)/simage_eps.Po \
-@AMDEP@ $(DEPDIR)/simage_gif.Plo $(DEPDIR)/simage_gif.Po \
-@AMDEP@ $(DEPDIR)/simage_jpeg.Plo $(DEPDIR)/simage_jpeg.Po \
-@AMDEP@ $(DEPDIR)/simage_pic.Plo $(DEPDIR)/simage_pic.Po \
-@AMDEP@ $(DEPDIR)/simage_png.Plo $(DEPDIR)/simage_png.Po \
-@AMDEP@ $(DEPDIR)/simage_rgb.Plo $(DEPDIR)/simage_rgb.Po \
-@AMDEP@ $(DEPDIR)/simage_tga.Plo $(DEPDIR)/simage_tga.Po \
-@AMDEP@ $(DEPDIR)/simage_tiff.Plo $(DEPDIR)/simage_tiff.Po \
-@AMDEP@ $(DEPDIR)/simage_write.Plo $(DEPDIR)/simage_write.Po \
-@AMDEP@ $(DEPDIR)/simage_xwd.Plo $(DEPDIR)/simage_xwd.Po
 DIST_COMMON = $(libsimage@SUFFIX@inc_HEADERS) Makefile.am Makefile.in
-
 SOURCES = $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_SOURCES) $(libsimage@SUFFIX@_la_SOURCES)
-OBJECTS = $(am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS) $(am_libsimage@SUFFIX@_la_OBJECTS)
 
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .h .lo .o .obj
+.SUFFIXES: .c .cpp .lo .o .obj
 
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+	-rm -f libtool
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  src/Makefile
-
 Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && \
 	  CONFIG_HEADERS= CONFIG_LINKS= \
 	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
+
+AR = ar
 install-libLIBRARIES: $(lib_LIBRARIES)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(libdir)
@@ -265,26 +330,10 @@ uninstall-libLIBRARIES:
 
 clean-libLIBRARIES:
 	-test -z "$(lib_LIBRARIES)" || rm -f $(lib_LIBRARIES)
-
-mostlyclean-compile:
-	-rm -f *.$(OBJEXT) core *.core
-
-distclean-compile:
-	-rm -f *.tab.c
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool
-
-simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS) $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_DEPENDENCIES)
-	-rm -f simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
-	$(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_AR) simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS) $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_LIBADD)
-	$(RANLIB) simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
+@BUILD_WITH_MSVC_FALSE@simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib: $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS) $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_DEPENDENCIES) 
+@BUILD_WITH_MSVC_FALSE@	-rm -f simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
+@BUILD_WITH_MSVC_FALSE@	$(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_AR) simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS) $(simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_LIBADD)
+@BUILD_WITH_MSVC_FALSE@	$(RANLIB) simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(libdir)
@@ -304,9 +353,89 @@ uninstall-libLTLIBRARIES:
 
 clean-libLTLIBRARIES:
 	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
+libsimage@SUFFIX@.la: $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_DEPENDENCIES) 
+	$(CXXLINK) -rpath $(libdir) $(libsimage@SUFFIX@_la_LDFLAGS) $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_LIBADD) $(LIBS)
 
-libsimage@SUFFIX@.la: $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_DEPENDENCIES)
-	$(LINK) -rpath $(libdir) $(libsimage@SUFFIX@_la_LDFLAGS) $(libsimage@SUFFIX@_la_OBJECTS) $(libsimage@SUFFIX@_la_LIBADD) $(LIBS)
+mostlyclean-compile:
+	-rm -f *.$(OBJEXT) core *.core
+
+distclean-compile:
+	-rm -f *.tab.c
+
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/movie.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/movie.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/params.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/params.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/resize.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/resize.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage12.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage12.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_eps.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_eps.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_gif.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_gif.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_jpeg.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_jpeg.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_pic.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_pic.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_png.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_png.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_qimage.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_qimage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_rgb.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_rgb.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_tga.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_tga.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_tiff.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_tiff.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_write.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_write.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_xwd.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/simage_xwd.Po@am__quote@
+
+distclean-depend:
+	-rm -rf $(DEPDIR)
+
+.c.o:
+@AMDEP_TRUE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(COMPILE) -c `test -f $< || echo '$(srcdir)/'`$<
+
+.c.obj:
+@AMDEP_TRUE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(COMPILE) -c `cygpath -w $<`
+
+.c.lo:
+@AMDEP_TRUE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
+CCDEPMODE = @CCDEPMODE@
+
+.cpp.o:
+@AMDEP_TRUE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXXCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
+
+.cpp.obj:
+@AMDEP_TRUE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXXCOMPILE) -c -o $@ `cygpath -w $<`
+
+.cpp.lo:
+@AMDEP_TRUE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LTCXXCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
+CXXDEPMODE = @CXXDEPMODE@
+uninstall-info-am:
 install-libsimage@SUFFIX@incHEADERS: $(libsimage@SUFFIX@inc_HEADERS)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(libsimage@SUFFIX@incdir)
@@ -352,65 +481,10 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 GTAGS:
 	here=`CDPATH=: && cd $(top_builddir) && pwd` \
 	  && cd $(top_srcdir) \
-	  && gtags -i $$here
+	  && gtags -i $(GTAGS_ARGS) $$here
 
 distclean-tags:
-	-rm -f TAGS ID
-
-@AMDEP@@_am_include@ $(DEPDIR)/movie.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/movie.Po
-@AMDEP@@_am_include@ $(DEPDIR)/params.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/params.Po
-@AMDEP@@_am_include@ $(DEPDIR)/resize.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/resize.Po
-@AMDEP@@_am_include@ $(DEPDIR)/simage.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/simage.Po
-@AMDEP@@_am_include@ $(DEPDIR)/simage12.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/simage12.Po
-@AMDEP@@_am_include@ $(DEPDIR)/simage_eps.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/simage_eps.Po
-@AMDEP@@_am_include@ $(DEPDIR)/simage_gif.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/simage_gif.Po
-@AMDEP@@_am_include@ $(DEPDIR)/simage_jpeg.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/simage_jpeg.Po
-@AMDEP@@_am_include@ $(DEPDIR)/simage_pic.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/simage_pic.Po
-@AMDEP@@_am_include@ $(DEPDIR)/simage_png.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/simage_png.Po
-@AMDEP@@_am_include@ $(DEPDIR)/simage_rgb.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/simage_rgb.Po
-@AMDEP@@_am_include@ $(DEPDIR)/simage_tga.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/simage_tga.Po
-@AMDEP@@_am_include@ $(DEPDIR)/simage_tiff.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/simage_tiff.Po
-@AMDEP@@_am_include@ $(DEPDIR)/simage_write.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/simage_write.Po
-@AMDEP@@_am_include@ $(DEPDIR)/simage_xwd.Plo
-@AMDEP@@_am_include@ $(DEPDIR)/simage_xwd.Po
-
-distclean-depend:
-	-rm -rf $(DEPDIR)
-
-@AMDEP@CCDEPMODE = @CCDEPMODE@
-
-.c.o:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
-
-.c.lo:
-@AMDEP@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
-
-.c.obj:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c -o $@ `cygpath -w $<`
-
+	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
@@ -419,7 +493,11 @@ distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
 
 distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
-	  d=$(srcdir); \
+	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
+	  dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \
+	  if test "$$dir" != "$$file" && test "$$dir" != "."; then \
+	    $(mkinstalldirs) "$(distdir)/$$dir"; \
+	  fi; \
 	  if test -d $$d/$$file; then \
 	    cp -pR $$d/$$file $(distdir) \
 	    || exit 1; \
@@ -445,23 +523,20 @@ install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 
 installcheck: installcheck-am
-
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
-	  INSTALL_PROGRAM_ENV='$(INSTALL_STRIP_PROGRAM_ENV)' install
-
+	  `test -z '$(STRIP)' || \
+	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
 mostlyclean-generic:
 
 clean-generic:
 
 distclean-generic:
-	-rm -f Makefile $(CONFIG_CLEAN_FILES)
-	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	-rm -f Makefile $(CONFIG_CLEAN_FILES) stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-rm -f Makefile.in
 clean: clean-am
 
 clean-am: clean-generic clean-libLIBRARIES clean-libLTLIBRARIES \
@@ -472,11 +547,11 @@ distclean: distclean-am
 distclean-am: clean-am distclean-compile distclean-depend \
 	distclean-generic distclean-libtool distclean-tags
 
-dvi:
+dvi: dvi-am
 
 dvi-am:
 
-info:
+info: info-am
 
 info-am:
 
@@ -485,7 +560,7 @@ install-data-am: install-data-local install-libsimage@SUFFIX@incHEADERS
 install-exec-am: install-exec-local install-libLIBRARIES \
 	install-libLTLIBRARIES
 
-install-info:
+install-info: install-info-am
 
 install-man:
 
@@ -500,22 +575,25 @@ mostlyclean: mostlyclean-am
 mostlyclean-am: mostlyclean-compile mostlyclean-generic \
 	mostlyclean-libtool
 
-uninstall-am: uninstall-libLIBRARIES uninstall-libLTLIBRARIES \
-	uninstall-libsimage@SUFFIX@incHEADERS uninstall-local
+uninstall-am: uninstall-info-am uninstall-libLIBRARIES \
+	uninstall-libLTLIBRARIES uninstall-libsimage@SUFFIX@incHEADERS \
+	uninstall-local
 
-.PHONY: all all-am check check-am clean clean-generic clean-libLIBRARIES \
-	clean-libLTLIBRARIES clean-libtool distclean distclean-compile \
-	distclean-depend distclean-generic distclean-libtool \
-	distclean-tags distdir dvi dvi-am info info-am install \
-	install-am install-data install-data-am install-data-local \
-	install-exec install-exec-am install-exec-local install-info \
+.PHONY: GTAGS all all-am check check-am clean clean-generic \
+	clean-libLIBRARIES clean-libLTLIBRARIES clean-libtool distclean \
+	distclean-compile distclean-depend distclean-generic \
+	distclean-libtool distclean-tags distdir dvi dvi-am info \
+	info-am install install-am install-data install-data-am \
+	install-data-local install-exec install-exec-am \
+	install-exec-local install-info install-info-am \
 	install-libLIBRARIES install-libLTLIBRARIES \
 	install-libsimage@SUFFIX@incHEADERS install-man install-strip \
 	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool tags uninstall \
-	uninstall-am uninstall-libLIBRARIES uninstall-libLTLIBRARIES \
-	uninstall-libsimage@SUFFIX@incHEADERS uninstall-local
+	uninstall-am uninstall-info-am uninstall-libLIBRARIES \
+	uninstall-libLTLIBRARIES uninstall-libsimage@SUFFIX@incHEADERS \
+	uninstall-local
 
 
 # **************************************************************************
@@ -571,7 +649,6 @@ uninstall-local:
 	done
 
 # EOF **********************************************************************
-
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

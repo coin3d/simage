@@ -55,6 +55,22 @@ SIM_AC_SETUP_MSVC_IFELSE([], [
 AC_PROG_CC
 AM_PROG_CC_STDC
 
+sim_ac_qimage_support=false
+AC_ARG_ENABLE(
+  [qimage],
+  AC_HELP_STRING([--enable-qimage], [Use Qt's QImage to load/save images]), [
+  case $enableval in
+    yes) sim_ac_qimage_support=true ;;
+    *) ;;
+  esac])
+
+# only test for C++ compiler when qimage support is enabled
+if $sim_ac_qimage_support; then
+  AC_PROG_CPP
+  AC_PROG_CXX
+  AC_LANG(C++)
+fi
+
 if test x"$am_cv_prog_cc_stdc" = x"no"; then
   AC_MSG_WARN([doesn't look like you're using an ANSI compatible C compiler])
 fi
@@ -174,6 +190,33 @@ AC_CHECK_HEADERS([unistd.h])
 
 SIM_AC_CHECK_MATHLIB(SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_libm",
                      AC_MSG_ERROR(could not find a way to use math library))
+
+# **************************************************************************
+# Check if qimage support is wanted (and if so, available)
+
+
+if $sim_ac_qimage_support; then
+  SIM_AC_CHECK_QT([
+    SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_qt_cppflags"
+    SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_qt_ldflags"
+    SIMAGE_EXTRA_LIBS="$sim_ac_qt_libs $SIMAGE_EXTRA_LIBS"
+    CPPFLAGS="$CPPFLAGS $sim_ac_qt_cppflags"
+    LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
+    LIBS="$sim_ac_qt_libs $LIBS"
+  ], [
+    AC_MSG_WARN([can't compile and link against Qt development kit])
+    sim_ac_qimage_support=false
+  ])
+fi
+
+AM_CONDITIONAL(SIMAGE_QIMAGE_SUPPORT, $sim_ac_qimage_support)
+
+if $sim_ac_qimage_support; then
+  AC_DEFINE(SIMAGE_QIMAGE_SUPPORT, ,[define to support Qt's QImage])
+  SIM_AC_CONFIGURATION_SETTING([QImage support], [Yes])
+else
+  SIM_AC_CONFIGURATION_SETTING([QImage support], [No (default)])
+fi
 
 # **************************************************************************
 # Check if UNGIF support is wanted (and if so, available).
