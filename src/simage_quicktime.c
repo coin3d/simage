@@ -135,7 +135,7 @@ get_importer(const char * filename, GraphicsImportComponent * c)
   int e = noErr;
 
   realpath(filename, fullpath);
-  FSPathMakeRef((char *)cc_dirname(fullpath), &path, false);
+  FSPathMakeRef((const UInt8 *)cc_dirname(fullpath), &path, false);
 
   // convert char * to UniChar *
   cfstr = CFStringCreateWithCString(0, cc_basename(fullpath), 
@@ -217,7 +217,7 @@ create_file(const char * filename, FSSpec * fss)
   char fullpath [MAXPATHLEN];
 
   realpath(filename, fullpath);
-  e = FSPathMakeRef((char *)cc_dirname(fullpath), &path, false);
+  e = FSPathMakeRef((const UInt8 *)cc_dirname(fullpath), &path, false);
   if (e != noErr) return 0;
 
   // convert char * to UniChar *
@@ -231,7 +231,7 @@ create_file(const char * filename, FSSpec * fss)
   e = FSMakeFSRefUnicode(&path, len, ustr, CFStringGetSystemEncoding(), &file);
   if (e == noErr) FSDeleteObject(&file);
 
-  e = FSCreateFileUnicode (&path, len, ustr, NULL, NULL, NULL, fss);  
+  e = FSCreateFileUnicode (&path, len, ustr, 0, NULL, NULL, fss);  
   free(ustr); 
 
   if (e == noErr) return 1;
@@ -464,12 +464,12 @@ simage_quicktime_save(const char * filename, const unsigned char * px,
                          NULL, 0, newpx, width * numcomponents);
   } else {
     quicktimeerror = ERR_BAD_DEPTH;
-    return NULL;
+    return 0;
   }
 
   if (e != noErr) {
     quicktimeerror = ERR_CG;
-    return NULL;
+    return 0;
   }
 
   if (!create_file(filename, &fss)) {
