@@ -413,6 +413,7 @@ simage_quicktime_get_savers(void)
   Component c = 0;
   bool firstext = true;
   char * cstr;
+  const char * cret;
   OSType * ext = malloc(sizeof(OSType));
 
   // Search for all graphics exporters, except the base exporter.
@@ -431,11 +432,21 @@ simage_quicktime_get_savers(void)
     cfstring_append_ostype(ret, ext);
   }
   free(ext);
-  cstr = malloc(CFStringGetLength(ret));
-  strcpy(cstr, CFStringGetCStringPtr(ret, CFStringGetSystemEncoding()));
+  
+  CFIndex length = CFStringGetLength(ret);
+  // number of unicode characters in ret should never be < 0...
+  assert(length >= 0);
+
+  // CFStringGetCString might return NULL due to encoding problems etc.
+  if (cret = CFStringGetCStringPtr(ret, CFStringGetSystemEncoding())) {
+    cstr = malloc(length + 1);
+    strncpy(cstr, cret, length); 
+  } else {
+    cstr = NULL;
+  }
+
   return cstr;
 }
-
 
 int 
 simage_quicktime_save(const char * filename, const unsigned char * px,
