@@ -2,19 +2,19 @@
 
 #include <Carbon/Carbon.h>
 #include <ApplicationServices/ApplicationServices.h>
-#include <QuickTime/ImageCompression.h>    // for image loading 
-#include <QuickTime/QuickTimeComponents.h> // for file type support
+#include <QuickTime/ImageCompression.h>    /* for image loading */
+#include <QuickTime/QuickTimeComponents.h> /* for file type support */
 
 #include <stdlib.h>
-#include <sys/param.h>  // for MAXPATHLEN
+#include <sys/param.h>  /* for MAXPATHLEN */
 
-#define ERR_NO_ERROR    0   // no error
-#define ERR_OPEN        1   // could not open file
-#define ERR_CG          2   // internal CG error
-#define ERR_WRITE       3   // error writing file
-#define ERR_UNSUPPORTED 4   // unsupported write format
-#define ERR_BAD_DEPTH   5   // unsupported bit depth 
-#define ERR_MEM         6   // out of memory
+#define ERR_NO_ERROR    0   /* no error */
+#define ERR_OPEN        1   /* could not open file */
+#define ERR_CG          2   /* internal CG error */
+#define ERR_WRITE       3   /* error writing file */
+#define ERR_UNSUPPORTED 4   /* unsupported write format */
+#define ERR_BAD_DEPTH   5   /* unsupported bit depth  */
+#define ERR_MEM         6   /* out of memory */
 
 typedef struct {
   size_t width;
@@ -28,22 +28,22 @@ typedef struct {
 
 static int quicktimeerror = ERR_NO_ERROR;
 
-// FIXME: Currently, all images are handled as 32bit (i.e. converted
-// on import). That seems to be the way to do it for 24bit and 32 bit
-// images, but should be done differently for 8bit images (though, note,
-// it works perfectly okay is it is.) For some reason, using 
-// k8IndexedPixelFormat as an argument when creating the GWorld for 
-// importing does not work. Investigate. kyrah 20030210
+/* FIXME: Currently, all images are handled as 32bit (i.e. converted
+   on import). That seems to be the way to do it for 24bit and 32 bit
+   images, but should be done differently for 8bit images (though, note,
+   it works perfectly okay is it is.) For some reason, using 
+   k8IndexedPixelFormat as an argument when creating the GWorld for 
+   importing does not work. Investigate. kyrah 20030210
+*/
 
 
-// -------------------- internal functions ---------------------------
-
-// Mac OS 10.1 doesn't have basename() and dirname(), so we
-// have to use our own.
-// FIXME #1: Same problem exists in Coin, so this should be
-// shared code between Coin and simage.
-// FIXME #2: Use system dirname() and basename() on Mac OS 10.2 
-// kyrah 20030723
+/* Mac OS 10.1 doesn't have basename() and dirname(), so we
+   have to use our own.
+   FIXME #1: Same problem exists in Coin, so this should be
+   shared code between Coin and simage.
+   FIXME #2: Use system dirname() and basename() on Mac OS 10.2 
+   kyrah 20030723
+*/
 
 static char *
 cc_basename(const char * path)
@@ -115,13 +115,13 @@ cc_dirname(const char * path)
 
 
 /* Check if there is a valid QuickTime importer that can read file.
- * The following will be tried:
- *  - matching Mac OS file type
- *  - matching the file name suffix
- *  - matching the MIME type
- *  - query each graphics importer component 
- * Returns 1 if an importer was found, and 0 otherwise.
- */
+   The following will be tried:
+    - matching Mac OS file type
+    - matching the file name suffix
+    - matching the MIME type
+    - query each graphics importer component 
+   Returns 1 if an importer was found, and 0 otherwise.
+*/
 static int
 get_importer(const char * filename, GraphicsImportComponent * c) 
 {
@@ -137,7 +137,7 @@ get_importer(const char * filename, GraphicsImportComponent * c)
   realpath(filename, fullpath);
   FSPathMakeRef((const UInt8 *)cc_dirname(fullpath), &path, false);
 
-  // convert char * to UniChar *
+  /* convert char * to UniChar * */
   cfstr = CFStringCreateWithCString(0, cc_basename(fullpath), 
           CFStringGetSystemEncoding());
   len = CFStringGetLength(cfstr);
@@ -153,7 +153,7 @@ get_importer(const char * filename, GraphicsImportComponent * c)
 }
 
 /* Look for a valid graphics exporter component for the file extension 
- * "fext," and if we find one, open it.
+   "fext," and if we find one, open it.
  */
 static void
 open_exporter(const char * fext, GraphicsExportComponent * ge)
@@ -184,8 +184,8 @@ open_exporter(const char * fext, GraphicsExportComponent * ge)
 
 
 /* Convert the OSType t to a C string and append it to str.
- * An OSType is really an unsigned long, intepreted as a four-character 
- * constant. 
+   An OSType is really an unsigned long, intepreted as a four-character 
+   constant. 
  */
 static void
 cfstring_append_ostype(CFMutableStringRef str, OSType * t) 
@@ -202,8 +202,8 @@ cfstring_append_ostype(CFMutableStringRef str, OSType * t)
 
 
 /* Create a new file named "file" in the current working directory.
- * If a file with this name already exists, it will be overwritten.
- * Returns 1 if file could be created successfully, and 0 otherwise.
+   If a file with this name already exists, it will be overwritten.
+   Returns 1 if file could be created successfully, and 0 otherwise.
  */
 static int
 create_file(const char * filename, FSSpec * fss) 
@@ -220,14 +220,14 @@ create_file(const char * filename, FSSpec * fss)
   e = FSPathMakeRef((const UInt8 *)cc_dirname(fullpath), &path, false);
   if (e != noErr) return 0;
 
-  // convert char * to UniChar *
+  /* convert char * to UniChar * */
   cfstr = CFStringCreateWithCString(0, cc_basename(fullpath), 
           CFStringGetSystemEncoding());
   len = CFStringGetLength(cfstr);
   ustr = malloc(len * sizeof(UniChar)); 
   CFStringGetCharacters(cfstr, CFRangeMake(0, len), ustr); 
 
-  // If you can create an FSRef, the file already exists -> delete it.
+  /* If you can create an FSRef, the file already exists -> delete it. */
   e = FSMakeFSRefUnicode(&path, len, ustr, CFStringGetSystemEncoding(), &file);
   if (e == noErr) FSDeleteObject(&file);
 
@@ -241,16 +241,17 @@ create_file(const char * filename, FSSpec * fss)
 
 
 /* Flip the image vertically. The flipped image will be returned in
- * newpx. Needed since Carbon has the origin in the upper left corner,
- * and OpenGL in the lower left corner.
+   newpx. Needed since Carbon has the origin in the upper left corner,
+   and OpenGL in the lower left corner.
  */
 static void
 v_flip(const unsigned char * px, int width, int height,
        int numcomponents, unsigned char * newpx)
 {   
-  // FIXME: We should really use QuickTime to do this (Altivec! :)).
-  // For importing, it's straightforward, but I have no clue how to do
-  // this for the export case. kyrah 20030210.
+  /* FIXME: We should really use QuickTime to do this (Altivec! :)).
+     For importing, it's straightforward, but I have no clue how to do
+     this for the export case. kyrah 20030210. 
+  */
   int i;
   if (!newpx) return; 
   for (i = 0; i < height; i++) {
@@ -262,8 +263,8 @@ v_flip(const unsigned char * px, int width, int height,
   
 
 /* Convert the image data in px from ARGB to RGBA.
- * Needed since Mac OS X uses ARGB internally, but OpenGL expects RGBA.
- */
+   Needed since Mac OS X uses ARGB internally, but OpenGL expects RGBA.
+*/
 static void 
 argb_to_rgba(uint32_t * px, int width, int height) 
 {
@@ -276,8 +277,8 @@ argb_to_rgba(uint32_t * px, int width, int height)
 
 
 /* Convert the image data in px from RGBA to ARGB.
- * Needed since Mac OS X uses ARGB internally, but OpenGL expects RGBA.
- */
+   Needed since Mac OS X uses ARGB internally, but OpenGL expects RGBA.
+*/
 static void 
 rgba_to_argb(uint32_t * px, int width, int height) 
 {
@@ -359,7 +360,7 @@ simage_quicktime_load(const char * file, int * width,
   bi.width = desc->width;
   bi.height = desc->height;
   bi.numcomponents = 4;
-  bi.bitsPerPixel = 32;     // not 24!
+  bi.bitsPerPixel = 32;     /* not 24! */
   bi.bytesPerRow = (bi.bitsPerPixel * bi.width + 7)/8;
   bi.size = bi.width * bi.height * bi.numcomponents;
   bi.data = malloc(bi.size);
@@ -385,7 +386,7 @@ simage_quicktime_load(const char * file, int * width,
   newpx = malloc(bi.width * bi.height * bi.numcomponents);
   v_flip(bi.data, bi.width, bi.height, bi.numcomponents, newpx);
 
-#if 0 // QuickTime flip code for reference. See FIXME note at v_flip. 
+#if 0 /* QuickTime flip code for reference. See FIXME note at v_flip. */
   MatrixRecord mr;
   GraphicsImportGetMatrix(gi, &mr);
   ScaleMatrix(&mr, fixed1, Long2Fix(-1), 0, 0);
@@ -416,7 +417,7 @@ simage_quicktime_get_savers(void)
   const char * cret;
   OSType * ext = malloc(sizeof(OSType));
 
-  // Search for all graphics exporters, except the base exporter.
+  /* Search for all graphics exporters, except the base exporter. */
   ComponentDescription cd;
   cd.componentType = GraphicsExporterComponentType;
   cd.componentSubType = 0;
@@ -425,7 +426,7 @@ simage_quicktime_get_savers(void)
   cd.componentFlagsMask = graphicsExporterIsBaseExporter;
 
   while ((c = FindNextComponent (c, &cd)) != 0) {
-    // put '," in front of all consecutive string entries
+    /* put '," in front of all consecutive string entries */
     if (firstext) firstext = false;
     else CFStringAppendCString(ret, ",", CFStringGetSystemEncoding());
     GraphicsExportGetDefaultFileNameExtension((GraphicsExportComponent)c, ext);
@@ -434,10 +435,10 @@ simage_quicktime_get_savers(void)
   free(ext);
   
   CFIndex length = CFStringGetLength(ret);
-  // number of unicode characters in ret should never be < 0...
+  /* number of unicode characters in ret should never be < 0... */
   assert(length >= 0);
 
-  // CFStringGetCString might return NULL due to encoding problems etc.
+  /* CFStringGetCString might return NULL due to encoding problems etc. */
   if (cret = CFStringGetCStringPtr(ret, CFStringGetSystemEncoding())) {
     cstr = malloc(length + 1);
     strncpy(cstr, cret, length); 
@@ -462,9 +463,10 @@ simage_quicktime_save(const char * filename, const unsigned char * px,
 
   v_flip(px, width, height, numcomponents, newpx);
 
-  // Note: We have to use QuickTime's QTNewGWorldFromPtr() here,
-  // not Carbon's NewGWorldFromPtr(), since the latter does 
-  // not support 24 bit images. 
+  /* Note: We have to use QuickTime's QTNewGWorldFromPtr() here,
+     not Carbon's NewGWorldFromPtr(), since the latter does 
+     not support 24 bit images. 
+  */
 
   if (numcomponents == 4) {
     rgba_to_argb((uint32_t *)newpx, width, height);
