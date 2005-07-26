@@ -434,18 +434,15 @@ simage_quicktime_get_savers(void)
   }
   free(ext);
   
-  CFIndex length = CFStringGetLength(ret);
+  CFIndex length = CFStringGetLength(ret) + 1;
   /* number of unicode characters in ret should never be < 0... */
-  assert(length >= 0);
+  assert(length > 0);
+  cstr = malloc(length);
 
   /* CFStringGetCString might return NULL due to encoding problems etc. */
-  if (cret = CFStringGetCStringPtr(ret, CFStringGetSystemEncoding())) {
-    cstr = malloc(length + 1);
-    strncpy(cstr, cret, length); 
-  } else {
+  if (!CFStringGetCString(ret, cstr, length, CFStringGetSystemEncoding())) {
     cstr = NULL;
   }
-
   return cstr;
 }
 
