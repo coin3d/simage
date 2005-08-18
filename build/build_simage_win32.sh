@@ -17,6 +17,7 @@
 # Verify that everything works if cygwin was built with Unix-style newlines
 # instead of dos-style. Check lars' windows-packages stuff for unix2dos
 
+
 SIMAGE_CRT_LIST="md mdd"
 SIMAGE_SOUND_LIST="no"
 

@@ -188,7 +188,8 @@ echo "[SIMAGELIBS]      Verifying libjpeg..."
 if ! test -e $SIMAGELIBS_DOWNLOAD/jpegsrc.v6b.tar; then
   if ! test -e $SIMAGELIBS_DOWNLOAD/jpegsrc.v6b.tar.gz; then
     echo "[SIMAGELIBS]         Downloading libjpeg"
-    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD http://www.ijg.org/files/jpegsrc.v6b.tar.gz
+    #wget --directory-prefix=$SIMAGELIBS_DOWNLOAD http://www.ijg.org/files/jpegsrc.v6b.tar.gz
+    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD http://www.xfig.org/jpeg/jpegsrc.v6b.tar.gz
   fi
   echo "[SIMAGELIBS]         gunzip'ing libjpeg"
   gunzip $SIMAGELIBS_DOWNLOAD/jpegsrc.v6b.tar.gz
