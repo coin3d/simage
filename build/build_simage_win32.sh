@@ -123,7 +123,7 @@ function set_simage_param_crt()
 
 # Verify SDKs
 
-if ! ./build_simage_libs_win32.sh $SIMAGE_SDK; then
+if ! /usr/bin/bash ./build_simage_libs_win32.sh $SIMAGE_SDK; then
   exit 1
 fi
 
