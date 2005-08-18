@@ -369,7 +369,8 @@ echo "[SIMAGELIBS]      Verifying libtiff..."
 if ! test -e $SIMAGELIBS_DOWNLOAD/tiff-v3.5.7.tar; then
   if ! test -e $SIMAGELIBS_DOWNLOAD/tiff-v3.5.7.tar.gz; then
     echo "[SIMAGELIBS]         Downloading libtiff"
-    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD ftp://ftp.remotesensing.org/pub/libtiff/tiff-v3.5.7.tar.gz
+    #wget --directory-prefix=$SIMAGELIBS_DOWNLOAD ftp://ftp.remotesensing.org/pub/libtiff/tiff-v3.5.7.tar.gz
+    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD ftp://ftp.sim.no/pub/3rdparty/tiff-v3.5.7.tar.gz
   fi
   echo "[SIMAGELIBS]         gunzip'ing libtiff"
   gunzip $SIMAGELIBS_DOWNLOAD/tiff-v3.5.7.tar.gz
@@ -431,7 +432,8 @@ echo "[SIMAGELIBS]      Verifying libogg..."
 if ! test -e $SIMAGELIBS_DOWNLOAD/libogg-1.0.tar; then
   if ! test -e $SIMAGELIBS_DOWNLOAD/libogg-1.0.tar.gz; then
     echo "[SIMAGELIBS]         Downloading libogg"
-    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD http://www.xiph.org/ogg/vorbis/download/libogg-1.0.tar.gz
+    #wget --directory-prefix=$SIMAGELIBS_DOWNLOAD http://www.xiph.org/ogg/vorbis/download/libogg-1.0.tar.gz
+    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD ftp://ftp.sim.no/pub/3rdparty/libogg-1.0.tar.gz
   fi
   echo "[SIMAGELIBS]         gunzip'ing libogg"
   gunzip $SIMAGELIBS_DOWNLOAD/libogg-1.0.tar.gz
@@ -493,7 +495,8 @@ echo "[SIMAGELIBS]      Verifying libvorbis..."
 if ! test -e $SIMAGELIBS_DOWNLOAD/libvorbis-1.0.tar; then
   if ! test -e $SIMAGELIBS_DOWNLOAD/libvorbis-1.0.tar.gz; then
     echo "[SIMAGELIBS]         Downloading libvorbis"
-    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD http://www.xiph.org/ogg/vorbis/download/libvorbis-1.0.tar.gz
+    #wget --directory-prefix=$SIMAGELIBS_DOWNLOAD http://www.xiph.org/ogg/vorbis/download/libvorbis-1.0.tar.gz
+    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD ftp://ftp.sim.no/pub/3rdparty/libvorbis-1.0.tar.gz
   fi
   echo "[SIMAGELIBS]         gunzip'ing libvorbis"
   gunzip $SIMAGELIBS_DOWNLOAD/libvorbis-1.0.tar.gz
@@ -618,7 +621,8 @@ echo "[SIMAGELIBS]      Verifying libsndfile..."
 if ! test -e $SIMAGELIBS_DOWNLOAD/libsndfile-1.0.5.tar; then
   if ! test -e $SIMAGELIBS_DOWNLOAD/libsndfile-1.0.5.tar.gz; then
     echo "[SIMAGELIBS]         Downloading libsndfile"
-    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD http://www.zip.com.au/~erikd/libsndfile/libsndfile-1.0.5.tar.gz
+    #wget --directory-prefix=$SIMAGELIBS_DOWNLOAD http://www.zip.com.au/~erikd/libsndfile/libsndfile-1.0.5.tar.gz
+    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD ftp://ftp.sim.no/pub/3rdparty/libsndfile-1.0.5.tar.gz
   fi
   echo "[SIMAGELIBS]         gunzip'ing libsndfile"
   gunzip $SIMAGELIBS_DOWNLOAD/libsndfile-1.0.5.tar.gz
