@@ -189,7 +189,7 @@ if ! test -e $SIMAGELIBS_DOWNLOAD/jpegsrc.v6b.tar; then
   if ! test -e $SIMAGELIBS_DOWNLOAD/jpegsrc.v6b.tar.gz; then
     echo "[SIMAGELIBS]         Downloading libjpeg"
     #wget --directory-prefix=$SIMAGELIBS_DOWNLOAD http://www.ijg.org/files/jpegsrc.v6b.tar.gz
-    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD http://www.xfig.org/jpeg/jpegsrc.v6b.tar.gz
+    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD ftp://ftp.sim.no/pub/3rdparty/jpegsrc.v6b.tar.gz
   fi
   echo "[SIMAGELIBS]         gunzip'ing libjpeg"
   gunzip $SIMAGELIBS_DOWNLOAD/jpegsrc.v6b.tar.gz
@@ -255,7 +255,7 @@ if ! test -e $SIMAGELIBS_DOWNLOAD/zlib-1.1.4.tar; then
   if ! test -e $SIMAGELIBS_DOWNLOAD/zlib-1.1.4.tar.gz; then
     echo "[SIMAGELIBS]         Downloading zlib"
     #wget --directory-prefix=$SIMAGELIBS_DOWNLOAD ftp://ftp.info-zip.org/pub/infozip/zlib/zlib-1.1.4.tar.gz
-    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD http://www.zlib.net/zlib-1.1.4.tar.gz
+    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD ftp://ftp.sim.no/pub/3rdparty/zlib-1.1.4.tar.gz
   fi
   echo "[SIMAGELIBS]         gunzip'ing zlib"
   gunzip $SIMAGELIBS_DOWNLOAD/zlib-1.1.4.tar.gz
@@ -312,7 +312,8 @@ echo "[SIMAGELIBS]      Verifying libpng..."
 if ! test -e $SIMAGELIBS_DOWNLOAD/libpng-1.2.5.tar; then
   if ! test -e $SIMAGELIBS_DOWNLOAD/libpng-1.2.5.tar.gz; then
     echo "[SIMAGELIBS]         Downloading libpng"
-    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD ftp://ftp.simplesystems.org/pub/libpng/src/libpng-1.2.5.tar.gz
+    #wget --directory-prefix=$SIMAGELIBS_DOWNLOAD ftp://ftp.simplesystems.org/pub/libpng/src/libpng-1.2.5.tar.gz
+    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD ftp://ftp.sim.no/pub/3rdparty/libpng-1.2.5.tar.gz
   fi
   echo "[SIMAGELIBS]         gunzip'ing libpng"
   gunzip $SIMAGELIBS_DOWNLOAD/libpng-1.2.5.tar.gz
