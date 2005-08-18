@@ -254,7 +254,8 @@ echo "[SIMAGELIBS]      Verifying zlib..."
 if ! test -e $SIMAGELIBS_DOWNLOAD/zlib-1.1.4.tar; then
   if ! test -e $SIMAGELIBS_DOWNLOAD/zlib-1.1.4.tar.gz; then
     echo "[SIMAGELIBS]         Downloading zlib"
-    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD ftp://ftp.info-zip.org/pub/infozip/zlib/zlib-1.1.4.tar.gz
+    #wget --directory-prefix=$SIMAGELIBS_DOWNLOAD ftp://ftp.info-zip.org/pub/infozip/zlib/zlib-1.1.4.tar.gz
+    wget --directory-prefix=$SIMAGELIBS_DOWNLOAD http://www.zlib.net/zlib-1.1.4.tar.gz
   fi
   echo "[SIMAGELIBS]         gunzip'ing zlib"
   gunzip $SIMAGELIBS_DOWNLOAD/zlib-1.1.4.tar.gz
