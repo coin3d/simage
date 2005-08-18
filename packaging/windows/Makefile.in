@@ -151,7 +151,7 @@ $(project).nsi: heading.nsi headerlist.nsi middle.nsi sourcelist.nsi bfheader.ns
 	builddir=`pwd`; \
 	cd $(top_srcdir)/build; \
 	MAKEFLAGS=""; \
-	$(top_srcdir)/build/build_simage_libs_win32.sh $$builddir/3rdparty
+	/usr/bin/bash $(top_srcdir)/build/build_simage_libs_win32.sh $$builddir/3rdparty
 
 build-shared-release/src/Inventor/Win/$(project)$(major).dll: 3rdparty $(Project)-$(VERSION)
 	@if test -d build-shared-release; then :; else mkdir build-shared-release; fi
