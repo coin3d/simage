@@ -47,6 +47,14 @@ int main(int argc, char ** argv)
 
   row = (unsigned char*) malloc(w*nc);
 
+  fprintf(stderr,"testing step: %s, %d %d %d\n", argv[1], w, h, nc);
+  for (i = 0; i < h; i += 146) {
+    if (!s_image_read_line(image, i, row)) {
+      fprintf(stderr,"failed to read line %d\n", i);
+    }
+  }
+
+  fprintf(stderr,"testing normal: %s, %d %d %d\n", argv[1], w, h, nc);
   for (i = 0; i < h; i++) {
     if (!s_image_read_line(image, i, row)) {
       fprintf(stderr,"failed to read line %d\n", i);
