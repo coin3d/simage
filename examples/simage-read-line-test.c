@@ -24,7 +24,7 @@ int main(int argc, char ** argv)
   int w, h, nc;
   char * infile;
   char * addalpha = NULL;
-  char * row = NULL;
+  unsigned char * row = NULL;
   s_image * image = NULL;
 
   if (argc < 2) {
@@ -45,9 +45,16 @@ int main(int argc, char ** argv)
 
   fprintf(stderr,"testing file: %s, %d %d %d\n", argv[1], w, h, nc);
 
-  row = (char*) malloc(w*nc);
+  row = (unsigned char*) malloc(w*nc);
 
   for (i = 0; i < h; i++) {
+    if (!s_image_read_line(image, i, row)) {
+      fprintf(stderr,"failed to read line %d\n", i);
+    }
+  }
+
+  fprintf(stderr,"testing backwards: %s, %d %d %d\n", argv[1], w, h, nc);
+  for (i = h-1; i >=0; i--) {
     if (!s_image_read_line(image, i, row)) {
       fprintf(stderr,"failed to read line %d\n", i);
     }
