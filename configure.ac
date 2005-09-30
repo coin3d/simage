@@ -327,20 +327,39 @@ if test x"$sim_ac_quicktime_support" = xfalse; then
   # Check if UNGIF support is wanted (and if so, available).
 
   SIM_AC_HAVE_LIBUNGIF_IFELSE([
-    AC_DEFINE(HAVE_UNGIFLIB, , [define to support the ungif library])
+    AC_DEFINE(HAVE_GIFLIB, , [define to support the ungif library])
     SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_libungif_cppflags"
     SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_libungif_ldflags"
     SIMAGE_EXTRA_LIBS="$sim_ac_libungif_libs $SIMAGE_EXTRA_LIBS"
     CPPFLAGS="$CPPFLAGS $sim_ac_libungif_cppflags"
     LDFLAGS="$LDFLAGS $sim_ac_libungif_ldflags"
     LIBS="$sim_ac_libungif_libs $LIBS"
-    SIM_AC_CONFIGURATION_SETTING([GIF image format support], [Yes])
-  ], [
-    SIM_AC_CONFIGURATION_SETTING([GIF image format support], [No (needs libungif)])
+    SIM_AC_CONFIGURATION_SETTING([GIF image format support], [Yes (libungif)])
   ])
 
   # : ${sim_ac_have_libungif=false}
   # AM_CONDITIONAL(SIMAGE_UNGIF_SUPPORT, $sim_ac_have_libungif)
+
+  # **************************************************************************
+  # Check if GIFLIB support is wanted (and if so, available).
+
+  SIM_AC_HAVE_GIFLIB_IFELSE([
+    AC_DEFINE(HAVE_GIFLIB, , [define to support the giflib library])
+    SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_giflib_cppflags"
+    SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_giflib_ldflags"
+    SIMAGE_EXTRA_LIBS="$sim_ac_giflib_libs $SIMAGE_EXTRA_LIBS"
+    CPPFLAGS="$CPPFLAGS $sim_ac_giflib_cppflags"
+    LDFLAGS="$LDFLAGS $sim_ac_giflib_ldflags"
+    LIBS="$sim_ac_giflib_libs $LIBS"
+    SIM_AC_CONFIGURATION_SETTING([GIF image format support], [Yes (giflib)])
+  ])
+
+  if test x"$sim_ac_have_libungif" = xfalse -a x"$sim_ac_have_giflib" = xfalse; then
+    SIM_AC_CONFIGURATION_SETTING([GIF image format support], [No (needs libungif or giflib)])
+  fi
+
+  # : ${sim_ac_have_giflib=false}
+  # AM_CONDITIONAL(SIMAGE_GIF_SUPPORT, $sim_ac_have_giflib)
 
   # **************************************************************************
   # Check if JPEG support is wanted (and if so, available).

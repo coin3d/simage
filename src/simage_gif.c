@@ -4,7 +4,7 @@
 */
 
 #include <config.h>
-#ifdef HAVE_UNGIFLIB
+#ifdef HAVE_GIFLIB
 
 #include <simage_gif.h>
 #include <stdlib.h>
@@ -243,4 +243,4 @@ simage_gif_load(const char *filename,
   return buffer;
 }
 
-#endif /* HAVE_UNGIFLIB */
+#endif /* HAVE_GIFLIB */

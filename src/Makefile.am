@@ -10,15 +10,15 @@ endif
 
 if SIMAGE_QUICKTIME_SUPPORT
 QUICKTIMESOURCES = simage_quicktime.c $(top_srcdir)/include/simage_quicktime.h
+GIFSOURCES = 
 JPEGSOURCES = 
-UNGIFSOURCES = 
 TIFFSOURCES = 
 PNGSOURCES = 
 TGASOURCES = 
 else
 QUICKTIMESOURCES =
+GIFSOURCES = simage_gif.c $(top_srcdir)/include/simage_gif.h
 JPEGSOURCES = simage_jpeg.c $(top_srcdir)/include/simage_jpeg.h
-UNGIFSOURCES = simage_gif.c $(top_srcdir)/include/simage_gif.h
 TIFFSOURCES = simage_tiff.c $(top_srcdir)/include/simage_tiff.h
 PNGSOURCES = simage_png.c $(top_srcdir)/include/simage_png.h
 TGASOURCES = simage_tga.c $(top_srcdir)/include/simage_tga.h
@@ -47,7 +47,7 @@ SIMAGESOURCES = \
 	params.c \
 	$(top_srcdir)/include/simage_private.h \
 	$(JPEGSOURCES) \
-	$(UNGIFSOURCES) \
+	$(GIFSOURCES) \
 	$(PNGSOURCES) \
 	$(TIFFSOURCES) \
 	$(TGASOURCES) \
