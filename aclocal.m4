@@ -11,7 +11,7 @@
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
 
-# **************************************************************************
+ **************************************************************************
 # gendsp.m4
 #
 # macros:
@@ -43,6 +43,7 @@ AC_REQUIRE([SIM_AC_MSVC_DSP_ENABLE_OPTION])
 $1_DSP_LIBDIRS=
 $1_DSP_LIBS=
 $1_DSP_INCS=
+$1_LIB_DSP_DEFS=
 $1_DSP_DEFS=
 
 if $sim_ac_make_dsp; then
@@ -93,6 +94,15 @@ if $sim_ac_make_dsp; then
       else
         $1_DSP_DEFS="[$]$1_DSP_DEFS /D \"$define\""
       fi
+      if echo $define | grep _MAKE_DLL; then
+        :
+      else
+        if test x"[$]$1_DSP_DEFS" = x""; then
+          $1_LIB_DSP_DEFS="/D \"$define\""
+        else
+          $1_LIB_DSP_DEFS="[$]$1_LIB_DSP_DEFS /D \"$define\""
+        fi
+      fi
       ;;
     esac
   done
@@ -118,6 +128,7 @@ fi
 AC_SUBST([$1_DSP_LIBS])
 AC_SUBST([$1_DSP_INCS])
 AC_SUBST([$1_DSP_DEFS])
+AC_SUBST([$1_LIB_DSP_DEFS])
 ])
 
 
@@ -236,6 +247,17 @@ AC_ARG_ENABLE([msvc],
 ])
 
 # **************************************************************************
+
+AC_DEFUN([SIM_AC_MSVC_VERSION], [
+AC_MSG_CHECKING([Visual Studio C++ version])
+AC_TRY_COMPILE([],
+  [long long number = 0;],
+  [sim_ac_msvc_version=7]
+  [sim_ac_msvc_version=6])
+AC_MSG_RESULT($sim_ac_msvc_version)
+])
+
+# **************************************************************************
 # Note: the SIM_AC_SETUP_MSVC_IFELSE macro has been OBSOLETED and
 # replaced by the one below.
 #
@@ -262,6 +284,29 @@ if $sim_ac_try_msvc; then
       export CC CXX
       BUILD_WITH_MSVC=true
       AC_MSG_RESULT([working])
+
+      # FIXME: why is this here, larsa? 20050714 mortene.
+      # SIM_AC_MSVC_VERSION
+
+      # Robustness: we had multiple reports of Cygwin ''link'' getting in
+      # the way of MSVC link.exe, so do a little sanity check for that.
+      #
+      # FIXME: a better fix would be to call link.exe with full path from
+      # the wrapmsvc wrapper, to avoid any trouble with this -- I believe
+      # that should be possible, using the dirname of the full cl.exe path.
+      # 20050714 mortene.
+      sim_ac_check_link=`type link`
+      AC_MSG_CHECKING([whether Cygwin's /usr/bin/link shadows MSVC link.exe])
+      case x"$sim_ac_check_link" in
+      x"link is /usr/bin/link"* )
+        AC_MSG_RESULT(yes)
+        SIM_AC_ERROR([cygwin-link])
+        ;;
+      * )
+        AC_MSG_RESULT(no)
+        ;;
+      esac
+
     else
       case $host in
       *-cygwin)
@@ -2045,7 +2090,7 @@ AC_CACHE_VAL([lt_cv_sys_max_cmd_len], [dnl
     lt_cv_sys_max_cmd_len=8192;
     ;;
 
-  netbsd* | freebsd* | openbsd* | darwin* | dragonfly*)
+  netbsd* | freebsd* | openbsd* | darwin* )
     # This has been around since 386BSD, at least.  Likely further.
     if test -x /sbin/sysctl; then
       lt_cv_sys_max_cmd_len=`/sbin/sysctl -n kern.argmax`
@@ -2057,20 +2102,8 @@ AC_CACHE_VAL([lt_cv_sys_max_cmd_len], [dnl
     # And add a safety zone
     lt_cv_sys_max_cmd_len=`expr $lt_cv_sys_max_cmd_len \/ 4`
     ;;
-  osf*)
-    # Dr. Hans Ekkehard Plesser reports seeing a kernel panic running configure
-    # due to this test when exec_disable_arg_limit is 1 on Tru64. It is not
-    # nice to cause kernel panics so lets avoid the loop below.
-    # First set a reasonable default.
-    lt_cv_sys_max_cmd_len=16384
-    # 
-    if test -x /sbin/sysconfig; then
-      case `/sbin/sysconfig -q proc exec_disable_arg_limit` in
-        *1*) lt_cv_sys_max_cmd_len=-1 ;;
-      esac
-    fi
-    ;;
-  *)
+
+ *)
     # If test is not a shell built-in, we'll probably end up computing a
     # maximum length that is only half of the actual maximum length, but
     # we can't tell.
@@ -2635,7 +2668,7 @@ cygwin* | mingw* | pw32*)
       ;;
     pw32*)
       # pw32 DLLs use 'pw' prefix rather than 'lib'
-      library_names_spec='`echo ${libname} | sed -e 's/^lib/pw/'``echo ${release} | $SED -e 's/[[.]]/-/g'`${versuffix}${shared_ext}'
+      library_names_spec='`echo ${libname} | sed -e 's/^lib/pw/'``echo ${release} | $SED -e 's/[.]/-/g'`${versuffix}${shared_ext}'
       ;;
     esac
     ;;
@@ -2693,9 +2726,7 @@ kfreebsd*-gnu)
   dynamic_linker='GNU ld.so'
   ;;
 
-freebsd* | dragonfly*)
-  # DragonFly does not have aout.  When/if they implement a new
-  # versioning mechanism, adjust this.
+freebsd*)
   objformat=`test -x /usr/bin/objformat && /usr/bin/objformat || echo aout`
   version_type=freebsd-$objformat
   case $version_type in
@@ -2714,7 +2745,7 @@ freebsd* | dragonfly*)
   freebsd2*)
     shlibpath_overrides_runpath=yes
     ;;
-  freebsd3.[[01]]* | freebsdelf3.[[01]]*)
+  freebsd3.[01]* | freebsdelf3.[01]*)
     shlibpath_overrides_runpath=yes
     hardcode_into_libs=yes
     ;;
@@ -2840,7 +2871,7 @@ linux*)
 
   # Append ld.so.conf contents to the search path
   if test -f /etc/ld.so.conf; then
-    lt_ld_extra=`awk '/^include / { system(sprintf("cd /etc; cat %s", \[$]2)); skip = 1; } { if (!skip) print \[$]0; skip = 0; }' < /etc/ld.so.conf | $SED -e 's/#.*//;s/[:,\t]/ /g;s/=[^=]*$//;s/=[^= ]* / /g;/^$/d' | tr '\n' ' '`
+    lt_ld_extra=`$SED -e 's/[:,\t]/ /g;s/=[^=]*$//;s/=[^= ]* / /g' /etc/ld.so.conf | tr '\n' ' '`
     sys_lib_dlsearch_path_spec="/lib /usr/lib $lt_ld_extra"
   fi
 
@@ -3070,7 +3101,7 @@ if test -f "$ltmain" && test -n "$tagnames"; then
       case $tagname in
       CXX)
 	if test -n "$CXX" && ( test "X$CXX" != "Xno" &&
-	    ( (test "X$CXX" = "Xg++" && `g++ -v >/dev/null 2>&1` ) ||
+	    ( (test "X$CXX" = "Xg++" && `g++ -v >/dev/null 2>&1` ) || 
 	    (test "X$CXX" != "Xg++"))) ; then
 	  AC_LIBTOOL_LANG_CXX_CONFIG
 	else
@@ -3541,13 +3572,13 @@ darwin* | rhapsody*)
   lt_cv_deplibs_check_method=pass_all
   ;;
 
-freebsd* | kfreebsd*-gnu | dragonfly*)
+freebsd* | kfreebsd*-gnu)
   if echo __ELF__ | $CC -E - | grep __ELF__ > /dev/null; then
     case $host_cpu in
     i*86 )
       # Not sure whether the presence of OpenBSD here was a mistake.
       # Let's accept both of them until this is cleared up.
-      lt_cv_deplibs_check_method='file_magic (FreeBSD|OpenBSD|DragonFly)/i[[3-9]]86 (compact )?demand paged shared library'
+      lt_cv_deplibs_check_method='file_magic (FreeBSD|OpenBSD)/i[[3-9]]86 (compact )?demand paged shared library'
       lt_cv_file_magic_cmd=/usr/bin/file
       lt_cv_file_magic_test_file=`echo /usr/lib/libc.so.*`
       ;;
@@ -3816,7 +3847,7 @@ AC_DEFUN([_LT_AC_PROG_CXXCPP],
 [
 AC_REQUIRE([AC_PROG_CXX])
 if test -n "$CXX" && ( test "X$CXX" != "Xno" &&
-    ( (test "X$CXX" = "Xg++" && `g++ -v >/dev/null 2>&1` ) ||
+    ( (test "X$CXX" = "Xg++" && `g++ -v >/dev/null 2>&1` ) || 
     (test "X$CXX" != "Xg++"))) ; then
   AC_PROG_CXXCPP
 fi
@@ -4153,7 +4184,7 @@ case $host_os in
     _LT_AC_TAGVAR(link_all_deplibs, $1)=yes
 
     if test "$GXX" = yes; then
-      case $host_os in aix4.[[012]]|aix4.[[012]].*)
+      case $host_os in aix4.[012]|aix4.[012].*)
       # We only want to do this on AIX 4.2 and lower, the check
       # below for broken collect2 doesn't work under 4.3+
 	collect2name=`${CC} -print-prog-name=collect2`
@@ -4174,9 +4205,6 @@ case $host_os in
 	fi
       esac
       shared_flag='-shared'
-      if test "$aix_use_runtimelinking" = yes; then
-	shared_flag="$shared_flag "'${wl}-G'
-      fi
     else
       # not using gcc
       if test "$host_cpu" = ia64; then
@@ -4340,14 +4368,14 @@ case $host_os in
 	;;
     esac
     ;;
-  freebsd[[12]]*)
+  freebsd[12]*)
     # C++ shared libraries reported to be fairly broken before switch to ELF
     _LT_AC_TAGVAR(ld_shlibs, $1)=no
     ;;
   freebsd-elf*)
     _LT_AC_TAGVAR(archive_cmds_need_lc, $1)=no
     ;;
-  freebsd* | kfreebsd*-gnu | dragonfly*)
+  freebsd* | kfreebsd*-gnu)
     # FreeBSD 3 and later use GNU C++ and GNU ld with standard ELF
     # conventions
     _LT_AC_TAGVAR(ld_shlibs, $1)=yes
@@ -4378,7 +4406,7 @@ case $host_os in
       # explicitly linking system object files so we need to strip them
       # from the output so that they don't get included in the library
       # dependencies.
-      output_verbose_link_cmd='templist=`($CC -b $CFLAGS -v conftest.$objext 2>&1) | grep "[[-]]L"`; list=""; for z in $templist; do case $z in conftest.$objext) list="$list $z";; *.$objext);; *) list="$list $z";;esac; done; echo $list'
+      output_verbose_link_cmd='templist=`($CC -b $CFLAGS -v conftest.$objext 2>&1) | grep "[-]L"`; list=""; for z in $templist; do case $z in conftest.$objext) list="$list $z";; *.$objext);; *) list="$list $z";;esac; done; echo $list'
       ;;
     *)
       if test "$GXX" = yes; then
@@ -4536,12 +4564,8 @@ case $host_os in
   	  _LT_AC_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
 	  ;;
 	*)  # Version 8.0 or newer
-	  tmp_idyn=
-	  case $host_cpu in
-	    ia64*) tmp_idyn=' -i_dynamic';;
-	  esac
-  	  _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared'"$tmp_idyn"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
-	  _LT_AC_TAGVAR(archive_expsym_cmds, $1)='$CC -shared'"$tmp_idyn"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
+  	  _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
+  	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
 	  ;;
 	esac
 	_LT_AC_TAGVAR(archive_cmds_need_lc, $1)=no
@@ -4549,14 +4573,6 @@ case $host_os in
 	_LT_AC_TAGVAR(export_dynamic_flag_spec, $1)='${wl}--export-dynamic'
 	_LT_AC_TAGVAR(whole_archive_flag_spec, $1)='${wl}--whole-archive$convenience ${wl}--no-whole-archive'
 	;;
-      pgCC)
-        # Portland Group C++ compiler
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname ${wl}$soname -o $lib'
-  	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname ${wl}$soname ${wl}-retain-symbols-file ${wl}$export_symbols -o $lib'
-
-	_LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}--rpath ${wl}$libdir'
-	_LT_AC_TAGVAR(export_dynamic_flag_spec, $1)='${wl}--export-dynamic'
-        ;;
       cxx)
 	# Compaq C++
 	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname $wl$soname -o $lib'
@@ -4795,7 +4811,7 @@ case $host_os in
 	_LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='-R$libdir'
 	_LT_AC_TAGVAR(hardcode_shlibpath_var, $1)=no
 	case $host_os in
-	  solaris2.[[0-5]] | solaris2.[[0-5]].*) ;;
+	  solaris2.[0-5] | solaris2.[0-5].*) ;;
 	  *)
 	    # The C++ compiler is used as linker so we must use $wl
 	    # flag to pass the commands to the underlying system
@@ -5172,7 +5188,7 @@ _LT_AC_TAGVAR(objext, $1)=$objext
 lt_simple_compile_test_code="class foo {}\n"
 
 # Code to be used in simple link tests
-lt_simple_link_test_code='public class conftest { public static void main(String[[]] argv) {}; }\n'
+lt_simple_link_test_code='public class conftest { public static void main(String[] argv) {}; }\n'
 
 # ltmain only uses $CC for tagged configurations so make sure $CC is set.
 _LT_AC_SYS_COMPILER
@@ -5414,12 +5430,6 @@ fast_install=$enable_fast_install
 # The host system.
 host_alias=$host_alias
 host=$host
-host_os=$host_os
-
-# The build system.
-build_alias=$build_alias
-build=$build
-build_os=$build_os
 
 # An echo program that does not interpret backslashes.
 echo=$lt_echo
@@ -5770,6 +5780,9 @@ symcode='[[BCDEGRST]]'
 # Regexp to match symbols that can be accessed directly from C.
 sympat='\([[_A-Za-z]][[_A-Za-z0-9]]*\)'
 
+# Transform the above into a raw symbol and a C symbol.
+symxfrm='\1 \2\3 \3'
+
 # Transform an extracted symbol line into a proper C declaration
 lt_cv_sys_global_symbol_to_cdecl="sed -n -e 's/^. .* \(.*\)$/extern int \1;/p'"
 
@@ -5829,11 +5842,8 @@ esac
 # Try without a prefix undercore, then with it.
 for ac_symprfx in "" "_"; do
 
-  # Transform symcode, sympat, and symprfx into a raw symbol and a C symbol.
-  symxfrm="\\1 $ac_symprfx\\2 \\2"
-
   # Write the raw and C identifiers.
-  lt_cv_sys_global_symbol_pipe="sed -n -e 's/^.*[[ 	]]\($symcode$symcode*\)[[ 	]][[ 	]]*$ac_symprfx$sympat$opt_cr$/$symxfrm/p'"
+  lt_cv_sys_global_symbol_pipe="sed -n -e 's/^.*[[ 	]]\($symcode$symcode*\)[[ 	]][[ 	]]*\($ac_symprfx\)$sympat$opt_cr$/$symxfrm/p'"
 
   # Check to see that the pipe works correctly.
   pipe_works=no
@@ -6051,7 +6061,7 @@ AC_MSG_CHECKING([for $compiler option to produce PIC])
 	    ;;
 	esac
 	;;
-      freebsd* | kfreebsd*-gnu | dragonfly*)
+      freebsd* | kfreebsd*-gnu)
 	# FreeBSD uses GNU C++
 	;;
       hpux9* | hpux10* | hpux11*)
@@ -6097,16 +6107,10 @@ AC_MSG_CHECKING([for $compiler option to produce PIC])
 	    _LT_AC_TAGVAR(lt_prog_compiler_wl, $1)='--backend -Wl,'
 	    _LT_AC_TAGVAR(lt_prog_compiler_pic, $1)='-fPIC'
 	    ;;
-	  icpc* | ecpc*)
+	  icpc)
 	    # Intel C++
 	    _LT_AC_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
 	    _LT_AC_TAGVAR(lt_prog_compiler_pic, $1)='-KPIC'
-	    _LT_AC_TAGVAR(lt_prog_compiler_static, $1)='-static'
-	    ;;
-	  pgCC)
-	    # Portland Group C++ compiler.
-	    _LT_AC_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
-	    _LT_AC_TAGVAR(lt_prog_compiler_pic, $1)='-fpic'
 	    _LT_AC_TAGVAR(lt_prog_compiler_static, $1)='-static'
 	    ;;
 	  cxx)
@@ -6342,17 +6346,10 @@ AC_MSG_CHECKING([for $compiler option to produce PIC])
       ;;
 
     linux*)
-      case $cc_basename in
+      case $CC in
       icc* | ecc*)
 	_LT_AC_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
 	_LT_AC_TAGVAR(lt_prog_compiler_pic, $1)='-KPIC'
-	_LT_AC_TAGVAR(lt_prog_compiler_static, $1)='-static'
-        ;;
-      pgcc | pgf77 | pgf90)
-        # Portland Group compilers (*not* the Pentium gcc compiler,
-	# which looks to be a dead project)
-	_LT_AC_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
-	_LT_AC_TAGVAR(lt_prog_compiler_pic, $1)='-fpic'
 	_LT_AC_TAGVAR(lt_prog_compiler_static, $1)='-static'
         ;;
       ccc*)
@@ -6397,11 +6394,6 @@ AC_MSG_CHECKING([for $compiler option to produce PIC])
 	_LT_AC_TAGVAR(lt_prog_compiler_pic, $1)='-Kconform_pic'
 	_LT_AC_TAGVAR(lt_prog_compiler_static, $1)='-Bstatic'
       fi
-      ;;
-
-    unicos*)
-      _LT_AC_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
-      _LT_AC_TAGVAR(lt_prog_compiler_can_build_shared, $1)=no
       ;;
 
     uts4*)
@@ -6464,7 +6456,7 @@ ifelse([$1],[CXX],[
     _LT_AC_TAGVAR(export_symbols_cmds, $1)="$ltdll_cmds"
   ;;
   cygwin* | mingw*)
-    _LT_AC_TAGVAR(export_symbols_cmds, $1)='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[[BCDGRS]] /s/.* \([[^ ]]*\)/\1 DATA/;/^.* __nm__/s/^.* __nm__\([[^ ]]*\) [[^ ]]*/\1 DATA/;/^I /d;/^[[AITW]] /s/.* //'\'' | sort | uniq > $export_symbols'
+    _LT_AC_TAGVAR(export_symbols_cmds, $1)='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[[BCDGS]] /s/.* \([[^ ]]*\)/\1 DATA/'\'' | $SED -e '\''/^[[AITW]] /s/.* //'\'' | sort | uniq > $export_symbols'
   ;;
   *)
     _LT_AC_TAGVAR(export_symbols_cmds, $1)='$NM $libobjs $convenience | $global_symbol_pipe | $SED '\''s/.* //'\'' | sort | uniq > $export_symbols'
@@ -6577,7 +6569,7 @@ EOF
       _LT_AC_TAGVAR(allow_undefined_flag, $1)=unsupported
       _LT_AC_TAGVAR(always_export_symbols, $1)=no
       _LT_AC_TAGVAR(enable_shared_with_static_runtimes, $1)=yes
-      _LT_AC_TAGVAR(export_symbols_cmds, $1)='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[[BCDGRS]] /s/.* \([[^ ]]*\)/\1 DATA/'\'' | $SED -e '\''/^[[AITW]] /s/.* //'\'' | sort | uniq > $export_symbols'
+      _LT_AC_TAGVAR(export_symbols_cmds, $1)='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[[BCDGS]] /s/.* \([[^ ]]*\)/\1 DATA/'\'' | $SED -e '\''/^[[AITW]] /s/.* //'\'' | sort | uniq > $export_symbols'
 
       if $LD --help 2>&1 | grep 'auto-import' > /dev/null; then
         _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--image-base=0x10000000 ${wl}--out-implib,$lib'
@@ -6591,7 +6583,7 @@ EOF
 	fi~
 	$CC -shared $output_objdir/$soname.def $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--image-base=0x10000000  ${wl}--out-implib,$lib'
       else
-	_LT_AC_TAGVAR(ld_shlibs, $1)=no
+	ld_shlibs=no
       fi
       ;;
 
@@ -6635,21 +6627,11 @@ EOF
 
   linux*)
     if $LD --help 2>&1 | grep ': supported targets:.* elf' > /dev/null; then
-      tmp_addflag=
-      case $CC,$host_cpu in
-      pgf77* | pgf90* )			# Portland Group f77 and f90 compilers
-        tmp_addflag=' -fpic' ;;
-      ecc*,ia64* | icc*,ia64*)		# Intel C compiler on ia64
-        tmp_addflag=' -i_dynamic' ;;
-      efc*,ia64* | ifort*,ia64*)	# Intel Fortran compiler on ia64
-        tmp_addflag=' -i_dynamic -nofor_main' ;;
-      ifc* | ifort*)			# Intel Fortran compiler
-      	tmp_addflag=' -nofor_main' ;;
-      esac
-      _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared'"$tmp_addflag"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
+        tmp_archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)="$tmp_archive_cmds"
       supports_anon_versioning=no
       case `$LD -v 2>/dev/null` in
-        *\ [[01]].* | *\ 2.[[0-9]].* | *\ 2.10.*) ;; # catch versions < 2.11
+        *\ [01].* | *\ 2.[[0-9]].* | *\ 2.10.*) ;; # catch versions < 2.11
         *\ 2.11.93.0.2\ *) supports_anon_versioning=yes ;; # RH7.3 ...
         *\ 2.11.92.0.12\ *) supports_anon_versioning=yes ;; # Mandrake 8.2 ...
         *\ 2.11.*) ;; # other 2.11 versions
@@ -6659,9 +6641,9 @@ EOF
         _LT_AC_TAGVAR(archive_expsym_cmds, $1)='$echo "{ global:" > $output_objdir/$libname.ver~
 cat $export_symbols | sed -e "s/\(.*\)/\1;/" >> $output_objdir/$libname.ver~
 $echo "local: *; };" >> $output_objdir/$libname.ver~
-        $CC -shared'"$tmp_addflag"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-version-script ${wl}$output_objdir/$libname.ver -o $lib'
+        $CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-version-script ${wl}$output_objdir/$libname.ver -o $lib'
       else
-        _LT_AC_TAGVAR(archive_expsym_cmds, $1)=$_LT_AC_TAGVAR(archive_cmds, $1)
+        _LT_AC_TAGVAR(archive_expsym_cmds, $1)="$tmp_archive_cmds"
       fi
     else
       _LT_AC_TAGVAR(ld_shlibs, $1)=no
@@ -6751,7 +6733,7 @@ $echo "local: *; };" >> $output_objdir/$libname.ver~
       _LT_AC_TAGVAR(link_all_deplibs, $1)=yes
 
       if test "$GCC" = yes; then
-	case $host_os in aix4.[[012]]|aix4.[[012]].*)
+	case $host_os in aix4.[012]|aix4.[012].*)
 	# We only want to do this on AIX 4.2 and lower, the check
 	# below for broken collect2 doesn't work under 4.3+
 	  collect2name=`${CC} -print-prog-name=collect2`
@@ -6772,9 +6754,6 @@ $echo "local: *; };" >> $output_objdir/$libname.ver~
 	  fi
 	esac
 	shared_flag='-shared'
-	if test "$aix_use_runtimelinking" = yes; then
-	  shared_flag="$shared_flag "'${wl}-G'
-	fi
       else
 	# not using gcc
 	if test "$host_cpu" = ia64; then
@@ -6854,7 +6833,7 @@ $echo "local: *; };" >> $output_objdir/$libname.ver~
       _LT_AC_TAGVAR(old_archive_From_new_cmds, $1)='true'
       # FIXME: Should let the user specify the lib program.
       _LT_AC_TAGVAR(old_archive_cmds, $1)='lib /OUT:$oldlib$oldobjs$old_deplibs'
-      _LT_AC_TAGVAR(fix_srcfile_path, $1)='`cygpath -w "$srcfile"`'
+      fix_srcfile_path='`cygpath -w "$srcfile"`'
       _LT_AC_TAGVAR(enable_shared_with_static_runtimes, $1)=yes
       ;;
 
@@ -6938,7 +6917,7 @@ $echo "local: *; };" >> $output_objdir/$libname.ver~
       ;;
 
     # FreeBSD 3 and greater uses gcc -shared to do shared libraries.
-    freebsd* | kfreebsd*-gnu | dragonfly*)
+    freebsd* | kfreebsd*-gnu)
       _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -o $lib $libobjs $deplibs $compiler_flags'
       _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='-R$libdir'
       _LT_AC_TAGVAR(hardcode_direct, $1)=yes
@@ -7127,7 +7106,7 @@ $echo "local: *; };" >> $output_objdir/$libname.ver~
       case $host_os in
       solaris2.[[0-5]] | solaris2.[[0-5]].*) ;;
       *) # Supported since Solaris 2.6 (maybe 2.5.1?)
-	_LT_AC_TAGVAR(whole_archive_flag_spec, $1)='${wl}-z ${wl}allextract$convenience ${wl}-z ${wl}defaultextract' ;;
+	_LT_AC_TAGVAR(whole_archive_flag_spec, $1)='-z allextract$convenience -z defaultextract' ;;
       esac
       _LT_AC_TAGVAR(link_all_deplibs, $1)=yes
       ;;
@@ -7388,7 +7367,7 @@ lt_ac_count=0
 # Add /usr/xpg4/bin/sed as it is typically found on Solaris
 # along with /bin/sed that truncates output.
 for lt_ac_sed in $lt_ac_sed_list /usr/xpg4/bin/sed; do
-  test ! -f $lt_ac_sed && continue
+  test ! -f $lt_ac_sed && break
   cat /dev/null > conftest.in
   lt_ac_count=0
   echo $ECHO_N "0123456789$ECHO_C" >conftest.in
@@ -7477,6 +7456,8 @@ AU_DEFUN([jm_MAINTAINER_MODE], [AM_MAINTAINER_MODE])
 #
 
 AC_DEFUN([SIM_AC_COMPILE_DEBUG], [
+AC_REQUIRE([SIM_AC_CHECK_SIMIAN_IFELSE])
+
 AC_ARG_ENABLE(
   [debug],
   AC_HELP_STRING([--enable-debug], [compile in debug mode [[default=yes]]]),
@@ -7490,6 +7471,21 @@ AC_ARG_ENABLE(
 
 if $enable_debug; then
   DSUFFIX=d
+  if $sim_ac_simian; then
+    case $CXX in
+    *wrapmsvc* )
+      # uninitialized checks
+      if test ${sim_ac_msvc_version-0} -gt 6; then
+        SIM_AC_CC_COMPILER_OPTION([/RTCu], [sim_ac_compiler_CFLAGS="$sim_ac_compiler_CFLAGS /RTCu"])
+        SIM_AC_CXX_COMPILER_OPTION([/RTCu], [sim_ac_compiler_CXXFLAGS="$sim_ac_compiler_CXXFLAGS /RTCu"])
+        # stack frame checks
+        SIM_AC_CC_COMPILER_OPTION([/RTCs], [sim_ac_compiler_CFLAGS="$sim_ac_compiler_CFLAGS /RTCs"])
+        SIM_AC_CXX_COMPILER_OPTION([/RTCs], [sim_ac_compiler_CXXFLAGS="$sim_ac_compiler_CXXFLAGS /RTCs"])
+      fi
+      ;;
+    esac
+  fi
+
   ifelse([$1], , :, [$1])
 else
   DSUFFIX=
@@ -7536,6 +7532,115 @@ else
 fi
 ])
 
+#
+# SIM_AC_CHECK_SIMIAN_IFELSE( IF-SIMIAN, IF-NOT-SIMIAN )
+#
+# Sets $sim_ac_simian to true or false
+#
+
+AC_DEFUN([SIM_AC_CHECK_SIMIAN_IFELSE], [
+AC_MSG_CHECKING([if user is simian])
+case `hostname -d 2>/dev/null || domainname 2>/dev/null || hostname` in
+*.sim.no | sim.no )
+  sim_ac_simian=true
+  ;;
+* )
+  if grep -ls "domain.*sim\\.no" /etc/resolv.conf >/dev/null; then
+    sim_ac_simian=true
+    :
+  else
+    sim_ac_simian=false
+    :
+  fi
+  ;;
+esac
+
+if $sim_ac_simian; then
+  AC_MSG_RESULT([probably])
+  ifelse($1, [], :, $1)
+else
+  AC_MSG_RESULT([probably not])
+  ifelse($2, [], :, $2)
+fi])
+
+
+#   Use this file to store miscellaneous macros related to checking
+#   compiler features.
+
+# Usage:
+#   SIM_AC_CC_COMPILER_OPTION(OPTION-TO-TEST, ACTION-IF-TRUE [, ACTION-IF-FALSE])
+#   SIM_AC_CXX_COMPILER_OPTION(OPTION-TO-TEST, ACTION-IF-TRUE [, ACTION-IF-FALSE])
+#
+# Description:
+#
+#   Check whether the current C or C++ compiler can handle a
+#   particular command-line option.
+#
+#
+# Author: Morten Eriksen, <mortene@sim.no>.
+#
+#   * [mortene:19991218] improve macros by catching and analyzing
+#     stderr (at least to see if there was any output there)?
+#
+
+AC_DEFUN([SIM_AC_COMPILER_OPTION], [
+sim_ac_save_cppflags=$CPPFLAGS
+CPPFLAGS="$CPPFLAGS $1"
+AC_TRY_COMPILE([], [], [sim_ac_accept_result=yes], [sim_ac_accept_result=no])
+AC_MSG_RESULT([$sim_ac_accept_result])
+CPPFLAGS=$sim_ac_save_cppflags
+# This need to go last, in case CPPFLAGS is modified in arg 2 or arg 3.
+if test $sim_ac_accept_result = yes; then
+  ifelse([$2], , :, [$2])
+else
+  ifelse([$3], , :, [$3])
+fi
+])
+
+AC_DEFUN([SIM_AC_COMPILER_BEHAVIOR_OPTION_QUIET], [
+sim_ac_save_cppflags=$CPPFLAGS
+CPPFLAGS="$CPPFLAGS $1"
+AC_TRY_COMPILE([], [$2], [sim_ac_accept_result=yes], [sim_ac_accept_result=no])
+CPPFLAGS=$sim_ac_save_cppflags
+# This need to go last, in case CPPFLAGS is modified in arg 3 or arg 4.
+if test $sim_ac_accept_result = yes; then
+  ifelse([$3], , :, [$3])
+else
+  ifelse([$4], , :, [$4])
+fi
+])
+
+
+AC_DEFUN([SIM_AC_CC_COMPILER_OPTION], [
+AC_LANG_SAVE
+AC_LANG(C)
+AC_MSG_CHECKING([whether $CC accepts $1])
+SIM_AC_COMPILER_OPTION([$1], [$2], [$3])
+AC_LANG_RESTORE
+])
+
+AC_DEFUN([SIM_AC_CC_COMPILER_BEHAVIOR_OPTION_QUIET], [
+AC_LANG_SAVE
+AC_LANG(C)
+SIM_AC_COMPILER_BEHAVIOR_OPTION_QUIET([$1], [$2], [$3], [$4])
+AC_LANG_RESTORE
+])
+
+AC_DEFUN([SIM_AC_CXX_COMPILER_OPTION], [
+AC_LANG_SAVE
+AC_LANG(C++)
+AC_MSG_CHECKING([whether $CXX accepts $1])
+SIM_AC_COMPILER_OPTION([$1], [$2], [$3])
+AC_LANG_RESTORE
+])
+
+AC_DEFUN([SIM_AC_CXX_COMPILER_BEHAVIOR_OPTION_QUIET], [
+AC_LANG_SAVE
+AC_LANG(C++)
+SIM_AC_COMPILER_BEHAVIOR_OPTION_QUIET([$1], [$2], [$3], [$4])
+AC_LANG_RESTORE
+])
+
 # Usage:
 #   SIM_AC_DEBUGSYMBOLS
 #
@@ -7562,12 +7667,10 @@ AC_ARG_ENABLE(
   esac],
   [enable_symbols=yes])
 
-# FIXME: don't mangle options like -fno-gnu-linker and -fvolatile-global
-# 20020104 larsa
+# weird seds to don't mangle options like -fno-gnu-linker and -fvolatile-global
 if test x"$enable_symbols" = x"no"; then
-  # CPPFLAGS="`echo $CPPFLAGS | sed 's/-g\>//'`"
-  CFLAGS="`echo $CFLAGS | sed 's/ -g //' | sed 's/^-g //' | sed 's/ -g$//'`"
-  CXXFLAGS="`echo $CXXFLAGS | sed 's/ -g //' | sed 's/^-g //' | sed 's/ -g$//'`"
+  CFLAGS="`echo $CFLAGS | sed 's/ -g //g' | sed 's/^-g //g' | sed 's/ -g$//g' | sed 's/^-g$//'`"
+  CXXFLAGS="`echo $CXXFLAGS | sed 's/ -g //g' | sed 's/^-g //g' | sed 's/ -g$//g' | sed 's/^-g$//'`"
 fi
 ]) # SIM_AC_DEBUGSYMBOLS
 
@@ -7787,33 +7890,74 @@ if $sim_ac_with_qt; then
   sim_ac_save_libs=$LIBS
 
   if test -n "$sim_ac_qtdir"; then
-    sim_ac_qt_incflags="-I$sim_ac_qtdir/include"
+    sim_ac_qt_incpath="-I$sim_ac_qtdir/include"
     sim_ac_qt_ldflags="-L$sim_ac_qtdir/lib"
   fi
 
-  CPPFLAGS="$sim_ac_qt_incflags $CPPFLAGS"
+  CPPFLAGS="$sim_ac_qt_incpath $CPPFLAGS"
   LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
 
   sim_ac_qt_libs=UNRESOLVED
 
+  # Check for Mac OS framework installation
+  if test -z "$QTDIR"; then
+    sim_ac_qt_framework_dir=/Library/Frameworks
+    # FIXME: Should we also look for the Qt framework in other  
+    # default framework locations (such as ~/Library/Frameworks)?
+    # Or require the user to specify this explicitly, e.g. by
+    # passing --with-qt-framework=xxx? 20050802 kyrah.
+  else
+    sim_ac_qt_framework_dir=$sim_ac_qtdir/lib
+  fi
+
+  SIM_AC_HAVE_QT_FRAMEWORK
+
+  if $sim_ac_have_qt_framework; then 
+    sim_ac_qt_cppflags="-I$sim_ac_qt_framework_dir/QtCore.framework/Headers -I$sim_ac_qt_framework_dir/QtOpenGL.framework/Headers -I$sim_ac_qt_framework_dir/QtGui.framework/Headers -I$sim_ac_qt_framework_dir/Qt3Support.framework/Headers -F$sim_ac_qt_framework_dir"
+    sim_ac_qt_libs="-Wl,-F$sim_ac_qt_framework_dir -Wl,-framework,QtGui -Wl,-framework,QtOpenGL -Wl,-framework,QtCore -Wl,-framework,Qt3Support"
+
+  else
+
   sim_ac_qglobal=false
   SIM_AC_CHECK_HEADER_SILENT([qglobal.h],
     [sim_ac_qglobal=true],
-    # Debian Linux and Darwin fink have the Qt-dev installation headers in 
-    # a separate subdir.
-    [sim_ac_debian_qtheaders=/usr/include/qt
+    [
+     # Debian Linux and Darwin fink have the Qt-dev installation headers in 
+     # a separate subdir, so we reset CPPFLAGS and try with those.
+     CPPFLAGS="$sim_ac_save_cppflags"
+     sim_ac_debian_qtheaders=/usr/include/qt
      if test -d $sim_ac_debian_qtheaders; then
-       sim_ac_qt_incflags="-I$sim_ac_debian_qtheaders $sim_ac_qt_incflags"
+       sim_ac_qt_incpath="-I$sim_ac_debian_qtheaders $sim_ac_qt_incpath"
        CPPFLAGS="-I$sim_ac_debian_qtheaders $CPPFLAGS"
        SIM_AC_CHECK_HEADER_SILENT([qglobal.h], [sim_ac_qglobal=true])
      else
-     sim_ac_fink_qtheaders=/sw/include/qt
-     if test -d $sim_ac_fink_qtheaders; then
-       sim_ac_qt_incflags="-I$sim_ac_fink_qtheaders $sim_ac_qt_incflags"
-       CPPFLAGS="-I$sim_ac_fink_qtheaders $CPPFLAGS"
-       SIM_AC_CHECK_HEADER_SILENT([qglobal.h], [sim_ac_qglobal=true])
-     fi
+       sim_ac_fink_qtheaders=/sw/include/qt
+       if test -d $sim_ac_fink_qtheaders; then
+         sim_ac_qt_incpath="-I$sim_ac_fink_qtheaders $sim_ac_qt_incpath"
+         CPPFLAGS="-I$sim_ac_fink_qtheaders $CPPFLAGS"
+         SIM_AC_CHECK_HEADER_SILENT([qglobal.h], [sim_ac_qglobal=true])
+       else
+       sim_ac_darwinports_qtheaders=/opt/local/include/qt3
+         if test -d $sim_ac_darwinports_qtheaders; then
+           sim_ac_qt_incpath="-I$sim_ac_darwinports_qtheaders $sim_ac_qt_incpath"
+           sim_ac_qt_ldflags="-L/opt/local/lib $sim_ac_qt_ldflags"
+           CPPFLAGS="-I$sim_ac_darwinports_qtheaders $CPPFLAGS"
+           LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
+           SIM_AC_CHECK_HEADER_SILENT([qglobal.h], [sim_ac_qglobal=true])
+         fi     
+       fi
      fi])
+
+  # Qt 4 has the headers in various new subdirectories vs Qt 3.
+  if $sim_ac_qglobal; then :; else
+    AC_MSG_CHECKING([if Qt4 include paths must be used])
+    CPPFLAGS="$sim_ac_qt_incpath $sim_ac_qt_incpath/Qt $sim_ac_save_cppflags"
+    SIM_AC_CHECK_HEADER_SILENT([qglobal.h],
+                               [sim_ac_qglobal=true
+                                sim_ac_qt_incpath="$sim_ac_qt_incpath $sim_ac_qt_incpath/Qt $sim_ac_qt_incpath/QtOpenGL $sim_ac_qt_incpath/QtGui"
+                                ])
+    AC_MSG_RESULT($sim_ac_qglobal)
+  fi
 
   if $sim_ac_qglobal; then
 
@@ -7837,6 +7981,7 @@ EOF
       # nada
       ;;
     esac
+    sim_ac_qt_major_version=`echo $sim_ac_qt_version | cut -c1`
 
     rm -f conftest.c
     AC_MSG_RESULT($sim_ac_qt_version)
@@ -7858,14 +8003,14 @@ upgrade. (See $srcdir/README.MAC for details.)])
 
       if test x$sim_ac_enable_darwin_x11 = xfalse; then
       # Using Qt/X11 but option --enable-darwin-x11 not given
-      AC_TRY_LINK([#include <qapplication.h>],
+      AC_TRY_COMPILE([#include <qapplication.h>],
                   [#if defined(__APPLE__) && defined(Q_WS_X11)
                    #error blah!
                    #endif],[],
                   [SIM_AC_ERROR([x11-qt-but-no-x11-requested])])
       else 
       # --enable-darwin-x11 specified but attempting Qt/Mac linkage
-      AC_TRY_LINK([#include <qapplication.h>],
+      AC_TRY_COMPILE([#include <qapplication.h>],
                   [#if defined(__APPLE__) && defined(Q_WS_MAC)
                    #error blah!
                    #endif],[],
@@ -7907,13 +8052,18 @@ recommend you to upgrade.])
       AC_MSG_CHECKING([for Qt linking with $CONFIG_QTLIBS])
 
       for sim_ac_qt_cppflags_loop in "" "-DQT_DLL"; do
-        CPPFLAGS="$sim_ac_qt_incflags $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"
+        CPPFLAGS="$sim_ac_qt_incpath $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"
         LIBS="$CONFIG_QTLIBS $sim_ac_save_libs"
         AC_TRY_LINK([#include <qapplication.h>],
-                    [qApp = NULL; /* QT_DLL must be defined for assignment to global variables to work */
+                    [
+                     // FIXME: assignment to qApp does no longer work with Qt 4,
+                     // should try to find another way to do the same thing. 20050629 mortene.
+                     #if QT_VERSION < 0x040000
+                     qApp = NULL; /* QT_DLL must be defined for assignment to global variables to work */
+                     #endif
                      qApp->exit(0);],
                     [sim_ac_qt_libs="$CONFIG_QTLIBS"
-                     sim_ac_qt_cppflags="$sim_ac_qt_incflags $sim_ac_qt_cppflags_loop"])
+                     sim_ac_qt_cppflags="$sim_ac_qt_incpath $sim_ac_qt_cppflags_loop"])
       done
 
       if test "x$sim_ac_qt_libs" = "xUNRESOLVED"; then
@@ -7927,6 +8077,9 @@ recommend you to upgrade.])
 
       ## Test all known possible combinations of linking against the
       ## Troll Tech Qt library:
+      ##
+      ## * "-lQtGui -lQt3Support": Qt 4 on UNIX-like systems (with some
+      ##   obsoleted Qt 3 widgets)
       ##
       ## * "-lqt-gl": links against the standard Debian version of the
       ##   Qt library with embedded QGL
@@ -7982,6 +8135,8 @@ recommend you to upgrade.])
 
       for sim_ac_qt_cppflags_loop in "" "-DQT_DLL"; do
         for sim_ac_qt_libcheck in \
+            "-lQtGui${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQtCore${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQt3Support${sim_ac_qt_suffix}${sim_ac_qt_major_version}" \
+            "-lQtGui -lQt3Support" \
             "-lqt-gl" \
             "-lqt-mt" \
             "-lqt" \
@@ -7996,36 +8151,30 @@ recommend you to upgrade.])
             "-lqt-mtnc${sim_ac_qt_version}"
         do
           if test "x$sim_ac_qt_libs" = "xUNRESOLVED"; then
-            CPPFLAGS="$sim_ac_qt_incflags $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"
+            CPPFLAGS="$sim_ac_qt_incpath $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"
             LIBS="$sim_ac_qt_libcheck $sim_ac_save_libs"
             AC_TRY_LINK([#include <qapplication.h>],
-                        [qApp = NULL; /* QT_DLL must be defined for assignment to global variables to work */
+                        [
+                         // FIXME: assignment to qApp does no longer work with Qt 4,
+                         // should try to find another way to do the same thing. 20050629 mortene.
+                         #if QT_VERSION < 0x040000
+                         qApp = NULL; /* QT_DLL must be defined for assignment to global variables to work */
+                         #endif
                          qApp->exit(0);],
                         [sim_ac_qt_libs="$sim_ac_qt_libcheck"
-                         sim_ac_qt_cppflags="$sim_ac_qt_incflags $sim_ac_qt_cppflags_loop"])
+                         sim_ac_qt_cppflags="$sim_ac_qt_incpath $sim_ac_qt_cppflags_loop"])
           fi
         done
       done
 
-      AC_MSG_RESULT($sim_ac_qt_cppflags $sim_ac_qt_libs)
+      AC_MSG_RESULT($sim_ac_qt_cppflags $sim_ac_qt_ldflags $sim_ac_qt_libs)
     fi
 
   else # sim_ac_qglobal = false
     AC_MSG_WARN([header file qglobal.h not found, can not compile Qt code])
   fi
 
-  sim_ac_qt_install=`cd $sim_ac_qtdir; pwd`/bin/install
-
-  AC_MSG_CHECKING(install sanity)
-  case $INSTALL in
-  "${sim_ac_qt_install}"* )
-    AC_MSG_RESULT(bogus)
-    SIM_AC_ERROR([qt-install])
-    ;;
-  * )
-    AC_MSG_RESULT(ok)
-    ;;
-  esac
+  fi # sim_ac_have_qt_framework
 
   # We should only *test* availability, not mutate the LIBS/CPPFLAGS
   # variables ourselves inside this macro. 20041021 larsa
@@ -8037,6 +8186,19 @@ recommend you to upgrade.])
     #CPPFLAGS="$sim_ac_qt_cppflags $sim_ac_save_cppflags"
     #LIBS="$sim_ac_qt_libs $sim_ac_save_libs"
     $1
+
+    sim_ac_qt_install=`cd $sim_ac_qtdir; pwd`/bin/install
+    AC_MSG_CHECKING([whether Qt's install tool shadows the system install])
+    case $INSTALL in
+    "${sim_ac_qt_install}"* )
+      AC_MSG_RESULT(yes)
+      SIM_AC_ERROR([qt-install])
+      ;;
+    * )
+      AC_MSG_RESULT(no)
+      ;;
+    esac
+
   else
     if test -z "$QTDIR"; then
       AC_MSG_WARN([QTDIR environment variable not set -- this might be an indication of a problem])
@@ -8097,7 +8259,7 @@ if $sim_ac_with_qt; then
     AC_MSG_CHECKING([for the QGL extension library])
 
     sim_ac_qgl_libs=UNRESOLVED
-    for sim_ac_qgl_libcheck in "-lqgl" "-lqgl -luser32"; do
+    for sim_ac_qgl_libcheck in "-lQtOpenGL4" "-lQtOpenGL" "-lqgl" "-lqgl -luser32"; do
       if test "x$sim_ac_qgl_libs" = "xUNRESOLVED"; then
         LIBS="$sim_ac_qgl_libcheck $sim_ac_save_LIBS"
         AC_TRY_LINK([#include <qgl.h>],
@@ -8164,7 +8326,12 @@ AC_CACHE_CHECK(
   [whether QGLFormat::setOverlay() is available],
   sim_cv_func_qglformat_setoverlay,
   [AC_TRY_LINK([#include <qgl.h>],
-               [QGLFormat f; f.setOverlay(TRUE);],
+               [/* The basics: */
+                QGLFormat f; f.setOverlay(TRUE);
+                /* We've had a bug report about soqt.dll linking fail due
+                   to missing the QGLWidget::overlayContext() symbol: */
+                QGLWidget * w = NULL; (void)w->overlayContext();
+               ],
                [sim_cv_func_qglformat_setoverlay=yes],
                [sim_cv_func_qglformat_setoverlay=no])])
 
@@ -8287,7 +8454,7 @@ AC_CACHE_CHECK(
   [whether QWidget::setWindowState() exists],
   sim_cv_exists_qwidget_setwindowstate,
 
-  [AC_TRY_LINK([#include <qapplication.h>],
+  [AC_TRY_LINK([#include <qwidget.h>],
                [QWidget * w = NULL; w->setWindowState(0);],
                [sim_cv_exists_qwidget_setwindowstate=true],
                [sim_cv_exists_qwidget_setwindowstate=false])])
@@ -8319,6 +8486,51 @@ if $sim_cv_exists_qlineedit_setinputmask; then
             [Define this if QLineEdit::setInputMask() is available])
 fi
 ]) # SIM_AC_QLINEEDIT_HASSETINPUTMASK
+
+
+
+# SIM_AC_HAVE_QT_FRAMEWORK
+# ----------------------
+#
+# Determine whether Qt is installed as a Mac OS X framework.  
+#
+# Uses the variable $sim_ac_qt_framework_dir which should either 
+# point to /Library/Frameworks or $QTDIR/lib. 
+#
+# Sets sim_ac_have_qt_framework to true if Qt is installed as 
+# a framework, and to false otherwise. 
+#
+# Author: Karin Kosina, <kyrah@sim.no>.
+
+AC_DEFUN([SIM_AC_HAVE_QT_FRAMEWORK], [
+case $host_os in
+  darwin*)
+    # First check if framework exists in the specified location, then
+    # try to actually link against the framework. This precaution is
+    # needed to catch the case where Qt-4 is installed in the default
+    # location /Library/Frameworks, but the user wants to override it
+    # by setting QTDIR to point to a non-framework install.
+    if test -d $sim_ac_qt_framework_dir/QtCore.framework; then
+      sim_ac_save_ldflags_fw=$LDFLAGS 
+      LDFLAGS="$LDFLAGS -F$sim_ac_qt_framework_dir -framework QtCore"
+      AC_CACHE_CHECK(
+        [whether Qt is installed as a framework],
+        sim_ac_have_qt_framework,
+        [AC_TRY_LINK([#include <QtCore/qglobal.h>],
+                 [],
+                 [sim_ac_have_qt_framework=true],
+                 [sim_ac_have_qt_framework=false])
+        ])
+        LDFLAGS=$sim_ac_save_ldflags_fw
+    else 
+      sim_ac_have_qt_framework=false
+    fi 
+    ;;
+  *)
+    sim_ac_have_qt_framework=false
+    ;;
+esac
+])
 
 
 # **************************************************************************
@@ -9096,12 +9308,15 @@ sim_ac_agl_ldflags="-Wl,-framework,ApplicationServices -Wl,-framework,AGL"
 
 LDFLAGS="$LDFLAGS $sim_ac_agl_ldflags"
 
+# see comment in Coin/src/glue/gl_agl.c: regarding __CARBONSOUND__ define 
+
 AC_CACHE_CHECK(
   [whether AGL is on the system],
   sim_cv_have_agl,
   AC_TRY_LINK(
     [#include <AGL/agl.h>
-#include <Carbon/Carbon.h>],
+     #define __CARBONSOUND__ 
+     #include <Carbon/Carbon.h>],
     [aglGetCurrentContext();],
     [sim_cv_have_agl=true],
     [sim_cv_have_agl=false]))
@@ -9541,83 +9756,6 @@ else
 fi
 ]) # SIM_AC_X11_READY()
 
-#   Use this file to store miscellaneous macros related to checking
-#   compiler features.
-
-# Usage:
-#   SIM_AC_CC_COMPILER_OPTION(OPTION-TO-TEST, ACTION-IF-TRUE [, ACTION-IF-FALSE])
-#   SIM_AC_CXX_COMPILER_OPTION(OPTION-TO-TEST, ACTION-IF-TRUE [, ACTION-IF-FALSE])
-#
-# Description:
-#
-#   Check whether the current C or C++ compiler can handle a
-#   particular command-line option.
-#
-#
-# Author: Morten Eriksen, <mortene@sim.no>.
-#
-#   * [mortene:19991218] improve macros by catching and analyzing
-#     stderr (at least to see if there was any output there)?
-#
-
-AC_DEFUN([SIM_AC_COMPILER_OPTION], [
-sim_ac_save_cppflags=$CPPFLAGS
-CPPFLAGS="$CPPFLAGS $1"
-AC_TRY_COMPILE([], [], [sim_ac_accept_result=yes], [sim_ac_accept_result=no])
-AC_MSG_RESULT([$sim_ac_accept_result])
-CPPFLAGS=$sim_ac_save_cppflags
-# This need to go last, in case CPPFLAGS is modified in arg 2 or arg 3.
-if test $sim_ac_accept_result = yes; then
-  ifelse([$2], , :, [$2])
-else
-  ifelse([$3], , :, [$3])
-fi
-])
-
-AC_DEFUN([SIM_AC_COMPILER_BEHAVIOR_OPTION_QUIET], [
-sim_ac_save_cppflags=$CPPFLAGS
-CPPFLAGS="$CPPFLAGS $1"
-AC_TRY_COMPILE([], [$2], [sim_ac_accept_result=yes], [sim_ac_accept_result=no])
-CPPFLAGS=$sim_ac_save_cppflags
-# This need to go last, in case CPPFLAGS is modified in arg 3 or arg 4.
-if test $sim_ac_accept_result = yes; then
-  ifelse([$3], , :, [$3])
-else
-  ifelse([$4], , :, [$4])
-fi
-])
-
-
-AC_DEFUN([SIM_AC_CC_COMPILER_OPTION], [
-AC_LANG_SAVE
-AC_LANG(C)
-AC_MSG_CHECKING([whether $CC accepts $1])
-SIM_AC_COMPILER_OPTION([$1], [$2], [$3])
-AC_LANG_RESTORE
-])
-
-AC_DEFUN([SIM_AC_CC_COMPILER_BEHAVIOR_OPTION_QUIET], [
-AC_LANG_SAVE
-AC_LANG(C)
-SIM_AC_COMPILER_BEHAVIOR_OPTION_QUIET([$1], [$2], [$3], [$4])
-AC_LANG_RESTORE
-])
-
-AC_DEFUN([SIM_AC_CXX_COMPILER_OPTION], [
-AC_LANG_SAVE
-AC_LANG(C++)
-AC_MSG_CHECKING([whether $CXX accepts $1])
-SIM_AC_COMPILER_OPTION([$1], [$2], [$3])
-AC_LANG_RESTORE
-])
-
-AC_DEFUN([SIM_AC_CXX_COMPILER_BEHAVIOR_OPTION_QUIET], [
-AC_LANG_SAVE
-AC_LANG(C++)
-SIM_AC_COMPILER_BEHAVIOR_OPTION_QUIET([$1], [$2], [$3], [$4])
-AC_LANG_RESTORE
-])
-
 # Usage:
 #  SIM_AC_CHECK_PTHREAD([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 #
@@ -9678,7 +9816,10 @@ if test x"$with_pthread" != xno; then
   for sim_ac_pthreads_libcheck in "-lpthread" "-pthread"; do
     if $sim_ac_pthread_avail; then :; else
       LIBS="$sim_ac_pthreads_libcheck $sim_ac_save_libs"
-      AC_TRY_LINK([#include <pthread.h>],
+      AC_TRY_LINK([#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#include <pthread.h>],
                   [(void)pthread_create(0L, 0L, 0L, 0L);],
                   [sim_ac_pthread_avail=true
                    sim_ac_pthread_libs="$sim_ac_pthreads_libcheck"
@@ -9696,7 +9837,10 @@ if test x"$with_pthread" != xno; then
     AC_CACHE_CHECK(
       [the struct timespec resolution],
       sim_cv_lib_pthread_timespec_resolution,
-      [AC_TRY_COMPILE([#include <pthread.h>],
+      [AC_TRY_COMPILE([#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#include <pthread.h>],
                       [struct timespec timeout;
                        timeout.tv_nsec = 0;],
                       [sim_cv_lib_pthread_timespec_resolution=nsecs],
@@ -9880,6 +10024,140 @@ else
   $2
 fi
 # unset sim_ac_want_libungif
+])
+
+# EOF **********************************************************************
+
+# **************************************************************************
+# SIM_AC_HAVE_GIFLIB_IFELSE( IF-FOUND, IF-NOT-FOUND )
+#
+# Variables:
+#   sim_ac_have_giflib
+#   sim_ac_giflib_cppflags
+#   sim_ac_giflib_ldflags
+#   sim_ac_giflib_libs
+#
+# Authors:
+#   Lars J. Aas <larsa@coin3d.org>
+#   Morten Eriksen <mortene@coin3d.org>
+#   Tamer Fahmy <tamer@coin3d.org>
+#
+# Todo:
+# - use AS_UNSET to unset internal variables to avoid polluting the environment
+# - remove ungif.m4
+#
+
+# **************************************************************************
+
+AC_DEFUN([SIM_AC_HAVE_GIFLIB_IFELSE],
+[AC_REQUIRE([SIM_AC_CHECK_X11])
+: ${sim_ac_have_giflib=false}
+AC_MSG_CHECKING([for giflib])
+AC_ARG_WITH(
+  [gif],
+  [AC_HELP_STRING([--with-gif=PATH], [enable/disable giflib support])],
+  [case $withval in
+  yes | "") sim_ac_want_giflib=true ;;
+  no)       sim_ac_want_giflib=false ;;
+  *)        sim_ac_want_giflib=true
+            sim_ac_giflib_path=$withval ;;
+  esac],
+  [sim_ac_want_giflib=true])
+case $sim_ac_want_giflib in
+true)
+  $sim_ac_have_giflib && break
+  sim_ac_giflib_save_CPPFLAGS=$CPPFLAGS
+  sim_ac_giflib_save_LDFLAGS=$LDFLAGS
+  sim_ac_giflib_save_LIBS=$LIBS
+  sim_ac_giflib_debug=false
+  test -n "`echo -- $CPPFLAGS $CFLAGS $CXXFLAGS | grep -- '-g\\>'`" &&
+    sim_ac_giflib_debug=true
+  # test -z "$sim_ac_giflib_path" -a x"$prefix" != xNONE &&
+  #   sim_ac_giflib_path=$prefix
+  sim_ac_giflib_name=gif
+  if test -n "$sim_ac_giflib_path"; then
+    for sim_ac_giflib_candidate in \
+      `( ls $sim_ac_giflib_path/lib/gif*.lib;
+         ls $sim_ac_giflib_path/lib/gif*d.lib ) 2>/dev/null`
+    do
+      case $sim_ac_giflib_candidate in
+      *d.lib)
+        $sim_ac_giflib_debug &&
+          sim_ac_giflib_name=`basename $sim_ac_giflib_candidate .lib` ;;
+      *.lib)
+        sim_ac_giflib_name=`basename $sim_ac_giflib_candidate .lib` ;;
+      esac
+    done
+    sim_ac_giflib_cppflags="-I$sim_ac_giflib_path/include"
+    CPPFLAGS="$CPPFLAGS $sim_ac_giflib_cppflags"
+    sim_ac_giflib_ldflags="-L$sim_ac_giflib_path/lib"
+    LDFLAGS="$LDFLAGS $sim_ac_giflib_ldflags"
+    # unset sim_ac_giflib_candidate
+    # unset sim_ac_giflib_path
+  fi
+  sim_ac_giflib_libs="-l$sim_ac_giflib_name"
+  LIBS="$sim_ac_giflib_libs $LIBS"
+  AC_TRY_LINK(
+    [
+#ifdef __cplusplus /* gif_lib.h (at least v4.0) has no C++ wrapper */
+extern "C" {
+#endif /* __cplusplus */
+#include <gif_lib.h>
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+],
+    [(void)EGifOpenFileName(0L, 0);],
+    [sim_ac_have_giflib=true])
+  # giflib has become dependent on Xlib :(
+  if test x"$sim_ac_have_giflib" = xfalse; then
+    if test x"$x_includes" != x""; then
+      sim_ac_giflib_cppflags="$sim_ac_giflib_cppflags -I$x_includes"
+      CPPFLAGS="$sim_ac_giflib_cppflags $sim_ac_giflib_save_CPPFLAGS"
+    fi
+    if test x"$x_libraries" != x""; then
+      sim_ac_giflib_ldflags="$sim_ac_giflib_ldflags -L$x_libraries"
+      LDFLAGS="$sim_ac_giflib_ldflags $sim_ac_giflib_save_LDFLAGS"
+    fi
+    sim_ac_giflib_libs="-l$sim_ac_giflib_name -lX11"
+    LIBS="$sim_ac_giflib_libs $sim_ac_giflib_save_LIBS"
+    AC_TRY_LINK(
+      [
+#ifdef __cplusplus /* gif_lib.h (at least v4.0) has no C++ wrapper */
+extern "C" {
+#endif /* __cplusplus */
+#include <gif_lib.h>
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+],
+      [(void)EGifOpenFileName(0L, 0);],
+      [sim_ac_have_giflib=true])
+  fi
+  CPPFLAGS=$sim_ac_giflib_save_CPPFLAGS
+  LDFLAGS=$sim_ac_giflib_save_LDFLAGS
+  LIBS=$sim_ac_giflib_save_LIBS
+  # unset sim_ac_giflib_debug
+  # unset sim_ac_giflib_name
+  # unset sim_ac_giflib_save_CPPFLAGS
+  # unset sim_ac_giflib_save_LDFLAGS
+  # unset sim_ac_giflib_save_LIBS
+  ;;
+esac
+
+if $sim_ac_want_giflib; then
+  if $sim_ac_have_giflib; then
+    AC_MSG_RESULT([success ($sim_ac_giflib_libs)])
+    $1
+  else
+    AC_MSG_RESULT([failure])
+    $2
+  fi
+else
+  AC_MSG_RESULT([disabled])
+  $2
+fi
+# unset sim_ac_want_giflib
 ])
 
 # EOF **********************************************************************

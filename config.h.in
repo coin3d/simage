@@ -3,6 +3,9 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
+/* define to support the giflib library */
+#undef HAVE_GIFLIB
+
 /* Define to 1 if you have the <guile/gh.h> header file. */
 #undef HAVE_GUILE_GH_H
 
@@ -41,9 +44,6 @@
 
 /* define to support the tiff library */
 #undef HAVE_TIFFLIB
-
-/* define to support the ungif library */
-#undef HAVE_UNGIFLIB
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
