@@ -3,9 +3,9 @@
 
 #include <config.h>
 
-#ifndef HAVE_UNGIFLIB
+#ifndef HAVE_GIFLIB
 #error "This file should not be used under the current configuration!"
-#endif /* !HAVE_UNGIFLIB */
+#endif /* !HAVE_GIFLIB */
 
 unsigned char *simage_gif_load(const char * filename,
 				int *width,
