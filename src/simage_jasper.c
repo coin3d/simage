@@ -6,6 +6,15 @@
 #include <config.h>
 #ifdef HAVE_JASPER
 
+/* needed since Japser includes its own config file */
+#undef PACKAGE
+#undef PACKAGE_BUGREPORT
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
+#undef VERSION
+
 #include <jasper/jasper.h>
 
 #define ERR_NO_ERROR    0
@@ -104,7 +113,7 @@ simage_jasper_read_line(void * opendata, int y, unsigned char * buf)
 {
   simage_jasper_opendata * od;
   jaspererror = ERR_NO_ERROR;
-  
+   
   od = (simage_jasper_opendata*) opendata;
 }
 
