@@ -434,6 +434,25 @@ if test x"$sim_ac_quicktime_support" = xfalse; then
   # AM_CONDITIONAL(SIMAGE_TIFF_SUPPORT, $sim_ac_have_libtiff)
 
   # **************************************************************************
+  # Check if JPEG 2000 support is wanted (and if so, available).
+
+  SIM_AC_HAVE_JASPER_IFELSE([
+    AC_DEFINE(HAVE_JASPER, , [define to support the jasper library])
+    SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_jasper_cppflags"
+    SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_jasper_ldflags"
+    SIMAGE_EXTRA_LIBS="$sim_ac_jasper_libs $SIMAGE_EXTRA_LIBS"
+    CPPFLAGS="$CPPFLAGS $sim_ac_jasper_cppflags"
+    LDFLAGS="$LDFLAGS $sim_ac_jasper_ldflags"
+    LIBS="$sim_ac_jasper_libs $LIBS"
+    SIM_AC_CONFIGURATION_SETTING([JPEG 2000 image format support], [Yes])
+  ], [
+    SIM_AC_CONFIGURATION_SETTING([JPEG 2000 image format support], [No (needs jasper)])
+  ])
+
+  # : ${sim_ac_have_jasper=false}
+  # AM_CONDITIONAL(SIMAGE_JASPER_SUPPORT, $sim_ac_have_libjpeg)
+
+  # **************************************************************************
   # Check if TARGA support is wanted.
 
   AC_ARG_WITH(

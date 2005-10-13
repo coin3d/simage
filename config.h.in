@@ -12,6 +12,9 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+/* define to support the jasper library */
+#undef HAVE_JASPER
+
 /* define to support the jpeg library */
 #undef HAVE_JPEGLIB
 
