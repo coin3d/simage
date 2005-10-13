@@ -24,6 +24,7 @@ PNGSOURCES = simage_png.c $(top_srcdir)/include/simage_png.h
 TGASOURCES = simage_tga.c $(top_srcdir)/include/simage_tga.h
 endif
 
+JASPERSOURCES = simage_jasper.c $(top_srcdir)/include/simage_jasper.h
 RGBSOURCES = simage_rgb.c $(top_srcdir)/include/simage_rgb.h
 PICSOURCES = simage_pic.c $(top_srcdir)/include/simage_pic.h
 XWDSOURCES = simage_xwd.c $(top_srcdir)/include/simage_xwd.h
@@ -47,6 +48,7 @@ SIMAGESOURCES = \
 	params.c \
 	$(top_srcdir)/include/simage_private.h \
 	$(JPEGSOURCES) \
+	$(JASPERSOURCES) \
 	$(GIFSOURCES) \
 	$(PNGSOURCES) \
 	$(TIFFSOURCES) \
