@@ -3,7 +3,7 @@
 
 #include <config.h>
 
-#ifndef HAVE_JASPERLIB
+#ifndef HAVE_JASPER
 #error "This file should not be used under the current configuration!"
 #endif /* !HAVE_JASPERLIB */
 

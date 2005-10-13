@@ -17,12 +17,13 @@
 
 #include <jasper/jasper.h>
 
-#define ERR_NO_ERROR    0
-#define ERR_OPEN        1
-#define ERR_READ        2
-#define ERR_MEM         3
-#define ERR_OPEN_WRITE  4
-#define ERR_WRITE       5
+#define ERR_NO_ERROR        0
+#define ERR_OPEN            1
+#define ERR_READ            2
+#define ERR_MEM             3
+#define ERR_OPEN_WRITE      4
+#define ERR_WRITE           5
+#define ERR_NOT_IMPLEMENTED 6
 
 static int jaspererror = ERR_NO_ERROR;
 
@@ -44,6 +45,9 @@ simage_jasper_error(char * buffer, int buflen)
     break;
   case ERR_WRITE:
     strncpy(buffer, "JASPER loader: Error writing file", buflen);
+    break;
+  case ERR_NOT_IMPLEMENTED:
+    strncpy(buffer, "JASPER loader: Feature not implemented", buflen);
     break;
   }
   return jaspererror;
@@ -67,7 +71,7 @@ simage_jasper_load(const char * filename,
                    int * height_ret,
                    int * numComponents_ret)
 {
-  jaspererror = ERR_NO_ERROR;
+  jaspererror = ERR_NOT_IMPLEMENTED;
   return NULL;
 }
 
@@ -78,7 +82,7 @@ simage_jasper_save(const char *filename,
                    int height,
                    int numcomponents)
 {
-  jaspererror = ERR_NO_ERROR;
+  jaspererror = ERR_NOT_IMPLEMENTED;
   return 0;
 }
 
@@ -96,7 +100,7 @@ simage_jasper_open(const char * filename,
                    int * height,
                    int * numcomponents)
 {
-  jaspererror = ERR_NO_ERROR;
+  jaspererror = ERR_NOT_IMPLEMENTED;
   return NULL;
 }
 
@@ -105,16 +109,17 @@ void
 simage_jasper_close(void * opendata)
 {
   simage_jasper_opendata * od = (simage_jasper_opendata*) opendata;
-  jaspererror = ERR_NO_ERROR;
+  jaspererror = ERR_NOT_IMPLEMENTED;
 }
 
 int 
 simage_jasper_read_line(void * opendata, int y, unsigned char * buf)
 {
   simage_jasper_opendata * od;
-  jaspererror = ERR_NO_ERROR;
+  jaspererror = ERR_NOT_IMPLEMENTED;
    
   od = (simage_jasper_opendata*) opendata;
+  return 0;
 }
 
 #endif /* HAVE_JASPER */
