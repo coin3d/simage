@@ -30,6 +30,10 @@ typedef struct _loader_data loader_data;
 #include <simage_jpeg.h>
 static loader_data jpeg_loader;
 #endif /* HAVE_JPEGLIB */
+#ifdef HAVE_JASPER
+#include <simage_jasper.h>
+static loader_data jasper_loader;
+#endif /* HAVE_JASPER */
 #ifdef HAVE_PNGLIB
 #include <simage_png.h>
 static loader_data png_loader;
@@ -177,6 +181,17 @@ add_internal_loaders(void)
     tiff_loader.openfuncs.close_func = simage_tiff_close;
     tiff_loader.openfuncs.read_line_func = simage_tiff_read_line;    
 #endif /* HAVE_TIFFLIB */
+#ifdef HAVE_JASPER
+    add_loader(&jasper_loader, 
+               simage_jasper_load,
+               simage_jasper_identify,
+               simage_jasper_error,
+               1, 0);
+    /* read_line API not supported by JASPER */
+    /* jasper_loader.openfuncs.open_func = simage_jasper_open;
+     * jasper_loader.openfuncs.close_func = simage_jasper_close;
+     * jasper_loader.openfuncs.read_line_func = simage_jasper_read_line;  */
+#endif /* HAVE_JASPER */
 #ifdef SIMAGE_RGB_SUPPORT
     add_loader(&rgb_loader, 
 	       simage_rgb_load,
