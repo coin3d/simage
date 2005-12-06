@@ -31,6 +31,7 @@ int main(int argc, char ** argv)
   int alphathreshold = -1;
   int gray = 0;
   int setundef = 0;
+  int mirrory = 0;
 
   if (argc < 3) {
     usage(argv[0]);
@@ -84,6 +85,10 @@ int main(int argc, char ** argv)
       }
       else if (strcmp(argv[i], "-gray") == 0) {
         gray = 1;
+        i++;
+      }
+      else if (strcmp(argv[i], "-mirrory") == 0) {
+        mirrory = 1;
         i++;
       }
       else if (strcmp(argv[i], "-setundef") == 0) {
@@ -253,6 +258,17 @@ int main(int argc, char ** argv)
       p += nc;
     }
     fprintf(stderr,"undef'ed %d pixels\n", cnt);
+  }
+  if (mirrory) {
+    unsigned char * tmp = (unsigned char*) malloc(w*nc);
+    for (int y = 0; y < h/2; y++) {
+      unsigned char * src1 = buf + w*nc*y;
+      unsigned char * src2 = buf + w*nc*(h-1-y);
+      memcpy(tmp, src1, w*nc);
+      memcpy(src1, src2, w*nc);
+      memcpy(src2, tmp, w*nc);
+    }
+    free(tmp);
   }
 
   fprintf(stderr,"save image '%s'...", outfile);
