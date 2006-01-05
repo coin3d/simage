@@ -1,16 +1,34 @@
- =====================================================================
- 001 Some older TIFF images cannot be loaded using the QuickTime 
-     loader. This is due to a limitation in QuickTime itself. (It might
-     also be that libtiff is less strict when it comes to tolerating 
-     bogus information in the file header.)
+============================================================================
 
-     This problem occurs for instance with the img.tif image in 
-     simage/tests, but I have not been able to reproduce it using
-     any other images I could get hold of.
+001 Some older TIFF images cannot be loaded using the QuickTime
+    loader. This is due to a limitation in QuickTime itself. (It might
+    also be that libtiff is less strict when it comes to tolerating
+    bogus information in the file header.)
 
-     It should be possible to use libtiff instead of QuickTime on Mac
-     OS X by specifying --with-libtiff. I'll fix that when I have the
-     time. 
+    This problem occurs for instance with the img.tif image in
+    simage/tests, but I have not been able to reproduce it using any
+    other images I could get hold of.
 
-     20030228 kyrah
-=====================================================================
+    It should be possible to use libtiff instead of QuickTime on Mac
+    OS X by specifying --with-libtiff. I'll fix that when I have the
+    time.
+
+    20030228 kyrah
+
+============================================================================
+
+002 Feature request: GIF-format export.
+
+    Frank Hibbeln has asked for this to be added, even using
+    uncompressed GIFs, to avoid any potential problems with the
+    LZV-patent.
+
+    (Or has that expired now? Anyone wanting to take care of this
+    issue should first investigate.)
+
+    Should be quite straightforward to do, as export seems to be
+    supported by giflib.
+
+    20060105 mortene.
+
+============================================================================
