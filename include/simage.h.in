@@ -36,7 +36,7 @@
  * int simage_check_save_supported(const char * filenameextension)
  *    
  *   Returns 1 if a saver of type filenameextension is added. The
- *   built-in savers are jpg/jpeg, png, tif/tiff and rgb.
+ *   built-in savers are gif, jpg/jpeg, png, tif/tiff and rgb.
  *
  * int simage_save_image(const char * filename,
  *                       const unsigned char * bytes,

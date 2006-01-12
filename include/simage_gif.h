@@ -8,12 +8,19 @@
 #endif /* !HAVE_GIFLIB */
 
 unsigned char *simage_gif_load(const char * filename,
-				int *width,
-				int *height,
-				int *numComponents);
+                               int *width,
+                               int *height,
+                               int *numComponents);
+
+int simage_gif_save(const char *filename,
+                    const unsigned char * bytes,
+                    int width,
+                    int height,
+                    int numcomponents);
+
 int simage_gif_identify(const char *filename,
-			 const unsigned char *header,
-			 int headerlen);
+                        const unsigned char *header,
+                        int headerlen);
 
 int simage_gif_error(char *buffer, int bufferlen);
 
