@@ -37,6 +37,6 @@
 
     the LZW-patent has expired. (http://www.unisys.com/about__unisys/lzw)
     still, simage users would have control over that by either linking
-    simage against either libungif or giflib.
+    simage against libungif or giflib.
 
 ============================================================================
