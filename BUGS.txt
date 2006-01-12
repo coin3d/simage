@@ -21,7 +21,7 @@
 
     Frank Hibbeln has asked for this to be added, even using
     uncompressed GIFs, to avoid any potential problems with the
-    LZV-patent.
+    LZW-patent.
 
     (Or has that expired now? Anyone wanting to take care of this
     issue should first investigate.)
@@ -30,5 +30,13 @@
     supported by giflib.
 
     20060105 mortene.
+
+    UPDATE 20050112 tamer: added basic GIF writing support (missing:
+    Floyd-Steinberg dithering, alpha buffer handling for transparent
+    background color, animation support(?)).
+
+    the LZW-patent has expired. (http://www.unisys.com/about__unisys/lzw)
+    still, simage users would have control over that by either linking
+    simage against either libungif or giflib.
 
 ============================================================================
