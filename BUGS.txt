@@ -1,22 +1,5 @@
 ============================================================================
 
-001 Some older TIFF images cannot be loaded using the QuickTime
-    loader. This is due to a limitation in QuickTime itself. (It might
-    also be that libtiff is less strict when it comes to tolerating
-    bogus information in the file header.)
-
-    This problem occurs for instance with the img.tif image in
-    simage/tests, but I have not been able to reproduce it using any
-    other images I could get hold of.
-
-    It should be possible to use libtiff instead of QuickTime on Mac
-    OS X by specifying --with-libtiff. I'll fix that when I have the
-    time.
-
-    20030228 kyrah
-
-============================================================================
-
 002 Feature request: GIF-format export.
 
     Frank Hibbeln has asked for this to be added, even using
