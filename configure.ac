@@ -245,7 +245,6 @@ AC_LANG_POP(C++)
 # **************************************************************************
 # Check if qimage support is wanted (and if so, available)
 
-echo "PRE LIBS: $LIBS";
 sim_ac_qimage_support=false
 if $sim_ac_qimage_support_wanted; then
   SIM_AC_CHECK_QT([
