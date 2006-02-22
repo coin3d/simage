@@ -36,6 +36,34 @@ static int quicktimeerror = ERR_NO_ERROR;
    importing does not work. Investigate. kyrah 20030210
 */
 
+/* Run-time endianness check - needed for ARGB <=> RGBA conversion in a 
+   Universal Binary world.
+
+   FIXME: This is duplicated from tidbits.c... if we ever get around
+   to moving shared code (e.g. dlopen abstraction, OpenGL checks etc)
+   into a separate library , this should go there as well. 20060221
+   kyrah. 
+*/ 
+
+static bool system_is_bigendian(void)
+{
+  union temptype {
+    uint32_t value;
+    uint8_t  bytes[4];
+  } temp;
+
+  temp.bytes[0] = 0x00;
+  temp.bytes[1] = 0x01;
+  temp.bytes[2] = 0x02;
+  temp.bytes[3] = 0x03;
+  switch (temp.value) {
+  case 0x03020100: return false;
+  case 0x00010203: return true;
+  default: 
+    assert(0 && "system has unknown endianness");
+    return false;
+  }
+}
 
 /* Mac OS 10.1 doesn't have basename() and dirname(), so we
    have to use our own.
@@ -269,10 +297,13 @@ static void
 argb_to_rgba(uint32_t * px, int width, int height) 
 {
   uint32_t i;
-
-  // ARGB -> RGBA
-  for(i = 0; i < (height * width); i++)
+  if (system_is_bigendian()) { 
+    for (i = 0; i < (height * width); i++)
       *(px+i) = ((*(px+i) & 0x00FFFFFF ) << 8) | ((*(px+i) >> 24) & 0x000000FF);
+  } else {
+    for (i = 0; i < (height * width); i++) 
+      *(px+i) = ((*(px+i) & 0x000000FF ) << 24) | ((*(px+i) >> 8) & 0x00FFFFFF);
+  }
 }
 
 
@@ -283,10 +314,13 @@ static void
 rgba_to_argb(uint32_t * px, int width, int height) 
 {
   uint32_t i;
-
-  // RGBA -> ARGB
-  for(i = 0; i < (height * width); i++)
+  if (system_is_bigendian()) { 
+    for (i = 0; i < (height * width); i++)
       *(px+i) = ((*(px+i) & 0xFFFFFF00 ) >> 8) | ((*(px+i) << 24) & 0xFF000000);
+  } else {
+    for (i = 0; i < (height * width); i++)
+      *(px+i) = ((*(px+i) & 0xFF000000 ) >> 24) | ((*(px+i) << 8) & 0xFFFFFF00);
+  }
 }
 
 
