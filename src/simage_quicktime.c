@@ -200,6 +200,17 @@ open_exporter(const char * fext, GraphicsExportComponent * ge)
     char * cstr = malloc(5);
     OSType * ext = malloc(sizeof(OSType));
     GraphicsExportGetDefaultFileNameExtension((GraphicsExportComponent)c, ext);
+    if (!system_is_bigendian()) { 
+      /* OSType is a big-endian four-character code => need to swap */
+      uint8_t tmp;
+      uint8_t * block = (uint8_t*)ext;        
+      tmp = block[3];
+      block[3] = block[0];
+      block[0] = tmp;
+      tmp = block[2];
+      block[2] = block[1];
+      block[1] = tmp;
+    }
     memcpy(cstr, ext, 4); 
     if (cstr[3] == ' ') cstr[3] = '\0';
     else cstr[4] = '\0';
@@ -447,7 +458,7 @@ simage_quicktime_get_savers(void)
   CFMutableStringRef ret = CFStringCreateMutable (NULL, 0);
   Component c = 0;
   bool firstext = true;
-  char * cstr;
+  char * cstr = NULL;
   const char * cret;
   OSType * ext = malloc(sizeof(OSType));
 
@@ -464,6 +475,17 @@ simage_quicktime_get_savers(void)
     if (firstext) firstext = false;
     else CFStringAppendCString(ret, ",", CFStringGetSystemEncoding());
     GraphicsExportGetDefaultFileNameExtension((GraphicsExportComponent)c, ext);
+    if (!system_is_bigendian()) { 
+      /* OSType is a big-endian four-character code => need to swap */
+      uint8_t tmp;
+      uint8_t * block = (uint8_t*)ext;
+      tmp = block[3];
+      block[3] = block[0];
+      block[0] = tmp;
+      tmp = block[2];
+      block[2] = block[1];
+      block[1] = tmp;
+    }
     cfstring_append_ostype(ret, ext);
   }
   free(ext);
@@ -477,6 +499,7 @@ simage_quicktime_get_savers(void)
   if (!CFStringGetCString(ret, cstr, length, CFStringGetSystemEncoding())) {
     cstr = NULL;
   }
+
   return cstr;
 }
 
