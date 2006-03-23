@@ -137,10 +137,7 @@ AC_DEFINE_UNQUOTED([SIMAGE_VERSION], ["$SIMAGE_VERSION"],
 # **************************************************************************
 # Universal Binary support (Mac OS X)
 
-SIM_AC_UNIVERSAL_BINARIES([
-  SIMAGE_EXTRA_CFLAGS="$sim_ac_universal_flags $SIMAGE_EXTRA_CFLAGS"
-  SIMAGE_EXTRA_CXXFLAGS="$sim_ac_universal_flags $SIMAGE_EXTRA_CXXFLAGS"
-])
+SIM_AC_UNIVERSAL_BINARIES
 
 # **************************************************************************
 # Miscellaneous options and initializations.
