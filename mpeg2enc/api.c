@@ -582,7 +582,7 @@ readparmfile(simpeg_encode_context * context,
     fgets(line,254,fd); sscanf(line,"%d",&context->matrix_coefficients);
     fgets(line,254,fd); sscanf(line,"%d",&context->display_horizontal_size);
     fgets(line,254,fd); sscanf(line,"%d",&context->display_vertical_size);
-    if (width > 0 && height < 0) {
+    if (width > 0 && height > 0) {
       context->display_horizontal_size = width;
       context->display_vertical_size = height;
     }
@@ -702,7 +702,7 @@ readparmfile(simpeg_encode_context * context,
     context->display_horizontal_size = 704;
     context->display_vertical_size = 480;
 
-    if (width > 0 && height < 0) {
+    if (width > 0 && height > 0) {
       context->display_horizontal_size = width;
       context->display_vertical_size = height;
     }
