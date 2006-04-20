@@ -823,7 +823,7 @@ readparmfile(simpeg_encode_context * context,
     context->display_horizontal_size = 704;
     context->display_vertical_size = 480;
 
-    if (width > 0 && height < 0) {
+    if (width > 0 && height > 0) {
       context->display_horizontal_size = width;
       context->display_vertical_size = height;
     }
