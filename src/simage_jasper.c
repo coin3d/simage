@@ -111,17 +111,17 @@ simage_jasper_load(const char * filename,
                    int * height_ret,
                    int * numComponents_ret)
 {
-	int width;
-	int height;
-	int depth;
-	int numcomps;
+  int width;
+  int height;
+  int depth;
+  int numcomps;
   int realnumcomp;
   int compno;
   int compfound[4] = {0,0,0,0};
 
-	jas_image_t * image = NULL;
+        jas_image_t * image = NULL;
   jas_stream_t * stream = NULL;
-	jas_matrix_t * data = NULL;
+        jas_matrix_t * data = NULL;
   unsigned char * buffer = NULL;
 
   jaspererror = ERR_NO_ERROR;
