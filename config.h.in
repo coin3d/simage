@@ -3,6 +3,9 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
+/* Define to 1 if you have the <gdiplus.h> header file. */
+#undef HAVE_GDIPLUS_H
+
 /* define to support the giflib library */
 #undef HAVE_GIFLIB
 
@@ -77,6 +80,9 @@
 
 /* define to enable eps support */
 #undef SIMAGE_EPS_SUPPORT
+
+/* define to support GDI+ */
+#undef SIMAGE_GDIPLUS_SUPPORT
 
 /* libsndfile available */
 #undef SIMAGE_LIBSNDFILE_SUPPORT
