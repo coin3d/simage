@@ -22083,12 +22083,19 @@ fi
 
 
 # **************************************************************************
-# Check if gdiplus support is wanted (and if so, available)
+# Check if GDI+ support is wanted (and if so, available)
 
 sim_ac_gdiplus_support=false
 if $sim_ac_gdiplus_support_wanted; then
+  : ${sim_ac_have_gdiplus=false}
+echo "$as_me:$LINENO: checking for GDI+" >&5
+echo $ECHO_N "checking for GDI+... $ECHO_C" >&6
+$sim_ac_have_gdiplus && break
+sim_ac_gdiplus_save_LIBS=$LIBS
+sim_ac_gdiplus_libs="-lgdiplus"
+LIBS="$sim_ac_gdiplus_libs $LIBS"
 
-for ac_header in gdiplus.h
+for ac_header in windows.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if eval "test \"\${$as_ac_Header+set}\" = set"; then
@@ -22232,27 +22239,32 @@ if test `eval echo '${'$as_ac_Header'}'` = yes; then
   cat >>confdefs.h <<_ACEOF
 #define `echo "HAVE_$ac_header" | $as_tr_cpp` 1
 _ACEOF
- ac_ext=cc
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-   cat >conftest.$ac_ext <<_ACEOF
+fi
+
+done
+
+
+for ac_header in gdiplus.h
+do
+as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
+echo "$as_me:$LINENO: checking for $ac_header" >&5
+echo $ECHO_N "checking for $ac_header... $ECHO_C" >&6
+if eval "test \"\${$as_ac_Header+set}\" = set"; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include <windows.h>
-#include <gdiplus.h>
-int
-main ()
-{
-Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-  ;
-  return 0;
-}
+#if HAVE_WINDOWS_H
+# include <windows.h>
+# endif
+
+
+#include <$ac_header>
 _ACEOF
 rm -f conftest.$ac_objext
 if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
@@ -22276,46 +22288,95 @@ if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-  sim_ac_gdiplus_support=true
+  eval "$as_ac_Header=yes"
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-sim_ac_gdiplus_support=false
+eval "$as_ac_Header=no"
 fi
 rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
-  ac_ext=cc
+fi
+echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_Header'}'`" >&5
+echo "${ECHO_T}`eval echo '${'$as_ac_Header'}'`" >&6
+if test `eval echo '${'$as_ac_Header'}'` = yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+ ac_ext=cc
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
+   cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <windows.h>
+#include <gdiplus.h>
+int
+main ()
+{
+Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_cxx_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  sim_ac_have_gdiplus=true
 else
-  sim_ac_gdiplus_support=false
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+   ac_ext=cc
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
 fi
 
 done
 
-fi
+LIBS=$sim_ac_gdiplus_save_LIBS
+if $sim_ac_have_gdiplus; then
+  echo "$as_me:$LINENO: result: success ($sim_ac_gdiplus_libs)" >&5
+echo "${ECHO_T}success ($sim_ac_gdiplus_libs)" >&6
 
-
-
-if $sim_ac_gdiplus_support; then
-  SIMAGE_GDIPLUS_SUPPORT_TRUE=
-  SIMAGE_GDIPLUS_SUPPORT_FALSE='#'
-else
-  SIMAGE_GDIPLUS_SUPPORT_TRUE='#'
-  SIMAGE_GDIPLUS_SUPPORT_FALSE=
-fi
-
-
-if $sim_ac_gdiplus_support; then
-  sim_ac_quicktime_support=false
 
 cat >>confdefs.h <<\_ACEOF
 #define SIMAGE_GDIPLUS_SUPPORT
 _ACEOF
 
+    SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_gdiplus_libs"
+    LIBS="$LIBS $sim_ac_gdiplus_libs"
 
 if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|GDI+ support:Yes"
@@ -22323,7 +22384,7 @@ else
   sim_ac_configuration_settings="GDI+ support:Yes"
 fi
 
-  # formats supported read/write by GDI+
+    # formats supported read/write by GDI+
 
 if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|GIF image format support:Yes (GDI+)"
@@ -22359,8 +22420,12 @@ else
   sim_ac_configuration_settings="BMP image format support:Yes (GDI+)"
 fi
 
+    sim_ac_gdiplus_support=true
+
 else
-  if $sim_ac_gdiplus_support_wanted; then
+  echo "$as_me:$LINENO: result: failure" >&5
+echo "${ECHO_T}failure" >&6
+
 
 if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|GDI+ support:No (needs installed GDI+ SDK)"
@@ -22368,7 +22433,10 @@ else
   sim_ac_configuration_settings="GDI+ support:No (needs installed GDI+ SDK)"
 fi
 
-  else
+
+fi
+
+else
 
 if test x"${sim_ac_configuration_settings+set}" = x"set"; then
   sim_ac_configuration_settings="$sim_ac_configuration_settings|GDI+ support:No (default, enable with --enable-gdiplus)"
@@ -22376,8 +22444,18 @@ else
   sim_ac_configuration_settings="GDI+ support:No (default, enable with --enable-gdiplus)"
 fi
 
-  fi
 fi
+
+
+
+if $sim_ac_gdiplus_support; then
+  SIMAGE_GDIPLUS_SUPPORT_TRUE=
+  SIMAGE_GDIPLUS_SUPPORT_FALSE='#'
+else
+  SIMAGE_GDIPLUS_SUPPORT_TRUE='#'
+  SIMAGE_GDIPLUS_SUPPORT_FALSE=
+fi
+
 
 
 # **************************************************************************
@@ -22534,7 +22612,7 @@ fi
 
 
 
-if test x"$sim_ac_quicktime_support" = xfalse -o x"$sim_ac_gdiplus_support" = xfalse; then
+if test x"$sim_ac_quicktime_support" = xfalse -a x"$sim_ac_gdiplus_support" = xfalse; then
   # **************************************************************************
   # Check if UNGIF support is wanted (and if so, available).
 

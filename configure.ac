@@ -302,46 +302,35 @@ fi
 
 
 # **************************************************************************
-# Check if gdiplus support is wanted (and if so, available)
+# Check if GDI+ support is wanted (and if so, available)
 
 sim_ac_gdiplus_support=false
 if $sim_ac_gdiplus_support_wanted; then
-AC_CHECK_HEADERS([gdiplus.h],
-  [AC_LANG_PUSH(C++)
-   AC_TRY_COMPILE(
-     [#include <windows.h>
-#include <gdiplus.h>],
-     [Gdiplus::GdiplusStartupInput gdiplusStartupInput;],
-     [sim_ac_gdiplus_support=true], 
-     [sim_ac_gdiplus_support=false])
-  AC_LANG_POP],
-  [sim_ac_gdiplus_support=false])
+  SIM_AC_HAVE_GDIPLUS_IFELSE([
+    AC_DEFINE(SIMAGE_GDIPLUS_SUPPORT, ,[define to support GDI+])
+    SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_gdiplus_libs"
+    LIBS="$LIBS $sim_ac_gdiplus_libs"
+    SIM_AC_CONFIGURATION_SETTING([GDI+ support], [Yes])
+    # formats supported read/write by GDI+
+    SIM_AC_CONFIGURATION_SETTING([GIF image format support], 
+                                 [Yes (GDI+)])
+    SIM_AC_CONFIGURATION_SETTING([JPEG image format support], 
+                                 [Yes (GDI+)])
+    SIM_AC_CONFIGURATION_SETTING([PNG image format support], 
+                                 [Yes (GDI+)])
+    SIM_AC_CONFIGURATION_SETTING([TIFF image format support], 
+                                 [Yes (GDI+)])
+    SIM_AC_CONFIGURATION_SETTING([BMP image format support], 
+                                 [Yes (GDI+)])
+    sim_ac_gdiplus_support=true
+  ], [
+    SIM_AC_CONFIGURATION_SETTING([GDI+ support], [No (needs installed GDI+ SDK)])
+  ])
+else
+  SIM_AC_CONFIGURATION_SETTING([GDI+ support], [No (default, enable with --enable-gdiplus)])
 fi
 
 AM_CONDITIONAL(SIMAGE_GDIPLUS_SUPPORT, $sim_ac_gdiplus_support)
-
-if $sim_ac_gdiplus_support; then
-  sim_ac_quicktime_support=false
-  AC_DEFINE(SIMAGE_GDIPLUS_SUPPORT, ,[define to support GDI+])
-  SIM_AC_CONFIGURATION_SETTING([GDI+ support], [Yes])
-  # formats supported read/write by GDI+
-  SIM_AC_CONFIGURATION_SETTING([GIF image format support], 
-                               [Yes (GDI+)])
-  SIM_AC_CONFIGURATION_SETTING([JPEG image format support], 
-                               [Yes (GDI+)])
-  SIM_AC_CONFIGURATION_SETTING([PNG image format support], 
-                               [Yes (GDI+)])
-  SIM_AC_CONFIGURATION_SETTING([TIFF image format support], 
-                               [Yes (GDI+)])
-  SIM_AC_CONFIGURATION_SETTING([BMP image format support], 
-                               [Yes (GDI+)])
-else
-  if $sim_ac_gdiplus_support_wanted; then
-    SIM_AC_CONFIGURATION_SETTING([GDI+ support], [No (needs installed GDI+ SDK)])
-  else
-    SIM_AC_CONFIGURATION_SETTING([GDI+ support], [No (default, enable with --enable-gdiplus)])
-  fi
-fi
 
 
 # **************************************************************************
@@ -380,7 +369,7 @@ fi
 AM_CONDITIONAL(SIMAGE_QUICKTIME_SUPPORT, $sim_ac_quicktime_support)
 
 
-if test x"$sim_ac_quicktime_support" = xfalse -o x"$sim_ac_gdiplus_support" = xfalse; then
+if test x"$sim_ac_quicktime_support" = xfalse -a x"$sim_ac_gdiplus_support" = xfalse; then
   # **************************************************************************
   # Check if UNGIF support is wanted (and if so, available).
 

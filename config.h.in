@@ -57,6 +57,9 @@
 /* Define to use the Video for Windows library */
 #undef HAVE_VFW
 
+/* Define to 1 if you have the <windows.h> header file. */
+#undef HAVE_WINDOWS_H
+
 /* Name of package */
 #undef PACKAGE
 
