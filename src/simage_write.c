@@ -25,7 +25,10 @@ struct _saver_data
 
 typedef struct _saver_data saver_data;
 
-/* built in image loaders */ 
+/* built in image loaders */
+#ifdef SIMAGE_GDIPLUS_SUPPORT
+#include <simage_gdiplus.h>
+#endif /* SIMAGE_GDIPLUS_SUPPORT */
 #ifdef HAVE_JPEGLIB
 #include <simage_jpeg.h>
 static saver_data jpeg_saver;
@@ -241,10 +244,11 @@ add_internal_savers(void)
 {
   static int first = 1;
   if (first) {
-#if defined(SIMAGE_QIMAGE_SUPPORT) || defined(SIMAGE_QUICKTIME_SUPPORT)
+#if defined(SIMAGE_GDIPLUS_SUPPORT) || defined(SIMAGE_QIMAGE_SUPPORT) || defined(SIMAGE_QUICKTIME_SUPPORT)
     char * qtext = NULL;
 #endif
     first = 0;
+
 #ifdef HAVE_JPEGLIB
     add_saver(&jpeg_saver, 
               simage_jpeg_save,
@@ -301,6 +305,30 @@ add_internal_savers(void)
               1, 0);
 #endif /* SIMAGE_EPS_SUPPORT */
 
+#ifdef SIMAGE_GDIPLUS_SUPPORT
+    qtext = simage_gdiplus_get_savers();
+    if (qtext) {
+      saver_data * saver;
+      char * str;
+      char * ext = qtext;
+      do {
+        str = strchr(ext, ',');
+        if (str) *str = 0;      
+        str_tolower(ext);
+        saver = (saver_data*) malloc(sizeof(saver_data));
+        add_saver_ext(saver,
+                      simage_gdiplus_save,
+                      simage_gdiplus_error,
+                      ext,
+                      "GDI+ saver",
+                      NULL,
+                      0, 0);
+        
+        if (str) ext = str + 1;
+      } while (str);
+      free(qtext);
+    }
+#endif /* SIMAGE_GDIPLUS_SUPPORT */
 #ifdef SIMAGE_QIMAGE_SUPPORT
     qtext = simage_qimage_get_savers();
     if (qtext) {

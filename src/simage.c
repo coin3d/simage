@@ -26,6 +26,10 @@ typedef struct _loader_data loader_data;
    Coin/src/nodes/SoTexture2.cpp. */
 
 /* built in image loaders */ 
+#ifdef SIMAGE_GDIPLUS_SUPPORT
+#include <simage_gdiplus.h>
+static loader_data gdiplus_loader;
+#endif /* SIMAGE_GDIPLUS_SUPPORT */
 #ifdef HAVE_JPEGLIB
 #include <simage_jpeg.h>
 static loader_data jpeg_loader;
@@ -150,6 +154,16 @@ add_internal_loaders(void)
   static int first = 1;
   if (first) {
     first = 0;
+#ifdef SIMAGE_GDIPLUS_SUPPORT
+    add_loader(&gdiplus_loader,
+               simage_gdiplus_load,
+               simage_gdiplus_identify,
+               simage_gdiplus_error,
+               1, 0);
+    gdiplus_loader.openfuncs.open_func = simage_gdiplus_open;
+    gdiplus_loader.openfuncs.close_func = simage_gdiplus_close;
+    gdiplus_loader.openfuncs.read_line_func = simage_gdiplus_read_line;    
+#endif /* SIMAGE_GDIPLUS_SUPPORT */
 #ifdef HAVE_JPEGLIB
     add_loader(&jpeg_loader, 
 	       simage_jpeg_load,
