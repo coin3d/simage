@@ -5,7 +5,7 @@
 
 #ifndef SIMAGE_QIMAGE_SUPPORT
 #error "This file should not be used under the current configuration!"
-#endif /* !HAVE_JPEGLIB */
+#endif /* !SIMAGE_QIMAGE_SUPPORT */
 
 
 #ifdef __cplusplus
@@ -36,4 +36,4 @@ extern "C" {
 }
 #endif
 
-#endif /* _SIMAGE_JPEG_H_ */
+#endif /* _SIMAGE_QIMAGE_H_ */
