@@ -2,6 +2,12 @@
 
 INCLUDES = -I$(top_srcdir)/include -I$(top_builddir)/include
 
+if SIMAGE_GDIPLUS_SUPPORT
+GDIPLUSSOURCES = simage_gdiplus.cpp $(top_srcdir)/include/simage_gdiplus.h
+else
+GDIPLUSSOURCES =
+endif
+
 if SIMAGE_QIMAGE_SUPPORT
 QIMAGESOURCES = simage_qimage.cpp $(top_srcdir)/include/simage_qimage.h
 else
@@ -47,6 +53,7 @@ SIMAGESOURCES = \
 	stream.c \
 	params.c \
 	$(top_srcdir)/include/simage_private.h \
+	$(GDIPLUSSOURCES) \
 	$(JPEGSOURCES) \
 	$(JASPERSOURCES) \
 	$(GIFSOURCES) \
