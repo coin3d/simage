@@ -425,6 +425,9 @@ simage_quicktime_load(const char * file, int * width,
   e = GraphicsImportDraw(gi);
   if (e != noErr) {
     quicktimeerror = ERR_CG;
+    if(bi.data != NULL) {
+      free(bi.data);
+    }
     return NULL;
   }
 
@@ -448,6 +451,9 @@ simage_quicktime_load(const char * file, int * width,
   *width = bi.width;
   *height = bi.height;
   *numcomponents = bi.numcomponents;
+  if(bi.data != NULL) {
+    free(bi.data);
+  }
   return newpx;
 }
 
