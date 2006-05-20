@@ -30,18 +30,19 @@ enum {
 
 static int gdipluserror = ERR_NO_ERROR;
 
-static int gdiplus_init(void) 
+static int
+gdiplus_init(void) 
 {
   static int did_init = 0;
 
   if (!did_init) {
     /* initialize GDI+ */
-    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     unsigned long gdiplusToken;
-    if (Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL) == Gdiplus::Ok) {
-      did_init = 1;
-    }
+    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    if (Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL) ==
+        Gdiplus::Ok) { did_init = 1; }
   }
+
   return did_init;
 }
 
@@ -71,22 +72,19 @@ simage_gdiplus_error(char * buffer, int buflen)
     strncpy(buffer, "GDI+ loader: Feature not implemented", buflen);
     break;
   default:
-    strncpy(buffer, "GDI+ loader: Interesting error you got", buflen);
+    strncpy(buffer, "GDI+ loader: Interesting unknown error you got", buflen);
   }
+
   return gdipluserror;
 }
 
 int 
 simage_gdiplus_identify(const char * ptr,
-			const unsigned char * header,
-			int headerlen)
+                        const unsigned char * header,
+                        int headerlen)
 {
   gdipluserror = ERR_NO_ERROR;
-
-  if (!gdiplus_init()) {
-    gdipluserror = ERR_INIT;
-    return 0;
-  }
+  if (!gdiplus_init()) { gdipluserror = ERR_INIT; return 0; }
 
   /* convert C string to wide char */
   wchar_t * filename = new wchar_t[strlen(ptr)+1];
@@ -97,108 +95,76 @@ simage_gdiplus_identify(const char * ptr,
   Gdiplus::Bitmap bitmap(filename);
 
   if (bitmap.GetFlags() == Gdiplus::ImageFlagsNone) {
-    delete filename;
-    return 0;
+    delete filename; return 0;
   }
   
   delete filename;
+
   return 1;
 }
 
 unsigned char *
 simage_gdiplus_load(const char * filename,
-		    int * width,
-		    int * height,
-		    int * numcomponents)
-{
-  /* convert C string filename to wide char */
-  wchar_t * filename_wide = new wchar_t[strlen(filename)+1];
+                    int * width,
+                    int * height,
+                    int * numcomponents)
+{  
+  Gdiplus::Bitmap * bitmap = 
+    (Gdiplus::Bitmap*)simage_gdiplus_open(filename, width, height,
+                                          numcomponents);
+  if (!bitmap) { return NULL; }
 
-  if (!filename_wide) { return NULL; }
-  mbstowcs(filename_wide, filename, strlen(filename)+1);
+  Gdiplus::PixelFormat pixelFormat = bitmap->GetPixelFormat();
+  /* default to RGBA conversion for other pixel formats */
+  if ((*numcomponents) == 4) { pixelFormat = PixelFormat32bppARGB; }
 
-  gdipluserror = ERR_NO_ERROR;
-
-  if (!gdiplus_init()) {
-    gdipluserror = ERR_INIT;
-    return NULL;
-  }
-  
-  Gdiplus::Bitmap * bitmap = new Gdiplus::Bitmap(filename_wide);
-  
-  if (bitmap && (bitmap->GetLastStatus() == Gdiplus::Ok)) {
-    *width = bitmap->GetWidth();
-    *height = bitmap->GetHeight();
-
-    Gdiplus::PixelFormat pixelFormat = bitmap->GetPixelFormat();
-
-    (*numcomponents) = (pixelFormat == PixelFormat8bppIndexed) ? 1 :
-      (pixelFormat == PixelFormat24bppRGB) ? 3 : 4;
-    /* default to RGBA conversion for other pixel formats */
-    if ((*numcomponents) == 4) { pixelFormat = PixelFormat32bppARGB; }
-  
-    Gdiplus::BitmapData * bitmapData = new Gdiplus::BitmapData;
-    Gdiplus::Rect rect(0, 0, *width, *height);
+  Gdiplus::BitmapData * bitmapData = new Gdiplus::BitmapData;
+  Gdiplus::Rect rect(0, 0, *width, *height);
     
-    bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
-		     pixelFormat, bitmapData);
+  bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
+                   pixelFormat, bitmapData);
 
-    unsigned int stride = bitmapData->Stride - (*width)*(*numcomponents);
-    unsigned char * src = (unsigned char *)bitmapData->Scan0;
-    unsigned char * buffer = (unsigned char *)malloc((*width)*(*height)*(*numcomponents));
-    unsigned char * dst = buffer + (*width)*(*height)*(*numcomponents) - (*numcomponents);
+  unsigned int stride = bitmapData->Stride - (*width)*(*numcomponents);
+  unsigned char * src = (unsigned char *)bitmapData->Scan0;
+  unsigned char * dst = (unsigned char *)malloc((*width)*(*height)*(*numcomponents));
+  /* start at end of buffer */
+  dst += (*width)*(*height)*(*numcomponents);
 
-    if (!buffer) {
-      gdipluserror = ERR_MEM;
-      return NULL;
+  if (!dst) { gdipluserror = ERR_MEM; return NULL; }
+
+  switch ((*numcomponents)) {
+  case 1:
+    for (unsigned int y = 0; y < (*height); y++) {
+      dst -= (*width);
+      memcpy(dst, src, (*width));
+      src += bitmapData->Stride;
     }
-
-    switch ((*numcomponents)) {
-    case 1:
-      for (unsigned int y = 0; y < (*height); y++) {
-	for (unsigned int x = 0; x < (*width); x++) {
-	  dst[0] = src[0];
- 	  src += (*numcomponents);
- 	  dst -= (*numcomponents);
-	}
-	src += stride;
+    break;
+  case 3:
+  case 4:
+    for (unsigned int y = 0; y < (*height); y++) {
+      dst -= (*width)*(*numcomponents);
+      for (unsigned int x = 0; x < (*width)*(*numcomponents); x+=(*numcomponents)) {
+        dst[x+2] = *src++; dst[x+1] = *src++; dst[x] = *src++;
+        /* ARGB GDI+ buffer, internally really represented as BGRA */
+        if ((*numcomponents) == 4) { dst[x+3] = *src++; }
       }
-      break;
-    case 3:
-    case 4:
-      for (unsigned int y = 0; y < (*height); y++) {
-	for (unsigned int x = 0; x < (*width); x++) {
-	  dst[0] = src[2]; dst[1] = src[1]; dst[2] = src[0];
-	  /* ARGB GDI+ buffer */
-	  if ((*numcomponents) == 4) { dst[3] = src[3]; }
- 	  src += (*numcomponents);
- 	  dst -= (*numcomponents);
-	}
-	src += stride;
-      }
-      break;
-    default:
-      gdipluserror = ERR_OPEN;
-      delete bitmapData;
-      delete bitmap;
-      delete filename_wide;      
-      return NULL;
+      src += stride;
     }
-
-    bitmap->UnlockBits(bitmapData);
-    
+    break;
+  default:
+    gdipluserror = ERR_OPEN;
     delete bitmapData;
     delete bitmap;
-    delete filename_wide;
-    
-    return buffer;
+    return NULL;
   }
 
-  if (bitmap) { delete bitmap; }
-  delete filename_wide;
+  bitmap->UnlockBits(bitmapData);
+    
+  delete bitmapData;
+  delete bitmap;    
 
-  gdipluserror = ERR_OPEN;
-  return NULL;
+  return dst;
 }
 
 char * 
@@ -209,7 +175,7 @@ simage_gdiplus_get_savers(void)
   Gdiplus::ImageCodecInfo * pImageCodecInfo;
 
   Gdiplus::GetImageDecodersSize(&num, &size);
-  pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size));
+  pImageCodecInfo = (Gdiplus::ImageCodecInfo*)malloc(size);
 
   Gdiplus::GetImageDecoders(num, size, pImageCodecInfo);
 
@@ -233,9 +199,9 @@ simage_gdiplus_get_savers(void)
     /* FIXME: too dirty. wash it! 20060418 tamer. */
     if (format_len == 4) {
       if (!strncmp(format, "JPEG", 4)) {
-	format[2] = 'G'; format[3] = '\0';
+        format[2] = 'G'; format[3] = '\0';
       } else if (!strncmp(format, "TIFF", 4)) {
-	format[3] = '\0';
+        format[3] = '\0';
       }
     }
 
@@ -285,21 +251,22 @@ GetEncoderClsid(const char * format, CLSID * pClsid)
   
   free(format_wide);
   free(pImageCodecInfo);
+
   return -1;
 }
 
 int 
 simage_gdiplus_save(const char * filename,
-		    const unsigned char * bytes,
-		    int width,
-		    int height,
-		    int numcomponents,
-		    const char * filetypeext)
+                    const unsigned char * bytes,
+                    int width,
+                    int height,
+                    int numcomponents,
+                    const char * filetypeext)
 {
   /* convert C string filename to wide char */
   wchar_t * filename_wide = new wchar_t[strlen(filename)+1];
   
-  if (!filename_wide) { return NULL; }
+  if (!filename_wide) { gdipluserror = ERR_WRITE; return 0; }
   mbstowcs(filename_wide, filename, strlen(filename)+1);
 
   Gdiplus::PixelFormat pixelFormat =
@@ -307,15 +274,15 @@ simage_gdiplus_save(const char * filename,
     PixelFormat24bppRGB : PixelFormat32bppARGB;
 
   Gdiplus::Bitmap * bitmap = new Gdiplus::Bitmap(width, height, pixelFormat);
-  Gdiplus::BitmapData  * bitmapData = new Gdiplus::BitmapData;
+  Gdiplus::BitmapData * bitmapData = new Gdiplus::BitmapData;
   Gdiplus::Rect rect(0, 0, width, height);
 
   bitmap->LockBits(&rect,
-		   Gdiplus::ImageLockModeRead | Gdiplus::ImageLockModeWrite,
-		   pixelFormat, bitmapData);
+                   Gdiplus::ImageLockModeRead | Gdiplus::ImageLockModeWrite,
+                   pixelFormat, bitmapData);
 
   unsigned char * dst = ((unsigned char *)bitmapData->Scan0);
-  const unsigned char * src = bytes + (width*height*numcomponents) - numcomponents;
+  const unsigned char * src = bytes + (width*height*numcomponents);
 
   int numcomp34 = ((numcomponents==1) || (numcomponents==3)) ? 3 : 4;
   unsigned int stride = bitmapData->Stride - width*numcomp34;
@@ -323,15 +290,15 @@ simage_gdiplus_save(const char * filename,
   switch (numcomponents) {
   case 1:
   case 2:
-    /* FIXME: code for 2 components case has not been ested. comp 1
-       should be rather written out as PixelFormat8bppIndexed. comp 2? 
+    /* FIXME: code for 2 components case has not been tested. comp 1
+       should rather be written out as PixelFormat8bppIndexed. comp 2? 
        20060420 tamer. */
     for (unsigned int y = 0; y < height; y++) {
-      for (unsigned int x = 0; x < width; x++) {
-	*dst++ = src[0]; *dst++ = src[0]; *dst++ = src[0];
-	/* ARGB GDI+ buffer */
-	if (numcomponents == 2) { *dst++ = src[1]; }
-	src -= numcomponents;
+      src -= width*numcomponents;
+      for (unsigned int x = 0; x < width*numcomponents; x+=numcomponents) {
+        *dst++ = src[x]; *dst++ = src[x]; *dst++ = src[x];
+        /* greyscale-alpha buffer */
+        if (numcomponents == 2) { *dst++ = src[x+1]; }
       }
       dst += stride;
     }
@@ -339,11 +306,11 @@ simage_gdiplus_save(const char * filename,
   case 3:
   case 4:
     for (unsigned int y = 0; y < height; y++) {
-      for (unsigned int x = 0; x < width; x++) {
-	*dst++ = src[2]; *dst++ = src[1]; *dst++ = src[0];
-	/* ARGB GDI+ buffer */
-	if (numcomponents == 4) { *dst++ = src[3]; }
-	src -= numcomponents;
+      src -= width*numcomponents;
+      for (unsigned int x = 0; x < width*numcomponents; x+=numcomponents) {
+        *dst++ = src[x+2]; *dst++ = src[x+1]; *dst++ = src[x];
+        /* ARGB GDI+ buffer, internally really represented as BGRA */
+        if (numcomponents == 4) { *dst++ = src[x+3]; }
       }
       dst += stride;
     }
@@ -353,27 +320,26 @@ simage_gdiplus_save(const char * filename,
     delete bitmapData;
     delete bitmap;
     delete filename_wide;
-
     return 0;
   }
 
   bitmap->UnlockBits(bitmapData);
 
   int ret;
-  CLSID pngClsid;
+  CLSID imgClsid;
 
   /* handle special JPEG and TIFF naming cases */
   /* FIXME: too dirty. wash it! 20060418 tamer. */
   if (!strncmp(filetypeext, "jpg", 3)) {
-    ret = GetEncoderClsid("jpeg", &pngClsid);
+    ret = GetEncoderClsid("jpeg", &imgClsid);
   } else if (!strncmp(filetypeext, "tif", 3)) {
-    ret = GetEncoderClsid("tiff", &pngClsid);
+    ret = GetEncoderClsid("tiff", &imgClsid);
   } else {
-    ret = GetEncoderClsid(filetypeext, &pngClsid);
+    ret = GetEncoderClsid(filetypeext, &imgClsid);
   }
     
   if (ret != -1) { 
-    bitmap->Save(filename_wide, &pngClsid, NULL);
+    bitmap->Save(filename_wide, &imgClsid, NULL);
   }
 
   delete bitmapData;
@@ -383,37 +349,186 @@ simage_gdiplus_save(const char * filename,
   return 1;
 }
 
-typedef struct {
-  int width;
-  int height;
-  int numcomp;
-  int depth;  
-} simage_gdiplus_opendata;
-
 void * 
 simage_gdiplus_open(const char * filename,
-                   int * width,
-                   int * height,
-                   int * numcomponents)
+                    int * width,
+                    int * height,
+                    int * numcomponents)
 {
-  gdipluserror = ERR_NOT_IMPLEMENTED;
+  gdipluserror = ERR_NO_ERROR;
+
+  if (!gdiplus_init()) { gdipluserror = ERR_INIT; return NULL; }
+
+  /* convert C string filename to wide char */
+  wchar_t * filename_wide = new wchar_t[strlen(filename)+1];
+
+  if (!filename_wide) { gdipluserror = ERR_OPEN; return NULL; }
+  mbstowcs(filename_wide, filename, strlen(filename)+1);
+  
+  Gdiplus::Bitmap * bitmap = new Gdiplus::Bitmap(filename_wide);
+
+  if (bitmap && (bitmap->GetLastStatus() == Gdiplus::Ok)) {
+    *width = bitmap->GetWidth();
+    *height = bitmap->GetHeight();
+
+    Gdiplus::PixelFormat pixelFormat = bitmap->GetPixelFormat();
+
+    (*numcomponents) = (pixelFormat == PixelFormat8bppIndexed) ? 1 :
+      (pixelFormat == PixelFormat24bppRGB) ? 3 : 4;
+
+    /* Simply use PixelFormat24bppRGB for GIF images, so GDI+ handles
+       them correctly and we don't have to write a verbose palette
+       handling essay to gain proper GIF support. FIXME: a bit
+       dirty. rinse it! 20060520 tamer. */
+    GUID guid; bitmap->GetRawFormat(&guid);
+    if (guid == Gdiplus::ImageFormatGIF) { (*numcomponents) = 4; }
+
+    delete filename_wide;
+    return bitmap;
+  }
+
+  if (bitmap) { delete bitmap; }
+  delete filename_wide;
+
+  gdipluserror = ERR_OPEN;
   return NULL;
 }
-
 
 void 
 simage_gdiplus_close(void * opendata)
 {
-  simage_gdiplus_opendata * od = (simage_gdiplus_opendata*) opendata;
-  gdipluserror = ERR_NOT_IMPLEMENTED;
+  Gdiplus::Bitmap * bitmap = (Gdiplus::Bitmap*)opendata;
+  if (bitmap) { delete bitmap; }
 }
 
 int 
 simage_gdiplus_read_line(void * opendata, int y, unsigned char * buf)
 {
-  simage_gdiplus_opendata * od;
-  gdipluserror = ERR_NOT_IMPLEMENTED;
-   
-  od = (simage_gdiplus_opendata*)opendata;
-  return 0;
+  Gdiplus::Bitmap * bitmap = (Gdiplus::Bitmap*)opendata;
+  if (!bitmap && !buf) { gdipluserror = ERR_READ; return 0; }
+
+  Gdiplus::PixelFormat pixelFormat = bitmap->GetPixelFormat();
+
+  int width = bitmap->GetWidth();
+  int height = bitmap->GetHeight();
+
+  if (y < 0 || y > height) { gdipluserror = ERR_READ; return 0; }
+
+  int numcomponents = (pixelFormat == PixelFormat8bppIndexed) ? 1 :
+    (pixelFormat == PixelFormat24bppRGB) ? 3 : 4;
+
+  /* Simply use PixelFormat24bppRGB for GIF images, so GDI+ handles
+     them correctly and we don't have to write a verbose palette
+     handling essay to gain proper GIF support. FIXME: a bit
+     dirty. rinse it! 20060520 tamer. */
+  GUID guid; bitmap->GetRawFormat(&guid);
+  if (guid == Gdiplus::ImageFormatGIF) { numcomponents = 4; }
+  
+  /* default to RGBA conversion for other pixel formats */
+  if (numcomponents == 4) { pixelFormat = PixelFormat32bppARGB; }
+  
+  Gdiplus::BitmapData bitmapData;
+  Gdiplus::Rect rect(0, height-y-1, width, 1);
+  
+  bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
+                   pixelFormat, &bitmapData);
+  
+  unsigned char * src = (unsigned char *)bitmapData.Scan0;
+
+  switch (numcomponents) {
+  case 1:
+    memcpy(buf, src, width);
+    break;
+  case 3:
+  case 4:
+    for (unsigned int x = 0; x < width*numcomponents; x+=numcomponents) {
+      buf[x+2] = *src++; buf[x+1] = *src++; buf[x] = *src++;
+      /* ARGB GDI+ buffer, internally represented as BGRA */
+      if (numcomponents == 4) { buf[x+3] = *src++; }
+    }
+    break;
+  default:
+    gdipluserror = ERR_READ;
+    return 0;
+  }
+
+  bitmap->UnlockBits(&bitmapData);
+
+  return 1;
+}
+
+/*
+ * FIXME: unstable experimental region support API. Use it without
+ * knowing why and a fiercely looking fluffy cow will cross your way
+ * one day. The fluffy cow is gonna eat up all your code and will
+ * happily moo the doomsday symphony while blocking your getaway
+ * road. YA HAVE BEEN WARNED! 20060520 tamer.
+ */
+int 
+simage_gdiplus_read_region(void * opendata,
+                           int x, int y, int w, int h,
+                           unsigned char * buf)
+{
+  Gdiplus::Bitmap * bitmap = (Gdiplus::Bitmap*)opendata;
+  if (!bitmap && !buf) { gdipluserror = ERR_READ; return 0; }
+
+  Gdiplus::PixelFormat pixelFormat = bitmap->GetPixelFormat();
+
+  int width = bitmap->GetWidth();
+  int height = bitmap->GetHeight();
+
+  if (x < 0 || y < 0 || w <= 0 || h <= 0 ||
+      (x+w > width) || (y+h > height)) { gdipluserror = ERR_READ; return 0; }
+
+  int numcomponents = (pixelFormat == PixelFormat8bppIndexed) ? 1 :
+    (pixelFormat == PixelFormat24bppRGB) ? 3 : 4;
+
+  /* Simply use PixelFormat24bppRGB for GIF images, so GDI+ handles
+     them correctly and we don't have to write a verbose palette
+     handling essay to gain proper GIF support. FIXME: a bit
+     dirty. rinse it! 20060520 tamer. */
+  GUID guid; bitmap->GetRawFormat(&guid);
+  if (guid == Gdiplus::ImageFormatGIF) { numcomponents = 4; }
+  
+  /* default to RGBA conversion for other pixel formats */
+  if (numcomponents == 4) { pixelFormat = PixelFormat32bppARGB; }
+  
+  Gdiplus::BitmapData bitmapData;
+  Gdiplus::Rect rect(x, y, w, h);
+
+  bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
+                   pixelFormat, &bitmapData);
+  
+  unsigned int stride = bitmapData.Stride - w*numcomponents;
+  unsigned char * src = (unsigned char *)bitmapData.Scan0;
+  unsigned char * dst = buf + w*h*numcomponents;
+
+  switch (numcomponents) {
+  case 1:
+    for (unsigned int i = 0; i < h; i++) {
+      dst -= w;
+      memcpy(dst, src, w);
+      src += bitmapData.Stride;
+    }
+    break;
+  case 3:
+  case 4:
+    for (unsigned int i = 0; i < h; i++) {
+      dst -= w*numcomponents;
+      for (unsigned int j = 0; j < w*numcomponents; j+=numcomponents) {
+        dst[j+2] = *src++; dst[j+1] = *src++; dst[j] = *src++;
+        /* ARGB GDI+ buffer, internally really represented as BGRA */
+        if (numcomponents == 4) { dst[j+3] = *src++; }
+      }
+      src += stride;
+    }
+    break;
+  default:
+    gdipluserror = ERR_READ;
+    return 0;
+  }
+
+  bitmap->UnlockBits(&bitmapData);
+
+  return 1;
 }
