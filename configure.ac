@@ -498,7 +498,9 @@ if test x"$sim_ac_quicktime_support" = xfalse -a x"$sim_ac_gdiplus_support" = xf
 
   # : ${sim_ac_have_jasper=false}
   # AM_CONDITIONAL(SIMAGE_JASPER_SUPPORT, $sim_ac_have_libjpeg)
+fi
 
+if test x"$sim_ac_quicktime_support" = xfalse; then
   # **************************************************************************
   # Check if TARGA support is wanted.
 
