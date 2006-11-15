@@ -284,13 +284,13 @@ avi_encode_bitmap(void *handle, unsigned char *buf, int rgb2bgr)
   }
 
   hr = AVIStreamWrite(context->pscomp,
-    context->framenumber,
-    1,        
-    (LPBYTE) buf,
-      context->width * context->height,  
-    AVIIF_KEYFRAME,
-    NULL,
-    NULL);
+                      context->framenumber,
+                      1,        
+                      (LPBYTE) buf,
+                      context->width * context->height * 3, /* nc = 3 (24 bit) */  
+                      AVIIF_KEYFRAME,
+                      NULL,
+                      NULL);
 
   /*
   fixme 20020227 thammer: Is it correct / smart to let every frame be
