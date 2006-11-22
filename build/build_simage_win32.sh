@@ -1,11 +1,10 @@
 #!/bin/bash
 
-# This script will download, (cvs) checkout and build simage
+# This script will download, (svn) checkout and build simage
 # from scratch, including all dependent libraries.
 
 # Before running this script, please
 # - install cygwin, including wget
-# - make sure you've done cvs login to cvs.coin3d.org
 
 # ToDo:
 #
@@ -40,7 +39,7 @@ if test "X$SIMAGE_PARAMS_OK" = "Xno"; then
   echo ""
   echo "       If the first syntax is used, target dir will be created, and it"
   echo "       will contain four subdirectories named \"sdk\", \"checkout\","
-  echo "       \"configure\", and \"install\"."
+  echo "       \"config\", and \"install\"."
   echo "       If the second syntax is used, the four specified directories"
   echo "       are used instead of one top-level directory (target dir)."
   echo ""
@@ -72,7 +71,7 @@ if test $# -eq 1; then
   fi
   SIMAGE_SDK=$1/sdk
   SIMAGE_CHECKOUT=$1/checkout
-  SIMAGE_CONFIGURE=$1/configure
+  SIMAGE_CONFIGURE=$1/config
   SIMAGE_INSTALL=$1/install
 fi
 
@@ -129,16 +128,16 @@ fi
 
 SIMAGE_SDK=$SIMAGE_SDK/dist
 
-# cvs update simage
+# svn update simage
 
 if ! test -d $SIMAGE_CHECKOUT/simage; then
   echo "[SIMAGE]      Checking out simage from scratch"
   cd $SIMAGE_CHECKOUT
-  cvs -z3 -d:pserver:cvs@cvs.coin3d.org:/export/cvsroot co simage
+  svn co https://svn.coin3d.org/repos/simage/trunk simage
 else
   echo "[SIMAGE]      Updating simage"
   cd $SIMAGE_CHECKOUT/simage
-  cvs -z3 update -dP
+  svn update
 fi
 
 # configure and make simage
