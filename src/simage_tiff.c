@@ -133,7 +133,7 @@ tiff_try_read_rgba(TIFF *in, int w, int h, int format,
     newbuffer = buffer;
   }
   if (!TIFFReadRGBAImage(in, w, h, 
-                         (unsigned long*) newbuffer, 1)) {
+                         (unsigned int*) newbuffer, 1)) {
     free(newbuffer);
     return ERR_READ;
   }
