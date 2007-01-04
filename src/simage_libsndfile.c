@@ -6,6 +6,7 @@
 #include <simage_libsndfile.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 
 #include <sndfile.h>
