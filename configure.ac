@@ -42,6 +42,8 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG(C++)
 
+SIM_AC_STRIP_EXIT_DECLARATION
+
 # The next part screwed up default compiler flags when set up above AC_PROG_CC
 # et al.  20041021 larsa
 if $BUILD_WITH_MSVC; then
