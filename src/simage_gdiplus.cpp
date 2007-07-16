@@ -118,19 +118,30 @@ simage_gdiplus_load(const char * filename,
   /* default to RGBA conversion for other pixel formats */
   if ((*numcomponents) == 4) { pixelFormat = PixelFormat32bppARGB; }
 
-  Gdiplus::BitmapData * bitmapData = new Gdiplus::BitmapData;
+  Gdiplus::BitmapData bitmapData;
   Gdiplus::Rect rect(0, 0, *width, *height);
     
-  bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
-                   pixelFormat, bitmapData);
+  Gdiplus::Status result = bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
+                                   pixelFormat, &bitmapData);
 
-  unsigned int stride = bitmapData->Stride - (*width)*(*numcomponents);
-  unsigned char * src = (unsigned char *)bitmapData->Scan0;
+  if (result != Gdiplus::Ok) {
+    if (result == Gdiplus::OutOfMemory)
+      gdipluserror = ERR_MEM;      
+    else 
+      gdipluserror = ERR_OPEN;
+    bitmap->UnlockBits(&bitmapData);
+    delete bitmap;
+    return NULL; 
+  }
+
+  unsigned int stride = bitmapData.Stride - (*width)*(*numcomponents);
+  unsigned char * src = (unsigned char *)bitmapData.Scan0;
+
   unsigned char * dst = (unsigned char *)malloc((*width)*(*height)*(*numcomponents));
+  if (!dst) { gdipluserror = ERR_MEM; return NULL; }
+
   /* start at end of buffer */
   dst += (*width)*(*height)*(*numcomponents);
-
-  if (!dst) { gdipluserror = ERR_MEM; return NULL; }
 
   switch ((*numcomponents)) {
   case 1: 
@@ -138,7 +149,7 @@ simage_gdiplus_load(const char * filename,
       for (unsigned int y = 0; y < (*height); y++) {
         dst -= (*width);
         memcpy(dst, src, (*width));
-        src += bitmapData->Stride;
+        src += bitmapData.Stride;
       }
     }
     break;
@@ -158,14 +169,13 @@ simage_gdiplus_load(const char * filename,
     break;
   default:
     gdipluserror = ERR_OPEN;
-    delete bitmapData;
+    free(dst); dst = NULL;
+    bitmap->UnlockBits(&bitmapData);
     delete bitmap;
     return NULL;
   }
 
-  bitmap->UnlockBits(bitmapData);
-    
-  delete bitmapData;
+  bitmap->UnlockBits(&bitmapData);    
   delete bitmap;    
 
   return dst;
