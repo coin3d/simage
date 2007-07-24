@@ -57,6 +57,11 @@ If you still can't get the configure script to detect the presence of
 and how to use the Qt library, please mail the config.log file to
 <coin-support@coin3d.org> and ask for help.
 
+!no-gdiplus
+Could not find a way to build against GDI+ (GdiPlus.h / -lgdiplus).
+GDI+ is part of the Microsoft Windows SDK download.  Make sure you have
+the MS Windows SDK set up correctly for your compiler.
+
 !no-qgl
 The configure script could not find any way to build code which uses
 Qt's OpenGL bindings (called "QGL"), neither as part of the main Qt
