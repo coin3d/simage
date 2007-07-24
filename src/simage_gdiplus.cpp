@@ -8,14 +8,33 @@
  * black hole known to mankind... 20060415 tamer.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /* HAVE_CONFIG_H */
+
 #include <simage_gdiplus.h>
 
 #include <windows.h>
+
+/* MSVC6 fix for gdiplus.h */
+#if defined(_MSC_VER) && (_MSC_VER == 1200) && !defined(ULONG_PTR)
+#define ULONG_PTR ULONG /* (32bit build) */
+#endif /* MSVC6 */
 #include <gdiplus.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+
+#ifdef HAVE_GDIPLUS_LOCKBITS_RECTARG_POINTER
+#define LOCKBITS_RECT_CAST(arg) &arg
+#else // !GDIPVER
+/* Old VC6 legacy download from codeproject.com with slightly
+   different LockBits() signature (Rect by reference). */
+#define LOCKBITS_RECT_CAST(arg) arg
+#endif // !GDIPVER
+
 
 enum { 
   ERR_NO_ERROR,
@@ -120,9 +139,10 @@ simage_gdiplus_load(const char * filename,
 
   Gdiplus::BitmapData bitmapData;
   Gdiplus::Rect rect(0, 0, *width, *height);
-    
-  Gdiplus::Status result = bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
-                                   pixelFormat, &bitmapData);
+
+  Gdiplus::Status result = bitmap->LockBits(LOCKBITS_RECT_CAST(rect),
+                                            Gdiplus::ImageLockModeRead,
+                                            pixelFormat, &bitmapData);
 
   if (result != Gdiplus::Ok) {
     if (result == Gdiplus::OutOfMemory)
@@ -184,14 +204,18 @@ simage_gdiplus_load(const char * filename,
 char * 
 simage_gdiplus_get_savers(void)
 {
-  unsigned int num, size;
+  gdipluserror = ERR_NO_ERROR;
+  if (!gdiplus_init()) {
+    gdipluserror = ERR_INIT;
+    return NULL;
+  }
 
-  Gdiplus::ImageCodecInfo * pImageCodecInfo;
+  UINT num = 0, size = 0;
+  Gdiplus::GetImageEncodersSize(&num, &size);
 
-  Gdiplus::GetImageDecodersSize(&num, &size);
-  pImageCodecInfo = (Gdiplus::ImageCodecInfo*)malloc(size);
+  Gdiplus::ImageCodecInfo * pImageCodecInfo = (Gdiplus::ImageCodecInfo *) malloc(size);
 
-  Gdiplus::GetImageDecoders(num, size, pImageCodecInfo);
+  Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
 
   char * formats = NULL;
   unsigned int formats_size = 0;
@@ -207,7 +231,7 @@ simage_gdiplus_get_savers(void)
     format_len = strlen(format);
 
     formats_size += format_len + ((i == 0) ? 1 : 2);
-    formats = (char *)realloc(formats, formats_size);
+    formats = (char *) realloc(formats, formats_size);
 
     /* make JPEG and TIFF strings 3 letter extensions */
     /* FIXME: too dirty. wash it! 20060418 tamer. */
@@ -291,7 +315,7 @@ simage_gdiplus_save(const char * filename,
   Gdiplus::BitmapData * bitmapData = new Gdiplus::BitmapData;
   Gdiplus::Rect rect(0, 0, width, height);
 
-  bitmap->LockBits(&rect,
+  bitmap->LockBits(LOCKBITS_RECT_CAST(rect),
                    Gdiplus::ImageLockModeRead | Gdiplus::ImageLockModeWrite,
                    pixelFormat, bitmapData);
 
@@ -448,7 +472,7 @@ simage_gdiplus_read_line(void * opendata, int y, unsigned char * buf)
   Gdiplus::BitmapData bitmapData;
   Gdiplus::Rect rect(0, height-y-1, width, 1);
   
-  bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
+  bitmap->LockBits(LOCKBITS_RECT_CAST(rect), Gdiplus::ImageLockModeRead,
                    pixelFormat, &bitmapData);
   
   unsigned char * src = (unsigned char *)bitmapData.Scan0;
@@ -516,7 +540,7 @@ simage_gdiplus_read_region(void * opendata,
   Gdiplus::BitmapData bitmapData;
   Gdiplus::Rect rect(x, y, w, h);
 
-  bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
+  bitmap->LockBits(LOCKBITS_RECT_CAST(rect), Gdiplus::ImageLockModeRead,
                    pixelFormat, &bitmapData);
   
   unsigned int stride = bitmapData.Stride - w*numcomponents;
