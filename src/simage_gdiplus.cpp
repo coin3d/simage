@@ -35,7 +35,6 @@
 #define LOCKBITS_RECT_CAST(arg) arg
 #endif // !GDIPVER
 
-
 enum { 
   ERR_NO_ERROR,
   ERR_OPEN,
@@ -56,10 +55,11 @@ gdiplus_init(void)
 
   if (!did_init) {
     /* initialize GDI+ */
-    unsigned long gdiplusToken;
+    unsigned long gdiplusToken = 0;
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-    if (Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL) ==
-        Gdiplus::Ok) { did_init = 1; }
+    if (Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL) == Gdiplus::Ok) {
+      did_init = 1;
+    }
   }
 
   return did_init;
@@ -244,10 +244,10 @@ simage_gdiplus_get_savers(void)
     }
 
     if (i == 0) {
-      strncpy(formats, format, format_len);
+      strncpy(formats, format, format_len + 1);
     } else {
-      strncat(formats, ",", 1);
-      strncat(formats, format, format_len);
+      strncat(formats, ",", 2);
+      strncat(formats, format, format_len + 1);
     }
 
     free(format);
