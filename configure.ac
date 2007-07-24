@@ -88,16 +88,17 @@ AC_ARG_ENABLE(
     *) ;;
   esac])
 
-
 sim_ac_gdiplus_support_wanted=false
-AC_ARG_ENABLE(
-  [gdiplus],
-  AC_HELP_STRING([--enable-gdiplus], [Use GDI+ on Windows to load/save images]), [
-  case $enableval in
-    yes) sim_ac_gdiplus_support_wanted=true ;;
-    *) ;;
+AC_ARG_WITH([gdiplus],
+  AC_HELP_STRING([--with-gdiplus], [Use GDI+ on Windows to load/save images]), [
+  case $withval in
+    no | false) sim_ac_gdiplus_support_wanted=false ;;
+    yes | true) sim_ac_gdiplus_support_wanted=true ;;
+    *) sim_ac_gdiplus_support_wanted=true
+       sim_ac_gdiplus_path=$withval
+       ;;
   esac])
-
+    
 # only test for C++ compiler when qimage support is enabled
 
 if test x"$am_cv_prog_cc_stdc" = x"no"; then
@@ -310,8 +311,12 @@ sim_ac_gdiplus_support=false
 if $sim_ac_gdiplus_support_wanted; then
   SIM_AC_HAVE_GDIPLUS_IFELSE([
     AC_DEFINE(SIMAGE_GDIPLUS_SUPPORT, ,[define to support GDI+])
-    SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_gdiplus_libs"
-    LIBS="$LIBS $sim_ac_gdiplus_libs"
+    SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS $sim_ac_gdiplus_CPPFLAGS"
+    SIMAGE_EXTRA_LDFLAGS="$SIMAGE_EXTRA_LDFLAGS $sim_ac_gdiplus_LDFLAGS"
+    SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_gdiplus_LIBS"
+    CPPFLAGS="$CPPFLAGS $sim_ac_gdiplus_CPPFLAGS"
+    LDFLAGS="$LDFLAGS $sim_ac_gdiplus_LDFLAGS"
+    LIBS="$LIBS $sim_ac_gdiplus_LIBS"
     SIM_AC_CONFIGURATION_SETTING([GDI+ support], [Yes])
     # formats supported read/write by GDI+
     SIM_AC_CONFIGURATION_SETTING([GIF image format support], 
@@ -326,14 +331,17 @@ if $sim_ac_gdiplus_support_wanted; then
                                  [Yes (GDI+)])
     sim_ac_gdiplus_support=true
   ], [
-    SIM_AC_CONFIGURATION_SETTING([GDI+ support], [No (needs installed GDI+ SDK)])
+    if $sim_ac_gdiplus_support_wanted; then
+      SIM_AC_ERROR([no-gdiplus])
+    else
+      SIM_AC_CONFIGURATION_SETTING([GDI+ support], [No (needs installed GDI+ SDK)])
+    fi
   ])
 else
-  SIM_AC_CONFIGURATION_SETTING([GDI+ support], [No (default, enable with --enable-gdiplus)])
+  SIM_AC_CONFIGURATION_SETTING([GDI+ support], [No (default, enable with --with-gdiplus)])
 fi
 
 AM_CONDITIONAL(SIMAGE_GDIPLUS_SUPPORT, $sim_ac_gdiplus_support)
-
 
 # **************************************************************************
 # Check if QuickTime support is wanted (and if so, available).
