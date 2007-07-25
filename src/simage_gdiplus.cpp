@@ -26,6 +26,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #ifdef HAVE_GDIPLUS_LOCKBITS_RECTARG_POINTER
 #define LOCKBITS_RECT_CAST(arg) &arg
@@ -47,6 +48,211 @@ enum {
 };
 
 static int gdipluserror = ERR_NO_ERROR;
+
+/*
+ * Get the pixel format that should be used for reading the image.
+ *
+ * The component depth and component composition of simage images differ
+ * from the pixel formats used by GDI+. This function maps a Bitmap to 
+ * an appropriate PixelFormat that makes it easy for us to copy the
+ * bitmap data returned by Bitmap::LockBits(...) to the simage image.
+ *
+ * The 'grayscale' flag is an output parameter that is used to indicate 
+ * that even though the returned pixel format is PixelFormat32bppARGB, 
+ * the image is really a gray scale image with alpha channel that can be
+ * converted to a two-component simage image.
+ */
+static Gdiplus::PixelFormat
+getReadFormat(Gdiplus::Bitmap & bitmap, bool & grayscale)
+{
+  grayscale = false;
+  Gdiplus::PixelFormat format = bitmap.GetPixelFormat();
+
+  if (Gdiplus::IsIndexedPixelFormat(format)) {
+    INT palettesize = bitmap.GetPaletteSize();
+    Gdiplus::ColorPalette * palette = 
+      reinterpret_cast<Gdiplus::ColorPalette *>(new char[palettesize]);
+    bitmap.GetPalette(palette, palettesize);
+    bool alphaflag = (palette->Flags & Gdiplus::PaletteFlagsHasAlpha) != 0;
+    bool grayflag = (palette->Flags & Gdiplus::PaletteFlagsGrayScale) != 0;
+    delete[] reinterpret_cast<char *>(palette);
+
+    if (!grayflag && !alphaflag)
+      return PixelFormat24bppRGB;
+    if (!grayflag && alphaflag)
+      return PixelFormat32bppARGB;
+    if (grayflag && !alphaflag)
+      return PixelFormat16bppGrayScale;
+    
+    // since GDI+ doesn't define a non-indexed color format for 
+    // grayscale images with alpha channel, we must extract the 
+    // image as ARGB, and convert it to simage's 0xGGAA - format 
+    // afterwards.
+    grayscale = true;
+    return PixelFormat32bppARGB;
+  }
+
+  if (format == PixelFormat16bppGrayScale) {
+    return PixelFormat16bppGrayScale;
+  }
+
+  if ((format == PixelFormat16bppRGB555) ||
+      (format == PixelFormat16bppRGB565) ||
+      (format == PixelFormat24bppRGB) ||
+      (format == PixelFormat32bppRGB) ||
+      (format == PixelFormat48bppRGB)) {
+    return PixelFormat24bppRGB;
+  }
+
+  return PixelFormat32bppARGB;
+}
+
+/*
+ * Crate a buffer and copy image data into the buffer.
+ *
+ * Only use this function for RGB or RGBA images, that is
+ * (numcomponents == 3) || (numcomponents == 4). 
+ *
+ * The 'stride' parameter is the number of bytes between each
+ * consecutive line in the input buffer.
+ *
+ * The image data is stored in the output buffer in simage 
+ * representation: 0xRRGGBBAA and 0xRRGGBB.
+ *
+ * The function will return NULL if malloc fails to allocate
+ * memory for the output buffer.
+ */
+static unsigned char *
+copyImageBuffer(unsigned char * src, unsigned int width, 
+                unsigned int height, 
+                unsigned int numcomponents, unsigned int stride)
+{
+  assert(src);
+  assert(stride >= (width * numcomponents));
+  assert((numcomponents == 3) || (numcomponents == 4));
+  if ((numcomponents != 3) && (numcomponents != 4)) { return NULL; }
+
+  unsigned char * dst = 
+    (unsigned char *)malloc(width * height * numcomponents);
+  if (!dst) { return NULL; }
+  
+  /* The image must be flipped horizontally so we start writing from the
+     end of the the destination buffer */
+  dst += width * height * numcomponents;
+
+  if (numcomponents == 3) {
+    for (unsigned int y = 0; y < height; y++) {
+      dst -= width * numcomponents;
+      for (unsigned int x = 0; x < width; ++x) {
+        /* GDI+ stores the image internally as BGR, 
+           we store it as RGB */
+        unsigned int offset = numcomponents * x;
+        dst[offset] = src[offset + 2];
+        dst[offset + 1] = src[offset + 1];
+        dst[offset + 2] = src[offset];
+      }
+      src += stride;
+    }
+  } else {
+    for (unsigned int y = 0; y < height; y++) {
+      dst -= width * numcomponents;
+      for (unsigned int x = 0; x < width; ++x) {
+        /* GDI+ stores the image internally as BGRA, 
+           we store it as RGBA */
+        unsigned int offset = numcomponents * x;
+        dst[offset] = src[offset + 2];
+        dst[offset + 1] = src[offset + 1];
+        dst[offset + 2] = src[offset];
+        dst[offset + 3] = src[offset + 3];
+      }
+      src += stride;
+    }
+  }
+  
+  return dst;
+}
+
+
+/*
+ * Crate a buffer and copy image data into the buffer.
+ *
+ * Only use this function for images that GDI+ represent as ARGB,
+ * but simage can store as 0xGGAA.
+ *
+ * The 'stride' parameter is the number of bytes between each
+ * consecutive line in the input buffer.
+ *
+ * The function will return NULL if malloc fails to allocate
+ * memory for the output buffer.
+ */
+static unsigned char *
+copy32bppGrayScaleBuffer(unsigned char * src, unsigned int width, 
+                         unsigned int height, unsigned int stride)
+{
+  assert(src);
+  assert(stride >= (width * 4));
+
+  unsigned char * dst = (unsigned char *)malloc(width * height * 2);
+  if (!dst) { return NULL; }
+
+  /* The image must be flipped horizontally so we start writing from the
+     end of the the destination buffer */
+  dst += width * height * 2;
+
+  for (unsigned int y = 0; y < height; y++) {
+    dst -= width * 2;
+    for (unsigned int x = 0; x < width * 2; 
+         x += 2) {
+      /* a GDI+ buffer stores the components internally in reverse order, 
+         eg. ARGB is stored as BGRA. Extract the blue component as the 
+         gray value and the alpha value.*/
+      dst[x] = src[x];
+      dst[x + 1] = src[x + 3];
+    }
+    src += stride;
+  }
+  
+  return dst;
+}
+
+/*
+ * Crate a buffer and copy image data into the buffer.
+ *
+ * Only use this function for images that GDI+ represent as 16-bits
+ * gray scale. Simage stores these as 8-bits grayscale.
+ *
+ * The 'stride' parameter is the number of bytes between each
+ * consecutive line in the input buffer.
+ *
+ * The function will return NULL if malloc fails to allocate
+ * memory for the output buffer.
+ */
+static unsigned char *
+copy16bppGrayScaleBuffer(unsigned char * src, unsigned int width,
+                         unsigned int height, unsigned int stride)
+{
+  assert(stride >= (2 * width));
+
+  unsigned char * dst = (unsigned char *)malloc(width * height);
+  if (!dst) { return NULL; }
+
+  /* The image must be flipped horizontally so we start writing from the
+     end of the the destination buffer */
+  dst += width * height;
+
+  unsigned short * shortsrc = (unsigned short *)src;
+
+  for (unsigned int y = 0; y < height; ++y) {
+    dst -= width;
+    for (unsigned int x = 0; x < width; ++x) {
+      /* Compress the 2-byte value to a 1-byte value */
+      dst[x] = (unsigned char)((shortsrc[x] / 65535.0) * 255.0);
+    }
+    shortsrc += stride;
+  }
+  
+  return dst;
+}
 
 static int
 gdiplus_init(void) 
@@ -133,70 +339,64 @@ simage_gdiplus_load(const char * filename,
                                           numcomponents);
   if (!bitmap) { return NULL; }
 
-  Gdiplus::PixelFormat pixelFormat = bitmap->GetPixelFormat();
-  /* default to RGBA conversion for other pixel formats */
-  if ((*numcomponents) == 4) { pixelFormat = PixelFormat32bppARGB; }
+  bool grayscale = false;
+  Gdiplus::PixelFormat format = getReadFormat(*bitmap, grayscale);
 
-  Gdiplus::BitmapData bitmapData;
+  Gdiplus::BitmapData bitmapdata;
   Gdiplus::Rect rect(0, 0, *width, *height);
 
   Gdiplus::Status result = bitmap->LockBits(LOCKBITS_RECT_CAST(rect),
                                             Gdiplus::ImageLockModeRead,
-                                            pixelFormat, &bitmapData);
+                                            format, &bitmapdata);
 
   if (result != Gdiplus::Ok) {
     if (result == Gdiplus::OutOfMemory)
       gdipluserror = ERR_MEM;      
     else 
       gdipluserror = ERR_OPEN;
-    bitmap->UnlockBits(&bitmapData);
+    bitmap->UnlockBits(&bitmapdata);
     delete bitmap;
     return NULL; 
   }
 
-  unsigned int stride = bitmapData.Stride - (*width)*(*numcomponents);
-  unsigned char * src = (unsigned char *)bitmapData.Scan0;
+  unsigned char * src = (unsigned char *)bitmapdata.Scan0;
 
-  unsigned char * dst = (unsigned char *)malloc((*width)*(*height)*(*numcomponents));
-  if (!dst) { gdipluserror = ERR_MEM; return NULL; }
+  unsigned char * dst = NULL;
 
-  /* start at end of buffer */
-  dst += (*width)*(*height)*(*numcomponents);
-
-  switch ((*numcomponents)) {
-  case 1: 
-    {
-      for (unsigned int y = 0; y < (*height); y++) {
-        dst -= (*width);
-        memcpy(dst, src, (*width));
-        src += bitmapData.Stride;
-      }
-    }
+  switch (format) {
+  case PixelFormat16bppGrayScale:
+    (*numcomponents) = 1;
+    dst = copy16bppGrayScaleBuffer(src, (*width), (*height),
+                                   bitmapdata.Stride);
     break;
-  case 3:
-  case 4:
-    {
-      for (unsigned int y = 0; y < (*height); y++) {
-        dst -= (*width)*(*numcomponents);
-        for (unsigned int x = 0; x < (*width)*(*numcomponents); x+=(*numcomponents)) {
-          dst[x+2] = *src++; dst[x+1] = *src++; dst[x] = *src++;
-          /* ARGB GDI+ buffer, internally really represented as BGRA */
-          if ((*numcomponents) == 4) { dst[x+3] = *src++; }
-        }
-        src += stride;
-      }
+  case PixelFormat24bppRGB:
+    (*numcomponents) = 3;
+    dst = copyImageBuffer(src, (*width), (*height),
+                          (*numcomponents),
+                          bitmapdata.Stride);
+    break;
+  case PixelFormat32bppARGB:
+    if (grayscale) {
+      (*numcomponents) = 2;
+      dst = copy32bppGrayScaleBuffer(src, (*width), (*height),
+                                     bitmapdata.Stride);
+    } else {
+      (*numcomponents) = 4;
+      dst = copyImageBuffer(src, (*width), (*height),
+                            (*numcomponents),
+                            bitmapdata.Stride);
     }
     break;
   default:
-    gdipluserror = ERR_OPEN;
-    free(dst); dst = NULL;
-    bitmap->UnlockBits(&bitmapData);
-    delete bitmap;
-    return NULL;
+    dst = NULL;
   }
-
-  bitmap->UnlockBits(&bitmapData);    
+  
+  bitmap->UnlockBits(&bitmapdata);    
   delete bitmap;    
+
+  if (!dst) {
+    gdipluserror = ERR_MEM;
+  }
 
   return dst;
 }
