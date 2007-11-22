@@ -16,8 +16,12 @@ dist_m4data_DATA = cfg/simage.m4
 cfgdatadir = $(datadir)/Coin/conf
 cfgdata_DATA = simage-@CONFIG@.cfg
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA= simage.pc
+
 EXTRA_DIST = \
 	simage.cfg.in \
+	simage.pc.in \
 	cfg/depcomp \
 	cfg/ltconfig \
 	cfg/wrapmsvc.exe \

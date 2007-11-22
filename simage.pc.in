@@ -1,0 +1,19 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: simage
+Description: a library with image format loaders and front-ends to common import libraries
+Version: @VERSION@
+Requires:
+Conflicts:
+Libs: -L${libdir} @SIMAGE_EXTRA_LDFLAGS@ @SIMAGE_EXTRA_LIBS@
+Cflags: -I${includedir} @SIMAGE_EXTRA_CFLAGS@ @SIMAGE_EXTRA_CPPFLAGS@
+
+simage_host="@host@"
+compiler=@COIN_COMPILER@
+compiler_is_gcc=@ac_compiler_gnu@
+datadir=@datadir@
+frameworkdir=@frameworkdir@
+msvcrt=@SIMAGE_MSVC_LIBC@
