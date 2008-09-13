@@ -1,3 +1,24 @@
+
+misc/
+        A directory for various scripts, and the location to put the GDI+
+        SDK for when building simage from one of the msvc*/ directories.
+
+msvc6/
+        Visual Studio build files for Visual Studio 6.
+        Requires the GDI+ SDK.  See misc/README.GDI+.
+
+msvc7/
+        Visual Studio build files for Visual Studio 7/7.1.
+        Requires the GDI+ SDK.  See misc/README.GDI+.
+
+msvc8/
+        Visual Studio build files for Visual Studio 8.
+        Requires the GDI+ SDK.  See misc/README.GDI+.
+
+msvc9/
+        Visual Studio build files for Visual Studio 9.
+        Requires the GDI+ SDK.  See misc/README.GDI+.
+
 simage.spec.in
 
         Template processed by configure script to generate an RPM
@@ -25,24 +46,12 @@ build_simage_win32.sh
         * Requires cygwin, wget and VisualC++ V6 
         * Run from the command line in any directory.
 
-        This script is used by Systems In Motion when creating binary
-        releases of simage, and is probably of little use to most
-        simage users. If you want to configure and build simage yourself,
-        please read the INSTALL file in the simage root directory for 
-        instructions.
-
 build_simage_libs_win32.sh
 
         Downloads and builds all libraries simage depends on.
 
         * Requires cygwin, wget and VisualC++ V6 
         * Run from the command line in any directory.
-
-        This script is used by Systems In Motion when creating binary
-        releases of simage, and is probably of little use to most
-        simage users. If you want to configure and build simage yourself,
-        please read the INSTALL file in the simage root directory for 
-        instructions.
 
 
 libungif_win32.diff
