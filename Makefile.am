@@ -20,19 +20,58 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA= simage.pc
 
 EXTRA_DIST = \
-	simage.cfg.in \
-	simage.pc.in \
-	cfg/depcomp \
-	cfg/ltconfig \
-	cfg/wrapmsvc.exe \
-	cfg/gendsp.sh \
-	cfg/errors.txt \
-	build/simage.spec.in \
-	docs/announcement-1_6_0.txt \
-	docs/announcement-1_6_1.txt \
-	src/simage_jpeg_reader.icc \
-	src/simage_jpeg_writer.icc \
-	README.WIN32
+        simage.cfg.in \
+        simage.pc.in \
+        cfg/depcomp \
+        cfg/ltconfig \
+        cfg/wrapmsvc.exe \
+        cfg/gendsp.sh \
+        cfg/errors.txt \
+        build/simage.spec.in \
+        build/README \
+        build/msvc6/config-debug.h \
+        build/msvc6/simage1_install.dsp \
+        build/msvc6/simage1.dsw \
+        build/msvc6/include/simage.h \
+        build/msvc6/simage1_uninstall.dsp \
+        build/msvc6/config-release.h \
+        build/msvc6/config.h \
+        build/msvc6/simage1.dsp \
+        build/msvc7/config-debug.h \
+        build/msvc7/simage1.sln \
+        build/msvc7/simage1_uninstall.vcproj \
+        build/msvc7/include/simage.h \
+        build/msvc7/simage1.vcproj \
+        build/msvc7/config-release.h \
+        build/msvc7/config.h \
+        build/msvc7/simage1_install.vcproj \
+        build/msvc8/config-debug.h \
+        build/msvc8/simage1.sln \
+        build/msvc8/simage1_uninstall.vcproj \
+        build/msvc8/include/simage.h \
+        build/msvc8/simage1.vcproj \
+        build/msvc8/config-release.h \
+        build/msvc8/config.h \
+        build/msvc8/simage1_install.vcproj \
+        build/msvc9/config-debug.h \
+        build/msvc9/simage1.sln \
+        build/msvc9/simage1_uninstall.vcproj \
+        build/msvc9/include/simage.h \
+        build/msvc9/simage1.vcproj \
+        build/msvc9/config-release.h \
+        build/msvc9/config.h \
+        build/msvc9/simage1_install.vcproj \
+        build/misc/create-directories.bat \
+        build/misc/install-headers.bat \
+        build/misc/uninstall-headers.bat \
+        build/misc/README.GDI+ \
+        build/misc/install-sdk.bat \
+        build/misc/uninstall-sdk.bat \
+        docs/announcement-1_6_0.txt \
+        docs/announcement-1_6_1.txt \
+        src/simage_jpeg_reader.icc \
+        src/simage_jpeg_writer.icc \
+        README.WIN32
 
 DISTCLEANFILES = \
 	libtool \
