@@ -18,3 +18,5 @@ echo mkdir %COINDIR%\lib
 mkdir lib
 :libexists
 
+popd
+
