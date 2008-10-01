@@ -261,7 +261,16 @@ gdiplus_init(void)
 
   if (!did_init) {
     /* initialize GDI+ */
+
+    /* Windows 64-bit uses the LLP64 type model, where int and long
+     * are 32-bit and a pointer is 64-bit. Most Unices use the LP64
+     * where int is 32-bit and long and pointer are 64-bit. */
+    /* FIXME: the following solution is a kludge. 20081001 tamer. */
+#if defined(_WIN64)
+    unsigned long long gdiplusToken = 0;
+#else
     unsigned long gdiplusToken = 0;
+#endif
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     if (Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL) == Gdiplus::Ok) {
       did_init = 1;
