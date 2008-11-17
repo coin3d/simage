@@ -182,9 +182,18 @@ s_params_set(s_params * params, ...)
     type = va_arg(ap, int);
     argerr = 0;
     switch (type) {
+
     case S_INTEGER_PARAM_TYPE:
       add_integer_param(params, name, va_arg(ap, int));
       break;
+
+      /* FIXME: one should never use 'float' as a type for va_arg, so
+         this type is bogus. see for instance
+
+         http://c-faq.com/varargs/float.html
+
+         -mortene
+      */
     case S_FLOAT_PARAM_TYPE:
 #if (__GNUC__ == 2 && __GNUC_MINOR__ == 96) || __GNUC__ >= 3
       /* fix for silly bug in gcc 2.96 */
@@ -193,18 +202,23 @@ s_params_set(s_params * params, ...)
       add_float_param(params, name, va_arg(ap, float));
 #endif /* gcc version 2.96 */
       break;
+
     case S_DOUBLE_PARAM_TYPE:
       add_double_param(params, name, va_arg(ap, double));
       break;
+
     case S_STRING_PARAM_TYPE:
       add_string_param(params, name, va_arg(ap, const char*));
       break;
+
     case S_POINTER_PARAM_TYPE:
       add_pointer_param(params, name, va_arg(ap, void *));
       break;
+
     case S_FUNCTION_PARAM_TYPE:
       add_function_param(params, name, va_arg(ap, s_generic_func*));
       break;
+
     default:
       argerr = 1;
       break;
