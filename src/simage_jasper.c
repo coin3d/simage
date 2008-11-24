@@ -6,7 +6,7 @@
 #include <config.h>
 #ifdef HAVE_JASPER
 
-#include <simage_tiff.h>
+#include <simage_jasper.h>
 
 /* needed since Japser includes its own config file */
 #undef PACKAGE
