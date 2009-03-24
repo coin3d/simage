@@ -800,18 +800,31 @@ LIBFLAGS=
 
 AC_SUBST([LIBFLAGS], [])
 
-AM_CONDITIONAL(BUILD_WITH_MSVC, $BUILD_WITH_MSVC)
+# check if compiler/linker handles __declspec()
+sim_ac_win32_declspec_available=false
+AC_MSG_CHECKING([for __declspec() support])
+AC_TRY_LINK(
+ [],
+ [__declspec(dllimport) int foo;],
+ [sim_ac_win32_declspec_available=true
+  AC_MSG_RESULT([available])],
+ [AC_MSG_RESULT([not available])])
 
-if $BUILD_WITH_MSVC; then
-  rm -f vc60.pdb
-  LIBFLAGS="$LIBFLAGS $sim_ac_msvcrt_LIBLDFLAGS"
-  LIBS="$LIBS $sim_ac_msvcrt_LIBLIBS"
+if $sim_ac_win32_declspec_available; then
   if $SIMAGE_STATIC; then
     SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS -DSIMAGE_NOT_DLL"
   else
     CPPFLAGS="-DSIMAGE_MAKE_DLL $CPPFLAGS"
     SIMAGE_EXTRA_CPPFLAGS="$SIMAGE_EXTRA_CPPFLAGS -DSIMAGE_DLL"
   fi
+fi
+
+AM_CONDITIONAL(BUILD_WITH_MSVC, $BUILD_WITH_MSVC)
+
+if $BUILD_WITH_MSVC; then
+  rm -f vc60.pdb
+  LIBFLAGS="$LIBFLAGS $sim_ac_msvcrt_LIBLDFLAGS"
+  LIBS="$LIBS $sim_ac_msvcrt_LIBLIBS"
 
   debugfile=`pwd`/src/simage${SIMAGE_MAJOR_VERSION}${SUFFIX}.pdb
   debugfile=`cygpath -w "$debugfile" | sed 's,\\\\,\\\\\\\\,g'`
