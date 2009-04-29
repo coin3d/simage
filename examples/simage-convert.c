@@ -32,6 +32,7 @@ int main(int argc, char ** argv)
   int gray = 0;
   int setundef = 0;
   int mirrory = 0;
+  int save = 1;
 
   if (argc < 3) {
     usage(argv[0]);
@@ -115,9 +116,9 @@ int main(int argc, char ** argv)
     else {
       ext++; /* skip period */
       if (!simage_check_save_supported(ext)) {
-        fprintf(stderr,"Extension '%s' not supported by simage\n",
+        fprintf(stderr,"Extension '%s' not supported for writing by simage\n",
                 ext);
-        return -1;
+        save = 0;
       }
     }
   }
@@ -271,15 +272,17 @@ int main(int argc, char ** argv)
     free(tmp);
   }
 
-  fprintf(stderr,"save image '%s'...", outfile);
-  ret = simage_save_image(argv[2], buf, w, h, nc, ext);
-  simage_free_image(buf);
-  if (ret != 1) {
-    fprintf(stderr,"error: %s\n", simage_get_last_error());
-    return -1;
-  }
-  else {
-    fprintf(stderr,"done\n");
+  if (save) {
+    fprintf(stderr,"save image '%s'...", outfile);
+    ret = simage_save_image(argv[2], buf, w, h, nc, ext);
+    simage_free_image(buf);
+    if (ret != 1) {
+      fprintf(stderr,"error: %s\n", simage_get_last_error());
+      return -1;
+    }
+    else {
+      fprintf(stderr,"done\n");
+    }
   }
   return 0;
 }
