@@ -108,16 +108,29 @@ fi
 sim_ac_quicktime_support=false
 case $host_os in
 darwin*)
-  sim_ac_quicktime_support=true
   AC_ARG_ENABLE(
     [quicktime],
     AC_HELP_STRING([--enable-quicktime], [Use Quicktime load/save images]), [
    case $enableval in
-      no) sim_ac_quicktime_support=false ;;
+      yes) sim_ac_quicktime_support=true ;;
       *) ;;
    esac])
   ;;
-*) SIM_AC_CONFIGURATION_SETTING([QuickTime support], [No (only available for Mac OS X)]) ;;
+*) SIM_AC_CONFIGURATION_SETTING([QuickTime support], [No (default, enable with --enable-quicktime)]) ;;
+esac
+
+sim_ac_cgimage_support=false
+case $host_os in
+darwin*)
+  AC_ARG_ENABLE(
+    [cgimage],
+    AC_HELP_STRING([--enable-cgimage], [Use CGImage load/save images]), [
+   case $enableval in
+      yes) sim_ac_cgimage_support=true ;;
+      *) ;;
+   esac])
+  ;;
+*) SIM_AC_CONFIGURATION_SETTING([CGImage support], [No (default, enable with --enable-cgimage)]) ;;
 esac
 
 # circumvent Automake 1.4h problem - explicitly use OBJEXT and EXEEXT
@@ -378,8 +391,44 @@ fi
 
 AM_CONDITIONAL(SIMAGE_QUICKTIME_SUPPORT, $sim_ac_quicktime_support)
 
+# **************************************************************************
+# Check if CGImage support is wanted (and if so, available).
 
-if test x"$sim_ac_quicktime_support" = xfalse -a x"$sim_ac_gdiplus_support" = xfalse; then
+if $sim_ac_cgimage_support; then
+  SIM_AC_HAVE_CGIMAGE_IFELSE([
+    AC_DEFINE(SIMAGE_CGIMAGE_SUPPORT, , [define to support the CGImage library])
+    SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_cgimage_libs"
+    LIBS="$LIBS $sim_ac_cgimage_libs"
+    SIM_AC_CONFIGURATION_SETTING([CGImage support], [Yes])
+    # These formats are guaranteed to be readable if we have
+    # a CGImage framework, so we do not have to test for them
+    # individually. 
+    SIM_AC_CONFIGURATION_SETTING([GIF image format support], 
+                                 [Yes (CGImage)])
+    SIM_AC_CONFIGURATION_SETTING([JPEG image format support], 
+                                 [Yes (CGImage)])
+    SIM_AC_CONFIGURATION_SETTING([PNG image format support], 
+                                 [Yes (CGImage)])
+    SIM_AC_CONFIGURATION_SETTING([TIFF image format support], 
+                                 [Yes (CGImage)])
+    SIM_AC_CONFIGURATION_SETTING([TGA image format support], 
+                                 [Yes (CGImage)])
+    SIM_AC_CONFIGURATION_SETTING([BMP image format support], 
+                                 [Yes (CGImage)])
+    SIM_AC_CONFIGURATION_SETTING([PSD image format support], 
+                                 [Yes (CGImage)])
+  ], [
+    SIM_AC_CONFIGURATION_SETTING([CGImage support], [No])
+  ])
+  if test $"$sim_ac_have_cgimage" = xfalse; then
+    sim_ac_cgimage_support=false
+  fi
+fi
+
+AM_CONDITIONAL(SIMAGE_CGIMAGE_SUPPORT, $sim_ac_cgimage_support)
+
+
+if test x"$sim_ac_quicktime_support" = xfalse -a x"$sim_ac_cgimage_support" = xfalse -a x"$sim_ac_gdiplus_support" = xfalse; then
   # **************************************************************************
   # Check if UNGIF support is wanted (and if so, available).
 
@@ -510,7 +559,7 @@ if test x"$sim_ac_quicktime_support" = xfalse -a x"$sim_ac_gdiplus_support" = xf
   # AM_CONDITIONAL(SIMAGE_JASPER_SUPPORT, $sim_ac_have_libjpeg)
 fi
 
-if test x"$sim_ac_quicktime_support" = xfalse; then
+if test x"$sim_ac_quicktime_support" = xfalse -a x"$sim_ac_cgimage_support" = xfalse; then
   # **************************************************************************
   # Check if TARGA support is wanted.
 

@@ -14,6 +14,12 @@ else
 QIMAGESOURCES =
 endif
 
+if SIMAGE_CGIMAGE_SUPPORT
+CGIMAGESOURCES = simage_cgimage.cpp $(top_srcdir)/include/simage_cgimage.h
+else
+CGIMAGESOURCES = 
+endif
+
 if SIMAGE_QUICKTIME_SUPPORT
 QUICKTIMESOURCES = simage_quicktime.c $(top_srcdir)/include/simage_quicktime.h
 GIFSOURCES = 
@@ -66,6 +72,7 @@ SIMAGESOURCES = \
 	$(EPSSOURCES) \
 	$(QIMAGESOURCES) \
 	$(QUICKTIMESOURCES) \
+	$(CGIMAGESOURCES) \
         $(AVISOURCES) \
         $(OGGVORBISSOURCES) \
         $(LIBSNDFILESOURCES)

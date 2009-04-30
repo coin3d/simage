@@ -109,6 +109,8 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
+SIMAGE_CGIMAGE_SUPPORT_FALSE = @SIMAGE_CGIMAGE_SUPPORT_FALSE@
+SIMAGE_CGIMAGE_SUPPORT_TRUE = @SIMAGE_CGIMAGE_SUPPORT_TRUE@
 SIMAGE_DEBUG_BUILD = @SIMAGE_DEBUG_BUILD@
 SIMAGE_DEBUG_BUILD_FALSE = @SIMAGE_DEBUG_BUILD_FALSE@
 SIMAGE_DEBUG_BUILD_TRUE = @SIMAGE_DEBUG_BUILD_TRUE@
@@ -198,6 +200,9 @@ INCLUDES = -I$(top_srcdir)/include -I$(top_builddir)/include
 @SIMAGE_QIMAGE_SUPPORT_FALSE@QIMAGESOURCES = 
 
 @SIMAGE_QIMAGE_SUPPORT_TRUE@QIMAGESOURCES = simage_qimage.cpp $(top_srcdir)/include/simage_qimage.h
+
+@SIMAGE_CGIMAGE_SUPPORT_TRUE@CGIMAGESOURCES = simage_cgimage.cpp $(top_srcdir)/include/simage_cgimage.h
+@SIMAGE_CGIMAGE_SUPPORT_FALSE@CGIMAGESOURCES = 
 @SIMAGE_QUICKTIME_SUPPORT_FALSE@QUICKTIMESOURCES = 
 
 @SIMAGE_QUICKTIME_SUPPORT_TRUE@QUICKTIMESOURCES = simage_quicktime.c $(top_srcdir)/include/simage_quicktime.h
@@ -251,6 +256,7 @@ SIMAGESOURCES = \
 	$(EPSSOURCES) \
 	$(QIMAGESOURCES) \
 	$(QUICKTIMESOURCES) \
+	$(CGIMAGESOURCES) \
         $(AVISOURCES) \
         $(OGGVORBISSOURCES) \
         $(LIBSNDFILESOURCES)
@@ -316,7 +322,8 @@ am__simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_SOURCES_DIST = \
 	$(top_srcdir)/include/simage_xwd.h simage_eps.c \
 	$(top_srcdir)/include/simage_eps.h simage_qimage.cpp \
 	$(top_srcdir)/include/simage_qimage.h simage_quicktime.c \
-	$(top_srcdir)/include/simage_quicktime.h simage_avi.c \
+	$(top_srcdir)/include/simage_quicktime.h simage_cgimage.cpp \
+	$(top_srcdir)/include/simage_cgimage.h simage_avi.c \
 	$(top_srcdir)/include/simage_avi.h avi_encode.c \
 	$(top_srcdir)/include/avi_encode.h simage_oggvorbis_reader.c \
 	$(top_srcdir)/include/simage_oggvorbis.h simage_libsndfile.c \
@@ -343,10 +350,12 @@ am__objects_11 = simage_eps.$(OBJEXT)
 @SIMAGE_QUICKTIME_SUPPORT_TRUE@am__objects_13 = \
 @SIMAGE_QUICKTIME_SUPPORT_TRUE@	simage_quicktime.$(OBJEXT)
 @SIMAGE_QUICKTIME_SUPPORT_FALSE@am__objects_13 =
-am__objects_14 = simage_avi.$(OBJEXT) avi_encode.$(OBJEXT)
-am__objects_15 = simage_oggvorbis_reader.$(OBJEXT)
-am__objects_16 = simage_libsndfile.$(OBJEXT)
-am__objects_17 = simage.$(OBJEXT) simage_write.$(OBJEXT) \
+@SIMAGE_CGIMAGE_SUPPORT_TRUE@am__objects_14 = simage_cgimage.$(OBJEXT)
+@SIMAGE_CGIMAGE_SUPPORT_FALSE@am__objects_14 =
+am__objects_15 = simage_avi.$(OBJEXT) avi_encode.$(OBJEXT)
+am__objects_16 = simage_oggvorbis_reader.$(OBJEXT)
+am__objects_17 = simage_libsndfile.$(OBJEXT)
+am__objects_18 = simage.$(OBJEXT) simage_write.$(OBJEXT) \
 	resize.$(OBJEXT) simage12.$(OBJEXT) simage13.$(OBJEXT) \
 	movie.$(OBJEXT) stream.$(OBJEXT) params.$(OBJEXT) \
 	$(am__objects_1) $(am__objects_2) $(am__objects_3) \
@@ -354,8 +363,8 @@ am__objects_17 = simage.$(OBJEXT) simage_write.$(OBJEXT) \
 	$(am__objects_7) $(am__objects_8) $(am__objects_9) \
 	$(am__objects_10) $(am__objects_11) $(am__objects_12) \
 	$(am__objects_13) $(am__objects_14) $(am__objects_15) \
-	$(am__objects_16)
-am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS = $(am__objects_17)
+	$(am__objects_16) $(am__objects_17)
+am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS = $(am__objects_18)
 simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS = \
 	$(am_simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_OBJECTS)
 LTLIBRARIES = $(lib_LTLIBRARIES)
@@ -380,43 +389,47 @@ am__libsimage@SUFFIX@_la_SOURCES_DIST = $(top_builddir)/include/simage.h \
 	$(top_srcdir)/include/simage_xwd.h simage_eps.c \
 	$(top_srcdir)/include/simage_eps.h simage_qimage.cpp \
 	$(top_srcdir)/include/simage_qimage.h simage_quicktime.c \
-	$(top_srcdir)/include/simage_quicktime.h simage_avi.c \
+	$(top_srcdir)/include/simage_quicktime.h simage_cgimage.cpp \
+	$(top_srcdir)/include/simage_cgimage.h simage_avi.c \
 	$(top_srcdir)/include/simage_avi.h avi_encode.c \
 	$(top_srcdir)/include/avi_encode.h simage_oggvorbis_reader.c \
 	$(top_srcdir)/include/simage_oggvorbis.h simage_libsndfile.c \
 	$(top_srcdir)/include/simage_libsndfile.h
-@SIMAGE_GDIPLUS_SUPPORT_TRUE@am__objects_18 = simage_gdiplus.lo
-@SIMAGE_GDIPLUS_SUPPORT_FALSE@am__objects_18 =
-@SIMAGE_QUICKTIME_SUPPORT_TRUE@am__objects_19 =
-@SIMAGE_QUICKTIME_SUPPORT_FALSE@am__objects_19 = simage_jpeg.lo
-am__objects_20 = simage_jasper.lo
-@SIMAGE_QUICKTIME_SUPPORT_TRUE@am__objects_21 =
-@SIMAGE_QUICKTIME_SUPPORT_FALSE@am__objects_21 = simage_gif.lo
+@SIMAGE_GDIPLUS_SUPPORT_TRUE@am__objects_19 = simage_gdiplus.lo
+@SIMAGE_GDIPLUS_SUPPORT_FALSE@am__objects_19 =
+@SIMAGE_QUICKTIME_SUPPORT_TRUE@am__objects_20 =
+@SIMAGE_QUICKTIME_SUPPORT_FALSE@am__objects_20 = simage_jpeg.lo
+am__objects_21 = simage_jasper.lo
 @SIMAGE_QUICKTIME_SUPPORT_TRUE@am__objects_22 =
-@SIMAGE_QUICKTIME_SUPPORT_FALSE@am__objects_22 = simage_png.lo
+@SIMAGE_QUICKTIME_SUPPORT_FALSE@am__objects_22 = simage_gif.lo
 @SIMAGE_QUICKTIME_SUPPORT_TRUE@am__objects_23 =
-@SIMAGE_QUICKTIME_SUPPORT_FALSE@am__objects_23 = simage_tiff.lo
+@SIMAGE_QUICKTIME_SUPPORT_FALSE@am__objects_23 = simage_png.lo
 @SIMAGE_QUICKTIME_SUPPORT_TRUE@am__objects_24 =
-@SIMAGE_QUICKTIME_SUPPORT_FALSE@am__objects_24 = simage_tga.lo
-am__objects_25 = simage_rgb.lo
-am__objects_26 = simage_pic.lo
-am__objects_27 = simage_xwd.lo
-am__objects_28 = simage_eps.lo
-@SIMAGE_QIMAGE_SUPPORT_TRUE@am__objects_29 = simage_qimage.lo
-@SIMAGE_QIMAGE_SUPPORT_FALSE@am__objects_29 =
-@SIMAGE_QUICKTIME_SUPPORT_TRUE@am__objects_30 = simage_quicktime.lo
-@SIMAGE_QUICKTIME_SUPPORT_FALSE@am__objects_30 =
-am__objects_31 = simage_avi.lo avi_encode.lo
-am__objects_32 = simage_oggvorbis_reader.lo
-am__objects_33 = simage_libsndfile.lo
-am__objects_34 = simage.lo simage_write.lo resize.lo simage12.lo \
-	simage13.lo movie.lo stream.lo params.lo $(am__objects_18) \
-	$(am__objects_19) $(am__objects_20) $(am__objects_21) \
-	$(am__objects_22) $(am__objects_23) $(am__objects_24) \
-	$(am__objects_25) $(am__objects_26) $(am__objects_27) \
-	$(am__objects_28) $(am__objects_29) $(am__objects_30) \
-	$(am__objects_31) $(am__objects_32) $(am__objects_33)
-am_libsimage@SUFFIX@_la_OBJECTS = $(am__objects_34)
+@SIMAGE_QUICKTIME_SUPPORT_FALSE@am__objects_24 = simage_tiff.lo
+@SIMAGE_QUICKTIME_SUPPORT_TRUE@am__objects_25 =
+@SIMAGE_QUICKTIME_SUPPORT_FALSE@am__objects_25 = simage_tga.lo
+am__objects_26 = simage_rgb.lo
+am__objects_27 = simage_pic.lo
+am__objects_28 = simage_xwd.lo
+am__objects_29 = simage_eps.lo
+@SIMAGE_QIMAGE_SUPPORT_TRUE@am__objects_30 = simage_qimage.lo
+@SIMAGE_QIMAGE_SUPPORT_FALSE@am__objects_30 =
+@SIMAGE_QUICKTIME_SUPPORT_TRUE@am__objects_31 = simage_quicktime.lo
+@SIMAGE_QUICKTIME_SUPPORT_FALSE@am__objects_31 =
+@SIMAGE_CGIMAGE_SUPPORT_TRUE@am__objects_32 = simage_cgimage.lo
+@SIMAGE_CGIMAGE_SUPPORT_FALSE@am__objects_32 =
+am__objects_33 = simage_avi.lo avi_encode.lo
+am__objects_34 = simage_oggvorbis_reader.lo
+am__objects_35 = simage_libsndfile.lo
+am__objects_36 = simage.lo simage_write.lo resize.lo simage12.lo \
+	simage13.lo movie.lo stream.lo params.lo $(am__objects_19) \
+	$(am__objects_20) $(am__objects_21) $(am__objects_22) \
+	$(am__objects_23) $(am__objects_24) $(am__objects_25) \
+	$(am__objects_26) $(am__objects_27) $(am__objects_28) \
+	$(am__objects_29) $(am__objects_30) $(am__objects_31) \
+	$(am__objects_32) $(am__objects_33) $(am__objects_34) \
+	$(am__objects_35)
+am_libsimage@SUFFIX@_la_OBJECTS = $(am__objects_36)
 libsimage@SUFFIX@_la_OBJECTS = $(am_libsimage@SUFFIX@_la_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir) -I$(top_builddir)/include
@@ -431,6 +444,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/simage12.Po ./$(DEPDIR)/simage13.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/simage13.Po ./$(DEPDIR)/simage_avi.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/simage_avi.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/simage_cgimage.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/simage_cgimage.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/simage_eps.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/simage_eps.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/simage_gdiplus.Plo \
@@ -583,6 +598,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simage13.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simage_avi.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simage_avi.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simage_cgimage.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simage_cgimage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simage_eps.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simage_eps.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simage_gdiplus.Plo@am__quote@

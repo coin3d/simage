@@ -74,6 +74,10 @@ static loader_data qimage_loader;
 #include <simage_quicktime.h>
 static loader_data quicktime_loader;
 #endif /* SIMAGE_QUICKTIME */
+#ifdef SIMAGE_CGIMAGE_SUPPORT
+#include <simage_cgimage.h>
+static loader_data cgimage_loader;
+#endif /* SIMAGE_CGIMAGE */
 
 #include <assert.h>
 
@@ -253,6 +257,14 @@ add_internal_loaders(void)
                1); // add_before -- if we can use QuickTime, makeitso
 #endif /* SIMAGE_QUICKTIME_SUPPORT */
   }
+#ifdef SIMAGE_CGIMAGE_SUPPORT
+    add_loader(&cgimage_loader,
+               simage_cgimage_load,
+               simage_cgimage_identify,
+               simage_cgimage_error,
+               1, 
+               1); // add_before -- if we can use CGImage, makeitso
+#endif /* SIMAGE_CGIMAGE_SUPPORT */
 }
 
 #define SIMAGE_ERROR_BUFSIZE 512

@@ -84,6 +84,9 @@
 /* define to enable avienc support */
 #undef SIMAGE_AVIENC_SUPPORT
 
+/* define to support the CGImage library */
+#undef SIMAGE_CGIMAGE_SUPPORT
+
 /* define to enable eps support */
 #undef SIMAGE_EPS_SUPPORT
 

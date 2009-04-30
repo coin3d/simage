@@ -1,4 +1,5 @@
-New in v1.6.2a (so far):
+New in v1.7a (so far):
+* Added CGImage loader to replace the deprecated Quicktime loader (--enable-cgimage)
 
 New in v1.6.1 (2004-10-08):
 * Switched resize filter from Lorenz3 to Bell filter to avoid
