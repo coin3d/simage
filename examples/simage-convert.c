@@ -262,6 +262,7 @@ int main(int argc, char ** argv)
   }
   if (mirrory) {
     unsigned char * tmp = (unsigned char*) malloc(w*nc);
+    int y;
     for (int y = 0; y < h/2; y++) {
       unsigned char * src1 = buf + w*nc*y;
       unsigned char * src2 = buf + w*nc*(h-1-y);
