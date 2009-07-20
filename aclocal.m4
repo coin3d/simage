@@ -11685,7 +11685,7 @@ if test x"$with_libsndfile" != xno; then
     [for libsndfile],
     sim_cv_lib_libsndfile_avail,
     [
-      sim_ac_lsf_libs="-lsndfile -llibsndfile -llibsndfile-1"
+      sim_ac_lsf_libs="-lsndfile -lsndfile-1 -llibsndfile -llibsndfile-1"
       sim_ac_lsfchk_hit=false
       for sim_ac_lsf_lib in "" $sim_ac_lsf_libs; do
         if $sim_ac_lsfchk_hit; then :; else
