@@ -88,7 +88,13 @@ AC_ARG_ENABLE(
     *) ;;
   esac])
 
-sim_ac_gdiplus_support_wanted=false
+
+# enable GDI+ support for Windows targets by default
+case $host_os in
+cygwin | mingw32) sim_ac_gdiplus_support_wanted=true ;;
+*) sim_ac_gdiplus_support_wanted=false ;;
+esac
+
 AC_ARG_WITH([gdiplus],
   AC_HELP_STRING([--with-gdiplus], [Use GDI+ on Windows to load/save images]), [
   case $withval in
@@ -344,11 +350,7 @@ if $sim_ac_gdiplus_support_wanted; then
                                  [Yes (GDI+)])
     sim_ac_gdiplus_support=true
   ], [
-    if $sim_ac_gdiplus_support_wanted; then
-      SIM_AC_ERROR([no-gdiplus])
-    else
-      SIM_AC_CONFIGURATION_SETTING([GDI+ support], [No (needs installed GDI+ SDK)])
-    fi
+    SIM_AC_ERROR([no-gdiplus])
   ])
 else
   SIM_AC_CONFIGURATION_SETTING([GDI+ support], [No (default, enable with --with-gdiplus)])
