@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="simage1"
 	ProjectGUID="{BEFBEC84-335B-4599-B0A6-D2C982F36F5D}"
 	TargetFrameworkVersion="0"
@@ -73,7 +73,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\misc\GDIPlus\Lib\GdiPlus.lib"
+				AdditionalDependencies="gdiplus.lib"
 				OutputFile="simage1d.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -168,7 +168,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\misc\GDIPlus\Lib\GdiPlus.lib"
+				AdditionalDependencies="gdiplus.lib"
 				OutputFile="simage1.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

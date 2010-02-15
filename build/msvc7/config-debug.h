@@ -8,7 +8,7 @@
 #define HAVE_GDIPLUS_H 1
 
 /* Define if first argument of Gdiplus::Bitmap::LockBits() is a pointer */
-/* #undef HAVE_GDIPLUS_LOCKBITS_RECTARG_POINTER */
+#define HAVE_GDIPLUS_LOCKBITS_RECTARG_POINTER
 
 /* define to support the giflib library */
 /* #undef HAVE_GIFLIB */
