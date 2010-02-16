@@ -26,6 +26,12 @@ static library instead of as a dll). Alternative 2 is the fastest and
 most convenient way to build simage if the configuration in the
 project file and in the supplied configure.h file is acceptable.
 
+The MSVC(Microsoft Visual Studio) 6 project files in build/msvc6 requires
+downloading GDIPlus in order to compile. Follow the description in
+build/misc/README.GDI+ for more information about this.
+   From MSVC 7 and up GDIPlus is included in the installation, and
+therefore downloading GDIPlus is not needed.
+
 Building simage with Cygwin
 ---------------------------
 
