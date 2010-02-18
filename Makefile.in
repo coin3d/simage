@@ -285,11 +285,11 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
 	installdirs-recursive install-recursive uninstall-recursive \
 	check-recursive installcheck-recursive
 DIST_COMMON = README $(dist_bin_SCRIPTS) $(dist_m4data_DATA) \
-	./include/simage.h.in AUTHORS COPYING INSTALL Makefile.am \
-	Makefile.in NEWS aclocal.m4 cfg/README cfg/config.guess \
-	cfg/config.sub cfg/depcomp cfg/install-sh cfg/ltconfig \
-	cfg/ltmain.sh cfg/missing cfg/mkinstalldirs config.h.in \
-	configure configure.ac simage.pc.in
+	./include/simage.h.in AUTHORS COPYING ChangeLog INSTALL \
+	Makefile.am Makefile.in NEWS aclocal.m4 cfg/README \
+	cfg/config.guess cfg/config.sub cfg/depcomp cfg/install-sh \
+	cfg/ltconfig cfg/ltmain.sh cfg/missing cfg/mkinstalldirs \
+	config.h.in configure configure.ac simage.pc.in
 DIST_SUBDIRS = mpeg2enc src guile
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -300,7 +300,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  Makefile
+	  $(AUTOMAKE) --gnu  Makefile
 Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)
 
