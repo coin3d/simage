@@ -308,47 +308,53 @@ AC_REQUIRE([SIM_AC_SPACE_IN_PATHS])
 : ${BUILD_WITH_MSVC=false}
 if $sim_ac_try_msvc; then
   if test -z "$CC" -a -z "$CXX"; then
-    sim_ac_wrapmsvc=`cd $ac_aux_dir; pwd`/wrapmsvc.exe
-    echo "$as_me:$LINENO: sim_ac_wrapmsvc=$sim_ac_wrapmsvc" >&AS_MESSAGE_LOG_FD
     AC_MSG_CHECKING([setup for wrapmsvc.exe])
-    if $sim_ac_wrapmsvc >&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD; then
-      m4_ifdef([$0_VISITED],
-        [AC_FATAL([Macro $0 invoked multiple times])])
-      m4_define([$0_VISITED], 1)
-      CC=$sim_ac_wrapmsvc
-      CXX=$sim_ac_wrapmsvc
-      export CC CXX
-      BUILD_WITH_MSVC=true
-      AC_MSG_RESULT([working])
-
-      # Robustness: we had multiple reports of Cygwin ''link'' getting in
-      # the way of MSVC link.exe, so do a little sanity check for that.
-      #
-      # FIXME: a better fix would be to call link.exe with full path from
-      # the wrapmsvc wrapper, to avoid any trouble with this -- I believe
-      # that should be possible, using the dirname of the full cl.exe path.
-      # 20050714 mortene.
-      sim_ac_check_link=`type link`
-      AC_MSG_CHECKING([whether Cygwin's /usr/bin/link shadows MSVC link.exe])
-      case x"$sim_ac_check_link" in
-      x"link is /usr/bin/link"* )
-        AC_MSG_RESULT(yes)
-        SIM_AC_ERROR([cygwin-link])
+    case $host in
+      *-cygwin)
+        valid_system=true
         ;;
       * )
-        AC_MSG_RESULT(no)
+        valid_system=false
         ;;
-      esac
+    esac
+    if $valid_system; then
+      sim_ac_wrapmsvc=`cd $ac_aux_dir; pwd`/wrapmsvc.exe
+      echo "$as_me:$LINENO: sim_ac_wrapmsvc=$sim_ac_wrapmsvc" >&AS_MESSAGE_LOG_FD
+      if $sim_ac_wrapmsvc >&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD; then
+        m4_ifdef([$0_VISITED],
+          [AC_FATAL([Macro $0 invoked multiple times])])
+        m4_define([$0_VISITED], 1)
+        CC=$sim_ac_wrapmsvc
+        CXX=$sim_ac_wrapmsvc
+        export CC CXX
+        BUILD_WITH_MSVC=true
+        AC_MSG_RESULT([working])
 
-    else
-      case $host in
-      *-cygwin)
+        # Robustness: we had multiple reports of Cygwin ''link'' getting in
+        # the way of MSVC link.exe, so do a little sanity check for that.
+        #
+        # FIXME: a better fix would be to call link.exe with full path from
+        # the wrapmsvc wrapper, to avoid any trouble with this -- I believe
+        # that should be possible, using the dirname of the full cl.exe path.
+        # 20050714 mortene.
+        sim_ac_check_link=`type link`
+        AC_MSG_CHECKING([whether Cygwin's /usr/bin/link shadows MSVC link.exe])
+        case x"$sim_ac_check_link" in
+        x"link is /usr/bin/link"* )
+          AC_MSG_RESULT(yes)
+          SIM_AC_ERROR([cygwin-link])
+          ;;
+        * )
+          AC_MSG_RESULT(no)
+          ;;
+        esac
+
+      else
         AC_MSG_RESULT([not working])
-        SIM_AC_ERROR([no-msvc++]) ;;
-      *)
-        AC_MSG_RESULT([not working (as expected)])
-        ;;
-      esac
+        SIM_AC_ERROR([no-msvc++])
+      fi
+    else
+      AC_MSG_RESULT([not a cygwin host])
     fi
   fi
 fi
@@ -8554,7 +8560,7 @@ if $sim_ac_with_qt; then
 
   SIM_AC_HAVE_QT_FRAMEWORK
 
-  if $sim_ac_have_qt_framework; then
+  if $sim_cv_have_qt_framework; then
     sim_ac_qt_cppflags="-I$sim_ac_qt_framework_dir/QtCore.framework/Headers -I$sim_ac_qt_framework_dir/QtOpenGL.framework/Headers -I$sim_ac_qt_framework_dir/QtGui.framework/Headers -F$sim_ac_qt_framework_dir"
     sim_ac_qt_libs="-Wl,-F$sim_ac_qt_framework_dir -Wl,-framework,QtGui -Wl,-framework,QtOpenGL -Wl,-framework,QtCore -Wl,-framework,QtXml -Wl,-framework,QtNetwork -Wl,-framework,QtSql"
   else
@@ -8828,7 +8834,7 @@ if $sim_ac_with_qt; then
 
     fi # sim_ac_qglobal_unresolved = false
 
-  fi # sim_ac_have_qt_framework
+  fi # sim_cv_have_qt_framework
 
   # We should only *test* availability, not mutate the LIBS/CPPFLAGS
   # variables ourselves inside this macro. 20041021 larsa
@@ -9156,7 +9162,7 @@ fi
 # Uses the variable $sim_ac_qt_framework_dir which should either
 # point to /Library/Frameworks or $QTDIR/lib.
 #
-# Sets sim_ac_have_qt_framework to true if Qt is installed as
+# Sets sim_cv_have_qt_framework to true if Qt is installed as
 # a framework, and to false otherwise.
 #
 # Author: Karin Kosina, <kyrah@sim.no>.
@@ -9174,19 +9180,19 @@ case $host_os in
       LDFLAGS="$LDFLAGS -F$sim_ac_qt_framework_dir -framework QtCore"
       AC_CACHE_CHECK(
         [whether Qt is installed as a framework],
-        sim_ac_have_qt_framework,
+        sim_cv_have_qt_framework,
         [AC_TRY_LINK([#include <QtCore/qglobal.h>],
                  [],
-                 [sim_ac_have_qt_framework=true],
-                 [sim_ac_have_qt_framework=false])
+                 [sim_cv_have_qt_framework=true],
+                 [sim_cv_have_qt_framework=false])
         ])
         LDFLAGS=$sim_ac_save_ldflags_fw
     else
-      sim_ac_have_qt_framework=false
+      sim_cv_have_qt_framework=false
     fi
     ;;
   *)
-    sim_ac_have_qt_framework=false
+    sim_cv_have_qt_framework=false
     ;;
 esac
 ])
