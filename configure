@@ -3822,7 +3822,7 @@ fi
 # Figure out if we want a static or shared library.
 case ${enable_static-no} in
 true | yes) SIMAGE_STATIC=true
-            enable_shared=no ;; # fix --enable-static problem.  20041021 larsa
+	    enable_shared=no ;; # fix --enable-static problem.  20041021 larsa
 *)          SIMAGE_STATIC=false ;;
 esac
 
@@ -3928,7 +3928,7 @@ fi
  ;;
 esac
 
-sim_ac_cgimage_support=false
+sim_ac_cgimage_support=true
 case $host_os in
 darwin*)
   # Check whether --enable-cgimage or --disable-cgimage was given.
@@ -3936,16 +3936,16 @@ if test "${enable_cgimage+set}" = set; then
   enableval="$enable_cgimage"
 
    case $enableval in
-      yes) sim_ac_cgimage_support=true ;;
+      no) sim_ac_cgimage_support=false ;;
       *) ;;
    esac
 fi;
   ;;
 *)
 if test x"${sim_ac_configuration_settings+set}" = x"set"; then
-  sim_ac_configuration_settings="$sim_ac_configuration_settings|CGImage support:No (default, enable with --enable-cgimage)"
+  sim_ac_configuration_settings="$sim_ac_configuration_settings|CGImage support:Yes (default, disable with --enable-cgimage)"
 else
-  sim_ac_configuration_settings="CGImage support:No (default, enable with --enable-cgimage)"
+  sim_ac_configuration_settings="CGImage support:Yes (default, disable with --enable-cgimage)"
 fi
  ;;
 esac
@@ -21500,10 +21500,10 @@ echo "${ECHO_T}$sim_ac_qt_cppflags $sim_ac_QTDIR_ldflags $sim_ac_qt_libs" >&6
     if $SIMAGE_STATIC; then
       if $BUILD_WITH_MSVC; then
 	echo "LIBS: $LIBS";
-        :
+	:
       else
-        LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
-        LIBS="$sim_ac_qt_libs $LIBS"
+	LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
+	LIBS="$sim_ac_qt_libs $LIBS"
       fi
     else
       LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
@@ -26390,8 +26390,8 @@ fi
 done
 
       if $sim_ac_have_guile_sdk; then
-        # This routine is not present in Guile 1.4
-        echo "$as_me:$LINENO: checking for scm_c_define_gsubr in -lguile" >&5
+	# This routine is not present in Guile 1.4
+	echo "$as_me:$LINENO: checking for scm_c_define_gsubr in -lguile" >&5
 echo $ECHO_N "checking for scm_c_define_gsubr in -lguile... $ECHO_C" >&6
 if test "${ac_cv_lib_guile_scm_c_define_gsubr+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
