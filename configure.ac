@@ -6,7 +6,7 @@ m4_define([SIMAGE_MINOR], [6])
 m4_define([SIMAGE_MICRO], [2])
 m4_define([SIMAGE_BETA],  [a])
 m4_define([SIMAGE_VERSION_STRING],
-          [SIMAGE_MAJOR.SIMAGE_MINOR.SIMAGE_MICRO[]SIMAGE_BETA])
+	  [SIMAGE_MAJOR.SIMAGE_MINOR.SIMAGE_MICRO[]SIMAGE_BETA])
 
 m4_define([SIMAGE_ABI_CURRENT], [m4_eval(SIMAGE_MAJOR*20+SIMAGE_MINOR)])
 m4_define([SIMAGE_ABI_REVISION], [SIMAGE_MICRO])
@@ -59,7 +59,7 @@ fi
 # Figure out if we want a static or shared library.
 case ${enable_static-no} in
 true | yes) SIMAGE_STATIC=true
-            enable_shared=no ;; # fix --enable-static problem.  20041021 larsa
+	    enable_shared=no ;; # fix --enable-static problem.  20041021 larsa
 *)          SIMAGE_STATIC=false ;;
 esac
 
@@ -104,13 +104,13 @@ AC_ARG_WITH([gdiplus],
        sim_ac_gdiplus_path=$withval
        ;;
   esac])
-    
+
 # only test for C++ compiler when qimage support is enabled
 
 if test x"$am_cv_prog_cc_stdc" = x"no"; then
   AC_MSG_WARN([doesn't look like you're using an ANSI compatible C compiler])
 fi
- 
+
 sim_ac_quicktime_support=false
 case $host_os in
 darwin*)
@@ -185,20 +185,20 @@ AM_MAINTAINER_MODE
 
 # Detect Mac OS X in general
 case $host_os in
-darwin* ) 
-  sim_ac_macosx=true 
+darwin* )
+  sim_ac_macosx=true
   # Check for Mac OS 10.2 or later
   case $host_os in
-  darwin[[678]].* ) 
-    sim_ac_macosx_10_2ff=true 
+  darwin[[678]].* )
+    sim_ac_macosx_10_2ff=true
     ;;
-  * )         
-    sim_ac_macosx_10_2ff=false 
+  * )
+    sim_ac_macosx_10_2ff=false
     ;;
   esac
   ;;
-* ) 
-  sim_ac_macosx=false 
+* )
+  sim_ac_macosx=false
   sim_ac_macosx_10_2ff=false
   ;;
 esac
@@ -209,7 +209,7 @@ if $BUILD_WITH_MSVC; then
 else
   AC_PROG_LIBTOOL
 fi
-  
+
 AM_CONDITIONAL([MACOSX], [$sim_ac_macosx])
 AM_CONDITIONAL([MACOSX_10_2FF], [$sim_ac_macosx_10_2ff])
 
@@ -237,7 +237,7 @@ CPPFLAGS="$CPPFLAGS -DSIMAGE_INTERNAL"
 AC_ARG_WITH(
   [alternate],
   [AC_HELP_STRING([--with-alternate=string],
-                  [specify name of alternate configuration])],
+		  [specify name of alternate configuration])],
   [CONFIG=$withval],
   [CONFIG=default])
 
@@ -246,7 +246,7 @@ AC_SUBST([CONFIG])
 AC_ARG_WITH(
   [suffix],
   [AC_HELP_STRING([--with-suffix=string],
-                  [specify library name suffix (e.g. "_g")])],
+		  [specify library name suffix (e.g. "_g")])],
   [SUFFIX=$withval],
   [SUFFIX=])
 
@@ -294,10 +294,10 @@ if $sim_ac_qimage_support_wanted; then
     if $SIMAGE_STATIC; then
       if $BUILD_WITH_MSVC; then
 	echo "LIBS: $LIBS";
-        :
+	:
       else
-        LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
-        LIBS="$sim_ac_qt_libs $LIBS"
+	LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
+	LIBS="$sim_ac_qt_libs $LIBS"
       fi
     else
       LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
@@ -338,16 +338,16 @@ if $sim_ac_gdiplus_support_wanted; then
     LIBS="$LIBS $sim_ac_gdiplus_LIBS"
     SIM_AC_CONFIGURATION_SETTING([GDI+ support], [Yes])
     # formats supported read/write by GDI+
-    SIM_AC_CONFIGURATION_SETTING([GIF image format support], 
-                                 [Yes (GDI+)])
-    SIM_AC_CONFIGURATION_SETTING([JPEG image format support], 
-                                 [Yes (GDI+)])
-    SIM_AC_CONFIGURATION_SETTING([PNG image format support], 
-                                 [Yes (GDI+)])
-    SIM_AC_CONFIGURATION_SETTING([TIFF image format support], 
-                                 [Yes (GDI+)])
-    SIM_AC_CONFIGURATION_SETTING([BMP image format support], 
-                                 [Yes (GDI+)])
+    SIM_AC_CONFIGURATION_SETTING([GIF image format support],
+				 [Yes (GDI+)])
+    SIM_AC_CONFIGURATION_SETTING([JPEG image format support],
+				 [Yes (GDI+)])
+    SIM_AC_CONFIGURATION_SETTING([PNG image format support],
+				 [Yes (GDI+)])
+    SIM_AC_CONFIGURATION_SETTING([TIFF image format support],
+				 [Yes (GDI+)])
+    SIM_AC_CONFIGURATION_SETTING([BMP image format support],
+				 [Yes (GDI+)])
     sim_ac_gdiplus_support=true
   ], [
     SIM_AC_ERROR([no-gdiplus])
@@ -368,21 +368,21 @@ if $sim_ac_quicktime_support; then
     LIBS="$LIBS $sim_ac_quicktime_libs"
     # These formats are guaranteed to be readable if we have
     # a QuickTime framework, so we do not have to test for them
-    # individually. 
-    SIM_AC_CONFIGURATION_SETTING([GIF image format support], 
-                                 [Yes (QuickTime)])
-    SIM_AC_CONFIGURATION_SETTING([JPEG image format support], 
-                                 [Yes (QuickTime)])
-    SIM_AC_CONFIGURATION_SETTING([PNG image format support], 
-                                 [Yes (QuickTime)])
-    SIM_AC_CONFIGURATION_SETTING([TIFF image format support], 
-                                 [Yes (QuickTime)])
-    SIM_AC_CONFIGURATION_SETTING([TGA image format support], 
-                                 [Yes (QuickTime)])
-    SIM_AC_CONFIGURATION_SETTING([BMP image format support], 
-                                 [Yes (QuickTime)])
-    SIM_AC_CONFIGURATION_SETTING([PSD image format support], 
-                                 [Yes (QuickTime)])
+    # individually.
+    SIM_AC_CONFIGURATION_SETTING([GIF image format support],
+				 [Yes (QuickTime)])
+    SIM_AC_CONFIGURATION_SETTING([JPEG image format support],
+				 [Yes (QuickTime)])
+    SIM_AC_CONFIGURATION_SETTING([PNG image format support],
+				 [Yes (QuickTime)])
+    SIM_AC_CONFIGURATION_SETTING([TIFF image format support],
+				 [Yes (QuickTime)])
+    SIM_AC_CONFIGURATION_SETTING([TGA image format support],
+				 [Yes (QuickTime)])
+    SIM_AC_CONFIGURATION_SETTING([BMP image format support],
+				 [Yes (QuickTime)])
+    SIM_AC_CONFIGURATION_SETTING([PSD image format support],
+				 [Yes (QuickTime)])
   ], [
     SIM_AC_CONFIGURATION_SETTING([QuickTime support], [No])
   ])
@@ -404,21 +404,21 @@ if $sim_ac_cgimage_support; then
     SIM_AC_CONFIGURATION_SETTING([CGImage support], [Yes])
     # These formats are guaranteed to be readable if we have
     # a CGImage framework, so we do not have to test for them
-    # individually. 
-    SIM_AC_CONFIGURATION_SETTING([GIF image format support], 
-                                 [Yes (CGImage)])
-    SIM_AC_CONFIGURATION_SETTING([JPEG image format support], 
-                                 [Yes (CGImage)])
-    SIM_AC_CONFIGURATION_SETTING([PNG image format support], 
-                                 [Yes (CGImage)])
-    SIM_AC_CONFIGURATION_SETTING([TIFF image format support], 
-                                 [Yes (CGImage)])
-    SIM_AC_CONFIGURATION_SETTING([TGA image format support], 
-                                 [Yes (CGImage)])
-    SIM_AC_CONFIGURATION_SETTING([BMP image format support], 
-                                 [Yes (CGImage)])
-    SIM_AC_CONFIGURATION_SETTING([PSD image format support], 
-                                 [Yes (CGImage)])
+    # individually.
+    SIM_AC_CONFIGURATION_SETTING([GIF image format support],
+				 [Yes (CGImage)])
+    SIM_AC_CONFIGURATION_SETTING([JPEG image format support],
+				 [Yes (CGImage)])
+    SIM_AC_CONFIGURATION_SETTING([PNG image format support],
+				 [Yes (CGImage)])
+    SIM_AC_CONFIGURATION_SETTING([TIFF image format support],
+				 [Yes (CGImage)])
+    SIM_AC_CONFIGURATION_SETTING([TGA image format support],
+				 [Yes (CGImage)])
+    SIM_AC_CONFIGURATION_SETTING([BMP image format support],
+				 [Yes (CGImage)])
+    SIM_AC_CONFIGURATION_SETTING([PSD image format support],
+				 [Yes (CGImage)])
   ], [
     SIM_AC_CONFIGURATION_SETTING([CGImage support], [No])
   ])
@@ -498,7 +498,7 @@ if test x"$sim_ac_quicktime_support" = xfalse -a x"$sim_ac_cgimage_support" = xf
     LDFLAGS="$LDFLAGS $sim_ac_libzlib_ldflags"
     LIBS="$sim_ac_libzlib_libs $LIBS"
   ])
-    
+
   # **************************************************************************
   # Check if PNG support is wanted (and if so, available).
 
@@ -515,7 +515,7 @@ if test x"$sim_ac_quicktime_support" = xfalse -a x"$sim_ac_cgimage_support" = xf
     SIM_AC_CONFIGURATION_SETTING([PNG image format support], [No (needs libpng)])
     if test x"$sim_ac_have_libzlib" = xfalse; then
       SIM_AC_CONFIGURATION_WARNING(
-        [PNG image format support may be disabled because of missing libz])
+	[PNG image format support may be disabled because of missing libz])
     fi
   ])
 
@@ -801,10 +801,10 @@ if $sim_ac_have_dlfcn_h; then
       [sim_ac_have_guile_sdk=true],
       [sim_ac_have_guile_sdk=false])
       if $sim_ac_have_guile_sdk; then
-        # This routine is not present in Guile 1.4
-        AC_CHECK_LIB(guile, scm_c_define_gsubr, 
-          [sim_ac_have_guile_sdk=true], 
-          [sim_ac_have_guile_sdk=false])
+	# This routine is not present in Guile 1.4
+	AC_CHECK_LIB(guile, scm_c_define_gsubr,
+	  [sim_ac_have_guile_sdk=true],
+	  [sim_ac_have_guile_sdk=false])
       fi
     if $sim_ac_have_guile_sdk; then
       HAVE_GUILE=true
@@ -934,7 +934,7 @@ else
   AC_SUBST(simage_configure_date)
 
   # Mac OS X needs to call gcc as g++ when linking C++
-  case $host_os in 
+  case $host_os in
   darwin*) COIN_COMPILER="$CXX";;
   *) COIN_COMPILER="$CC";;
   esac
@@ -959,7 +959,7 @@ AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
 	guile/Makefile
-        mpeg2enc/Makefile
+	mpeg2enc/Makefile
 	build/simage.spec
 ])
 
