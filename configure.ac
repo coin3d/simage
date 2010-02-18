@@ -125,18 +125,18 @@ darwin*)
 *) SIM_AC_CONFIGURATION_SETTING([QuickTime support], [No (default, enable with --enable-quicktime)]) ;;
 esac
 
-sim_ac_cgimage_support=false
+sim_ac_cgimage_support=true
 case $host_os in
 darwin*)
   AC_ARG_ENABLE(
     [cgimage],
     AC_HELP_STRING([--enable-cgimage], [Use CGImage load/save images]), [
    case $enableval in
-      yes) sim_ac_cgimage_support=true ;;
+      no) sim_ac_cgimage_support=false ;;
       *) ;;
    esac])
   ;;
-*) SIM_AC_CONFIGURATION_SETTING([CGImage support], [No (default, enable with --enable-cgimage)]) ;;
+*) SIM_AC_CONFIGURATION_SETTING([CGImage support], [Yes (default, disable with --enable-cgimage)]) ;;
 esac
 
 # circumvent Automake 1.4h problem - explicitly use OBJEXT and EXEEXT
