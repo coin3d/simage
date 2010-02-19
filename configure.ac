@@ -125,19 +125,20 @@ darwin*)
 *) SIM_AC_CONFIGURATION_SETTING([QuickTime support], [No (default, enable with --enable-quicktime)]) ;;
 esac
 
-sim_ac_cgimage_support=true
 case $host_os in
-darwin*)
-  AC_ARG_ENABLE(
-    [cgimage],
-    AC_HELP_STRING([--enable-cgimage], [Use CGImage load/save images]), [
-   case $enableval in
-      no) sim_ac_cgimage_support=false ;;
-      *) ;;
-   esac])
-  ;;
-*) SIM_AC_CONFIGURATION_SETTING([CGImage support], [Yes (default, disable with --enable-cgimage)]) ;;
+darwin*) sim_ac_cgimage_support_wanted=true ;;
+*) sim_ac_cgimage_support_wanted=false ;;
 esac
+
+AC_ARG_ENABLE(
+  [cgimage],
+  AC_HELP_STRING([--enable-cgimage], [Use CGImage on OS X to load/save images]), [
+ case $enableval in
+  no | false) sim_ac_cgimage_support_wanted=false ;;
+  yes | true) sim_ac_cgimage_support_wanted=true ;;
+  *) sim_ac_cgimage_support_wanted=true ;;
+ esac])
+
 
 # circumvent Automake 1.4h problem - explicitly use OBJEXT and EXEEXT
 AC_OBJEXT
@@ -396,9 +397,10 @@ AM_CONDITIONAL(SIMAGE_QUICKTIME_SUPPORT, $sim_ac_quicktime_support)
 # **************************************************************************
 # Check if CGImage support is wanted (and if so, available).
 
+sim_ac_cgimage_support=false
 if $sim_ac_cgimage_support; then
   SIM_AC_HAVE_CGIMAGE_IFELSE([
-    AC_DEFINE(SIMAGE_CGIMAGE_SUPPORT, , [define to support the CGImage library])
+    AC_DEFINE(SIMAGE_CGIMAGE_SUPPORT, , [define to support CGImage])
     SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_cgimage_libs"
     LIBS="$LIBS $sim_ac_cgimage_libs"
     SIM_AC_CONFIGURATION_SETTING([CGImage support], [Yes])
@@ -419,6 +421,7 @@ if $sim_ac_cgimage_support; then
 				 [Yes (CGImage)])
     SIM_AC_CONFIGURATION_SETTING([PSD image format support],
 				 [Yes (CGImage)])
+    sim_ac_cgimage_support=true
   ], [
     SIM_AC_CONFIGURATION_SETTING([CGImage support], [No])
   ])
