@@ -398,7 +398,7 @@ AM_CONDITIONAL(SIMAGE_QUICKTIME_SUPPORT, $sim_ac_quicktime_support)
 # Check if CGImage support is wanted (and if so, available).
 
 sim_ac_cgimage_support=false
-if $sim_ac_cgimage_support; then
+if $sim_ac_cgimage_support_wanted; then
   SIM_AC_HAVE_CGIMAGE_IFELSE([
     AC_DEFINE(SIMAGE_CGIMAGE_SUPPORT, , [define to support CGImage])
     SIMAGE_EXTRA_LIBS="$SIMAGE_EXTRA_LIBS $sim_ac_cgimage_libs"
