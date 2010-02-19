@@ -1,5 +1,15 @@
-New in v1.7a (so far):
-* Added CGImage loader to replace the deprecated Quicktime loader (--enable-cgimage)
+New in v1.7.0 (2010-02-22):
+* Added CGImage based backend OS X.
+* Added Quicktime based backend for older OS X versions.
+* Added GDI+ based backend for Windows.
+* Added Jasper/JPEG 2000 support.
+* Added Visual Studio project files.
+* Added Universal Binary support for OS X.
+* Added pkg-config description.
+* Added support for Windows 64-bit.
+* Fixed QImage backend to work with Qt4.
+* Fixed various memory leaks.
+* Fixed various build system and compile/link issues.
 
 New in v1.6.1 (2004-10-08):
 * Switched resize filter from Lorenz3 to Bell filter to avoid
