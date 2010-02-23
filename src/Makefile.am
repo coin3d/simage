@@ -15,7 +15,7 @@ QIMAGESOURCES =
 endif
 
 if SIMAGE_CGIMAGE_SUPPORT
-CGIMAGESOURCES = simage_cgimage.cpp $(top_srcdir)/include/simage_cgimage.h
+CGIMAGESOURCES = simage_cgimage.c $(top_srcdir)/include/simage_cgimage.h
 else
 CGIMAGESOURCES = 
 endif
