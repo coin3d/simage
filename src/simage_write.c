@@ -12,9 +12,9 @@
 struct _saver_data
 {
   int (*save_func)(const char * name, const unsigned char * bytes,
-                   int width, int height, int numcomponents);
+		   int width, int height, int numcomponents);
   int (*save_func_ext)(const char * name, const unsigned char * bytes,
-                       int width, int height, int numcomponents, const char * ext);
+		       int width, int height, int numcomponents, const char * ext);
   int (*error_func)(char * textbuffer, int bufferlen);
   char * extensions;
   char * fullname;
@@ -59,13 +59,16 @@ static saver_data eps_saver;
 #ifdef SIMAGE_QUICKTIME_SUPPORT
 #include <simage_quicktime.h>
 #endif /* SIMAGE_QUICKTIME_SUPPORT */
+#ifdef SIMAGE_CGIMAGE_SUPPORT
+#include <simage_cgimage.h>
+#endif /* SIMAGE_CGIMAGE */
 
 #include <assert.h>
 
 static saver_data * first_saver = NULL;
 static saver_data * last_saver = NULL;
 
-static char * 
+static char *
 safe_strdup(const char * str)
 {
   char * newstr = NULL;
@@ -105,23 +108,23 @@ simage_strcasecmp(const char * str1, const char * str2)
  * returns a void pointer to the saver. addbefore specifies
  * if the saver should be added at the beginning or at the
  * end of the linked list. useful if a user program finds
- * a bug in this library (simply use addbefore) 
+ * a bug in this library (simply use addbefore)
  *
  * Note: The actual significance of is_internal is that memory is
- * allocated for the "non internal" loaders (currently QImage and 
+ * allocated for the "non internal" loaders (currently QImage and
  * QuickTime), while the other (internal) ones are static structs. The
  * is_internal flag is used to determine whether the memory for the
- * loader should be freed at cleanup. 
+ * loader should be freed at cleanup.
  */
 
 static void
 add_saver_data(saver_data * saver,
-               int (*error_func)(char *, int),
-               const char * extensions,
-               const char * fullname,
-               const char * description,
-               int is_internal,
-               int addbefore)
+	       int (*error_func)(char *, int),
+	       const char * extensions,
+	       const char * fullname,
+	       const char * description,
+	       int is_internal,
+	       int addbefore)
 {
   saver->extensions = is_internal ? (char*) extensions : safe_strdup(extensions);
   saver->fullname = is_internal ? (char*) fullname : safe_strdup(fullname);
@@ -146,41 +149,41 @@ add_saver_data(saver_data * saver,
 
 static void *
 add_saver(saver_data * saver,
-          int (*save_func)(const char *,
-                           const unsigned char *,
-                           int, int, int),
-          int (*error_func)(char *, int),
-          const char * extensions,
-          const char * fullname,
-          const char * description,
-          int is_internal,
-          int addbefore)
+	  int (*save_func)(const char *,
+			   const unsigned char *,
+			   int, int, int),
+	  int (*error_func)(char *, int),
+	  const char * extensions,
+	  const char * fullname,
+	  const char * description,
+	  int is_internal,
+	  int addbefore)
 {
   assert(saver);
   saver->save_func = save_func;
   saver->save_func_ext = NULL;
   add_saver_data(saver, error_func, extensions, fullname,
-                 description, is_internal, addbefore);
+		 description, is_internal, addbefore);
   return saver;
 }
 
 static void *
 add_saver_ext(saver_data * saver,
-              int (*save_func)(const char *,
-                               const unsigned char *,
-                               int, int, int, const char *),
-              int (*error_func)(char *, int),
-              const char * extensions,
-              const char * fullname,
-              const char * description,
-              int is_internal,
-              int addbefore)
+	      int (*save_func)(const char *,
+			       const unsigned char *,
+			       int, int, int, const char *),
+	      int (*error_func)(char *, int),
+	      const char * extensions,
+	      const char * fullname,
+	      const char * description,
+	      int is_internal,
+	      int addbefore)
 {
   assert(saver);
   saver->save_func = NULL;
   saver->save_func_ext = save_func;
   add_saver_data(saver, error_func, extensions, fullname,
-                 description, is_internal, addbefore);
+		 description, is_internal, addbefore);
   return saver;
 }
 
@@ -230,7 +233,7 @@ static const char giffull[] = "The Graphics Interchange Format";
 static char epsext[] = "eps,ps";
 static const char epsfull[] ="Encapsulated postscript";
 
-static void 
+static void
 str_tolower(char * str)
 {
   while (*str) {
@@ -244,65 +247,66 @@ add_internal_savers(void)
 {
   static int first = 1;
   if (first) {
-#if defined(SIMAGE_GDIPLUS_SUPPORT) || defined(SIMAGE_QIMAGE_SUPPORT) || defined(SIMAGE_QUICKTIME_SUPPORT)
+#if defined(SIMAGE_GDIPLUS_SUPPORT) || defined(SIMAGE_QIMAGE_SUPPORT) || \
+    defined(SIMAGE_QUICKTIME_SUPPORT) || defined(SIMAGE_CGIMAGE_SUPPORT)
     char * qtext = NULL;
 #endif
     first = 0;
 
 #ifdef HAVE_JPEGLIB
-    add_saver(&jpeg_saver, 
-              simage_jpeg_save,
-              simage_jpeg_error,
-              jpegext,
-              jpegfull,
-              NULL,
-              1, 0);
+    add_saver(&jpeg_saver,
+	      simage_jpeg_save,
+	      simage_jpeg_error,
+	      jpegext,
+	      jpegfull,
+	      NULL,
+	      1, 0);
 #endif /* HAVE_JPEGLIB */
 #ifdef HAVE_PNGLIB
-    add_saver(&png_saver, 
-              simage_png_save,
-              simage_png_error,
-              pngext,
-              pngfull,
-              NULL,
-              1, 0);
+    add_saver(&png_saver,
+	      simage_png_save,
+	      simage_png_error,
+	      pngext,
+	      pngfull,
+	      NULL,
+	      1, 0);
 #endif /* HAVE_PNGLIB */
 #ifdef HAVE_TIFFLIB
-    add_saver(&tiff_saver, 
-              simage_tiff_save,
-              simage_tiff_error,
-              tiffext,
-              tifffull,
-              NULL,
-              1, 0);
+    add_saver(&tiff_saver,
+	      simage_tiff_save,
+	      simage_tiff_error,
+	      tiffext,
+	      tifffull,
+	      NULL,
+	      1, 0);
 #endif /* HAVE_TIFFLIB */
 #ifdef SIMAGE_RGB_SUPPORT
-    add_saver(&rgb_saver, 
-              simage_rgb_save,
-              simage_rgb_error,
-              rgbext,
-              rgbfull,
-              NULL,
-              1, 0);
+    add_saver(&rgb_saver,
+	      simage_rgb_save,
+	      simage_rgb_error,
+	      rgbext,
+	      rgbfull,
+	      NULL,
+	      1, 0);
 #endif /* SIMAGE_RGB_SUPPORT */
 #ifdef HAVE_GIFLIB
-    add_saver(&gif_saver, 
-              simage_gif_save,
-              simage_gif_error,
-              gifext,
-              giffull,
-              NULL,
-              1, 0);
+    add_saver(&gif_saver,
+	      simage_gif_save,
+	      simage_gif_error,
+	      gifext,
+	      giffull,
+	      NULL,
+	      1, 0);
 #endif /* HAVE_GIFLIB */
 
 #ifdef SIMAGE_EPS_SUPPORT
-    add_saver(&eps_saver, 
-              simage_eps_save,
-              simage_eps_error,
-              epsext,
-              epsfull,
-              NULL,
-              1, 0);
+    add_saver(&eps_saver,
+	      simage_eps_save,
+	      simage_eps_error,
+	      epsext,
+	      epsfull,
+	      NULL,
+	      1, 0);
 #endif /* SIMAGE_EPS_SUPPORT */
 
 #ifdef SIMAGE_GDIPLUS_SUPPORT
@@ -312,19 +316,19 @@ add_internal_savers(void)
       char * str;
       char * ext = qtext;
       do {
-        str = strchr(ext, ',');
-        if (str) *str = 0;      
-        str_tolower(ext);
-        saver = (saver_data*) malloc(sizeof(saver_data));
-        add_saver_ext(saver,
-                      simage_gdiplus_save,
-                      simage_gdiplus_error,
-                      ext,
-                      "GDI+ saver",
-                      NULL,
-                      0, 0);
-        
-        if (str) ext = str + 1;
+	str = strchr(ext, ',');
+	if (str) *str = 0;
+	str_tolower(ext);
+	saver = (saver_data*) malloc(sizeof(saver_data));
+	add_saver_ext(saver,
+		      simage_gdiplus_save,
+		      simage_gdiplus_error,
+		      ext,
+		      "GDI+ saver",
+		      NULL,
+		      0, 0);
+
+	if (str) ext = str + 1;
       } while (str);
       free(qtext);
     }
@@ -336,19 +340,19 @@ add_internal_savers(void)
       char * str;
       char * ext = qtext;
       do {
-        str = strchr(ext, ',');
-        if (str) *str = 0;      
-        str_tolower(ext);
-        saver = (saver_data*) malloc(sizeof(saver_data));
-        add_saver_ext(saver,
-                      simage_qimage_save,
-                      simage_qimage_error,
-                      ext,
-                      "QImage saver",
-                      NULL,
-                      0, 0);
-        
-        if (str) ext = str + 1;
+	str = strchr(ext, ',');
+	if (str) *str = 0;
+	str_tolower(ext);
+	saver = (saver_data*) malloc(sizeof(saver_data));
+	add_saver_ext(saver,
+		      simage_qimage_save,
+		      simage_qimage_error,
+		      ext,
+		      "QImage saver",
+		      NULL,
+		      0, 0);
+
+	if (str) ext = str + 1;
       } while (str);
       free(qtext);
     }
@@ -360,23 +364,47 @@ add_internal_savers(void)
       char * str;
       char * ext = qtext;
       do {
-        str = strchr(ext, ',');
-        if (str) *str = 0;      
-        str_tolower(ext);
-        saver = (saver_data*) malloc(sizeof(saver_data));
-        add_saver_ext(saver,
-                      simage_quicktime_save,
-                      simage_quicktime_error,
-                      ext,
-                      "QuickTime saver",
-                      NULL,
-                      0, 1);
-        if (str) ext = str + 1;
+	str = strchr(ext, ',');
+	if (str) *str = 0;
+	str_tolower(ext);
+	saver = (saver_data*) malloc(sizeof(saver_data));
+	add_saver_ext(saver,
+		      simage_quicktime_save,
+		      simage_quicktime_error,
+		      ext,
+		      "QuickTime saver",
+		      NULL,
+		      0, 1);
+	if (str) ext = str + 1;
       } while (str);
-      
+
       free(qtext);
     }
 #endif /* SIMAGE_QUICKTIME_SUPPORT */
+#ifdef SIMAGE_CGIMAGE_SUPPORT
+    qtext = simage_cgimage_get_savers();
+    if (qtext) {
+      saver_data * saver;
+      char * str;
+      char * ext = qtext;
+      do {
+	str = strchr(ext, ',');
+	if (str) *str = 0;
+	str_tolower(ext);
+	saver = (saver_data*) malloc(sizeof(saver_data));
+	add_saver_ext(saver,
+		      simage_cgimage_save,
+		      simage_cgimage_error,
+		      ext,
+		      "CGImage saver",
+		      NULL,
+		      0, 1);
+	if (str) ext = str + 1;
+      } while (str);
+
+      free(qtext);
+    }
+#endif /* SIMAGE_CGIMAGE_SUPPORT */
   }
 }
 
@@ -386,28 +414,28 @@ extern char simage_error_msg[];
 
 int
 simage_save_image(const char * filename,
-                  const unsigned char * bytes,
-                  int width, int height, int numcomponents,
-                  const char * filenameextension)
+		  const unsigned char * bytes,
+		  int width, int height, int numcomponents,
+		  const char * filenameextension)
 {
   saver_data * saver;
 
   simage_error_msg[0] = 0; /* clear error msg */
 
-  add_internal_savers();  
-  
+  add_internal_savers();
+
   saver = find_saver(filenameextension);
-  
+
   if (saver) {
     int ret = 0;
     if (saver->save_func_ext) {
       ret = saver->save_func_ext(filename, bytes, width,
-                                 height, numcomponents,
-                                 filenameextension);
+				 height, numcomponents,
+				 filenameextension);
     }
     else if (saver->save_func) {
       ret = saver->save_func(filename, bytes, width,
-                             height, numcomponents);
+			     height, numcomponents);
     }
     if (ret == 0) {
       (void) saver->error_func(simage_error_msg, SIMAGE_ERROR_BUFSIZE);
@@ -420,32 +448,32 @@ simage_save_image(const char * filename,
   }
 }
 
-void * 
+void *
 simage_add_saver(int (*save_func)(const char * name,
-                                  const unsigned char * bytes,
-                                  int width, int height, int nc),
-                 int (*error_func)(char * textbuffer, int bufferlen),
-                 const char * extensions,
-                 const char * fullname,
-                 const char * description,
-                 int addbefore)
+				  const unsigned char * bytes,
+				  int width, int height, int nc),
+		 int (*error_func)(char * textbuffer, int bufferlen),
+		 const char * extensions,
+		 const char * fullname,
+		 const char * description,
+		 int addbefore)
 {
   add_internal_savers();
-  return add_saver((saver_data *)malloc(sizeof(saver_data)), 
-                   save_func, 
-                   error_func,
-                   extensions,
-                   fullname,
-                   description,
-                   0, addbefore);
+  return add_saver((saver_data *)malloc(sizeof(saver_data)),
+		   save_func,
+		   error_func,
+		   extensions,
+		   fullname,
+		   description,
+		   0, addbefore);
 }
 
-void 
+void
 simage_remove_saver(void * handle)
 {
   saver_data *prev = NULL;
   saver_data *saver = first_saver;
-  
+
   while (saver && saver != (saver_data*)handle) {
     prev = saver;
     saver = saver->next;
@@ -466,16 +494,16 @@ simage_remove_saver(void * handle)
   }
 }
 
-int 
+int
 simage_check_save_supported(const char * filenameextension)
 {
-  saver_data * saver; 
+  saver_data * saver;
   add_internal_savers();
   saver = find_saver(filenameextension);
   return saver != NULL ? 1 : 0;
 }
 
-int 
+int
 simage_get_num_savers(void)
 {
   int cnt = 0;
@@ -493,7 +521,7 @@ simage_get_num_savers(void)
   return cnt;
 }
 
-void * 
+void *
 simage_get_saver_handle(int idx)
 {
   saver_data * saver = first_saver;
@@ -504,24 +532,23 @@ simage_get_saver_handle(int idx)
   return (void*) saver;
 }
 
-const char * 
+const char *
 simage_get_saver_extensions(void * handle)
 {
   saver_data * saver = (saver_data *) handle;
   return saver->extensions;
 }
 
-const char * 
+const char *
 simage_get_saver_fullname(void * handle)
 {
   saver_data * saver = (saver_data *) handle;
   return saver->fullname;
 }
 
-const char * 
+const char *
 simage_get_saver_description(void * handle)
 {
   saver_data * saver = (saver_data *) handle;
   return saver->description;
 }
-

@@ -20,22 +20,14 @@ extern "C" {
                                       int *height,
                                       int *numcomponents);
   
-/*   char * simage_cgimage_get_savers(void);  */
+  char * simage_cgimage_get_savers(void);
   
-/*   int simage_cgimage_save(const char *filename, */
-/*                           const unsigned char * bytes, */
-/*                           int width, */
-/*                           int height, */
-/*                           int numcomponents, */
-/*                           const char * ext); */
-  
-  
-/*   void * simage_cgimage_open(const char * filename, */
-/*                              int * width, */
-/*                              int * height, */
-/*                              int * numcomponents); */
-/*   void simage_cgimage_close(void * opendata); */
-/*   int simage_cgimage_read_line(void * opendata, int y, unsigned char * buf); */
+  int simage_cgimage_save(const char *filename,
+                          const unsigned char * bytes,
+                          int width,
+                          int height,
+                          int numcomponents,
+                          const char * ext);
   
 #ifdef __cplusplus
 }
