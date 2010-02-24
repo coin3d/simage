@@ -3,12 +3,21 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <ApplicationServices/ApplicationServices.h>
 
-#define ERR_NO_ERROR    0   // no error
-#define ERR_LOAD        1   // could not load file
+enum {
+  ERR_NO_ERROR,
+  ERR_OPEN,
+  ERR_READ,
+  ERR_MEM,
+  ERR_OPEN_WRITE,
+  ERR_WRITE,
+  ERR_NOT_IMPLEMENTED,
+  ERR_INIT
+};
 
 static int cgimageerror = ERR_NO_ERROR;
 
-static CGImageSourceRef create_image_source(const char * file)
+static CGImageSourceRef
+create_image_source(const char * file)
 {
   CFStringRef cfname;
   CFURLRef image_url;
@@ -17,16 +26,23 @@ static CGImageSourceRef create_image_source(const char * file)
   cfname = CFStringCreateWithCString(kCFAllocatorDefault,
 				     file,
 				     kCFStringEncodingUTF8);
-  assert(cfname);
+
+  if (!cfname) {
+    return NULL;
+  }
 
   image_url = CFURLCreateWithFileSystemPath(kCFAllocatorDefault,
 					    cfname,
 					    kCFURLPOSIXPathStyle,
 					    false);
-  assert(texture_url);
+
+  if (!image_url) {
+    CFRelease(cfname);
+    return NULL;
+  }
 
   image_source = CGImageSourceCreateWithURL(image_url, NULL);
-  CFRelease(texture_url);
+  CFRelease(image_url);
   CFRelease(cfname);
 
   if (image_source &&
@@ -43,7 +59,7 @@ simage_cgimage_error(char * cstr, int buflen)
 {
   int errval = cgimageerror;
   switch (cgimageerror) {
-  case ERR_LOAD:
+  case ERR_OPEN:
     strncpy(cstr, "CGImage loader: Error loading file", buflen);
     break;
   }
@@ -63,7 +79,6 @@ simage_cgimage_identify(const char * file, const unsigned char * header,
   return 0;
 }
 
-
 unsigned char *
 simage_cgimage_load(const char * file, int * width, int * height, int * numcomponents)
 {
@@ -75,7 +90,7 @@ simage_cgimage_load(const char * file, int * width, int * height, int * numcompo
 
   image_source = create_image_source(file);
   if (!image_source) {
-    cgimageerror = ERR_LOAD;
+    cgimageerror = ERR_OPEN;
     return NULL;
   }
 
@@ -98,12 +113,13 @@ simage_cgimage_load(const char * file, int * width, int * height, int * numcompo
 
   newpx = (unsigned char *)malloc(*width * *height * *numcomponents);
 
-  context = CGBitmapContextCreate(newpx, *width, *height, 8, *width * *numcomponents, color_space,
+  context = CGBitmapContextCreate(newpx, *width, *height, 8, *width * *numcomponents,
+				  color_space,
 				  (*numcomponents == 1) ?
 				  kCGImageAlphaNone :
 				  kCGImageAlphaPremultipliedLast);
   assert(context);
-  // Flip Y axis
+  /* flip Y axis */
   CGContextScaleCTM(context, 1.0f, -1.0f);
   CGContextTranslateCTM(context, 0.0f, -*height);
 
@@ -120,7 +136,65 @@ simage_cgimage_load(const char * file, int * width, int * height, int * numcompo
 char *
 simage_cgimage_get_savers(void)
 {
+  unsigned int idx;
+  unsigned int formats_size = 0;
+  char * format;
+  char * formats = NULL;
 
+  CFArrayRef destinationTypes;
+  CFIndex fileext_len = 0;
+  CFStringRef fileext;
+  CFStringRef jpegStr;
+  CFStringRef tiffStr;
+
+  format = (char*)malloc(5);
+  memset(format, 0, 5);
+
+  jpegStr = CFSTR("jpeg");
+  tiffStr = CFSTR("tiff");
+
+  destinationTypes = CGImageDestinationCopyTypeIdentifiers();
+  for (idx = 0; idx < CFArrayGetCount(destinationTypes); idx++) {
+    fileext = UTTypeCopyPreferredTagWithClass(CFArrayGetValueAtIndex(destinationTypes, idx),
+					      kUTTagClassFilenameExtension);
+
+    fileext_len = CFStringGetLength(fileext);
+
+    /* make JPEG and TIFF strings 3 letter extensions */
+    /* FIXME: dirty. wash it! 20100224 tamer. */
+    if (fileext_len == 4) {
+      if (!CFStringCompare(fileext, jpegStr, 0)) {
+	CFRelease(fileext);
+	fileext = CFSTR("jpg");
+	fileext_len = 3;
+      } else if (!CFStringCompare(fileext, tiffStr, 0)) {
+	CFRelease(fileext);
+	fileext = CFSTR("tif");
+	fileext_len = 3;
+      }
+    }
+
+    formats_size += fileext_len + ((idx == 0) ? 1 : 2);
+    formats = (char *)realloc(formats, formats_size);
+
+    /* Assumption: file extension tag not bigger than 4 characters,
+       therefore the hardcoded value of 5. 20100224 tamer. */
+    CFStringGetCString(fileext, format, 5, kCFStringEncodingUTF8);
+
+    if (idx == 0) {
+      strncpy(formats, format, fileext_len+1);
+    } else {
+      strncat(formats, ",", 2);
+      strncat(formats, format, fileext_len+1);
+    }
+
+    CFRelease(fileext);
+  }
+
+  CFRelease(destinationTypes);
+  free(format);
+
+  return formats;
 }
 
 int
@@ -131,5 +205,110 @@ simage_cgimage_save(const char *filename,
 		    int numcomponents,
 		    const char * ext)
 {
+  CFStringRef cfname;
+  CFStringRef file_ext;
+  CFStringRef type_name;
+  CFURLRef image_url;
+  CGContextRef context;
+  CGImageRef image_source;
+  CGImageDestinationRef image_dest;
+  CGColorSpaceRef colorSpaceRef;
+  CGDataProviderRef provider;
 
+  int bitsPerComponent, bitsPerPixel, bytesPerRow;
+  int finalized;
+
+  /* FIXME: audit of the code left, if we really release all resources
+     in all resp. error handlers. 20100224 tamer. */
+  provider = CGDataProviderCreateWithData(NULL, bytes,
+					  width*height*numcomponents,
+					  NULL);
+
+  bitsPerComponent = 8;
+  bitsPerPixel = bitsPerComponent*numcomponents;
+  bytesPerRow = numcomponents * width;
+  colorSpaceRef = CGColorSpaceCreateDeviceRGB();
+  image_source = CGImageCreate(width, height, 8, 8*numcomponents,
+			       numcomponents*width,
+			       colorSpaceRef,
+			       kCGBitmapByteOrderDefault,
+			       provider,
+			       NULL, 0,
+			       kCGRenderingIntentDefault);
+
+  CGColorSpaceRelease(colorSpaceRef);
+  CGDataProviderRelease(provider);
+
+#if 0
+  /* FIXME: finish flip axis implementation. 20100224 tamer. */
+  context = CreateARGBBitmapContext(image_source);
+  /* flip Y axis */
+  CGContextScaleCTM(context, 1.0f, -1.0f);
+  CGContextTranslateCTM(context, 0.0f, -height);
+
+  CGContextDrawImage(context, CGRectMake(0, 0, width, height), image_source);
+  CFRelease(context);
+#endif
+
+  cfname = CFStringCreateWithCString(kCFAllocatorDefault,
+				     filename,
+				     kCFStringEncodingUTF8);
+
+  if (!cfname) {
+    cgimageerror = ERR_WRITE;
+    CFRelease(image_source);
+    return 1;
+  }
+
+  image_url = CFURLCreateWithFileSystemPath(kCFAllocatorDefault,
+					    cfname,
+					    kCFURLPOSIXPathStyle,
+					    false);
+
+  if (!image_url) {
+    cgimageerror = ERR_WRITE;
+    CFRelease(image_source);
+    CFRelease(cfname);
+    return 1;
+  }
+
+  file_ext = CFStringCreateWithCString(kCFAllocatorDefault,
+				       ext,
+				       kCFStringEncodingUTF8);
+  type_name = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,
+						    file_ext,
+						    kUTTypeImage);
+
+  if (!type_name) {
+    cgimageerror = ERR_WRITE;
+    CFRelease(image_source);
+    CFRelease(cfname);
+    CFRelease(file_ext);
+    return 1;
+  }
+
+  image_dest = CGImageDestinationCreateWithURL(image_url, type_name, 1, NULL);
+
+  if (!image_dest) {
+    cgimageerror = ERR_WRITE;
+    CFRelease(image_source);
+    CFRelease(cfname);
+    CFRelease(file_ext);
+    CFRelease(type_name);
+    return 1;
+  }
+
+  CGImageDestinationAddImage(image_dest, image_source, NULL);
+
+  finalized = CGImageDestinationFinalize(image_dest);
+  if (!finalized) {
+    cgimageerror = ERR_WRITE;
+  }
+
+  CGImageRelease(image_source);
+  CFRelease(image_dest);
+  CFRelease(file_ext);
+  CFRelease(type_name);
+
+  return !finalized;
 }
