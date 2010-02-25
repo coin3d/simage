@@ -209,46 +209,61 @@ simage_cgimage_save(const char *filename,
   CFStringRef file_ext;
   CFStringRef type_name;
   CFURLRef image_url;
-  CGContextRef context;
   CGImageRef image_source;
   CGImageDestinationRef image_dest;
-  CGColorSpaceRef colorSpaceRef;
+  CGColorSpaceRef color_space;
   CGDataProviderRef provider;
 
   int bitsPerComponent, bitsPerPixel, bytesPerRow;
   int finalized;
 
-  /* FIXME: audit of the code left, if we really release all resources
-     in all resp. error handlers. 20100224 tamer. */
-  provider = CGDataProviderCreateWithData(NULL, bytes,
-					  width*height*numcomponents,
+  unsigned int pos = 0, imgbufsize = width*height*numcomponents;
+  unsigned char * bytes_flipped = NULL;
+
+  /* FIXME: Flipping manually as CGBitmapContexts leads to headaches
+     by not supporting 24bits per pixel buffers. 20100225 tamer. */
+  bytes_flipped = (unsigned char *)malloc(imgbufsize);
+  /* flip buffer horizontally */
+  for (pos = 0; pos < imgbufsize; pos+=width*numcomponents) {
+    memcpy(bytes_flipped+pos,
+	   bytes+imgbufsize-width*numcomponents-pos,
+	   width*numcomponents);
+  }
+
+  provider = CGDataProviderCreateWithData(NULL, bytes_flipped,
+					  imgbufsize,
 					  NULL);
 
   bitsPerComponent = 8;
   bitsPerPixel = bitsPerComponent*numcomponents;
   bytesPerRow = numcomponents * width;
-  colorSpaceRef = CGColorSpaceCreateDeviceRGB();
+  color_space = CGColorSpaceCreateDeviceRGB();
   image_source = CGImageCreate(width, height, 8, 8*numcomponents,
 			       numcomponents*width,
-			       colorSpaceRef,
+			       color_space,
 			       kCGBitmapByteOrderDefault,
 			       provider,
 			       NULL, 0,
 			       kCGRenderingIntentDefault);
 
-  CGColorSpaceRelease(colorSpaceRef);
   CGDataProviderRelease(provider);
+  CGColorSpaceRelease(color_space);
+  free(bytes_flipped);
 
-#if 0
-  /* FIXME: finish flip axis implementation. 20100224 tamer. */
-  context = CreateARGBBitmapContext(image_source);
-  /* flip Y axis */
-  CGContextScaleCTM(context, 1.0f, -1.0f);
-  CGContextTranslateCTM(context, 0.0f, -height);
+  file_ext = CFStringCreateWithCString(kCFAllocatorDefault,
+				       ext,
+				       kCFStringEncodingUTF8);
+  type_name = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,
+						    file_ext,
+						    kUTTypeImage);
 
-  CGContextDrawImage(context, CGRectMake(0, 0, width, height), image_source);
-  CFRelease(context);
-#endif
+  CFRelease(file_ext);
+
+  if (!type_name) {
+    cgimageerror = ERR_WRITE;
+    CFRelease(image_source);
+    return 1;
+  }
 
   cfname = CFStringCreateWithCString(kCFAllocatorDefault,
 				     filename,
@@ -256,6 +271,7 @@ simage_cgimage_save(const char *filename,
 
   if (!cfname) {
     cgimageerror = ERR_WRITE;
+    CFRelease(type_name);
     CFRelease(image_source);
     return 1;
   }
@@ -265,36 +281,23 @@ simage_cgimage_save(const char *filename,
 					    kCFURLPOSIXPathStyle,
 					    false);
 
+  CFRelease(cfname);
+
   if (!image_url) {
     cgimageerror = ERR_WRITE;
+    CFRelease(type_name);
     CFRelease(image_source);
-    CFRelease(cfname);
-    return 1;
-  }
-
-  file_ext = CFStringCreateWithCString(kCFAllocatorDefault,
-				       ext,
-				       kCFStringEncodingUTF8);
-  type_name = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,
-						    file_ext,
-						    kUTTypeImage);
-
-  if (!type_name) {
-    cgimageerror = ERR_WRITE;
-    CFRelease(image_source);
-    CFRelease(cfname);
-    CFRelease(file_ext);
     return 1;
   }
 
   image_dest = CGImageDestinationCreateWithURL(image_url, type_name, 1, NULL);
 
+  CFRelease(type_name);
+  CFRelease(image_url);
+
   if (!image_dest) {
     cgimageerror = ERR_WRITE;
     CFRelease(image_source);
-    CFRelease(cfname);
-    CFRelease(file_ext);
-    CFRelease(type_name);
     return 1;
   }
 
@@ -307,8 +310,6 @@ simage_cgimage_save(const char *filename,
 
   CGImageRelease(image_source);
   CFRelease(image_dest);
-  CFRelease(file_ext);
-  CFRelease(type_name);
 
   return !finalized;
 }
