@@ -201,7 +201,7 @@ INCLUDES = -I$(top_srcdir)/include -I$(top_builddir)/include
 
 @SIMAGE_QIMAGE_SUPPORT_TRUE@QIMAGESOURCES = simage_qimage.cpp $(top_srcdir)/include/simage_qimage.h
 
-@SIMAGE_CGIMAGE_SUPPORT_TRUE@CGIMAGESOURCES = simage_cgimage.cpp $(top_srcdir)/include/simage_cgimage.h
+@SIMAGE_CGIMAGE_SUPPORT_TRUE@CGIMAGESOURCES = simage_cgimage.c $(top_srcdir)/include/simage_cgimage.h
 @SIMAGE_CGIMAGE_SUPPORT_FALSE@CGIMAGESOURCES = 
 @SIMAGE_QUICKTIME_SUPPORT_FALSE@QUICKTIMESOURCES = 
 
@@ -322,7 +322,7 @@ am__simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_SOURCES_DIST = \
 	$(top_srcdir)/include/simage_xwd.h simage_eps.c \
 	$(top_srcdir)/include/simage_eps.h simage_qimage.cpp \
 	$(top_srcdir)/include/simage_qimage.h simage_quicktime.c \
-	$(top_srcdir)/include/simage_quicktime.h simage_cgimage.cpp \
+	$(top_srcdir)/include/simage_quicktime.h simage_cgimage.c \
 	$(top_srcdir)/include/simage_cgimage.h simage_avi.c \
 	$(top_srcdir)/include/simage_avi.h avi_encode.c \
 	$(top_srcdir)/include/avi_encode.h simage_oggvorbis_reader.c \
@@ -389,7 +389,7 @@ am__libsimage@SUFFIX@_la_SOURCES_DIST = $(top_builddir)/include/simage.h \
 	$(top_srcdir)/include/simage_xwd.h simage_eps.c \
 	$(top_srcdir)/include/simage_eps.h simage_qimage.cpp \
 	$(top_srcdir)/include/simage_qimage.h simage_quicktime.c \
-	$(top_srcdir)/include/simage_quicktime.h simage_cgimage.cpp \
+	$(top_srcdir)/include/simage_quicktime.h simage_cgimage.c \
 	$(top_srcdir)/include/simage_cgimage.h simage_avi.c \
 	$(top_srcdir)/include/simage_avi.h avi_encode.c \
 	$(top_srcdir)/include/avi_encode.h simage_oggvorbis_reader.c \
