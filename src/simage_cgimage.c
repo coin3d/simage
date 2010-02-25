@@ -262,7 +262,7 @@ simage_cgimage_save(const char *filename,
   if (!type_name) {
     cgimageerror = ERR_WRITE;
     CFRelease(image_source);
-    return 1;
+    return 0;
   }
 
   cfname = CFStringCreateWithCString(kCFAllocatorDefault,
@@ -273,7 +273,7 @@ simage_cgimage_save(const char *filename,
     cgimageerror = ERR_WRITE;
     CFRelease(type_name);
     CFRelease(image_source);
-    return 1;
+    return 0;
   }
 
   image_url = CFURLCreateWithFileSystemPath(kCFAllocatorDefault,
@@ -287,7 +287,7 @@ simage_cgimage_save(const char *filename,
     cgimageerror = ERR_WRITE;
     CFRelease(type_name);
     CFRelease(image_source);
-    return 1;
+    return 0;
   }
 
   image_dest = CGImageDestinationCreateWithURL(image_url, type_name, 1, NULL);
@@ -298,7 +298,7 @@ simage_cgimage_save(const char *filename,
   if (!image_dest) {
     cgimageerror = ERR_WRITE;
     CFRelease(image_source);
-    return 1;
+    return 0;
   }
 
   CGImageDestinationAddImage(image_dest, image_source, NULL);
@@ -311,5 +311,5 @@ simage_cgimage_save(const char *filename,
   CGImageRelease(image_source);
   CFRelease(image_dest);
 
-  return !finalized;
+  return finalized;
 }
