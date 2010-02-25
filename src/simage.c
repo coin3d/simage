@@ -256,7 +256,6 @@ add_internal_loaders(void)
                1, 
                1); // add_before -- if we can use QuickTime, makeitso
 #endif /* SIMAGE_QUICKTIME_SUPPORT */
-  }
 #ifdef SIMAGE_CGIMAGE_SUPPORT
     add_loader(&cgimage_loader,
                simage_cgimage_load,
@@ -265,6 +264,7 @@ add_internal_loaders(void)
                1, 
                1); // add_before -- if we can use CGImage, makeitso
 #endif /* SIMAGE_CGIMAGE_SUPPORT */
+  }
 }
 
 #define SIMAGE_ERROR_BUFSIZE 512
