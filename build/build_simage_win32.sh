@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script will download, (svn) checkout and build simage
+# This script will download, (mercurial) checkout and build simage
 # from scratch, including all dependent libraries.
 
 # Before running this script, please
@@ -128,16 +128,16 @@ fi
 
 SIMAGE_SDK=$SIMAGE_SDK/dist
 
-# svn update simage
+# hg update simage
 
 if ! test -d $SIMAGE_CHECKOUT/simage; then
   echo "[SIMAGE]      Checking out simage from scratch"
   cd $SIMAGE_CHECKOUT
-  svn co https://svn.coin3d.org/repos/simage/trunk simage
+  hg clone https://hg.sim.no/simage/default simage
 else
   echo "[SIMAGE]      Updating simage"
   cd $SIMAGE_CHECKOUT/simage
-  svn update
+  hg update
 fi
 
 # configure and make simage
