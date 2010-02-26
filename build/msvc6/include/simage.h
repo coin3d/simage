@@ -168,7 +168,7 @@
 #define SIMAGE_MICRO_VERSION 2
 #endif /* !SIMAGE_MICRO_VERSION */
 #if !defined(SIMAGE_VERSION)
-#define SIMAGE_VERSION "1.6.2a"
+#define SIMAGE_VERSION "1.7.0"
 #endif /* !SIMAGE_VERSION */
 
 /***************************************************************************/

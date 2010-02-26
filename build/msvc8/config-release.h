@@ -74,13 +74,13 @@
 #define PACKAGE_NAME "simage"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "simage 1.6.2a"
+#define PACKAGE_STRING "simage 1.7.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "simage"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.6.2a"
+#define PACKAGE_VERSION "1.7.0"
 
 /* define to enable avienc support */
 /* #undef SIMAGE_AVIENC_SUPPORT */
@@ -125,7 +125,7 @@
 #define SIMAGE_TGA_SUPPORT 
 
 /* define this to the simage major.minor.micro version string */
-#define SIMAGE_VERSION "1.6.2a"
+#define SIMAGE_VERSION "1.7.0"
 
 /* define to enable xwd support */
 /* #undef SIMAGE_XWD_SUPPORT */
@@ -134,7 +134,7 @@
 /* #undef STDC_HEADERS */
 
 /* Version number of package */
-#define VERSION "1.6.2a"
+#define VERSION "1.7.0"
 
 /* Define to 1 if the X Window System is missing or not being used. */
 /* #undef X_DISPLAY_MISSING */
