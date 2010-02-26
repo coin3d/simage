@@ -1,0 +1,50 @@
+simage 1.7.0
+============
+
+Kongsberg SIM is proud to release version 1.7.0 of the simage graphics
+utility library. Simage is a cross-platform library capable of
+loading, manipulating and saving images, creating and saving movies
+(AVI and mpeg), and loading audio. The simage library relies heavily
+on 3rd party libraries to perform these tasks.
+
+Simage 1.7.0 is a minor release. It keeps binary compatibility with
+the previous version of simage (1.6.2).
+
+NEWS File Excerpt:
+------------------
+
+New in v1.7.0 (2010-02-22):
+* Added CGImage based backend on OS X.
+* Added Quicktime based backend for older OS X versions.
+* Added GDI+ based backend for Windows.
+* Added Jasper/JPEG 2000 support.
+* Added Visual Studio project files.
+* Added Universal Binary support for OS X.
+* Added pkg-config description.
+* Added support for Windows 64-bit.
+* Fixed QImage backend to work with Qt4.
+* Fixed various memory leaks.
+* Fixed various build system and compile/link issues.
+
+See the ChangeLog file for all the details that lead to this release.
+
+
+Download Information:
+---------------------
+
+This message is posted before some of the listed binary downloads are
+available.  If you don't find what you are after, try again at a later
+time.
+
+ChangeLog:
+  http://hg.sim.no/simage/simage-1.7/ChangeLog
+
+Source Code:
+  http://ftp.coin3d.org/coin/src/all/simage-1.7.0.tar.gz
+  http://ftp.coin3d.org/coin/src/all/simage-1.7.0.zip
+
+Precompiled for MS Windows:
+  http://ftp.coin3d.org/coin/bin/win32/simage-1.7.0-bin-msvc6.zip
+  http://ftp.coin3d.org/coin/bin/win32/simage-1.7.0-bin-msvc7.zip
+  http://ftp.coin3d.org/coin/bin/win32/simage-1.7.0-bin-msvc8.zip
+  http://ftp.coin3d.org/coin/bin/win32/simage-1.7.0-bin-msvc9.zip
