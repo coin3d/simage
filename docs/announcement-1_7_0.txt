@@ -37,7 +37,7 @@ available.  If you don't find what you are after, try again at a later
 time.
 
 ChangeLog:
-  http://hg.sim.no/simage/simage-1.7/ChangeLog
+  http://hg.sim.no/simage/simage-1.7/raw-file/Simage-1.7.0/ChangeLog
 
 Source Code:
   http://ftp.coin3d.org/coin/src/all/simage-1.7.0.tar.gz
