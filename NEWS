@@ -1,5 +1,5 @@
 New in v1.7.0 (2010-02-22):
-* Added CGImage based backend OS X.
+* Added CGImage based backend on OS X.
 * Added Quicktime based backend for older OS X versions.
 * Added GDI+ based backend for Windows.
 * Added Jasper/JPEG 2000 support.
