@@ -8,12 +8,12 @@ loading, manipulating and saving images, creating and saving movies
 on 3rd party libraries to perform these tasks.
 
 Simage 1.7.0 is a minor release. It keeps binary compatibility with
-the previous version of simage (1.6.2).
+the previous version of simage (1.6.1).
 
 NEWS File Excerpt:
 ------------------
 
-New in v1.7.0 (2010-02-22):
+New in v1.7.0 (2010-02-26):
 * Added CGImage based backend on OS X.
 * Added Quicktime based backend for older OS X versions.
 * Added GDI+ based backend for Windows.
