@@ -1,11 +1,11 @@
 simage 1.7.0
 ============
 
-Kongsberg SIM is proud to release version 1.7.0 of the simage graphics
-utility library. Simage is a cross-platform library capable of
-loading, manipulating and saving images, creating and saving movies
-(AVI and mpeg), and loading audio. The simage library relies heavily
-on 3rd party libraries to perform these tasks.
+Kongsberg Oil & Gas Technologies is proud to release version 1.7.0 of
+the simage graphics utility library. Simage is a cross-platform
+library capable of loading, manipulating and saving images, creating
+and saving movies (AVI and mpeg), and loading audio. The simage
+library relies heavily on 3rd party libraries to perform these tasks.
 
 Simage 1.7.0 is a minor release. It keeps binary compatibility with
 the previous version of simage (1.6.1).
