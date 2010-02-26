@@ -98,10 +98,10 @@
 #define SIMAGE_MAJOR_VERSION 1
 
 /* define this to the simage release version number */
-#define SIMAGE_MICRO_VERSION 2
+#define SIMAGE_MICRO_VERSION 0
 
 /* define this to the simage minor version number */
-#define SIMAGE_MINOR_VERSION 6
+#define SIMAGE_MINOR_VERSION 7
 
 /* define to enable mpeg2enc support */
 /* #undef SIMAGE_MPEG2ENC_SUPPORT */
