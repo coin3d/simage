@@ -10,10 +10,10 @@ SUBDIRS = $(MPEG2ENCDIR) src guile
 
 dist_bin_SCRIPTS = simage-config
 
-m4datadir = $(datadir)/aclocal
+m4datadir = $(datarootdir)/aclocal
 dist_m4data_DATA = cfg/simage.m4
 
-cfgdatadir = $(datadir)/Coin/conf
+cfgdatadir = $(datarootdir)/Coin/conf
 cfgdata_DATA = simage-@CONFIG@.cfg
 
 pkgconfigdir = $(libdir)/pkgconfig

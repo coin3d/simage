@@ -57,7 +57,7 @@ rm -f ./config.cache
 # The options must cover the set of install-directories in the %files section.
 $RPM_SOURCE_DIR/simage/configure \
                        --bindir=@bindir@ --includedir=@includedir@ \
-                       --libdir=@libdir@ --datadir=@datadir@
+                       --libdir=@libdir@ --datadir=@datarootdir@
 make
 
 
@@ -75,7 +75,7 @@ make install-strip
 @libdir@/libsimage.so.@LT_CURRENT@.@LT_AGE@.@LT_REVISION@
 @libdir@/libsimage.la
 @libdir@/libsimage.so
-@datadir@/aclocal/simage.m4
+@datarootdir@/aclocal/simage.m4
 
 
 %clean
