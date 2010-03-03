@@ -1,3 +1,5 @@
+New in v1.7.1a (so far):
+
 New in v1.7.0 (2010-02-26):
 * Added CGImage based backend on OS X.
 * Added Quicktime based backend for older OS X versions.
