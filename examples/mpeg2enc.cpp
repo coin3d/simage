@@ -1,4 +1,20 @@
 /*
+ * Copyright (c) Kongsberg Oil & Gas Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+/*
  * Demonstrates how to use the simage API to write MPEG movies of
  * frames from the SoOffscreenRenderer.
  *
@@ -58,7 +74,7 @@ progress_cb(void * userdata, float sub, int current_frame, int num_frames)
 
   int logframes = (int)log10(num_frames) + 1;
   (void)sprintf(buffer, "\rwriting frame: %%%dd / %%%dd  -- %%03.1f%%%%  ",
-                logframes, logframes);
+		logframes, logframes);
 
   (void)fprintf(stdout, buffer, current_frame + 1, num_frames, sub * 100.0);
   (void)fflush(stdout);
@@ -81,7 +97,7 @@ static SbBool
 optcmp(const char * arg, const char * optionname)
 {
   return ((strncmp(arg, "--", 2) == 0) &&
-          (strcmp(&arg[2], optionname) == 0));
+	  (strcmp(&arg[2], optionname) == 0));
 }
 
 int
@@ -145,10 +161,10 @@ main(int argc, char ** argv)
   root->addChild(myMaterial);
   SoNode *node;
   root->addChild(node = new SoCone);
-  
+
   SbViewportRegion vp;
   vp.setWindowSize(SbVec2s(userpars.width, userpars.height));
-  
+
   SoOffscreenRenderer * renderer = new SoOffscreenRenderer( vp );
 
   renderer->setBackgroundColor( SbColor( 0.1f, 0.2f, 0.3f )  );
@@ -159,40 +175,40 @@ main(int argc, char ** argv)
   int nr_frames = userpars.clocktime * 30;
 
   s_params * params = s_params_create();
-  s_params_set(params, 
-               "mime-type", S_STRING_PARAM_TYPE, "video/mpeg",
-               "width", S_INTEGER_PARAM_TYPE, userpars.width,
-               "height", S_INTEGER_PARAM_TYPE, userpars.height,
+  s_params_set(params,
+	       "mime-type", S_STRING_PARAM_TYPE, "video/mpeg",
+	       "width", S_INTEGER_PARAM_TYPE, userpars.width,
+	       "height", S_INTEGER_PARAM_TYPE, userpars.height,
 
-               "num frames", S_INTEGER_PARAM_TYPE, nr_frames,
+	       "num frames", S_INTEGER_PARAM_TYPE, nr_frames,
 
-               "error callback", S_FUNCTION_PARAM_TYPE, error_cb,
-               "warning callback", S_FUNCTION_PARAM_TYPE, warning_cb,
-               "progress callback", S_FUNCTION_PARAM_TYPE, progress_cb,
-               /* use to specify userdata for all callbacks */
-               "callback userdata", S_POINTER_PARAM_TYPE, NULL,
+	       "error callback", S_FUNCTION_PARAM_TYPE, error_cb,
+	       "warning callback", S_FUNCTION_PARAM_TYPE, warning_cb,
+	       "progress callback", S_FUNCTION_PARAM_TYPE, progress_cb,
+	       /* use to specify userdata for all callbacks */
+	       "callback userdata", S_POINTER_PARAM_TYPE, NULL,
 
-               /* use to encode as mpeg1 instead of mpeg2 */
-               "mpeg1", S_BOOL_PARAM_TYPE, 0,
+	       /* use to encode as mpeg1 instead of mpeg2 */
+	       "mpeg1", S_BOOL_PARAM_TYPE, 0,
 
-               /* use to specify a parameter file */
-               "parameter file", S_STRING_PARAM_TYPE, "ntsc_coin.par",
+	       /* use to specify a parameter file */
+	       "parameter file", S_STRING_PARAM_TYPE, "ntsc_coin.par",
 
-               /* use to specify constraints coded parameter constraints for mpeg2 files, 
-                  such as bitrate, sample rate, and maximum allowed motion vector range.
+	       /* use to specify constraints coded parameter constraints for mpeg2 files,
+		  such as bitrate, sample rate, and maximum allowed motion vector range.
 
-                  Value Meaning         Typical use
-                  ----  --------------- -----------------------------------------------
-                  4     High Level      HDTV production rates: e.g. 1920 x 1080 x 30 Hz
-                  6     High 1440 Level HDTV consumer rates: e.g. 1440 x 960 x 30 Hz
-                  8     Main Level      CCIR 601 rates: e.g. 720 x 480 x 30 Hz
-                  10    Low Level       SIF video rate: e.g. 352 x 240 x 30 Hz
-               */
-               "level", S_INTEGER_PARAM_TYPE, userpars.constraintslevel,
+		  Value Meaning         Typical use
+		  ----  --------------- -----------------------------------------------
+		  4     High Level      HDTV production rates: e.g. 1920 x 1080 x 30 Hz
+		  6     High 1440 Level HDTV consumer rates: e.g. 1440 x 960 x 30 Hz
+		  8     Main Level      CCIR 601 rates: e.g. 720 x 480 x 30 Hz
+		  10    Low Level       SIF video rate: e.g. 352 x 240 x 30 Hz
+	       */
+	       "level", S_INTEGER_PARAM_TYPE, userpars.constraintslevel,
 
-               /* NULL means no more params */
-               NULL);
-               
+	       /* NULL means no more params */
+	       NULL);
+
   s_movie * movie = s_movie_create(MPGOUT, params);
   s_params_destroy(params);
   if (movie == NULL) {
@@ -200,12 +216,12 @@ main(int argc, char ** argv)
     if (simage_get_last_error()) { error_cb(NULL, simage_get_last_error()); }
     exit(1);
   }
-  
+
 
   s_image * image = NULL;
 
   for (int i=0; i < nr_frames; i++)
-  { 
+  {
     SbVec3f cpos = camera->position.getValue();
     float x, y, z;
     cpos.getValue(x, y, z);
@@ -227,8 +243,8 @@ main(int argc, char ** argv)
     else s_image_set(image, userpars.width, userpars.height, 3, renderer->getBuffer(), 0);
     s_movie_put_image(movie, image, NULL);
   }
-  
-  if (image) s_image_destroy(image);    
+
+  if (image) s_image_destroy(image);
   s_movie_close(movie);
   s_movie_destroy(movie);
 

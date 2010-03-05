@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) Kongsberg Oil & Gas Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -5,6 +21,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
+
 #include <simage.h>
 #include <simage_private.h>
 #include <string.h>
@@ -19,7 +36,7 @@
 
 struct simage_stream_s {
   char * filename;
-  
+
   s_stream_open_func * open;
   s_stream_create_func * create;
   s_stream_get_func * get;
@@ -27,7 +44,7 @@ struct simage_stream_s {
   s_stream_close_func * close;
   s_stream_seek_func * seek;
   s_stream_tell_func * tell;
-  
+
   s_params * params;
   void *context;
 };
@@ -37,7 +54,7 @@ struct simage_stream_importer {
   s_stream_get_func * get;
   s_stream_seek_func * seek;
   s_stream_tell_func * tell;
-  s_stream_close_func * close;  
+  s_stream_close_func * close;
 
   struct simage_stream_importer * next;
 };
@@ -47,8 +64,8 @@ struct simage_stream_exporter {
   s_stream_put_func * put;
   s_stream_seek_func * seek;
   s_stream_tell_func * tell;
-  s_stream_close_func * close;  
-  
+  s_stream_close_func * close;
+
   struct simage_stream_exporter * next;
 };
 
@@ -57,40 +74,40 @@ struct simage_stream_exporter {
 static struct simage_stream_importer * importers;
 static struct simage_stream_exporter * exporters;
 
-static void 
+static void
 add_internal_importers(void)
 {
   static int first = 1;
   if (first) {
 #ifdef SIMAGE_OGGVORBIS_SUPPORT
     s_stream_importer_add_ex(oggvorbis_reader_stream_open,
-                             oggvorbis_reader_stream_get, 
+                             oggvorbis_reader_stream_get,
                              oggvorbis_reader_stream_seek,
                              oggvorbis_reader_stream_tell,
                              oggvorbis_reader_stream_close);
 #endif
 #ifdef SIMAGE_LIBSNDFILE_SUPPORT
     s_stream_importer_add_ex(libsndfile_stream_open,
-                             libsndfile_stream_get, 
+                             libsndfile_stream_get,
                              libsndfile_stream_seek,
                              libsndfile_stream_tell,
                              libsndfile_stream_close);
 #endif
     first = 0;
-  }                
+  }
 }
 
 static void
 add_internal_exporters(void)
 {
   static int first = 1;
-  if (first) {    
+  if (first) {
     /* none yet */
-   first = 0;
+    first = 0;
   }
 }
 
-s_stream * 
+s_stream *
 s_stream_open(const char * filename, s_params * params)
 {
   struct simage_stream_importer * imp;
@@ -124,7 +141,7 @@ s_stream_open(const char * filename, s_params * params)
   return stream;
 }
 
-s_stream * 
+s_stream *
 s_stream_create(const char * filename, s_params * params /* | NULL */)
 {
   struct simage_stream_exporter * exp;
@@ -132,7 +149,7 @@ s_stream_create(const char * filename, s_params * params /* | NULL */)
   stream->params = NULL;
   stream->filename = NULL;
   stream->context = NULL;
-  
+
   add_internal_exporters();
 
   exp = exporters;
@@ -155,27 +172,27 @@ s_stream_create(const char * filename, s_params * params /* | NULL */)
   return stream;
 }
 
-void * 
+void *
 s_stream_get_buffer(s_stream * stream, void * buffer,
-                           int *size, s_params * params)
+                    int *size, s_params * params)
 {
   return stream->get(stream, buffer, size, params);
 }
 
-int 
-s_stream_put_buffer(s_stream * stream, void * buffer, 
-                        int size, s_params * params)
+int
+s_stream_put_buffer(s_stream * stream, void * buffer,
+                    int size, s_params * params)
 {
   return stream->put(stream, buffer, size, params);
 }
 
-void 
+void
 s_stream_close(s_stream * stream)
 {
   stream->close(stream);
 }
 
-void 
+void
 s_stream_destroy(s_stream * stream)
 {
   if (stream->params) s_params_destroy(stream->params);
@@ -183,7 +200,7 @@ s_stream_destroy(s_stream * stream)
   free((void*) stream);
 }
 
-s_params * 
+s_params *
 s_stream_params(s_stream * stream)
 {
   if (stream->params == NULL) {
@@ -198,13 +215,13 @@ s_stream_context_get(s_stream *stream)
   return stream->context;
 }
 
-void 
+void
 s_stream_context_set(s_stream *stream, void *context)
 {
   stream->context = context;
 }
 
-void 
+void
 s_stream_importer_add(s_stream_open_func * open,
                       s_stream_get_func * get,
                       s_stream_close_func * close)
@@ -212,7 +229,7 @@ s_stream_importer_add(s_stream_open_func * open,
   s_stream_importer_add_ex(open, get, NULL, NULL, close);
 }
 
-void 
+void
 s_stream_importer_add_ex(s_stream_open_func * open,
                          s_stream_get_func * get,
                          s_stream_seek_func * seek,
@@ -239,7 +256,7 @@ s_stream_importer_add_ex(s_stream_open_func * open,
   else last->next = imp;
 }
 
-void 
+void
 s_stream_exporter_add(s_stream_create_func * create,
                       s_stream_put_func * put,
                       s_stream_close_func * close)
@@ -247,7 +264,7 @@ s_stream_exporter_add(s_stream_create_func * create,
   s_stream_exporter_add_ex(create, put, NULL, NULL, close);
 }
 
-void 
+void
 s_stream_exporter_add_ex(s_stream_create_func * create,
                          s_stream_put_func * put,
                          s_stream_seek_func * seek,
@@ -274,7 +291,7 @@ s_stream_exporter_add_ex(s_stream_create_func * create,
   else last->next = exp;
 }
 
-int 
+int
 s_stream_seek(s_stream * stream, int offset, int whence,
               s_params * params /* | NULL */)
 {

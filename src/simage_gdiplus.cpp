@@ -1,4 +1,20 @@
-/* 
+/*
+ * Copyright (c) Kongsberg Oil & Gas Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+/*
  * GDI+ provides support for the following image formats:
  *   bmp, gif, jpeg, exif, png, tiff, icon, wmf, emf
  * Only the raster images are used through usage of the Bitmap class.
@@ -36,7 +52,7 @@
 #define LOCKBITS_RECT_CAST(arg) arg
 #endif // !GDIPVER
 
-enum { 
+enum {
   ERR_NO_ERROR,
   ERR_OPEN,
   ERR_READ,
@@ -53,12 +69,12 @@ static int gdipluserror = ERR_NO_ERROR;
  * Get the pixel format that should be used for reading the image.
  *
  * The component depth and component composition of simage images differ
- * from the pixel formats used by GDI+. This function maps a Bitmap to 
+ * from the pixel formats used by GDI+. This function maps a Bitmap to
  * an appropriate PixelFormat that makes it easy for us to copy the
  * bitmap data returned by Bitmap::LockBits(...) to the simage image.
  *
- * The 'grayscale' flag is an output parameter that is used to indicate 
- * that even though the returned pixel format is PixelFormat32bppARGB, 
+ * The 'grayscale' flag is an output parameter that is used to indicate
+ * that even though the returned pixel format is PixelFormat32bppARGB,
  * the image is really a gray scale image with alpha channel that can be
  * converted to a two-component simage image.
  */
@@ -70,7 +86,7 @@ getReadFormat(Gdiplus::Bitmap & bitmap, bool & grayscale)
 
   if (Gdiplus::IsIndexedPixelFormat(format)) {
     INT palettesize = bitmap.GetPaletteSize();
-    Gdiplus::ColorPalette * palette = 
+    Gdiplus::ColorPalette * palette =
       reinterpret_cast<Gdiplus::ColorPalette *>(new char[palettesize]);
     bitmap.GetPalette(palette, palettesize);
     bool alphaflag = (palette->Flags & Gdiplus::PaletteFlagsHasAlpha) != 0;
@@ -83,10 +99,10 @@ getReadFormat(Gdiplus::Bitmap & bitmap, bool & grayscale)
       return PixelFormat32bppARGB;
     if (grayflag && !alphaflag)
       return PixelFormat16bppGrayScale;
-    
-    // since GDI+ doesn't define a non-indexed color format for 
-    // grayscale images with alpha channel, we must extract the 
-    // image as ARGB, and convert it to simage's 0xGGAA - format 
+
+    // since GDI+ doesn't define a non-indexed color format for
+    // grayscale images with alpha channel, we must extract the
+    // image as ARGB, and convert it to simage's 0xGGAA - format
     // afterwards.
     grayscale = true;
     return PixelFormat32bppARGB;
@@ -111,20 +127,20 @@ getReadFormat(Gdiplus::Bitmap & bitmap, bool & grayscale)
  * Crate a buffer and copy image data into the buffer.
  *
  * Only use this function for RGB or RGBA images, that is
- * (numcomponents == 3) || (numcomponents == 4). 
+ * (numcomponents == 3) || (numcomponents == 4).
  *
  * The 'stride' parameter is the number of bytes between each
  * consecutive line in the input buffer.
  *
- * The image data is stored in the output buffer in simage 
+ * The image data is stored in the output buffer in simage
  * representation: 0xRRGGBBAA and 0xRRGGBB.
  *
  * The function will return NULL if malloc fails to allocate
  * memory for the output buffer.
  */
 static unsigned char *
-copyImageBuffer(unsigned char * src, unsigned int width, 
-                unsigned int height, 
+copyImageBuffer(unsigned char * src, unsigned int width,
+                unsigned int height,
                 unsigned int numcomponents, unsigned int stride)
 {
   assert(src);
@@ -132,10 +148,10 @@ copyImageBuffer(unsigned char * src, unsigned int width,
   assert((numcomponents == 3) || (numcomponents == 4));
   if ((numcomponents != 3) && (numcomponents != 4)) { return NULL; }
 
-  unsigned char * dst = 
+  unsigned char * dst =
     (unsigned char *)malloc(width * height * numcomponents);
   if (!dst) { return NULL; }
-  
+
   /* The image must be flipped horizontally so we start writing from the
      end of the the destination buffer */
   dst += width * height * numcomponents;
@@ -144,7 +160,7 @@ copyImageBuffer(unsigned char * src, unsigned int width,
     for (unsigned int y = 0; y < height; y++) {
       dst -= width * numcomponents;
       for (unsigned int x = 0; x < width; ++x) {
-        /* GDI+ stores the image internally as BGR, 
+        /* GDI+ stores the image internally as BGR,
            we store it as RGB */
         unsigned int offset = numcomponents * x;
         dst[offset] = src[offset + 2];
@@ -157,7 +173,7 @@ copyImageBuffer(unsigned char * src, unsigned int width,
     for (unsigned int y = 0; y < height; y++) {
       dst -= width * numcomponents;
       for (unsigned int x = 0; x < width; ++x) {
-        /* GDI+ stores the image internally as BGRA, 
+        /* GDI+ stores the image internally as BGRA,
            we store it as RGBA */
         unsigned int offset = numcomponents * x;
         dst[offset] = src[offset + 2];
@@ -168,7 +184,7 @@ copyImageBuffer(unsigned char * src, unsigned int width,
       src += stride;
     }
   }
-  
+
   return dst;
 }
 
@@ -186,7 +202,7 @@ copyImageBuffer(unsigned char * src, unsigned int width,
  * memory for the output buffer.
  */
 static unsigned char *
-copy32bppGrayScaleBuffer(unsigned char * src, unsigned int width, 
+copy32bppGrayScaleBuffer(unsigned char * src, unsigned int width,
                          unsigned int height, unsigned int stride)
 {
   assert(src);
@@ -201,17 +217,17 @@ copy32bppGrayScaleBuffer(unsigned char * src, unsigned int width,
 
   for (unsigned int y = 0; y < height; y++) {
     dst -= width * 2;
-    for (unsigned int x = 0; x < width * 2; 
+    for (unsigned int x = 0; x < width * 2;
          x += 2) {
-      /* a GDI+ buffer stores the components internally in reverse order, 
-         eg. ARGB is stored as BGRA. Extract the blue component as the 
+      /* a GDI+ buffer stores the components internally in reverse order,
+         eg. ARGB is stored as BGRA. Extract the blue component as the
          gray value and the alpha value.*/
       dst[x] = src[x];
       dst[x + 1] = src[x + 3];
     }
     src += stride;
   }
-  
+
   return dst;
 }
 
@@ -250,12 +266,12 @@ copy16bppGrayScaleBuffer(unsigned char * src, unsigned int width,
     }
     shortsrc += stride;
   }
-  
+
   return dst;
 }
 
 static int
-gdiplus_init(void) 
+gdiplus_init(void)
 {
   static int did_init = 0;
 
@@ -284,35 +300,35 @@ int
 simage_gdiplus_error(char * buffer, int buflen)
 {
   switch (gdipluserror) {
-  case ERR_INIT:
-    strncpy(buffer, "GDI+ loader: Error initializing GDI+", buflen);    
-    break;
-  case ERR_OPEN:
-    strncpy(buffer, "GDI+ loader: Error opening file", buflen);
-    break;
-  case ERR_READ:
-    strncpy(buffer, "GDI+ loader: Error reading file", buflen);
-    break;
-  case ERR_MEM:
-    strncpy(buffer, "GDI+ loader: Out of memory error", buflen);
-    break;
-  case ERR_OPEN_WRITE:
-    strncpy(buffer, "GDI+ saver: Error opening file", buflen);
-    break;
-  case ERR_WRITE:
-    strncpy(buffer, "GDI+ loader: Error writing file", buflen);
-    break;
-  case ERR_NOT_IMPLEMENTED:
-    strncpy(buffer, "GDI+ loader: Feature not implemented", buflen);
-    break;
-  default:
-    strncpy(buffer, "GDI+ loader: Interesting unknown error you got", buflen);
+    case ERR_INIT:
+      strncpy(buffer, "GDI+ loader: Error initializing GDI+", buflen);
+      break;
+    case ERR_OPEN:
+      strncpy(buffer, "GDI+ loader: Error opening file", buflen);
+      break;
+    case ERR_READ:
+      strncpy(buffer, "GDI+ loader: Error reading file", buflen);
+      break;
+    case ERR_MEM:
+      strncpy(buffer, "GDI+ loader: Out of memory error", buflen);
+      break;
+    case ERR_OPEN_WRITE:
+      strncpy(buffer, "GDI+ saver: Error opening file", buflen);
+      break;
+    case ERR_WRITE:
+      strncpy(buffer, "GDI+ loader: Error writing file", buflen);
+      break;
+    case ERR_NOT_IMPLEMENTED:
+      strncpy(buffer, "GDI+ loader: Feature not implemented", buflen);
+      break;
+    default:
+      strncpy(buffer, "GDI+ loader: Interesting unknown error you got", buflen);
   }
 
   return gdipluserror;
 }
 
-int 
+int
 simage_gdiplus_identify(const char * ptr,
                         const unsigned char * header,
                         int headerlen)
@@ -325,13 +341,13 @@ simage_gdiplus_identify(const char * ptr,
 
   if (!filename) { return 0; }
   mbstowcs(filename, ptr, strlen(ptr)+1);
-  
+
   Gdiplus::Bitmap bitmap(filename);
 
   if (bitmap.GetFlags() == Gdiplus::ImageFlagsNone) {
     delete filename; return 0;
   }
-  
+
   delete filename;
 
   return 1;
@@ -342,8 +358,8 @@ simage_gdiplus_load(const char * filename,
                     int * width,
                     int * height,
                     int * numcomponents)
-{  
-  Gdiplus::Bitmap * bitmap = 
+{
+  Gdiplus::Bitmap * bitmap =
     (Gdiplus::Bitmap*)simage_gdiplus_open(filename, width, height,
                                           numcomponents);
   if (!bitmap) { return NULL; }
@@ -360,12 +376,12 @@ simage_gdiplus_load(const char * filename,
 
   if (result != Gdiplus::Ok) {
     if (result == Gdiplus::OutOfMemory)
-      gdipluserror = ERR_MEM;      
-    else 
+      gdipluserror = ERR_MEM;
+    else
       gdipluserror = ERR_OPEN;
     bitmap->UnlockBits(&bitmapdata);
     delete bitmap;
-    return NULL; 
+    return NULL;
   }
 
   unsigned char * src = (unsigned char *)bitmapdata.Scan0;
@@ -373,35 +389,35 @@ simage_gdiplus_load(const char * filename,
   unsigned char * dst = NULL;
 
   switch (format) {
-  case PixelFormat16bppGrayScale:
-    (*numcomponents) = 1;
-    dst = copy16bppGrayScaleBuffer(src, (*width), (*height),
-                                   bitmapdata.Stride);
-    break;
-  case PixelFormat24bppRGB:
-    (*numcomponents) = 3;
-    dst = copyImageBuffer(src, (*width), (*height),
-                          (*numcomponents),
-                          bitmapdata.Stride);
-    break;
-  case PixelFormat32bppARGB:
-    if (grayscale) {
-      (*numcomponents) = 2;
-      dst = copy32bppGrayScaleBuffer(src, (*width), (*height),
+    case PixelFormat16bppGrayScale:
+      (*numcomponents) = 1;
+      dst = copy16bppGrayScaleBuffer(src, (*width), (*height),
                                      bitmapdata.Stride);
-    } else {
-      (*numcomponents) = 4;
+      break;
+    case PixelFormat24bppRGB:
+      (*numcomponents) = 3;
       dst = copyImageBuffer(src, (*width), (*height),
                             (*numcomponents),
                             bitmapdata.Stride);
-    }
-    break;
-  default:
-    dst = NULL;
+      break;
+    case PixelFormat32bppARGB:
+      if (grayscale) {
+        (*numcomponents) = 2;
+        dst = copy32bppGrayScaleBuffer(src, (*width), (*height),
+                                       bitmapdata.Stride);
+      } else {
+        (*numcomponents) = 4;
+        dst = copyImageBuffer(src, (*width), (*height),
+                              (*numcomponents),
+                              bitmapdata.Stride);
+      }
+      break;
+    default:
+      dst = NULL;
   }
-  
-  bitmap->UnlockBits(&bitmapdata);    
-  delete bitmap;    
+
+  bitmap->UnlockBits(&bitmapdata);
+  delete bitmap;
 
   if (!dst) {
     gdipluserror = ERR_MEM;
@@ -410,7 +426,7 @@ simage_gdiplus_load(const char * filename,
   return dst;
 }
 
-char * 
+char *
 simage_gdiplus_get_savers(void)
 {
   gdipluserror = ERR_NO_ERROR;
@@ -475,15 +491,15 @@ GetEncoderClsid(const char * format, CLSID * pClsid)
 
   Gdiplus::GetImageEncodersSize(&num, &size);
   if (size == 0) { return -1; }
-  
+
   pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size));
   if (!pImageCodecInfo) { return -1; }
-  
+
   Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
 
   /* convert C string filename to wide char */
   wchar_t * format_wide = new wchar_t[strlen(format)+1];
-  
+
   if (!format_wide) { return -1; }
   mbstowcs(format_wide, format, strlen(format)+1);
 
@@ -495,14 +511,14 @@ GetEncoderClsid(const char * format, CLSID * pClsid)
       return i;
     }
   }
-  
+
   free(format_wide);
   free(pImageCodecInfo);
 
   return -1;
 }
 
-int 
+int
 simage_gdiplus_save(const char * filename,
                     const unsigned char * bytes,
                     int width,
@@ -512,7 +528,7 @@ simage_gdiplus_save(const char * filename,
 {
   /* convert C string filename to wide char */
   wchar_t * filename_wide = new wchar_t[strlen(filename)+1];
-  
+
   if (!filename_wide) { gdipluserror = ERR_WRITE; return 0; }
   mbstowcs(filename_wide, filename, strlen(filename)+1);
 
@@ -533,13 +549,13 @@ simage_gdiplus_save(const char * filename,
 
   int numcomp34 = ((numcomponents==1) || (numcomponents==3)) ? 3 : 4;
   unsigned int stride = bitmapData->Stride - width*numcomp34;
-      
+
   switch (numcomponents) {
-  case 1:
-  case 2:
+    case 1:
+    case 2:
     {
       /* FIXME: code for 2 components case has not been tested. comp 1
-         should rather be written out as PixelFormat8bppIndexed. comp 2? 
+         should rather be written out as PixelFormat8bppIndexed. comp 2?
          20060420 tamer. */
       for (unsigned int y = 0; y < height; y++) {
         src -= width*numcomponents;
@@ -552,8 +568,8 @@ simage_gdiplus_save(const char * filename,
       }
     }
     break;
-  case 3:
-  case 4:
+    case 3:
+    case 4:
     {
       for (unsigned int y = 0; y < height; y++) {
         src -= width*numcomponents;
@@ -566,12 +582,12 @@ simage_gdiplus_save(const char * filename,
       }
     }
     break;
-  default:
-    gdipluserror = ERR_WRITE;
-    delete bitmapData;
-    delete bitmap;
-    delete filename_wide;
-    return 0;
+    default:
+      gdipluserror = ERR_WRITE;
+      delete bitmapData;
+      delete bitmap;
+      delete filename_wide;
+      return 0;
   }
 
   bitmap->UnlockBits(bitmapData);
@@ -588,8 +604,8 @@ simage_gdiplus_save(const char * filename,
   } else {
     ret = GetEncoderClsid(filetypeext, &imgClsid);
   }
-    
-  if (ret != -1) { 
+
+  if (ret != -1) {
     bitmap->Save(filename_wide, &imgClsid, NULL);
   }
 
@@ -600,7 +616,7 @@ simage_gdiplus_save(const char * filename,
   return 1;
 }
 
-void * 
+void *
 simage_gdiplus_open(const char * filename,
                     int * width,
                     int * height,
@@ -615,7 +631,7 @@ simage_gdiplus_open(const char * filename,
 
   if (!filename_wide) { gdipluserror = ERR_OPEN; return NULL; }
   mbstowcs(filename_wide, filename, strlen(filename)+1);
-  
+
   Gdiplus::Bitmap * bitmap = new Gdiplus::Bitmap(filename_wide);
 
   if (bitmap && (bitmap->GetLastStatus() == Gdiplus::Ok)) {
@@ -645,14 +661,14 @@ simage_gdiplus_open(const char * filename,
   return NULL;
 }
 
-void 
+void
 simage_gdiplus_close(void * opendata)
 {
   Gdiplus::Bitmap * bitmap = (Gdiplus::Bitmap*)opendata;
   if (bitmap) { delete bitmap; }
 }
 
-int 
+int
 simage_gdiplus_read_line(void * opendata, int y, unsigned char * buf)
 {
   Gdiplus::Bitmap * bitmap = (Gdiplus::Bitmap*)opendata;
@@ -674,24 +690,24 @@ simage_gdiplus_read_line(void * opendata, int y, unsigned char * buf)
      dirty. rinse it! 20060520 tamer. */
   GUID guid; bitmap->GetRawFormat(&guid);
   if (guid == Gdiplus::ImageFormatGIF) { numcomponents = 4; }
-  
+
   /* default to RGBA conversion for other pixel formats */
   if (numcomponents == 4) { pixelFormat = PixelFormat32bppARGB; }
-  
+
   Gdiplus::BitmapData bitmapData;
   Gdiplus::Rect rect(0, height-y-1, width, 1);
-  
+
   bitmap->LockBits(LOCKBITS_RECT_CAST(rect), Gdiplus::ImageLockModeRead,
                    pixelFormat, &bitmapData);
-  
+
   unsigned char * src = (unsigned char *)bitmapData.Scan0;
 
   switch (numcomponents) {
-  case 1:
-    memcpy(buf, src, width);
-    break;
-  case 3:
-  case 4:
+    case 1:
+      memcpy(buf, src, width);
+      break;
+    case 3:
+    case 4:
     {
       for (unsigned int x = 0; x < width*numcomponents; x+=numcomponents) {
         buf[x+2] = *src++; buf[x+1] = *src++; buf[x] = *src++;
@@ -700,9 +716,9 @@ simage_gdiplus_read_line(void * opendata, int y, unsigned char * buf)
       }
     }
     break;
-  default:
-    gdipluserror = ERR_READ;
-    return 0;
+    default:
+      gdipluserror = ERR_READ;
+      return 0;
   }
 
   bitmap->UnlockBits(&bitmapData);
@@ -717,7 +733,7 @@ simage_gdiplus_read_line(void * opendata, int y, unsigned char * buf)
  * happily moo the doomsday symphony while blocking your getaway
  * road. YA HAVE BEEN WARNED! 20060520 tamer.
  */
-int 
+int
 simage_gdiplus_read_region(void * opendata,
                            int x, int y, int w, int h,
                            unsigned char * buf)
@@ -742,22 +758,22 @@ simage_gdiplus_read_region(void * opendata,
      dirty. rinse it! 20060520 tamer. */
   GUID guid; bitmap->GetRawFormat(&guid);
   if (guid == Gdiplus::ImageFormatGIF) { numcomponents = 4; }
-  
+
   /* default to RGBA conversion for other pixel formats */
   if (numcomponents == 4) { pixelFormat = PixelFormat32bppARGB; }
-  
+
   Gdiplus::BitmapData bitmapData;
   Gdiplus::Rect rect(x, y, w, h);
 
   bitmap->LockBits(LOCKBITS_RECT_CAST(rect), Gdiplus::ImageLockModeRead,
                    pixelFormat, &bitmapData);
-  
+
   unsigned int stride = bitmapData.Stride - w*numcomponents;
   unsigned char * src = (unsigned char *)bitmapData.Scan0;
   unsigned char * dst = buf + w*h*numcomponents;
 
   switch (numcomponents) {
-  case 1:
+    case 1:
     {
       for (unsigned int i = 0; i < h; i++) {
         dst -= w;
@@ -766,8 +782,8 @@ simage_gdiplus_read_region(void * opendata,
       }
     }
     break;
-  case 3:
-  case 4:
+    case 3:
+    case 4:
     {
       for (unsigned int i = 0; i < h; i++) {
         dst -= w*numcomponents;
@@ -780,9 +796,9 @@ simage_gdiplus_read_region(void * opendata,
       }
     }
     break;
-  default:
-    gdipluserror = ERR_READ;
-    return 0;
+    default:
+      gdipluserror = ERR_READ;
+      return 0;
   }
 
   bitmap->UnlockBits(&bitmapData);

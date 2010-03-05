@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) Kongsberg Oil & Gas Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /* *************************************************************************
  * simage_xwd.c -- xwd support without Xlib.
  * Written by Lars J. Aas <larsa@sim.no>
@@ -5,7 +21,10 @@
  * This implementation is far from complete and kind of "ad hoc".
  */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif /* HAVE_CONFIG_H */
+
 #ifdef SIMAGE_XWD_SUPPORT
 
 #include <simage_xwd.h>
@@ -109,21 +128,21 @@ simage_xwd_error(
   int bufferlen )
 {
   switch ( xwderror ) {
-  case XWD_FILE_STAT_ERROR:
-    strncpy( buffer, "XWD loader: file stat error", bufferlen );
-    break;
-  case XWD_FILE_OPEN_ERROR:
-    strncpy( buffer, "XWD loader: file open error", bufferlen );
-    break;
-  case XWD_FILE_READ_ERROR:
-    strncpy( buffer, "XWD loader: file read error", bufferlen );
-    break;
-  case XWD_MALLOC_ERROR:
-    strncpy( buffer, "XWD loader: malloc error", bufferlen );
-    break;
-  case XWD_NO_SUPPORT_ERROR:
-    strncpy( buffer, "XWD loader: unsupported operation", bufferlen );
-    break;
+    case XWD_FILE_STAT_ERROR:
+      strncpy( buffer, "XWD loader: file stat error", bufferlen );
+      break;
+    case XWD_FILE_OPEN_ERROR:
+      strncpy( buffer, "XWD loader: file open error", bufferlen );
+      break;
+    case XWD_FILE_READ_ERROR:
+      strncpy( buffer, "XWD loader: file read error", bufferlen );
+      break;
+    case XWD_MALLOC_ERROR:
+      strncpy( buffer, "XWD loader: malloc error", bufferlen );
+      break;
+    case XWD_NO_SUPPORT_ERROR:
+      strncpy( buffer, "XWD loader: unsupported operation", bufferlen );
+      break;
   }
   return xwderror;
 } /* simage_xwd_error() */
@@ -229,16 +248,16 @@ simage_xwd_load(
 
   /* check that format is supported and set
      xwderror = XWD_NO_SUPPORT_ERROR;
-  if problem is detected */
+     if problem is detected */
 
   /*
-  fprintf( stdout, "xwd image: %dx%d\n", w, h );
-  fprintf( stdout, "bpp: %d  pbrgb: %d  bpl: %d\n", bits_per_pixel, bits_per_rgb, bytes_per_line );
-  fprintf( stdout, "colors: %d  entries: %d\n", num_colors, colormap_entries );
-  fprintf( stdout, "red: %08x  green: %08x  blue: %08x\n",
-           getuint32be( buf + XWD_HOFF_RED_MASK ),
-           getuint32be( buf + XWD_HOFF_GREEN_MASK ),
-           getuint32be( buf + XWD_HOFF_BLUE_MASK ) );
+    fprintf( stdout, "xwd image: %dx%d\n", w, h );
+    fprintf( stdout, "bpp: %d  pbrgb: %d  bpl: %d\n", bits_per_pixel, bits_per_rgb, bytes_per_line );
+    fprintf( stdout, "colors: %d  entries: %d\n", num_colors, colormap_entries );
+    fprintf( stdout, "red: %08x  green: %08x  blue: %08x\n",
+    getuint32be( buf + XWD_HOFF_RED_MASK ),
+    getuint32be( buf + XWD_HOFF_GREEN_MASK ),
+    getuint32be( buf + XWD_HOFF_BLUE_MASK ) );
   */
 
   /* check visual class */
@@ -246,24 +265,24 @@ simage_xwd_load(
   /* FIXME:
      if visual needs palette (I figure it's visual that decides this), read the palette data.
      leave it at NULL if else, since palette != NULL will lead to palette lookup
-  if ( (palette = (unsigned long *) malloc( sizeof(long) * getuint32be( buf + XWD_HOFF_COLORMAP_ENTRIES ))) == NULL ) {
-    free( buf );
-    free( image );
-    xwderror = XWD_MALLOC_ERROR;
-    xwderrno = errno;
-    return NULL;
-  }
-  ptr = buf + getuint32be( buf + XWD_HOFF_HEADER_SIZE );
-  for ( i = 0; i < num_colors; i++ ) {
-    pixel = getuint32be( ptr + XWD_COFF_PIXEL );
-    red = (getuint16be( ptr + XWD_COFF_RED ) / 256) & 0xff;
-    green = (getuint16be( ptr + XWD_COFF_GREEN ) / 256) & 0xff;
-    blue = (getuint16be( ptr + XWD_COFF_BLUE ) / 256) & 0xff;
-    palette[i] = ((red << 16) | (green << 8) | blue);
-    fprintf( stdout, "color:  %08x (pixel)  %d (red)  %d (green)  %d (blue)  = %08x\n",
-             pixel, red, green, blue, palette[i] );
-    ptr += XWD_COLOR_SIZE;
-  } */
+     if ( (palette = (unsigned long *) malloc( sizeof(long) * getuint32be( buf + XWD_HOFF_COLORMAP_ENTRIES ))) == NULL ) {
+     free( buf );
+     free( image );
+     xwderror = XWD_MALLOC_ERROR;
+     xwderrno = errno;
+     return NULL;
+     }
+     ptr = buf + getuint32be( buf + XWD_HOFF_HEADER_SIZE );
+     for ( i = 0; i < num_colors; i++ ) {
+     pixel = getuint32be( ptr + XWD_COFF_PIXEL );
+     red = (getuint16be( ptr + XWD_COFF_RED ) / 256) & 0xff;
+     green = (getuint16be( ptr + XWD_COFF_GREEN ) / 256) & 0xff;
+     blue = (getuint16be( ptr + XWD_COFF_BLUE ) / 256) & 0xff;
+     palette[i] = ((red << 16) | (green << 8) | blue);
+     fprintf( stdout, "color:  %08x (pixel)  %d (red)  %d (green)  %d (blue)  = %08x\n",
+     pixel, red, green, blue, palette[i] );
+     ptr += XWD_COLOR_SIZE;
+     } */
 
   ptr = buf + getuint32be( buf + XWD_HOFF_HEADER_SIZE ) + (num_colors * XWD_COLOR_SIZE);
   imageptr = image;

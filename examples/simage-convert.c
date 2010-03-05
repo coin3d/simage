@@ -1,5 +1,21 @@
 /*
- * simage-convert.c 
+ * Copyright (c) Kongsberg Oil & Gas Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+/*
+ * simage-convert.c
  *  a simple program that shows how to use simage, by pederb@sim.no
  *
  * This program is public domain.
@@ -11,7 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void 
+static void
 usage(const char * argv0)
 {
   fprintf(stderr, "Usage:\n %s <infile> <outfile> [-newsize <x> <y>] [-scale <xmul> <ymul>] [-alphathreshold <val>] [-addalpha <filename>] [-setundef]\n",argv0);
@@ -137,7 +153,7 @@ int main(int argc, char ** argv)
           w, h, nc);
 
   if (xmul > 0.0f) {
-    neww = (int) (w * xmul); 
+    neww = (int) (w * xmul);
     newh = (int) (h * ymul);
   }
   if (neww > 0 && newh > 0 && (neww != w || newh != h)) {
@@ -209,7 +225,7 @@ int main(int argc, char ** argv)
     const int n = w * h;
     for (i = 0; i < n; i++) {
       if (nc == 2) p++;
-      else p += 3; 
+      else p += 3;
       if (*p < alphathreshold) {
         if (*p != 0) {
           cnt++;
@@ -230,7 +246,7 @@ int main(int argc, char ** argv)
   if (gray && nc >= 3) {
     unsigned char * src = buf;
     unsigned char * dst = buf;
-    
+
     for (i = 0; i < w*h; i++) {
       *dst++ = (unsigned char) ((src[0]*77 + src[1]*150 + src[2] * 28) >> 8);
       src += 3;

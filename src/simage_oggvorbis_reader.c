@@ -1,4 +1,23 @@
+/*
+ * Copyright (c) Kongsberg Oil & Gas Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif /* HAVE_CONFIG_H */
+
 #ifdef SIMAGE_OGGVORBIS_SUPPORT
 
 #include <simage.h>
@@ -18,27 +37,27 @@ typedef struct {
 } oggvorbis_reader_context;
 
 
-static void 
+static void
 oggvorbis_reader_init_context(oggvorbis_reader_context *context)
 {
   context->file = NULL;
   context->current_section = 0;
 }
 
-static void 
+static void
 oggvorbis_reader_cleanup_context(oggvorbis_reader_context *context)
 {
 }
 
-static size_t 
-oggvorbis_reader_read_cb(void *ptr, size_t size, size_t nmemb, 
-                                void *datasource)
+static size_t
+oggvorbis_reader_read_cb(void *ptr, size_t size, size_t nmemb,
+                         void *datasource)
 {
   oggvorbis_reader_context *context = (oggvorbis_reader_context *)datasource;
   return fread(ptr, size, nmemb, context->file);
 }
 
-static int 
+static int
 oggvorbis_reader_seek_cb(void *datasource, ogg_int64_t offset, int whence)
 {
   oggvorbis_reader_context *context = (oggvorbis_reader_context *)datasource;
@@ -52,7 +71,7 @@ oggvorbis_reader_tell_cb(void *datasource)
   return ftell(context->file);
 }
 
-static int 
+static int
 oggvorbis_reader_close_cb(void *datasource)
 {
   oggvorbis_reader_context *context = (oggvorbis_reader_context *)datasource;
@@ -62,18 +81,18 @@ oggvorbis_reader_close_cb(void *datasource)
   return 0;
 }
 
-static int 
-oggvorbis_reader_open(oggvorbis_reader_context **contextp, 
+static int
+oggvorbis_reader_open(oggvorbis_reader_context **contextp,
                       const char *filename)
 {
   ov_callbacks callbacks;
-  oggvorbis_reader_context *context;  
+  oggvorbis_reader_context *context;
 
-  *contextp = (oggvorbis_reader_context *) 
+  *contextp = (oggvorbis_reader_context *)
     malloc(sizeof(oggvorbis_reader_context));
   oggvorbis_reader_init_context(*contextp);
-  context = *contextp;  
-  
+  context = *contextp;
+
   context->file = fopen(filename, "rb");
   if (context->file == NULL) {
     oggvorbis_reader_cleanup_context(context);
@@ -86,7 +105,7 @@ oggvorbis_reader_open(oggvorbis_reader_context **contextp,
   callbacks.close_func = oggvorbis_reader_close_cb;
   callbacks.tell_func = oggvorbis_reader_tell_cb;
 
-  if(ov_open_callbacks((void *)context, &context->vorbisfile, NULL, 0, 
+  if(ov_open_callbacks((void *)context, &context->vorbisfile, NULL, 0,
                        callbacks) < 0) {
     fclose(context->file);
     context->file = NULL;
@@ -98,8 +117,8 @@ oggvorbis_reader_open(oggvorbis_reader_context **contextp,
   return 1;
 }
 
-static int 
-oggvorbis_reader_read(oggvorbis_reader_context *context, 
+static int
+oggvorbis_reader_read(oggvorbis_reader_context *context,
                       char *buffer, int size)
 {
   int readsize;
@@ -125,16 +144,16 @@ oggvorbis_reader_read(oggvorbis_reader_context *context,
   while (readsize<size) {
     /* FIXME: Check how libvorbisfile handles odd sizes.  The
        libvorbisfile documentation doesn't say anything about this, so
-       everything might be OK.  
-       2002-01-10 thammer.  
+       everything might be OK.
+       2002-01-10 thammer.
     */
-    numread=ov_read(&context->vorbisfile, 
-                    buffer+readsize, 
-                    size-readsize, bigEndian, 2, 1, 
+    numread=ov_read(&context->vorbisfile,
+                    buffer+readsize,
+                    size-readsize, bigEndian, 2, 1,
                     &context->current_section);
     /* FIXME: Verify that EOF's (and numread=0) are
        handled correctly. 2003-01-09 thammer
-     */
+    */
     if (numread<=0)
       return numread;
     else
@@ -144,8 +163,8 @@ oggvorbis_reader_read(oggvorbis_reader_context *context,
   return readsize;
 }
 
-static void 
-oggvorbis_reader_get_stream_info(oggvorbis_reader_context *context, 
+static void
+oggvorbis_reader_get_stream_info(oggvorbis_reader_context *context,
                                  int *channels, int *samplerate)
 {
   if (context->file) {
@@ -157,7 +176,7 @@ oggvorbis_reader_get_stream_info(oggvorbis_reader_context *context,
 }
 
 
-static void 
+static void
 oggvorbis_reader_close(oggvorbis_reader_context *context)
 {
   if (context->file != NULL)
@@ -168,14 +187,14 @@ oggvorbis_reader_close(oggvorbis_reader_context *context)
 }
 
 
-int 
+int
 oggvorbis_reader_stream_open(const char * filename, s_stream * stream,
                              s_params * params)
 {
   oggvorbis_reader_context *context;
   int channels, samplerate;
-  
-  if (!oggvorbis_reader_open(&context, filename)) 
+
+  if (!oggvorbis_reader_open(&context, filename))
     return 0;
 
   s_stream_context_set(stream, (void *)context);
@@ -188,7 +207,7 @@ oggvorbis_reader_stream_open(const char * filename, s_stream * stream,
   return 1;
 }
 
-void * 
+void *
 oggvorbis_reader_stream_get(s_stream * stream, void * buffer, int * size, s_params * params)
 {
   int ret;
@@ -209,7 +228,7 @@ oggvorbis_reader_stream_get(s_stream * stream, void * buffer, int * size, s_para
   return NULL;
 }
 
-void 
+void
 oggvorbis_reader_stream_close(s_stream * stream)
 {
   oggvorbis_reader_context *context;

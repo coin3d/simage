@@ -1,8 +1,27 @@
 /*
+ * Copyright (c) Kongsberg Oil & Gas Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+/*
  * Based heavily on example code in libpng. Some bugs fixed though.
  */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif /* HAVE_CONFIG_H */
+
 #ifdef HAVE_PNGLIB
 
 #include <simage_png.h>
@@ -26,14 +45,14 @@ static int pngerror = ERR_NO_ERROR;
 static jmp_buf setjmp_buffer;
 
 /* called my libpng */
-static void 
+static void
 warn_callback(png_structp ps, png_const_charp pc)
 {
 /*   fprintf(stderr,"PNG warn: %s\n", pc); */
   /*FIXME: notify? */
 }
 
-static void 
+static void
 err_callback(png_structp ps, png_const_charp pc)
 {
 /*   fprintf(stderr,"PNG error: %s\n", pc); */
@@ -42,42 +61,42 @@ err_callback(png_structp ps, png_const_charp pc)
   longjmp(setjmp_buffer, 1);
 }
 
-int 
+int
 simage_png_error(char * buffer, int buflen)
 {
   switch (pngerror) {
-  case ERR_OPEN:
-    strncpy(buffer, "PNG loader: Error opening file", buflen);
-    break;
-  case ERR_MEM:
-    strncpy(buffer, "PNG loader: Out of memory error", buflen);
-    break;
-  case ERR_PNGLIB:
-    strncpy(buffer, "PNG loader: Illegal png file", buflen);
-    break;
-  case ERR_OPEN_WRITE:
-    strncpy(buffer, "PNG saver: Error opening file", buflen);
-    break;
-  case ERR_PNGLIB_WRITE:
-    strncpy(buffer, "PNG saver: Internal libpng error", buflen);    
-    break;
-  case ERR_MEM_WRITE:
-    strncpy(buffer, "PNG saver: Out of memory error", buflen);
-    break;
+    case ERR_OPEN:
+      strncpy(buffer, "PNG loader: Error opening file", buflen);
+      break;
+    case ERR_MEM:
+      strncpy(buffer, "PNG loader: Out of memory error", buflen);
+      break;
+    case ERR_PNGLIB:
+      strncpy(buffer, "PNG loader: Illegal png file", buflen);
+      break;
+    case ERR_OPEN_WRITE:
+      strncpy(buffer, "PNG saver: Error opening file", buflen);
+      break;
+    case ERR_PNGLIB_WRITE:
+      strncpy(buffer, "PNG saver: Internal libpng error", buflen);
+      break;
+    case ERR_MEM_WRITE:
+      strncpy(buffer, "PNG saver: Out of memory error", buflen);
+      break;
   }
   return pngerror;
 
 }
 
-int 
+int
 simage_png_identify(const char * ptr,
-		    const unsigned char *header,
-		    int headerlen)
+                    const unsigned char *header,
+                    int headerlen)
 {
   static unsigned char pngcmp[] = {0x89, 'P', 'N', 'G', 0xd, 0xa, 0x1a, 0xa};
   if (headerlen < 8) return 0;
-  if (memcmp((const void*)header, 
-	     (const void*)pngcmp, 8) == 0) return 1;
+  if (memcmp((const void*)header,
+             (const void*)pngcmp, 8) == 0) return 1;
   return 0;
 }
 
@@ -114,14 +133,14 @@ user_flush_cb(png_structp png_ptr)
 
 unsigned char *
 simage_png_load(const char *filename,
-		 int *width_ret,
-		 int *height_ret,
-		 int *numComponents_ret)
+                int *width_ret,
+                int *height_ret,
+                int *numComponents_ret)
 {
   png_structp png_ptr;
   png_infop info_ptr;
   png_uint_32 width, height;
-  
+
   int bit_depth, color_type, interlace_type;
   FILE *fp;
   unsigned char *buffer;
@@ -142,11 +161,11 @@ simage_png_load(const char *filename,
    * was compiled with a compatible version of the library.  REQUIRED
    */
   /*png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING,
-      (void *)user_error_ptr, user_error_fn, user_warning_fn);*/
+    (void *)user_error_ptr, user_error_fn, user_warning_fn);*/
 
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING,
-				   NULL, err_callback, warn_callback);
-  
+                                   NULL, err_callback, warn_callback);
+
   if (png_ptr == NULL) {
     pngerror = ERR_MEM;
     fclose(fp);
@@ -161,7 +180,7 @@ simage_png_load(const char *filename,
     png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
     return 0;
   }
-  
+
   /* Set error handling if you are using the setjmp/longjmp method (this is
    * the normal method of doing things with libpng).  REQUIRED unless you
    * set up your own error handlers in the png_create_read_struct() earlier.
@@ -179,7 +198,7 @@ simage_png_load(const char *filename,
     if (buffer) free(buffer);
     return NULL;
   }
-  
+
   /*  we're not using png_init_io(), as we don't want to pass a FILE*
       into libpng, in case it's an MSWindows DLL with a different CRT
       (C run-time library) */
@@ -191,13 +210,13 @@ simage_png_load(const char *filename,
   png_read_info(png_ptr, info_ptr);
 
   png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type,
-	       &interlace_type, NULL, NULL);
+               &interlace_type, NULL, NULL);
 
   /**** Set up the data transformations you want.  Note that these are all
-  **** optional.  Only call them if you want/need them.  Many of the
-  **** transformations only work on specific types of images, and many
-  **** are mutually exclusive.
-  ****/
+   **** optional.  Only call them if you want/need them.  Many of the
+   **** transformations only work on specific types of images, and many
+   **** are mutually exclusive.
+   ****/
 
   /* tell libpng to strip 16 bit/color files down to 8 bits/color */
   png_set_strip_16(png_ptr);
@@ -205,7 +224,7 @@ simage_png_load(const char *filename,
   /* strip alpha bytes from the input data without combining with th
    * background (not recommended) */
   /* png_set_strip_alpha(png_ptr); */
-  
+
   /* extract multiple pixels with bit depths of 1, 2, and 4 from a single
    * byte into separate bytes (useful for paletted and grayscale images).
    */
@@ -214,7 +233,7 @@ simage_png_load(const char *filename,
   /* change the order of packed pixels to least significant bit first
    * (not useful if you are using png_set_packing). */
   /* png_set_packswap(png_ptr); */
-  
+
   /* expand paletted colors into true RGB triplets */
   if (color_type == PNG_COLOR_TYPE_PALETTE)
     png_set_expand(png_ptr);
@@ -222,12 +241,12 @@ simage_png_load(const char *filename,
   /* expand grayscale images to the full 8 bits from 1, 2, or 4 bits/pixel */
   if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
     png_set_expand(png_ptr);
-  
+
   /* expand paletted or RGB images with transparency to full alpha channels
    * so the data will be available as RGBA quartets */
   if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
     png_set_expand(png_ptr);
-  
+
   /* Add filler (or alpha) byte (before/after each RGB triplet) */
   /* png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER); */
 
@@ -236,10 +255,10 @@ simage_png_load(const char *filename,
   channels = png_get_channels(png_ptr, info_ptr);
 
   /* allocate the memory to hold the image using the fields of info_ptr. */
-  
+
   bytes_per_row = png_get_rowbytes(png_ptr, info_ptr);
 
-  
+
   buffer = (unsigned char*) malloc(bytes_per_row*height);
 
   format = channels;
@@ -248,10 +267,10 @@ simage_png_load(const char *filename,
   for (y = 0; y < height; y++) {
     row_pointers[height-y-1] = buffer + y*bytes_per_row;
   }
-  
+
   png_read_image(png_ptr, row_pointers);
   png_read_end(png_ptr, info_ptr);
-  
+
   free(row_pointers);
 
   /* clean up after the read, and free any memory allocated - REQUIRED */
@@ -273,7 +292,7 @@ simage_png_load(const char *filename,
   return buffer;
 }
 
-int 
+int
 simage_png_save(const char *filename,
                 const unsigned char * bytes,
                 int width,
@@ -287,7 +306,7 @@ simage_png_save(const char *filename,
   int y, bytesperrow;
 #ifdef PNG_TEXT_SUPPORTED
   png_text text_ptr[3];
-#endif  
+#endif
 
   /* open the file */
   fp = fopen(filename, "wb");
@@ -295,7 +314,7 @@ simage_png_save(const char *filename,
     pngerror = ERR_OPEN_WRITE;
     return 0;
   }
-  
+
   /* Create and initialize the png_struct with the desired error handler
    * functions.  If you want to use the default stderr and longjump method,
    * you can supply NULL for the last three parameters.  We also check that
@@ -303,7 +322,7 @@ simage_png_save(const char *filename,
    * in case we are using dynamically linked libraries.  REQUIRED.
    */
   png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
-				    NULL, NULL, NULL);
+                                    NULL, NULL, NULL);
 
   if (png_ptr == NULL) {
     pngerror = ERR_OPEN_WRITE;
@@ -336,7 +355,7 @@ simage_png_save(const char *filename,
       (C run-time library) */
   png_set_write_fn(png_ptr, (void *)fp, (png_rw_ptr)user_write_cb,
                    (png_flush_ptr)user_flush_cb);
-  
+
   /* Set the image information here.  Width and height are up to 2^31,
    * bit_depth is one of 1, 2, 4, 8, or 16, but valid values also depend on
    * the color_type selected. color_type is one of PNG_COLOR_TYPE_GRAY,
@@ -347,23 +366,23 @@ simage_png_save(const char *filename,
    */
 
   switch (numcomponents) {
-  case 1:
-    colortype = PNG_COLOR_TYPE_GRAY;
-    break;
-  case 2:
-    colortype = PNG_COLOR_TYPE_GRAY_ALPHA;
-    break;
-  case 3:
-    colortype = PNG_COLOR_TYPE_RGB;
-    break;
-  default:
-  case 4:
-    colortype = PNG_COLOR_TYPE_RGB_ALPHA;
-    break;
+    case 1:
+      colortype = PNG_COLOR_TYPE_GRAY;
+      break;
+    case 2:
+      colortype = PNG_COLOR_TYPE_GRAY_ALPHA;
+      break;
+    case 3:
+      colortype = PNG_COLOR_TYPE_RGB;
+      break;
+    default:
+    case 4:
+      colortype = PNG_COLOR_TYPE_RGB_ALPHA;
+      break;
   }
 
   png_set_IHDR(png_ptr, info_ptr, width, height, 8, colortype,
-	       PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+               PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
   /* Optional gamma chunk is strongly suggested if you have any guess
    * as to the correct gamma of the image. */
@@ -430,17 +449,17 @@ simage_png_save(const char *filename,
    */
 
   /* If you are only writing one row at a time, this works */
-  
+
   bytesperrow = width * numcomponents;
 
   for (y = 0; y < height; y++) {
     png_write_row(png_ptr, (png_bytep) bytes + bytesperrow * (height-y-1));
   }
-  
+
   /* You can write optional chunks like tEXt, zTXt, and tIME at the end
    * as well.
    */
-  
+
   /* It is REQUIRED to call this to finish writing the rest of the file */
   png_write_end(png_ptr, info_ptr);
 

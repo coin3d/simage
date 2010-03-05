@@ -17,16 +17,16 @@ endif
 if SIMAGE_CGIMAGE_SUPPORT
 CGIMAGESOURCES = simage_cgimage.c $(top_srcdir)/include/simage_cgimage.h
 else
-CGIMAGESOURCES = 
+CGIMAGESOURCES =
 endif
 
 if SIMAGE_QUICKTIME_SUPPORT
 QUICKTIMESOURCES = simage_quicktime.c $(top_srcdir)/include/simage_quicktime.h
-GIFSOURCES = 
-JPEGSOURCES = 
-TIFFSOURCES = 
-PNGSOURCES = 
-TGASOURCES = 
+GIFSOURCES =
+JPEGSOURCES =
+TIFFSOURCES =
+PNGSOURCES =
+TGASOURCES =
 else
 QUICKTIMESOURCES =
 GIFSOURCES = simage_gif.c $(top_srcdir)/include/simage_gif.h
@@ -42,11 +42,11 @@ PICSOURCES = simage_pic.c $(top_srcdir)/include/simage_pic.h
 XWDSOURCES = simage_xwd.c $(top_srcdir)/include/simage_xwd.h
 EPSSOURCES = simage_eps.c $(top_srcdir)/include/simage_eps.h
 AVISOURCES = simage_avi.c $(top_srcdir)/include/simage_avi.h \
-             avi_encode.c $(top_srcdir)/include/avi_encode.h
+	     avi_encode.c $(top_srcdir)/include/avi_encode.h
 OGGVORBISSOURCES = simage_oggvorbis_reader.c \
-                   $(top_srcdir)/include/simage_oggvorbis.h
+		   $(top_srcdir)/include/simage_oggvorbis.h
 LIBSNDFILESOURCES = simage_libsndfile.c \
-                   $(top_srcdir)/include/simage_libsndfile.h
+		   $(top_srcdir)/include/simage_libsndfile.h
 
 SIMAGESOURCES = \
 	$(top_builddir)/include/simage.h \
@@ -73,9 +73,9 @@ SIMAGESOURCES = \
 	$(QIMAGESOURCES) \
 	$(QUICKTIMESOURCES) \
 	$(CGIMAGESOURCES) \
-        $(AVISOURCES) \
-        $(OGGVORBISSOURCES) \
-        $(LIBSNDFILESOURCES)
+	$(AVISOURCES) \
+	$(OGGVORBISSOURCES) \
+	$(LIBSNDFILESOURCES)
 
 if BUILD_WITH_MSVC
 # we don't use libtool on Cygwin to generate lib
@@ -86,11 +86,11 @@ endif
 
 # On Mac OS 10.2 or later, create two-level namespace binaries. Also
 # pad the install_name to make it possible to change it (e.g. to
-# include the library in an app bundle). 
+# include the library in an app bundle).
 if MACOSX_10_2FF
-LibtoolLinkArgs = -no-undefined -Wl,-twolevel_namespace -Wl,-undefined,error -Wl,-headerpad_max_install_names 
+LibtoolLinkArgs = -no-undefined -Wl,-twolevel_namespace -Wl,-undefined,error -Wl,-headerpad_max_install_names
 else
-LibtoolLinkArgs = -no-undefined 
+LibtoolLinkArgs = -no-undefined
 endif
 
 simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_SOURCES = \

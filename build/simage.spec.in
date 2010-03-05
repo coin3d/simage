@@ -21,10 +21,10 @@ Summary: Tiny library for loading texture bitmaps.
 Name: simage
 Version: @VERSION@
 Release: @simage_configure_date@
-Copyright: Public Domain
+Copyright: BSD License
 Group: Development/Libraries
 URL: http://www.coin3d.org
-Vendor: Systems in Motion
+Vendor: Kongsberg Oil & Gas Technologies
 Packager: Morten Eriksen <mortene@sim.no>
 
 %description
@@ -38,11 +38,10 @@ PIC and TARGA.  simage is used by the Coin 3D library.
 %prep
 
 cd $RPM_SOURCE_DIR
-export CVSROOT=:pserver:cvs@cvs.sim.no:/export/cvsroot
-if test ! -d simage; then
-  cvs checkout -P simage
+if test ! -d Coin; then
+  hg clone http://hg.sim.no/simage/default simage
 else
-  cvs update -dP simage
+  hg -Rsimage pull -u
 fi
 
 
