@@ -17,8 +17,6 @@
 /*
  * simage-convert.c
  *  a simple program that shows how to use simage, by pederb@sim.no
- *
- * This program is public domain.
  */
 
 #include <simage.h>

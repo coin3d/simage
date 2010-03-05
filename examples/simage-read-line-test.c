@@ -16,10 +16,7 @@
 
 /*
  * simage-read-line-test.c
- *
  * A simple program for testing line-by-line image access.
- *
- * This program is public domain.
  */
 
 #include <simage.h>

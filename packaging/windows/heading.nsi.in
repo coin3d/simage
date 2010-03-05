@@ -10,8 +10,8 @@ OutFile "simage-v@sdk_version@-install.exe"
 SilentInstall "normal"
 CRCCheck "on"
 
-LicenseText "GNU General Public License"
-LicenseData LICENSE.TXT
+LicenseText "BSD License"
+LicenseData LICENSE
 
 ComponentText "Installing the simage library"
 InstType "Binary SDK"
