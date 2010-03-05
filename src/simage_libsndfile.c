@@ -1,4 +1,23 @@
+/*
+ * Copyright (c) Kongsberg Oil & Gas Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif /* HAVE_CONFIG_H */
+
 #ifdef SIMAGE_LIBSNDFILE_SUPPORT
 
 #include <simage.h>
@@ -18,7 +37,7 @@ typedef struct {
   int tempbuffersize;
 } libsndfile_context;
 
-static void 
+static void
 libsndfile_init_context(libsndfile_context *context)
 {
   context->file = NULL;
@@ -26,18 +45,18 @@ libsndfile_init_context(libsndfile_context *context)
   context->tempbuffersize = 0;
 }
 
-static void 
+static void
 libsndfile_cleanup_context(libsndfile_context *context)
 {
-  if (context->tempbuffer) 
+  if (context->tempbuffer)
     free(context->tempbuffer);
   context->tempbuffer = NULL;
   context->tempbuffersize = 0;
 }
 
-int 
+int
 libsndfile_stream_open(const char * filename, s_stream * stream,
-                             s_params * params)
+                       s_params * params)
 {
   libsndfile_context *context;
   FILE *dummyfile;
@@ -62,10 +81,10 @@ libsndfile_stream_open(const char * filename, s_stream * stream,
   s_stream_context_set(stream, (void *)context);
 
   /* FIXME: SF_INFO::frames is of type sf_count_t, which is a 32bit
-     integer in some libsndfile version and 64bit on others (like the 
-     Mac OS X one), so casting context->sfinfo.frames to int is not 
-     totally correct - but necessary, since we do not have a 64bit 
-     s_params type. 
+     integer in some libsndfile version and 64bit on others (like the
+     Mac OS X one), so casting context->sfinfo.frames to int is not
+     totally correct - but necessary, since we do not have a 64bit
+     s_params type.
      20030108 kyrah
   */
   s_params_set(s_stream_params(stream),
@@ -77,7 +96,7 @@ libsndfile_stream_open(const char * filename, s_stream * stream,
   return 1;
 }
 
-void * 
+void *
 libsndfile_stream_get(s_stream * stream, void * buffer, int * size, s_params * params)
 {
   int itemsread;
@@ -130,7 +149,7 @@ libsndfile_stream_get(s_stream * stream, void * buffer, int * size, s_params * p
   return NULL;
 }
 
-void 
+void
 libsndfile_stream_close(s_stream * stream)
 {
   libsndfile_context *context;
@@ -143,9 +162,9 @@ libsndfile_stream_close(s_stream * stream)
   free(context);
 }
 
-int 
-libsndfile_stream_seek(s_stream * stream, int offset, int whence, 
-                        s_params *params)
+int
+libsndfile_stream_seek(s_stream * stream, int offset, int whence,
+                       s_params *params)
 {
   libsndfile_context *context;
   context = (libsndfile_context *)s_stream_context_get(stream);
@@ -156,7 +175,7 @@ libsndfile_stream_seek(s_stream * stream, int offset, int whence,
     return -1;
 }
 
-int 
+int
 libsndfile_stream_tell(s_stream * stream, s_params *params)
 {
   libsndfile_context *context;

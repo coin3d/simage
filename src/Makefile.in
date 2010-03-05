@@ -458,13 +458,13 @@ PICSOURCES = simage_pic.c $(top_srcdir)/include/simage_pic.h
 XWDSOURCES = simage_xwd.c $(top_srcdir)/include/simage_xwd.h
 EPSSOURCES = simage_eps.c $(top_srcdir)/include/simage_eps.h
 AVISOURCES = simage_avi.c $(top_srcdir)/include/simage_avi.h \
-             avi_encode.c $(top_srcdir)/include/avi_encode.h
+	     avi_encode.c $(top_srcdir)/include/avi_encode.h
 
 OGGVORBISSOURCES = simage_oggvorbis_reader.c \
-                   $(top_srcdir)/include/simage_oggvorbis.h
+		   $(top_srcdir)/include/simage_oggvorbis.h
 
 LIBSNDFILESOURCES = simage_libsndfile.c \
-                   $(top_srcdir)/include/simage_libsndfile.h
+		   $(top_srcdir)/include/simage_libsndfile.h
 
 SIMAGESOURCES = \
 	$(top_builddir)/include/simage.h \
@@ -491,20 +491,20 @@ SIMAGESOURCES = \
 	$(QIMAGESOURCES) \
 	$(QUICKTIMESOURCES) \
 	$(CGIMAGESOURCES) \
-        $(AVISOURCES) \
-        $(OGGVORBISSOURCES) \
-        $(LIBSNDFILESOURCES)
+	$(AVISOURCES) \
+	$(OGGVORBISSOURCES) \
+	$(LIBSNDFILESOURCES)
 
 
 # we don't use libtool on Cygwin to generate lib
 @BUILD_WITH_MSVC_TRUE@lib_LIBRARIES = simage@SIMAGE_MAJOR_VERSION@@SUFFIX@.lib
 @BUILD_WITH_MSVC_FALSE@lib_LTLIBRARIES = libsimage@SUFFIX@.la
-@MACOSX_10_2FF_FALSE@LibtoolLinkArgs = -no-undefined 
+@MACOSX_10_2FF_FALSE@LibtoolLinkArgs = -no-undefined
 
 # On Mac OS 10.2 or later, create two-level namespace binaries. Also
 # pad the install_name to make it possible to change it (e.g. to
-# include the library in an app bundle). 
-@MACOSX_10_2FF_TRUE@LibtoolLinkArgs = -no-undefined -Wl,-twolevel_namespace -Wl,-undefined,error -Wl,-headerpad_max_install_names 
+# include the library in an app bundle).
+@MACOSX_10_2FF_TRUE@LibtoolLinkArgs = -no-undefined -Wl,-twolevel_namespace -Wl,-undefined,error -Wl,-headerpad_max_install_names
 simage@SIMAGE_MAJOR_VERSION@@SUFFIX@_lib_SOURCES = \
 	$(SIMAGESOURCES)
 

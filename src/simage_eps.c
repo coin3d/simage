@@ -1,4 +1,23 @@
+/*
+ * Copyright (c) Kongsberg Oil & Gas Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif /* HAVE_CONFIG_H */
+
 #ifdef SIMAGE_EPS_SUPPORT
 
 #include <simage_eps.h>
@@ -11,13 +30,13 @@
 
 static int epserror = ERR_NO_ERROR;
 
-int 
+int
 simage_eps_error(char * buffer, int buflen)
 {
   switch (epserror) {
-  case ERR_OPEN_WRITE:
-    strncpy(buffer, "EPS loader: Error opening file for writing", buflen);
-    break;
+    case ERR_OPEN_WRITE:
+      strncpy(buffer, "EPS loader: Error opening file for writing", buflen);
+      break;
   }
   return epserror;
 }
@@ -104,7 +123,7 @@ flush_ascii85(FILE * fp,
   output_ascii85(fp, 0, tuple, linebuf, tuplecnt, linecnt, rowlen, 1);
 }
 
-int 
+int
 simage_eps_save(const char *filename,
                 const unsigned char * src,
                 int width,
@@ -114,7 +133,7 @@ simage_eps_save(const char *filename,
 {
   /*
     Code adapted from Coin's SoOffscreenRenderer::writeToPostscript().
-    If you find a bug here, remember to correct it in Coin also.  
+    If you find a bug here, remember to correct it in Coin also.
   */
 
 #define ROWLEN 72
@@ -134,7 +153,7 @@ simage_eps_save(const char *filename,
   int cnt;
   FILE * fp = fopen(filename, "wb");
 
-  if (fp == NULL) { 
+  if (fp == NULL) {
     epserror = ERR_OPEN_WRITE;
     return 0;
   }
@@ -147,7 +166,7 @@ simage_eps_save(const char *filename,
   inchsize[1] = 11.0f;
   pixelsize[0] = inchsize[0]*defaultdpi;
   pixelsize[1] = inchsize[1]*defaultdpi;
-  
+
   chan = nc <= 2 ? 1 : 3;
   scaledsize[0] = (int) ceil(((double)size[0])*defaultdpi/dpi);
   scaledsize[1] = (int) ceil(((double)size[1])*defaultdpi/dpi);
@@ -155,18 +174,18 @@ simage_eps_save(const char *filename,
   fprintf(fp, "%%!PS-Adobe-2.0 EPSF-1.2\n");
   fprintf(fp, "%%%%Pages: 1\n");
   fprintf(fp, "%%%%PageOrder: Ascend\n");
-  fprintf(fp, "%%%%BoundingBox: 0 %d %d %d\n", 
-          pixelsize[1]-scaledsize[1], 
+  fprintf(fp, "%%%%BoundingBox: 0 %d %d %d\n",
+          pixelsize[1]-scaledsize[1],
           scaledsize[0],
           pixelsize[1]);
   fprintf(fp, "%%%%Creator: simage <http://www.coin3d.org>\n");
   fprintf(fp, "%%%%EndComments\n");
-  
+
   fprintf(fp, "\n");
   fprintf(fp, "/origstate save def\n");
   fprintf(fp, "\n");
-  fprintf(fp, "%% workaround for bug in some PS interpreters\n"); 
-  fprintf(fp, "%% which doesn't skip the ASCII85 EOD marker.\n");     
+  fprintf(fp, "%% workaround for bug in some PS interpreters\n");
+  fprintf(fp, "%% which doesn't skip the ASCII85 EOD marker.\n");
   fprintf(fp, "/~ {currentfile read pop pop} def\n\n");
   fprintf(fp, "/image_wd %d def\n", size[0]);
   fprintf(fp, "/image_ht %d def\n", size[1]);
@@ -194,38 +213,38 @@ simage_eps_save(const char *filename,
   /* fprintf(fp, "/RunLengthDecode filter\n"); FIXME: add later */
   if (chan == 3) fprintf(fp, "false 3\ncolorimage\n");
   else fprintf(fp,"image\n");
-  
+
   num = size[0] * size[1];
   tuplecnt = 0;
   linecnt = 0;
   cnt = 0;
-  
+
   while (cnt < num) {
     switch (nc) {
-    default: /* avoid warning */
-    case 1:
-      output_ascii85(fp, src[cnt], tuple, linebuf, &tuplecnt, &linecnt, ROWLEN, 0);
-      break;
-    case 2:
-      output_ascii85(fp, src[cnt*2], tuple, linebuf, &tuplecnt, &linecnt, ROWLEN, 0);
-      break;
-    case 3:
-      output_ascii85(fp, src[cnt*3], tuple, linebuf, &tuplecnt, &linecnt, ROWLEN, 0);
-      output_ascii85(fp, src[cnt*3+1], tuple, linebuf, &tuplecnt, &linecnt, ROWLEN, 0);
-      output_ascii85(fp, src[cnt*3+2], tuple, linebuf, &tuplecnt, &linecnt, ROWLEN, 0);
-      break;
-    case 4:
-      output_ascii85(fp, src[cnt*4], tuple, linebuf, &tuplecnt, &linecnt, ROWLEN, 0);
-      output_ascii85(fp, src[cnt*4+1], tuple, linebuf, &tuplecnt, &linecnt, ROWLEN, 0);
-      output_ascii85(fp, src[cnt*4+2], tuple, linebuf, &tuplecnt, &linecnt, ROWLEN, 0);
-      break;
+      default: /* avoid warning */
+      case 1:
+        output_ascii85(fp, src[cnt], tuple, linebuf, &tuplecnt, &linecnt, ROWLEN, 0);
+        break;
+      case 2:
+        output_ascii85(fp, src[cnt*2], tuple, linebuf, &tuplecnt, &linecnt, ROWLEN, 0);
+        break;
+      case 3:
+        output_ascii85(fp, src[cnt*3], tuple, linebuf, &tuplecnt, &linecnt, ROWLEN, 0);
+        output_ascii85(fp, src[cnt*3+1], tuple, linebuf, &tuplecnt, &linecnt, ROWLEN, 0);
+        output_ascii85(fp, src[cnt*3+2], tuple, linebuf, &tuplecnt, &linecnt, ROWLEN, 0);
+        break;
+      case 4:
+        output_ascii85(fp, src[cnt*4], tuple, linebuf, &tuplecnt, &linecnt, ROWLEN, 0);
+        output_ascii85(fp, src[cnt*4+1], tuple, linebuf, &tuplecnt, &linecnt, ROWLEN, 0);
+        output_ascii85(fp, src[cnt*4+2], tuple, linebuf, &tuplecnt, &linecnt, ROWLEN, 0);
+        break;
     }
     cnt++;
   }
-  
+
   /* flush data in ascii85 encoder */
   flush_ascii85(fp, tuple, linebuf, &tuplecnt, &linecnt, ROWLEN);
-  
+
   fprintf(fp, "~>\n\n"); /* ASCII85 EOD marker */
   fprintf(fp, "origstate restore\n");
   fprintf(fp, "\n");

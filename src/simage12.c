@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) Kongsberg Oil & Gas Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -5,11 +21,12 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
+
 #include <simage.h>
 #include <simage_private.h>
 #include <string.h>
 
-s_image * 
+s_image *
 s_image_create(int w, int h, int components,
                unsigned char * prealloc /* | NULL */ )
 {
@@ -17,16 +34,16 @@ s_image_create(int w, int h, int components,
   image->width = w;
   image->height = h;
   image->components = components;
-  image->order = SIMAGE_ORDER_RGB; 
+  image->order = SIMAGE_ORDER_RGB;
   image->didalloc = 0;
   image->data = prealloc;
   if (image->data == NULL) {
     image->didalloc = 1;
     image->data = (unsigned char *) malloc(w*h*components);
   }
-  
+
   /* needed for simage 1.6 */
-  image->opendata = NULL; 
+  image->opendata = NULL;
   image->oktoreadall = 1;
   image->openfilename = NULL;
   memset(&image->openfuncs, 0, sizeof(struct simage_open_funcs));
@@ -35,7 +52,7 @@ s_image_create(int w, int h, int components,
   return (s_image*) image;
 }
 
-void 
+void
 s_image_destroy(s_image * image)
 {
   if (image) {
@@ -51,21 +68,21 @@ s_image_destroy(s_image * image)
   }
 }
 
-int 
+int
 s_image_width(s_image * image)
 {
   if (image) return image->width;
   return 0;
 }
 
-int 
+int
 s_image_height(s_image * image)
 {
   if (image) return image->height;
   return 0;
 }
 
-int 
+int
 s_image_components(s_image * image)
 {
   if (image) return image->components;
@@ -73,7 +90,7 @@ s_image_components(s_image * image)
 }
 
 
-int 
+int
 s_image_set_component_order(s_image * image, int order)
 {
   int oldorder = image->order;
@@ -81,13 +98,13 @@ s_image_set_component_order(s_image * image, int order)
   return oldorder;
 }
 
-int 
+int
 s_image_get_component_order(s_image * image)
 {
   return image->order;
 }
 
-unsigned char * 
+unsigned char *
 s_image_data(s_image * image)
 {
   if (image) {
@@ -105,7 +122,7 @@ s_image_data(s_image * image)
   return NULL;
 }
 
-void 
+void
 s_image_set(s_image * image, int w, int h, int components,
             unsigned char * data, int copydata)
 {
@@ -142,16 +159,16 @@ s_image_set(s_image * image, int w, int h, int components,
   image->order = SIMAGE_ORDER_RGB;
 }
 
-s_image * 
+s_image *
 s_image_load(const char * filename, s_image * prealloc /* | NULL */)
 {
   unsigned char * data;
   int w,h,nc;
-  
+
   data = simage_read_image(filename, &w, &h, &nc);
   if (data == NULL) return NULL;
-  if (prealloc == NULL || 
-      prealloc->width != w || 
+  if (prealloc == NULL ||
+      prealloc->width != w ||
       prealloc->height != h ||
       prealloc->components != nc) {
     prealloc = s_image_create(w, h, nc, data);
@@ -160,7 +177,7 @@ s_image_load(const char * filename, s_image * prealloc /* | NULL */)
   else {
     /* copy into preallocated buffer */
     memcpy(prealloc->data, data, w*h*nc);
-    
+
     /* we don't need this copy any more */
     simage_free_image(data);
   }
@@ -170,25 +187,25 @@ s_image_load(const char * filename, s_image * prealloc /* | NULL */)
   return prealloc;
 }
 
-int 
+int
 s_image_save(const char * filename, s_image * image,
              s_params * params /* | NULL */)
 {
   char * ext = NULL;
   if (params != NULL) {
-    s_params_get(params, S_STRING_PARAM_TYPE, 
+    s_params_get(params, S_STRING_PARAM_TYPE,
                  "file type", &ext,
                  NULL);
   }
   if (ext == NULL) {
     ext = (char*) strrchr(filename, '.');
     if (ext == NULL) return 0;
-    
+
     /* skip period */
     ext++;
   }
-  
-  return simage_save_image(filename, 
+
+  return simage_save_image(filename,
                            s_image_data(image),
                            image->width,
                            image->height,

@@ -1,9 +1,28 @@
+/*
+ * Copyright (c) Kongsberg Oil & Gas Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
 /*!
   GIF loader, using giflib or libungif.
   Based, in part, on source code found in libungif, gif2rgb.c
 */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif /* HAVE_CONFIG_H */
+
 #ifdef HAVE_GIFLIB
 
 #include <simage_gif.h>
@@ -12,11 +31,11 @@
 #include <stdio.h>
 #include <gif_lib.h>
 
-enum { 
-  ERR_NO_ERROR, 
-  ERR_OPEN, 
-  ERR_READ, 
-  ERR_WRITE, 
+enum {
+  ERR_NO_ERROR,
+  ERR_OPEN,
+  ERR_READ,
+  ERR_WRITE,
   ERR_MEM
 };
 
@@ -26,38 +45,38 @@ int
 simage_gif_error(char * buffer, int buflen)
 {
   switch (giferror) {
-  case ERR_OPEN:
-    strncpy(buffer, "GIF loader: Error opening file", buflen);
-    break;
-  case ERR_READ:
-    strncpy(buffer, "GIF loader: Error reading file", buflen);
-    break;
-  case ERR_WRITE:
-    strncpy(buffer, "GIF loader: Error writing file", buflen);
-    break;
-  case ERR_MEM:
-    strncpy(buffer, "GIF loader: Out of memory error", buflen);
-    break;
+    case ERR_OPEN:
+      strncpy(buffer, "GIF loader: Error opening file", buflen);
+      break;
+    case ERR_READ:
+      strncpy(buffer, "GIF loader: Error reading file", buflen);
+      break;
+    case ERR_WRITE:
+      strncpy(buffer, "GIF loader: Error writing file", buflen);
+      break;
+    case ERR_MEM:
+      strncpy(buffer, "GIF loader: Out of memory error", buflen);
+      break;
   }
   return giferror;
 }
 
-int 
+int
 simage_gif_identify(const char *filename,
                     const unsigned char *header,
                     int headerlen)
 {
-  return (headerlen >= 3) 
+  return (headerlen >= 3)
     && header[0] == 'G'
-    && header[1] == 'I' 
+    && header[1] == 'I'
     && header[2] == 'F';
 }
 
 static void
-decode_row(GifFileType * giffile, 
-           unsigned char * buffer, 
+decode_row(GifFileType * giffile,
+           unsigned char * buffer,
            unsigned char * rowdata,
-           int x, int y, int len, 
+           int x, int y, int len,
            int transparent)
 {
   GifColorType * cmentry;
@@ -73,7 +92,7 @@ decode_row(GifFileType * giffile,
               ? giffile->Image.ColorMap
               : giffile->SColorMap);
   colormapsize = colormap ? colormap->ColorCount : 255;
-  
+
   while (len--) {
     col = *rowdata++;
     if (col >= colormapsize) col = 0; /* just in case */
@@ -107,19 +126,19 @@ simage_gif_load(const char *filename,
   GifByteType * extension;
   GifFileType * giffile;
   GifColorType * bgcol;
-  
+
   /* The way an interlaced image should be read - offsets and jumps */
-  int interlacedoffset[] = { 0, 4, 2, 1 }; 
-  int interlacedjumps[] = { 8, 8, 4, 2 };    
-  
+  int interlacedoffset[] = { 0, 4, 2, 1 };
+  int interlacedjumps[] = { 8, 8, 4, 2 };
+
   giffile = DGifOpenFileName(filename);
   if (!giffile) {
     giferror = ERR_OPEN;
     return NULL;
   }
-  
+
   transparent = -1; /* no transparent color by default */
-  
+
   n = giffile->SHeight * giffile->SWidth;
   buffer = (unsigned char*) malloc(n * 4);
   if (!buffer) {
@@ -132,12 +151,12 @@ simage_gif_load(const char *filename,
     free(buffer);
     return NULL;
   }
-  
+
   bg = giffile->SBackGroundColor;
   if (giffile->SColorMap && bg < giffile->SColorMap->ColorCount) {
     bgcol = &giffile->SColorMap->Colors[bg];
   }
-  else bgcol = NULL;  
+  else bgcol = NULL;
   ptr = buffer;
   for (i = 0; i < n; i++) {
     if (bgcol) {
@@ -153,7 +172,7 @@ simage_gif_load(const char *filename,
       *ptr++ = 0xff;
     }
   }
- 
+
   /* Scan the content of the GIF file and load the image(s) in: */
   do {
     if (DGifGetRecordType(giffile, &recordtype) == GIF_ERROR) {
@@ -163,78 +182,78 @@ simage_gif_load(const char *filename,
       return NULL;
     }
     switch (recordtype) {
-    case IMAGE_DESC_RECORD_TYPE:
-      if (DGifGetImageDesc(giffile) == GIF_ERROR) {
-        giferror = ERR_READ;
-        free(buffer);
-        free(rowdata);
-        return NULL;
-      }
-      row = giffile->Image.Top; /* subimage position in composite image */
-      col = giffile->Image.Left;
-      width = giffile->Image.Width;
-      height = giffile->Image.Height;
-      if (giffile->Image.Left + giffile->Image.Width > giffile->SWidth ||
-          giffile->Image.Top + giffile->Image.Height > giffile->SHeight) {
-        /* image is not confined to screen dimension */
-        giferror = ERR_READ;
-        free(buffer);
-        free(rowdata);
-        return NULL;
-      }
-      if (giffile->Image.Interlace) {
-        /* Need to perform 4 passes on the images: */
-        for (i = 0; i < 4; i++) {
-          for (j = row + interlacedoffset[i]; j < row + height;
-               j += interlacedjumps[i]) {
+      case IMAGE_DESC_RECORD_TYPE:
+        if (DGifGetImageDesc(giffile) == GIF_ERROR) {
+          giferror = ERR_READ;
+          free(buffer);
+          free(rowdata);
+          return NULL;
+        }
+        row = giffile->Image.Top; /* subimage position in composite image */
+        col = giffile->Image.Left;
+        width = giffile->Image.Width;
+        height = giffile->Image.Height;
+        if (giffile->Image.Left + giffile->Image.Width > giffile->SWidth ||
+            giffile->Image.Top + giffile->Image.Height > giffile->SHeight) {
+          /* image is not confined to screen dimension */
+          giferror = ERR_READ;
+          free(buffer);
+          free(rowdata);
+          return NULL;
+        }
+        if (giffile->Image.Interlace) {
+          /* Need to perform 4 passes on the images: */
+          for (i = 0; i < 4; i++) {
+            for (j = row + interlacedoffset[i]; j < row + height;
+                 j += interlacedjumps[i]) {
+              if (DGifGetLine(giffile, rowdata, width) == GIF_ERROR) {
+                giferror = ERR_READ;
+                free(buffer);
+                free(rowdata);
+                return NULL;
+              }
+              else decode_row(giffile, buffer, rowdata, col, j, width, transparent);
+            }
+          }
+        }
+        else {
+          for (i = 0; i < height; i++, row++) {
             if (DGifGetLine(giffile, rowdata, width) == GIF_ERROR) {
               giferror = ERR_READ;
               free(buffer);
               free(rowdata);
               return NULL;
             }
-            else decode_row(giffile, buffer, rowdata, col, j, width, transparent);
+            else decode_row(giffile, buffer, rowdata, col, row, width, transparent);
           }
         }
-      }
-      else {
-        for (i = 0; i < height; i++, row++) {
-          if (DGifGetLine(giffile, rowdata, width) == GIF_ERROR) {
-            giferror = ERR_READ;
-            free(buffer);
-            free(rowdata);
-            return NULL;
-          }
-          else decode_row(giffile, buffer, rowdata, col, row, width, transparent);
-        }
-      }
-      break;
-    case EXTENSION_RECORD_TYPE:
-      /* Skip any extension blocks in file: */
-      if (DGifGetExtension(giffile, &extcode, &extension) == GIF_ERROR) {
-        giferror = ERR_READ;
-        free(buffer);
-        free(rowdata);
-        return NULL;
-      }
-      /* transparent test from the gimp gif-plugin. Open Source rulez! */
-      else if (extcode == 0xf9) { 
-        if (extension[0] >= 4 && extension[1] & 0x1) transparent = extension[4];
-        else transparent = -1;
-      }
-      while (extension != NULL) {
-        if (DGifGetExtensionNext(giffile, &extension) == GIF_ERROR) {
+        break;
+      case EXTENSION_RECORD_TYPE:
+        /* Skip any extension blocks in file: */
+        if (DGifGetExtension(giffile, &extcode, &extension) == GIF_ERROR) {
           giferror = ERR_READ;
           free(buffer);
           free(rowdata);
           return NULL;
         }
-      }
-      break;
-    case TERMINATE_RECORD_TYPE:
-      break;
-    default:		    /* Should be trapped by DGifGetRecordType. */
-      break;
+        /* transparent test from the gimp gif-plugin. Open Source rulez! */
+        else if (extcode == 0xf9) {
+          if (extension[0] >= 4 && extension[1] & 0x1) transparent = extension[4];
+          else transparent = -1;
+        }
+        while (extension != NULL) {
+          if (DGifGetExtensionNext(giffile, &extension) == GIF_ERROR) {
+            giferror = ERR_READ;
+            free(buffer);
+            free(rowdata);
+            return NULL;
+          }
+        }
+        break;
+      case TERMINATE_RECORD_TYPE:
+        break;
+      default:              /* Should be trapped by DGifGetRecordType. */
+        break;
     }
   }
   while (recordtype != TERMINATE_RECORD_TYPE);
@@ -247,7 +266,7 @@ simage_gif_load(const char *filename,
   return buffer;
 }
 
-int 
+int
 simage_gif_save(const char * filename,
                 const unsigned char * bytes,
                 int width,
@@ -322,8 +341,8 @@ simage_gif_save(const char * filename,
     free(outbuf);
     FreeMapObject(cmapobj);
     return 0;
-  }      
-    
+  }
+
   /* open gif file and overwrite any existing file */
   if (!(giffile = EGifOpenFileName(filename, FALSE))) {
     giferror = ERR_OPEN;
@@ -335,8 +354,8 @@ simage_gif_save(const char * filename,
 
   if (EGifPutScreenDesc(giffile, width, height, 8,
                         0, cmapobj) == GIF_ERROR ||
-      EGifPutImageDesc(giffile, 0, 0, width, height, 
-                       FALSE, NULL) == GIF_ERROR) { 
+      EGifPutImageDesc(giffile, 0, 0, width, height,
+                       FALSE, NULL) == GIF_ERROR) {
     giferror = ERR_WRITE;
     free(rgbbuf);
     free(outbuf);
@@ -348,7 +367,7 @@ simage_gif_save(const char * filename,
   outbuf_ptr = outbuf + bufsize;
   for (i = height; i > 0; i--) {
     outbuf_ptr -= width;
-    if (EGifPutLine(giffile, outbuf_ptr, width) == GIF_ERROR) { 
+    if (EGifPutLine(giffile, outbuf_ptr, width) == GIF_ERROR) {
       giferror = ERR_WRITE;
       free(rgbbuf);
       free(outbuf);
@@ -359,7 +378,7 @@ simage_gif_save(const char * filename,
   }
 
   if (EGifPutComment(giffile, "Image saved using simage.") == GIF_ERROR ||
-      EGifCloseFile(giffile) == GIF_ERROR) { 
+      EGifCloseFile(giffile) == GIF_ERROR) {
     giferror = ERR_WRITE;
     free(rgbbuf);
     free(outbuf);

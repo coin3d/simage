@@ -1,4 +1,4 @@
-NEWSFLASH 
+NEWSFLASH
 
 You can now build simage the same way you build Coin, by using
 Visual Studio project files you will find under one of the
@@ -12,11 +12,11 @@ Building the simage library on the Microsoft Windows platform
 
 You can build the simage library in two ways:
 
-        1. Using Cygwin[1]
-        2. Using the Visual C++ project file and workspace 
-           that is part of the "Coin3D for Windows" 
-           installation package. See <URL:http://www.coin3d.org> 
-           for more details.
+	1. Using Cygwin[1]
+	2. Using the Visual C++ project file and workspace
+	   that is part of the "Coin3D for Windows"
+	   installation package. See <URL:http://www.coin3d.org>
+	   for more details.
 
 Both alternatives require Visual C++ version 6.0 or newer.
 
@@ -40,8 +40,8 @@ Make sure you have the latest version of Cygwin.
 Open a bash shell and configure and build the same way as you would on
 UNIX-based systems, i.e.
 
-        $ [srcdir]/configure
-        $ make install
+	$ [srcdir]/configure
+	$ make install
 
 
 Note that if you encounter any problems when trying to build on

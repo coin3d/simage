@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) Kongsberg Oil & Gas Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
 #include <simage_cgimage.h>
 
 #include <CoreFoundation/CoreFoundation.h>
@@ -24,17 +40,17 @@ create_image_source(const char * file)
   CGImageSourceRef image_source;
 
   cfname = CFStringCreateWithCString(kCFAllocatorDefault,
-				     file,
-				     kCFStringEncodingUTF8);
+                                     file,
+                                     kCFStringEncodingUTF8);
 
   if (!cfname) {
     return NULL;
   }
 
   image_url = CFURLCreateWithFileSystemPath(kCFAllocatorDefault,
-					    cfname,
-					    kCFURLPOSIXPathStyle,
-					    false);
+                                            cfname,
+                                            kCFURLPOSIXPathStyle,
+                                            false);
 
   if (!image_url) {
     CFRelease(cfname);
@@ -59,9 +75,9 @@ simage_cgimage_error(char * cstr, int buflen)
 {
   int errval = cgimageerror;
   switch (cgimageerror) {
-  case ERR_OPEN:
-    strncpy(cstr, "CGImage loader: Error loading file", buflen);
-    break;
+    case ERR_OPEN:
+      strncpy(cstr, "CGImage loader: Error loading file", buflen);
+      break;
   }
   cgimageerror = ERR_NO_ERROR;
   return errval;
@@ -69,7 +85,7 @@ simage_cgimage_error(char * cstr, int buflen)
 
 int
 simage_cgimage_identify(const char * file, const unsigned char * header,
-			int headerlen)
+                        int headerlen)
 {
   CGImageSourceRef image_source = create_image_source(file);
   if (image_source) {
@@ -114,10 +130,10 @@ simage_cgimage_load(const char * file, int * width, int * height, int * numcompo
   newpx = (unsigned char *)malloc(*width * *height * *numcomponents);
 
   context = CGBitmapContextCreate(newpx, *width, *height, 8, *width * *numcomponents,
-				  color_space,
-				  (*numcomponents == 1) ?
-				  kCGImageAlphaNone :
-				  kCGImageAlphaPremultipliedLast);
+                                  color_space,
+                                  (*numcomponents == 1) ?
+                                  kCGImageAlphaNone :
+                                  kCGImageAlphaPremultipliedLast);
   assert(context);
   /* flip Y axis */
   CGContextScaleCTM(context, 1.0f, -1.0f);
@@ -156,7 +172,7 @@ simage_cgimage_get_savers(void)
   destinationTypes = CGImageDestinationCopyTypeIdentifiers();
   for (idx = 0; idx < CFArrayGetCount(destinationTypes); idx++) {
     fileext = UTTypeCopyPreferredTagWithClass(CFArrayGetValueAtIndex(destinationTypes, idx),
-					      kUTTagClassFilenameExtension);
+                                              kUTTagClassFilenameExtension);
 
     fileext_len = CFStringGetLength(fileext);
 
@@ -164,13 +180,13 @@ simage_cgimage_get_savers(void)
     /* FIXME: dirty. wash it! 20100224 tamer. */
     if (fileext_len == 4) {
       if (!CFStringCompare(fileext, jpegStr, 0)) {
-	CFRelease(fileext);
-	fileext = CFSTR("jpg");
-	fileext_len = 3;
+        CFRelease(fileext);
+        fileext = CFSTR("jpg");
+        fileext_len = 3;
       } else if (!CFStringCompare(fileext, tiffStr, 0)) {
-	CFRelease(fileext);
-	fileext = CFSTR("tif");
-	fileext_len = 3;
+        CFRelease(fileext);
+        fileext = CFSTR("tif");
+        fileext_len = 3;
       }
     }
 
@@ -199,11 +215,11 @@ simage_cgimage_get_savers(void)
 
 int
 simage_cgimage_save(const char *filename,
-		    const unsigned char * bytes,
-		    int width,
-		    int height,
-		    int numcomponents,
-		    const char * ext)
+                    const unsigned char * bytes,
+                    int width,
+                    int height,
+                    int numcomponents,
+                    const char * ext)
 {
   CFStringRef cfname;
   CFStringRef file_ext;
@@ -226,36 +242,36 @@ simage_cgimage_save(const char *filename,
   /* flip buffer horizontally */
   for (pos = 0; pos < imgbufsize; pos+=width*numcomponents) {
     memcpy(bytes_flipped+pos,
-	   bytes+imgbufsize-width*numcomponents-pos,
-	   width*numcomponents);
+           bytes+imgbufsize-width*numcomponents-pos,
+           width*numcomponents);
   }
 
   provider = CGDataProviderCreateWithData(NULL, bytes_flipped,
-					  imgbufsize,
-					  NULL);
+                                          imgbufsize,
+                                          NULL);
 
   bitsPerComponent = 8;
   bitsPerPixel = bitsPerComponent*numcomponents;
   bytesPerRow = numcomponents * width;
   color_space = CGColorSpaceCreateDeviceRGB();
   image_source = CGImageCreate(width, height, 8, 8*numcomponents,
-			       numcomponents*width,
-			       color_space,
-			       kCGBitmapByteOrderDefault,
-			       provider,
-			       NULL, 0,
-			       kCGRenderingIntentDefault);
+                               numcomponents*width,
+                               color_space,
+                               kCGBitmapByteOrderDefault,
+                               provider,
+                               NULL, 0,
+                               kCGRenderingIntentDefault);
 
   CGDataProviderRelease(provider);
   CGColorSpaceRelease(color_space);
   free(bytes_flipped);
 
   file_ext = CFStringCreateWithCString(kCFAllocatorDefault,
-				       ext,
-				       kCFStringEncodingUTF8);
+                                       ext,
+                                       kCFStringEncodingUTF8);
   type_name = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,
-						    file_ext,
-						    kUTTypeImage);
+                                                    file_ext,
+                                                    kUTTypeImage);
 
   CFRelease(file_ext);
 
@@ -266,8 +282,8 @@ simage_cgimage_save(const char *filename,
   }
 
   cfname = CFStringCreateWithCString(kCFAllocatorDefault,
-				     filename,
-				     kCFStringEncodingUTF8);
+                                     filename,
+                                     kCFStringEncodingUTF8);
 
   if (!cfname) {
     cgimageerror = ERR_WRITE;
@@ -277,9 +293,9 @@ simage_cgimage_save(const char *filename,
   }
 
   image_url = CFURLCreateWithFileSystemPath(kCFAllocatorDefault,
-					    cfname,
-					    kCFURLPOSIXPathStyle,
-					    false);
+                                            cfname,
+                                            kCFURLPOSIXPathStyle,
+                                            false);
 
   CFRelease(cfname);
 

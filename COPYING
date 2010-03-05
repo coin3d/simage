@@ -1,8 +1,18 @@
-All files in this library are public domain, except the files in the 
-mpeg2enc directory.
+The files in the mpeg2enc directory are licensed under the terms of
+the LICENSE.mpeg2enc file.
 
-The license for the files in the mpeg2enc directory can be found
-in the file mpeg2enc/mpeg2enc.h.
+All other files in this library are licensed under the terms of the
+LICENSE file.
 
-Please send patches for bugs and new features to: Peder Blekken,
-<pederb@sim.no>.
+See <URL:http://www.coin3d.org/> for additional information.
+
+Contact us at
+
+        support@sim.no / sales@sim.no
+
+Or on dead trees at
+
+        Kongsberg Oil & Gas Technologies
+        Bygdoy Alle 5
+        0257 Oslo
+        NORWAY

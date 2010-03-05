@@ -34,7 +34,7 @@ fi
 if test x"$compiler_is_gcc" = x"yes"; then
   sim_ac_save_cpp=$CPP
   CPP="cpp"
-  case `uname -s` in    
+  case `uname -s` in
     Darwin) CPP="cpp3"
     ;;
   esac
@@ -44,15 +44,15 @@ if test x"$compiler_is_gcc" = x"yes"; then
     /End of search list./b
     s/ /-I/
     p
-  }' 
+  }'
 EOF`
   result=
   for inc_path in $cppflags; do
     additem=true
     for sys_dir in $cpp_sys_dirs; do
       if test x$inc_path = x$sys_dir; then
-        additem=false
-        break
+	additem=false
+	break
       fi
     done
     $additem && result="$result $inc_path"
@@ -112,4 +112,3 @@ do
 done
 
 exit 0
-

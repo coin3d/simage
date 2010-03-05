@@ -1,8 +1,27 @@
 /*
+ * Copyright (c) Kongsberg Oil & Gas Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+/*
  * An SGI RGB loader. By pederb@sim.no.
  */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif /* HAVE_CONFIG_H */
+
 #ifdef SIMAGE_RGB_SUPPORT
 
 #include <simage_rgb.h>
@@ -33,15 +52,15 @@ typedef struct {
   unsigned char * tmpbuf[4];
 } simage_rgb_opendata;
 
-unsigned char * 
+unsigned char *
 simage_rgb_load(const char * filename,
                 int * width,
                 int * height,
                 int * numcomponents)
 {
-  simage_rgb_opendata * od = (simage_rgb_opendata*) 
+  simage_rgb_opendata * od = (simage_rgb_opendata*)
     simage_rgb_open(filename, width, height, numcomponents);
-  
+
   if (od) {
     int i;
     int bpr = *width * *numcomponents;
@@ -70,7 +89,7 @@ write_short(FILE * fp, unsigned short val)
   return fwrite(&tmp, 2, 1, fp);
 }
 
-int 
+int
 simage_rgb_save(const char * filename,
                 const unsigned char * bytes,
                 int width,
@@ -119,41 +138,41 @@ simage_rgb_save(const char * filename,
   return 1;
 }
 
-int 
+int
 simage_rgb_identify(const char * filename,
                     const unsigned char * header,
                     int headerlen)
 {
   static unsigned char rgbcmp[] = {0x01, 0xda};
   if (headerlen < 2) return 0;
-  if (memcmp((const void*)header, 
-	     (const void*)rgbcmp, 2) == 0) return 1;
+  if (memcmp((const void*)header,
+             (const void*)rgbcmp, 2) == 0) return 1;
   return 0;
 }
 
-int 
+int
 simage_rgb_error(char * buffer, int buflen)
 {
   switch (rgberror) {
-  case ERR_OPEN:
-    strncpy(buffer, "RGB loader: Error opening file", buflen);
-    break;
-  case ERR_READ:
-    strncpy(buffer, "RGB loader: Error reading file", buflen);
-    break;
-  case ERR_MEM:
-    strncpy(buffer, "RGB loader: Out of memory error", buflen);
-    break;
-  case ERR_SIZEZ:
-    strncpy(buffer, "RGB loader: Unsupported zsize", buflen);
-    break;
-  case ERR_OPEN_WRITE:
-    strncpy(buffer, "RGB loader: Error opening file for writing", buflen);
+    case ERR_OPEN:
+      strncpy(buffer, "RGB loader: Error opening file", buflen);
+      break;
+    case ERR_READ:
+      strncpy(buffer, "RGB loader: Error reading file", buflen);
+      break;
+    case ERR_MEM:
+      strncpy(buffer, "RGB loader: Out of memory error", buflen);
+      break;
+    case ERR_SIZEZ:
+      strncpy(buffer, "RGB loader: Unsupported zsize", buflen);
+      break;
+    case ERR_OPEN_WRITE:
+      strncpy(buffer, "RGB loader: Error opening file for writing", buflen);
   }
   return rgberror;
 }
 
-static int 
+static int
 read_short(FILE * in, short * dst, int n, int swap)
 {
   int i;
@@ -172,13 +191,13 @@ read_short(FILE * in, short * dst, int n, int swap)
   return num == n;
 }
 
-static int 
+static int
 read_ushort(FILE * in, unsigned short * dst, int n, int swap)
 {
   return read_short(in, (short*) dst, n, swap);
 }
 
-static int 
+static int
 read_int(FILE * in, int * dst, int n, int swap)
 {
   int i;
@@ -200,13 +219,13 @@ read_int(FILE * in, int * dst, int n, int swap)
   return num == n;
 }
 
-static int 
+static int
 read_uint(FILE * in, unsigned int * dst, int n, int swap)
 {
   return read_int(in, (int*)dst, n, swap);
 }
 
-void * 
+void *
 simage_rgb_open(const char * filename,
                 int * width,
                 int * height,
@@ -223,11 +242,11 @@ simage_rgb_open(const char * filename,
     int data;
     char bytedata[4];
   } endiantest;
-  
+
   endiantest.data = 1;
   /* need to swap shorts and integers on little endian systems  */
   swap = endiantest.bytedata[0] == 1;
-  
+
   in = fopen(filename, "rb");
   if (!in) {
     rgberror = ERR_OPEN;
@@ -247,7 +266,7 @@ simage_rgb_open(const char * filename,
     fclose(in);
     return NULL;
   }
-  
+
   od = (simage_rgb_opendata*) malloc(sizeof(simage_rgb_opendata));
   memset(od, 0, sizeof(simage_rgb_opendata));
   od->in = in;
@@ -281,13 +300,13 @@ simage_rgb_open(const char * filename,
   return (void*) od;
 }
 
-void 
+void
 simage_rgb_close(void * opendata)
 {
   int i;
-  simage_rgb_opendata * od = 
+  simage_rgb_opendata * od =
     (simage_rgb_opendata*) opendata;
-  
+
   fclose(od->in);
   for (i = 0; i < od->nc; i++) {
     free(od->tmpbuf[i]);
@@ -330,21 +349,21 @@ read_rgb_row_component(simage_rgb_opendata * od, int y, int c)
 
     pixel = *src++;
     count = (int)(pixel & 0x7F);
-    
+
     while (count) {
       if (dst + count > dststop) { rgberror = ERR_READ; return 0; }
       if (pixel & 0x80) {
         if (src + count > srcstop) { rgberror = ERR_READ; return 0; }
-	while (count--) {
-	  *dst++ = *src++;
-	}
-      } 
+        while (count--) {
+          *dst++ = *src++;
+        }
+      }
       else {
         if (src >= srcstop) { rgberror = ERR_READ; return 0; }
-	pixel = *src++;
-	while (count--) {
-	  *dst++ = pixel;
-	}
+        pixel = *src++;
+        while (count--) {
+          *dst++ = pixel;
+        }
       }
       pixel = *src++;
       count = (int)(pixel & 0x7F);
@@ -363,13 +382,13 @@ read_rgb_row_component(simage_rgb_opendata * od, int y, int c)
   return 1;
 }
 
-int 
+int
 simage_rgb_read_line(void * opendata, int y, unsigned char * buf)
 {
   int i, c;
   unsigned char * ptr;
 
-  simage_rgb_opendata * od = 
+  simage_rgb_opendata * od =
     (simage_rgb_opendata*) opendata;
 
   /* read each component into tmpbufs */
@@ -379,7 +398,7 @@ simage_rgb_read_line(void * opendata, int y, unsigned char * buf)
       return 0;
     }
   }
-  
+
   ptr = buf;
   /* merge components into pixels */
   for (i = 0; i < od->w; i++) {
@@ -391,4 +410,3 @@ simage_rgb_read_line(void * opendata, int y, unsigned char * buf)
 }
 
 #endif /* SIMAGE_RGB_SUPPORT */
-

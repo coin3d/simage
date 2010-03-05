@@ -2,11 +2,27 @@
 #define SIMAGE_H
 
 /*
+ * Copyright (c) Kongsberg Oil & Gas Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+/*
  * simage:
  *
  * A simple library for loading images. This library is designed
- * for loading textures to be used as OpenGL textures. 
- * Only pixel formats directly supported by OpenGL (v1.0) will be 
+ * for loading textures to be used as OpenGL textures.
+ * Only pixel formats directly supported by OpenGL (v1.0) will be
  * returned. The user is responsible for resizing the texture to
  * a 2^n width/height though.
  *
@@ -16,9 +32,9 @@
  *
  * Usage information:
  *
- * simage_check_supported(filename): 
+ * simage_check_supported(filename):
  *
- *   Will return 1 if filename can be loaded, 0 otherwise. 
+ *   Will return 1 if filename can be loaded, 0 otherwise.
  *
  * simage_read_image(filename, width, height, numComponents)
  *
@@ -34,7 +50,7 @@
  *     4 : RGB data with alpha component (GL_RGBA)
  *
  * int simage_check_save_supported(const char * filenameextension)
- *    
+ *
  *   Returns 1 if a saver of type filenameextension is added. The
  *   built-in savers are gif, jpg/jpeg, png, tif/tiff and rgb.
  *
@@ -52,13 +68,13 @@
  *
  *   A convenience function that can be used to resize an image.
  *   Since OpenGL textures must have width and height equal to 2^n,
- *   this is often needed. A pointer to the new image data is returned. 
+ *   this is often needed. A pointer to the new image data is returned.
  *   imagedata is not freed. Uses the algorithm "Filtered Image
- *   Rescaling" by Dale Schumacher, from GGems III. 
+ *   Rescaling" by Dale Schumacher, from GGems III.
  *
  * simage_next_power_of_two(int val)
- * 
- *   Will return the first 2^n bigger or equal to val. 
+ *
+ *   Will return the first 2^n bigger or equal to val.
  *   If simage_next_power_of_two(size) != size, you'll typically
  *   need to resize your image to be able to use it in an OpenGL app.
  *
@@ -66,22 +82,22 @@
  *
  * s_movie * s_movie_create(const char * filename, s_params * params)
  *
- *   Will create a new move file named filename and attempt to locate a 
+ *   Will create a new move file named filename and attempt to locate a
  *   suitable encoder based on the parameters (params) supplied.
  *
  *   Returns a pointer to the opened movie on success, NULL on failure
  *
  *   Common parameters:
- *   - "mime-type" <string> : The requested encoder type. There are currently 
- *     2 encoders available, with mime-types "video/mpeg" and "video/avi".  
+ *   - "mime-type" <string> : The requested encoder type. There are currently
+ *     2 encoders available, with mime-types "video/mpeg" and "video/avi".
  *   - width <int> : Frame width (all input images must have this width)
  *   - height <int> : Frame height (all input images must have this height)
  *
  *   Parameters specific for the avi encoder
  *   - fps <int> : Number of frames per second in output file
- *   - parameter file <int> : If this parameter is missing (or empty ""), 
+ *   - parameter file <int> : If this parameter is missing (or empty ""),
  *     a GUI will pop up each time this functions is run, asking the user
- *     to specify compression settings. If a filename is specified and the 
+ *     to specify compression settings. If a filename is specified and the
  *     file doesn't exist, a GUI pops up, and the compression settings are
  *     saved in a new file with the specified filename. If the file exists,
  *     no GUI pops up, and the compression settings are read from the file.
@@ -90,17 +106,17 @@
  *   - width and height must be divisible by 4
  *
  * int s_movie_put_image(s_movie * movie, s_image * image, s_params * params)
- * 
- *   Adds (encodes) the image as one frame to the movie. params is currently 
- *   used only for optimizing avi encoding: 
+ *
+ *   Adds (encodes) the image as one frame to the movie. params is currently
+ *   used only for optimizing avi encoding:
  *   - "allow image modification" <int> : Set to "1" to allow the encoder
  *     to modify the image buffer. If this parameter is not set, the encoder
  *     will make a local copy of the image before it is encoded.
- * 
+ *
  *   Example code:
  *
  *   s_params *imgparams = s_params_create();
- *   s_params_set(imgparams, 
+ *   s_params_set(imgparams,
  *                "allow image modification", S_INTEGER_PARAM_TYPE, 1,
  *                NULL);
  *   for(;;) {
@@ -120,7 +136,7 @@
  *
  *   Cleans up all resources allocated by s_movie_create(...)
  *
- */  
+ */
 
 /***************************************************************************/
 
@@ -141,14 +157,14 @@
 /* version 1.4 added API for stream I/O */
 #define SIMAGE_VERSION_1_4
 
-/* version 1.5 added API for seeking and getting ("telling") the 
-               current position in a stream
-               added API for setting and getting component order of an
-               image */
+/* version 1.5 added API for seeking and getting ("telling") the
+   current position in a stream
+   added API for setting and getting component order of an
+   image */
 #define SIMAGE_VERSION_1_5
 
 /* version 1.6 added API for reading images line-by-line
-               added API for loading dynamic libraries at run-time */
+   added API for loading dynamic libraries at run-time */
 #define SIMAGE_VERSION_1_6
 
 /* These are available for adding or omitting features based on simage
@@ -181,11 +197,11 @@
   On MSWindows platforms, one of these defines must always be set when
   building application programs:
 
-   - "SIMAGE_DLL", when the application programmer is using the
-     library in the form of a dynamic link library (DLL)
+  - "SIMAGE_DLL", when the application programmer is using the
+  library in the form of a dynamic link library (DLL)
 
-   - "SIMAGE_NOT_DLL", when the application programmer is using the
-     library in the form of a static object library (LIB)
+  - "SIMAGE_NOT_DLL", when the application programmer is using the
+  library in the form of a static object library (LIB)
 
   Note that either SIMAGE_DLL or SIMAGE_NOT_DLL _must_ be defined by
   the application programmer on MSWindows platforms, or else the
@@ -205,7 +221,7 @@
   It is extremely important that the application programmer uses the
   correct define, as using "SIMAGE_NOT_DLL" when "SIMAGE_DLL" is
   correct will cause mysterious crashes.
- */
+*/
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 # ifdef SIMAGE_INTERNAL
 #  ifdef SIMAGE_MAKE_DLL
@@ -259,7 +275,7 @@ extern "C" {
      simage_resize() (Windows goes berzerk if you call free() from the
      client application) */
   SIMAGE_DLL_API void simage_free_image(unsigned char * imagedata);
-  
+
   /* convenience function */
   SIMAGE_DLL_API int simage_next_power_of_two(int val);
 
@@ -273,7 +289,7 @@ extern "C" {
   /* use the plugin interface described below for extending simage to
      handle more file formats */
 
-  struct simage_plugin 
+  struct simage_plugin
   {
     unsigned char *(*load_func)(const char * name, int * width, int * height,
                                 int * numcomponents);
@@ -290,16 +306,16 @@ extern "C" {
   /*****************************************************************/
   /**** NOTE: new methods for simage version 1.1 *******************/
   /*****************************************************************/
-  
+
   /* check if export is available for a filetype. Returns 1 if supported, 0 otherwise */
   SIMAGE_DLL_API int simage_check_save_supported(const char * filenameextension);
-  
+
   /* save image. use simage_check_write_supported first, please */
   SIMAGE_DLL_API int simage_save_image(const char * filename,
                                        const unsigned char * bytes,
                                        int w, int h, int numcomponents,
                                        const char * filenameextension);
-  
+
   SIMAGE_DLL_API void * simage_add_saver(int (*save_func)(const char * name,
                                                           const unsigned char * bytes,
                                                           int width, int height, int nc),
@@ -308,14 +324,14 @@ extern "C" {
                                          const char * fullname,
                                          const char * description,
                                          int addbefore);
-  
+
   SIMAGE_DLL_API void simage_remove_saver(void * handle);
   SIMAGE_DLL_API int simage_get_num_savers(void);
   SIMAGE_DLL_API void * simage_get_saver_handle(int idx);
   SIMAGE_DLL_API const char * simage_get_saver_extensions(void * handle);
   SIMAGE_DLL_API const char * simage_get_saver_fullname(void * handle);
   SIMAGE_DLL_API const char * simage_get_saver_description(void * handle);
-  
+
 
   /*****************************************************************/
   /**** NOTE: new methods for simage version 1.2 *******************/
@@ -333,18 +349,18 @@ extern "C" {
   SIMAGE_DLL_API s_image * s_image_create(int w, int h, int components,
                                           unsigned char * prealloc /* | NULL */);
   SIMAGE_DLL_API void s_image_destroy(s_image * image);
-  
+
   SIMAGE_DLL_API int s_image_width(s_image * image);
   SIMAGE_DLL_API int s_image_height(s_image * image);
   SIMAGE_DLL_API int s_image_components(s_image * image);
   SIMAGE_DLL_API unsigned char * s_image_data(s_image * image);
   SIMAGE_DLL_API void s_image_set(s_image * image, int w, int h, int components,
                                   unsigned char * data, int copydata);
-  
+
   SIMAGE_DLL_API s_image * s_image_load(const char * filename, s_image * prealloc /* | NULL */);
   SIMAGE_DLL_API int s_image_save(const char * filename, s_image * image,
                                   s_params * params /* | NULL */);
-  
+
   SIMAGE_DLL_API s_movie * s_movie_open(const char * filename);
   SIMAGE_DLL_API s_movie * s_movie_create(const char * filename, s_params * params /* | NULL */);
   SIMAGE_DLL_API s_image * s_movie_get_image(s_movie * movie, s_image * prealloc /* | NULL */,
@@ -353,15 +369,15 @@ extern "C" {
                                        s_params * params /* | NULL */);
   SIMAGE_DLL_API void s_movie_close(s_movie * movie);
   SIMAGE_DLL_API void s_movie_destroy(s_movie * movie);
-  
+
   SIMAGE_DLL_API void s_movie_importer_add(s_movie_open_func * open,
                                            s_movie_get_func * get,
                                            s_movie_close_func * close);
-  
+
   SIMAGE_DLL_API void s_movie_exporter_add(s_movie_create_func * create,
                                            s_movie_put_func * put,
                                            s_movie_close_func * close);
-  
+
   enum {
     S_INTEGER_PARAM_TYPE,
     S_BOOL_PARAM_TYPE = S_INTEGER_PARAM_TYPE,
@@ -375,7 +391,7 @@ extern "C" {
   SIMAGE_DLL_API s_params * s_params_create(void);
   SIMAGE_DLL_API s_params * s_params_copy(s_params * params);
   SIMAGE_DLL_API void s_params_destroy(s_params * params);
-  
+
   SIMAGE_DLL_API void s_params_set(s_params * params, ...);
   SIMAGE_DLL_API int s_params_get(s_params * params, ...);
 
@@ -402,25 +418,25 @@ extern "C" {
   typedef int s_stream_put_func(s_stream *, void *, int, s_params *);
   typedef void s_stream_close_func(s_stream *);
 
-  SIMAGE_DLL_API s_stream * s_stream_open(const char * filename, 
+  SIMAGE_DLL_API s_stream * s_stream_open(const char * filename,
                                           s_params * params /* | NULL */);
-  SIMAGE_DLL_API s_stream * s_stream_create(const char * filename, 
+  SIMAGE_DLL_API s_stream * s_stream_create(const char * filename,
                                             s_params * params /* | NULL */);
-  SIMAGE_DLL_API void * s_stream_get_buffer(s_stream * stream, 
+  SIMAGE_DLL_API void * s_stream_get_buffer(s_stream * stream,
                                             void * prealloc /* | NULL */,
                                             int *size /* | NULL */,
                                             s_params * params /* | NULL */);
-  SIMAGE_DLL_API int s_stream_put_buffer(s_stream * stream, void * buffer, 
-                                         int size, 
+  SIMAGE_DLL_API int s_stream_put_buffer(s_stream * stream, void * buffer,
+                                         int size,
                                          s_params * params /* | NULL */);
   SIMAGE_DLL_API void s_stream_close(s_stream * stream);
   SIMAGE_DLL_API void s_stream_destroy(s_stream * stream);
   SIMAGE_DLL_API s_params * s_stream_params(s_stream * stream);
-  
+
   SIMAGE_DLL_API void s_stream_importer_add(s_stream_open_func * open,
                                             s_stream_get_func * get,
                                             s_stream_close_func * close);
-  
+
   SIMAGE_DLL_API void s_stream_exporter_add(s_stream_create_func * create,
                                             s_stream_put_func * put,
                                             s_stream_close_func * close);
@@ -432,7 +448,7 @@ extern "C" {
   typedef int s_stream_seek_func(s_stream *, int, int, s_params *);
   typedef int s_stream_tell_func(s_stream *, s_params *);
 
-  enum { 
+  enum {
     SIMAGE_SEEK_SET = 0,
     SIMAGE_SEEK_CUR = 1,
     SIMAGE_SEEK_END = 2
@@ -449,7 +465,7 @@ extern "C" {
                                                s_stream_seek_func * seek,
                                                s_stream_tell_func * tell,
                                                s_stream_close_func * close);
-  
+
   SIMAGE_DLL_API void s_stream_exporter_add_ex(s_stream_create_func * create,
                                                s_stream_put_func * put,
                                                s_stream_seek_func * seek,
@@ -466,9 +482,9 @@ extern "C" {
   /*****************************************************************/
   /**** NOTE: new methods for simage version 1.6 *******************/
   /*****************************************************************/
-  
+
   SIMAGE_DLL_API s_image * s_image_open(const char * file, int oktoreadall);
-  SIMAGE_DLL_API int s_image_read_line(s_image * image, 
+  SIMAGE_DLL_API int s_image_read_line(s_image * image,
                                        int line,
                                        unsigned char * buf);
 
@@ -480,7 +496,7 @@ extern "C" {
                                                      s_dlsym_func *dlsym,
                                                      s_dlclose_func *dlclose);
 
-  
+
 
 #ifdef __cplusplus
 }

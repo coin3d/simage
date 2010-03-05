@@ -3,6 +3,5 @@ This package was debianized by the Coin Developer Team
 
 Copyright:
 
-All files in this library are public domain, except simage_rgb.cpp
-which is Copyright (c) Mark J Kilgard <mjk@nvidia.com>.
-
+All files in this library are BSD licensed, except the files in the
+mpeg2enc directory.
