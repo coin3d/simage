@@ -224,7 +224,7 @@ SimpegWrite_encode(const char *output_filename,
   free(context);
 
   return 1; /* ok */
-};
+}
 
 
 static void *
@@ -287,7 +287,7 @@ SimpegWrite_begin_encode(const char *output_filename,
     context->bufbuf[i] = NULL;
 
   return (void*) context;
-};
+}
 
 static int
 SimpegWrite_encode_bitmap(void * handle, const unsigned char *rgb_buffer)
@@ -327,7 +327,7 @@ SimpegWrite_encode_bitmap(void * handle, const unsigned char *rgb_buffer)
   context->SimpegWrite_current_input_frame++;
 
   return 1; /* ok */
-};
+}
 
 static int
 SimpegWrite_end_encode(void * handle)
@@ -357,7 +357,7 @@ SimpegWrite_end_encode(void * handle)
   cleanup(context);
   free(context);
   return 1;
-};
+}
 
 static void
 cleanup(simpeg_encode_context * context)
@@ -429,7 +429,7 @@ void SimpegWrite_error(simpeg_encode_context * context, const char *text, ...)
     context->SimpegWrite_error_cb_user(context->cbuserdata, buf);
   }
   longjmp(context->jmpbuf, 1);
-};
+}
 
 void SimpegWrite_warning(simpeg_encode_context * context,const char *text, ...)
 {
@@ -442,7 +442,7 @@ void SimpegWrite_warning(simpeg_encode_context * context,const char *text, ...)
 
     context->SimpegWrite_warning_cb_user(context->cbuserdata, buf);
   }
-};
+}
 
 int SimpegWrite_progress(simpeg_encode_context * context, float sub, int current_frame, int num_frames)
 {
@@ -450,7 +450,7 @@ int SimpegWrite_progress(simpeg_encode_context * context, float sub, int current
     return context->SimpegWrite_progress_cb_user(context->cbuserdata, sub, current_frame, num_frames);
   else
     return 1;
-};
+}
 
 
 static void
