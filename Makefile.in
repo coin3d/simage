@@ -55,6 +55,7 @@ am__aclocal_m4_deps =  \
 	$(top_srcdir)/../simacros/bin/../cfg/m4/configuration_summary.m4 \
 	$(top_srcdir)/../simacros/bin/../cfg/m4/cpp_search_order.m4 \
 	$(top_srcdir)/../simacros/bin/../cfg/m4/dates.m4 \
+	$(top_srcdir)/../simacros/bin/../cfg/m4/doxygen_detection.m4 \
 	$(top_srcdir)/../simacros/bin/../cfg/m4/errors.m4 \
 	$(top_srcdir)/../simacros/bin/../cfg/m4/exit.m4 \
 	$(top_srcdir)/../simacros/bin/../cfg/m4/fink.m4 \
@@ -104,7 +105,7 @@ pkgconfigDATA_INSTALL = $(INSTALL_DATA)
 DATA = $(cfgdata_DATA) $(dist_m4data_DATA) $(pkgconfig_DATA)
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = mpeg2enc src guile
+DIST_SUBDIRS = html mpeg2enc src guile
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -125,6 +126,10 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BUILD_HTMLPAGES_FALSE = @BUILD_HTMLPAGES_FALSE@
+BUILD_HTMLPAGES_TRUE = @BUILD_HTMLPAGES_TRUE@
+BUILD_LIBRARY_FALSE = @BUILD_LIBRARY_FALSE@
+BUILD_LIBRARY_TRUE = @BUILD_LIBRARY_TRUE@
 BUILD_WITH_MSVC = @BUILD_WITH_MSVC@
 BUILD_WITH_MSVC_FALSE = @BUILD_WITH_MSVC_FALSE@
 BUILD_WITH_MSVC_TRUE = @BUILD_WITH_MSVC_TRUE@
@@ -197,6 +202,7 @@ SIMAGE_CGIMAGE_SUPPORT_TRUE = @SIMAGE_CGIMAGE_SUPPORT_TRUE@
 SIMAGE_DEBUG_BUILD = @SIMAGE_DEBUG_BUILD@
 SIMAGE_DEBUG_BUILD_FALSE = @SIMAGE_DEBUG_BUILD_FALSE@
 SIMAGE_DEBUG_BUILD_TRUE = @SIMAGE_DEBUG_BUILD_TRUE@
+SIMAGE_DOC_HTML = @SIMAGE_DOC_HTML@
 SIMAGE_DSP_DEFS = @SIMAGE_DSP_DEFS@
 SIMAGE_DSP_INCS = @SIMAGE_DSP_INCS@
 SIMAGE_DSP_LIBS = @SIMAGE_DSP_LIBS@
@@ -263,14 +269,19 @@ localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
+path_tag = @path_tag@
 pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
+sim_ac_doxygen_exe = @sim_ac_doxygen_exe@
+sim_ac_perl_exe = @sim_ac_perl_exe@
 sim_ac_qt_cygpath = @sim_ac_qt_cygpath@
+simage_build_dir = @simage_build_dir@
 simage_configure_date = @simage_configure_date@
+simage_html_dir = @simage_html_dir@
 simage_src_dir = @simage_src_dir@
 sysconfdir = @sysconfdir@
 target = @target@
@@ -281,9 +292,13 @@ target_vendor = @target_vendor@
 win_includedir = @win_includedir@
 win_libdir = @win_libdir@
 win_srcdir = @win_srcdir@
+@BUILD_HTMLPAGES_FALSE@HTMLDIR = 
+@BUILD_HTMLPAGES_TRUE@HTMLDIR = html
 @SIMAGE_MPEG2ENC_SUPPORT_FALSE@MPEG2ENCDIR = 
 @SIMAGE_MPEG2ENC_SUPPORT_TRUE@MPEG2ENCDIR = mpeg2enc
-SUBDIRS = $(MPEG2ENCDIR) src guile
+@BUILD_LIBRARY_FALSE@SRCDIRS = 
+@BUILD_LIBRARY_TRUE@SRCDIRS = $(MPEG2ENCDIR) src guile
+SUBDIRS = $(HTMLDIR) $(SRCDIRS)
 dist_bin_SCRIPTS = simage-config
 m4datadir = $(datarootdir)/aclocal
 dist_m4data_DATA = cfg/simage.m4
@@ -299,6 +314,7 @@ EXTRA_DIST = \
 	cfg/wrapmsvc.exe \
 	cfg/gendsp.sh \
 	cfg/errors.txt \
+	cfg/doxy4win.pl \
 	build/simage.spec.in \
 	build/README \
 	build/msvc6/config-debug.h \
@@ -341,13 +357,16 @@ EXTRA_DIST = \
 	build/misc/uninstall-sdk.bat \
 	docs/announcement-1_6_0.txt \
 	docs/announcement-1_6_1.txt \
-	src/simage_jpeg_reader.icc \
-	src/simage_jpeg_writer.icc \
-	README.WIN32
+        docs/simage.doxygen.in \
+	docs/doxygen/header.html \
+	docs/doxygen/footer.html \
+	docs/doxygen/stylesheet.css \
+	docs/doxygen/Coin_logo.png
 
 DISTCLEANFILES = \
 	libtool \
-	simage-@CONFIG@.cfg
+	simage-@CONFIG@.cfg \
+	docs/simage.doxygen
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -621,7 +640,7 @@ distclean-tags:
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkdir_p) $(distdir)/. $(distdir)/../simacros/bin/../cfg/m4 $(distdir)/build $(distdir)/build/misc $(distdir)/build/msvc6 $(distdir)/build/msvc6/include $(distdir)/build/msvc7 $(distdir)/build/msvc7/include $(distdir)/build/msvc8 $(distdir)/build/msvc8/include $(distdir)/build/msvc9 $(distdir)/build/msvc9/include $(distdir)/cfg $(distdir)/docs $(distdir)/include $(distdir)/src
+	$(mkdir_p) $(distdir)/. $(distdir)/../simacros/bin/../cfg/m4 $(distdir)/build $(distdir)/build/misc $(distdir)/build/msvc6 $(distdir)/build/msvc6/include $(distdir)/build/msvc7 $(distdir)/build/msvc7/include $(distdir)/build/msvc8 $(distdir)/build/msvc8/include $(distdir)/build/msvc9 $(distdir)/build/msvc9/include $(distdir)/cfg $(distdir)/docs $(distdir)/docs/doxygen $(distdir)/include
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
@@ -866,6 +885,9 @@ uninstall-info: uninstall-info-recursive
 	uninstall-dist_binSCRIPTS uninstall-dist_m4dataDATA \
 	uninstall-info-am uninstall-pkgconfigDATA
 
+	src/simage_jpeg_reader.icc \
+	src/simage_jpeg_writer.icc \
+	README.WIN32
 
 simage-@CONFIG@.cfg: config.status $(srcdir)/simage.cfg.in
 	@$(SHELL) config.status --file=$@:simage.cfg.in
@@ -878,6 +900,25 @@ install-exec-local: $(srcdir)/cfg/wrapmsvc.exe
 	  echo " $(INSTALL_PROGRAM) $(srcdir)/cfg/$$p $(DESTDIR)$(bindir)/$$p"; \
 	  $(INSTALL_PROGRAM) $(srcdir)/cfg/$$p $(DESTDIR)$(bindir)/$$p; \
 	fi
+
+# **************************************************************************
+
+docs/simage.doxygen: $(srcdir)/docs/simage.doxygen.in config.status
+	@if test -d docs; then :; else mkdir docs; fi
+	@./config.status --file=$@:$@.in
+	@$(srcdir)/cfg/doxy4win.pl docs/simage.doxygen
+
+doxygen-doc: built-sources
+	if test x"@SIMAGE_DOC_HTML@" = x"YES"; then \
+	  mkdir -p "@simage_html_dir@"; \
+	else :; fi
+	@sim_ac_doxygen_exe@ $(top_builddir)/docs/simage.doxygen
+
+doxygen-docs: built-sources
+	if test x"@SIMAGE_DOC_HTML@" = x"YES"; then \
+	  mkdir -p "@simage_html_dir@"; \
+	else :; fi
+	@sim_ac_doxygen_exe@ $(top_builddir)/docs/simage.doxygen
 
 # **************************************************************************
 

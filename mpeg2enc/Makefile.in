@@ -50,6 +50,7 @@ am__aclocal_m4_deps =  \
 	$(top_srcdir)/../simacros/bin/../cfg/m4/configuration_summary.m4 \
 	$(top_srcdir)/../simacros/bin/../cfg/m4/cpp_search_order.m4 \
 	$(top_srcdir)/../simacros/bin/../cfg/m4/dates.m4 \
+	$(top_srcdir)/../simacros/bin/../cfg/m4/doxygen_detection.m4 \
 	$(top_srcdir)/../simacros/bin/../cfg/m4/errors.m4 \
 	$(top_srcdir)/../simacros/bin/../cfg/m4/exit.m4 \
 	$(top_srcdir)/../simacros/bin/../cfg/m4/fink.m4 \
@@ -150,6 +151,10 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BUILD_HTMLPAGES_FALSE = @BUILD_HTMLPAGES_FALSE@
+BUILD_HTMLPAGES_TRUE = @BUILD_HTMLPAGES_TRUE@
+BUILD_LIBRARY_FALSE = @BUILD_LIBRARY_FALSE@
+BUILD_LIBRARY_TRUE = @BUILD_LIBRARY_TRUE@
 BUILD_WITH_MSVC = @BUILD_WITH_MSVC@
 BUILD_WITH_MSVC_FALSE = @BUILD_WITH_MSVC_FALSE@
 BUILD_WITH_MSVC_TRUE = @BUILD_WITH_MSVC_TRUE@
@@ -225,6 +230,7 @@ SIMAGE_CGIMAGE_SUPPORT_TRUE = @SIMAGE_CGIMAGE_SUPPORT_TRUE@
 SIMAGE_DEBUG_BUILD = @SIMAGE_DEBUG_BUILD@
 SIMAGE_DEBUG_BUILD_FALSE = @SIMAGE_DEBUG_BUILD_FALSE@
 SIMAGE_DEBUG_BUILD_TRUE = @SIMAGE_DEBUG_BUILD_TRUE@
+SIMAGE_DOC_HTML = @SIMAGE_DOC_HTML@
 SIMAGE_DSP_DEFS = @SIMAGE_DSP_DEFS@
 SIMAGE_DSP_INCS = @SIMAGE_DSP_INCS@
 SIMAGE_DSP_LIBS = @SIMAGE_DSP_LIBS@
@@ -291,14 +297,19 @@ localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
+path_tag = @path_tag@
 pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
+sim_ac_doxygen_exe = @sim_ac_doxygen_exe@
+sim_ac_perl_exe = @sim_ac_perl_exe@
 sim_ac_qt_cygpath = @sim_ac_qt_cygpath@
+simage_build_dir = @simage_build_dir@
 simage_configure_date = @simage_configure_date@
+simage_html_dir = @simage_html_dir@
 simage_src_dir = @simage_src_dir@
 sysconfdir = @sysconfdir@
 target = @target@
