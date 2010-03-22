@@ -17,160 +17,76 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/*
- * simage:
- *
- * A simple library for loading images. This library is designed
- * for loading textures to be used as OpenGL textures.
- * Only pixel formats directly supported by OpenGL (v1.0) will be
- * returned. The user is responsible for resizing the texture to
- * a 2^n width/height though.
- *
- * This library does not support the "new" OpenGL v1.1 image
- * formats. In the future this might be supported though. We still
- * have some old SGI HW with only OpenGL v1.0 installed...
- *
- * Usage information:
- *
- * simage_check_supported(filename):
- *
- *   Will return 1 if filename can be loaded, 0 otherwise.
- *
- * simage_read_image(filename, width, height, numComponents)
- *
- *   Will (attempt to) read filename, and return a pointer to
- *   the image data. NULL is returned if the image could not
- *   be loaded. The memory is allocated using malloc(), and
- *   it is the callers responsibility to free the memory (using free())
- *   width and height contains the width and height of the image,
- *   and numComponents is a number indicating the following:
- *     1 : Grayscale image (GL_LUMINANCE)
- *     2 : Grayscale with alpha channel (GL_LUMINANCE_ALPHA)
- *     3 : RGB data (GL_RGB)
- *     4 : RGB data with alpha component (GL_RGBA)
- *
- * int simage_check_save_supported(const char * filenameextension)
- *
- *   Returns 1 if a saver of type filenameextension is added. The
- *   built-in savers are gif, jpg/jpeg, png, tif/tiff and rgb.
- *
- * int simage_save_image(const char * filename,
- *                       const unsigned char * bytes,
- *                       int w, int h, int numcomponents,
- *                       const char * filenameextension)
- *
- *   Saves image in the format specified in filenameextension.
- *
- * A couple of functions for your convenience:
- *
- * simage_resize(imagedata, width, height, numComponents,
- *               newwidth, newheight)
- *
- *   A convenience function that can be used to resize an image.
- *   Since OpenGL textures must have width and height equal to 2^n,
- *   this is often needed. A pointer to the new image data is returned.
- *   imagedata is not freed. Uses the algorithm "Filtered Image
- *   Rescaling" by Dale Schumacher, from GGems III.
- *
- * simage_next_power_of_two(int val)
- *
- *   Will return the first 2^n bigger or equal to val.
- *   If simage_next_power_of_two(size) != size, you'll typically
- *   need to resize your image to be able to use it in an OpenGL app.
- *
- * The movie functions:
- *
- * s_movie * s_movie_create(const char * filename, s_params * params)
- *
- *   Will create a new move file named filename and attempt to locate a
- *   suitable encoder based on the parameters (params) supplied.
- *
- *   Returns a pointer to the opened movie on success, NULL on failure
- *
- *   Common parameters:
- *   - "mime-type" <string> : The requested encoder type. There are currently
- *     2 encoders available, with mime-types "video/mpeg" and "video/avi".
- *   - width <int> : Frame width (all input images must have this width)
- *   - height <int> : Frame height (all input images must have this height)
- *
- *   Parameters specific for the avi encoder
- *   - fps <int> : Number of frames per second in output file
- *   - parameter file <int> : If this parameter is missing (or empty ""),
- *     a GUI will pop up each time this functions is run, asking the user
- *     to specify compression settings. If a filename is specified and the
- *     file doesn't exist, a GUI pops up, and the compression settings are
- *     saved in a new file with the specified filename. If the file exists,
- *     no GUI pops up, and the compression settings are read from the file.
- *     The format of the file is unspecified, and copying such a file between
- *     different computers probably won't work.
- *   - width and height must be divisible by 4
- *
- * int s_movie_put_image(s_movie * movie, s_image * image, s_params * params)
- *
- *   Adds (encodes) the image as one frame to the movie. params is currently
- *   used only for optimizing avi encoding:
- *   - "allow image modification" <int> : Set to "1" to allow the encoder
- *     to modify the image buffer. If this parameter is not set, the encoder
- *     will make a local copy of the image before it is encoded.
- *
- *   Example code:
- *
- *   s_params *imgparams = s_params_create();
- *   s_params_set(imgparams,
- *                "allow image modification", S_INTEGER_PARAM_TYPE, 1,
- *                NULL);
- *   for(;;) {
- *     s_image_set(image, width, height, 1, <get image from somewhere>);
- *     for (int i=0; i<repeatCount;i++)
- *       s_movie_put_image(movie, image, imgparams);
- *   }
- *   s_params_destroy(imgparams);
- *
- *   Returns 1 on success, 0 on failure
- *
- * void s_movie_close(s_movie * movie)
- *
- *   Closes the newly created movie file
- *
- * void s_movie_destroy(s_movie * movie)
- *
- *   Cleans up all resources allocated by s_movie_create(...)
- *
- */
+/*!
+  \mainpage
+
+  %Simage is a library capable of loading, manipulating and saving
+  images, creating and saving movies (AVI and mpeg), and loading
+  audio. The simage library relies heavily on 3rd party libraries to
+  perform these tasks.
+
+  The main interface for %Simage usage is documented in the main
+  <simage.h> header file.
+
+  \COIN uses %Simage just to read textures, but the programmer is of
+  course free to use the other features of the simage library
+  directly.
+
+  <b>Supported image file formats:</b>
+
+  \li JPEG: reading and writing (through libjpeg)
+  \li PNG: reading and writing (using libpng and zlib)
+  \li GIF
+  \li TIFF
+  \li RGB: reading only
+  \li PIC: reading only
+  \li TGA (targa): reading only
+  \li EPS (encapsulated postscript): writing only
+
+  <b>Supported video file formats:</b>
+
+  \li AVI: writing
+  \li MPEG
+
+  <b>Supported audio file formats:</b>
+
+  \li Ogg/Vorbis
+  \li formats supported through: <a href="http://www.mega-nerd.com/libsndfile/">libsndfile</a>.
+*/
 
 /***************************************************************************/
 
-/* A unique identifier to recognize in sourcecode whether or not this
+/*! A unique identifier to recognize in sourcecode whether or not this
  * file is included.
  */
 #define __SIMAGE__
 
-/* version 1.1 introduced saving */
+/*! Version 1.1 introduced saving */
 #define SIMAGE_VERSION_1_1
 
-/* version 1.2 added a new API, and support for movies */
+/*! Version 1.2 added a new API, and support for movies */
 #define SIMAGE_VERSION_1_2
 
-/* version 1.3 added simage_resize3d */
+/*! Version 1.3 added simage_resize3d */
 #define SIMAGE_VERSION_1_3
 
-/* version 1.4 added API for stream I/O */
+/*! Version 1.4 added API for stream I/O */
 #define SIMAGE_VERSION_1_4
 
-/* version 1.5 added API for seeking and getting ("telling") the
+/*! Version 1.5 added API for seeking and getting ("telling") the
    current position in a stream
    added API for setting and getting component order of an
    image */
 #define SIMAGE_VERSION_1_5
 
-/* version 1.6 added API for reading images line-by-line
+/*! Version 1.6 added API for reading images line-by-line
    added API for loading dynamic libraries at run-time */
 #define SIMAGE_VERSION_1_6
 
-/* These are available for adding or omitting features based on simage
+/*! These are available for adding or omitting features based on simage
  * version numbers in "client" sources. NB: they are automatically
  * synchronized with the settings in configure.in when configure is
- * run. The #ifndefs are necessary because during development, these
+ * run. The \#ifndefs are necessary because during development, these
  * are also defined in the config.h file generated by configure.
  */
 #if !defined(SIMAGE_MAJOR_VERSION)
@@ -193,7 +109,9 @@
 # error Leave the internal SIMAGE_DLL_API define alone.
 #endif /* SIMAGE_DLL_API */
 
-/*
+/*! \file simage.h
+  \brief Windows specific information.
+
   On MSWindows platforms, one of these defines must always be set when
   building application programs:
 
@@ -205,7 +123,7 @@
 
   Note that either SIMAGE_DLL or SIMAGE_NOT_DLL _must_ be defined by
   the application programmer on MSWindows platforms, or else the
-  #error statement will hit. Set up one or the other of these two
+  \#error statement will hit. Set up one or the other of these two
   defines in your compiler environment according to how the library
   was built -- as a DLL (use "SIMAGE_DLL") or as a LIB (use
   "SIMAGE_NOT_DLL").
@@ -249,45 +167,70 @@
 extern "C" {
 #endif
 
-  /* Note specifically for MSWindows that by leaving out the APIENTRY
-     keyword for the function definitions, we default to the __cdecl
-     calling convention. This is important to take into consideration
-     when explicitly linking to the library at run-time: when using
-     the wrong calling convention, obscure errors due to stack
-     corruption can occur under certain (possibly rare) conditions. */
+  /*! Note specifically for MSWindows that by leaving out the APIENTRY
+    keyword for the function definitions, we default to the __cdecl
+    calling convention. This is important to take into consideration
+    when explicitly linking to the library at run-time: when using the
+    wrong calling convention, obscure errors due to stack corruption
+    can occur under certain (possibly rare) conditions.
+  */
 
-  /* run-time version checking */
+  /*! Returns run-time version for simage. */
   SIMAGE_DLL_API void simage_version(int * major, int * minor, int * micro);
 
-  /* check if image file format is supported */
+  /*! Checks if image file format is supported. Returns 1 if \a
+    filename can be loaded, 0 otherwise. */
   SIMAGE_DLL_API int simage_check_supported(const char * filename);
 
-  /* reading and parsing image files */
-  /* returned image buffer must be freed by simage_free_image() */
+  /*! Attempts to read \a filename, and return a pointer to the image
+    data. NULL is returned if the image could not be loaded. The
+    memory is allocated using malloc(), and it is the callers
+    responsibility to free the memory (using free()) \a width and \a
+    height contains the width and height of the image, and \a
+    numcomponents is a number indicating the following:
+
+      1 : Grayscale image (GL_LUMINANCE)
+      2 : Grayscale with alpha channel (GL_LUMINANCE_ALPHA)
+      3 : RGB data (GL_RGB)
+      4 : RGB data with alpha component (GL_RGBA)
+
+    Returned image buffer must be freed by simage_free_image()
+  */
   SIMAGE_DLL_API unsigned char * simage_read_image(const char * filename,
-                                                   int * w, int * h,
+                                                   int * width, int * height,
                                                    int * numcomponents);
 
-  /* check this if simage_read_image returns NULL or simage_write_image returns 0 */
+  /*! Returns error message, which is set when simage_read_image
+     returned NULL or simage_write_image returns 0. */
   SIMAGE_DLL_API const char * simage_get_last_error(void);
 
-  /* free resources allocated by either simage_read_image() or
-     simage_resize() (Windows goes berzerk if you call free() from the
-     client application) */
+  /*! Free resources allocated by either simage_read_image() or
+    simage_resize() (Windows goes berzerk if you call free() from the
+    client application) */
   SIMAGE_DLL_API void simage_free_image(unsigned char * imagedata);
 
-  /* convenience function */
+  /*! Returns the first 2^n bigger or equal to val. If
+    simage_next_power_of_two(size) != size, you'll typically need to
+    resize your image to be able to use it in an OpenGL app.
+  */
   SIMAGE_DLL_API int simage_next_power_of_two(int val);
 
-  /* scale the input image and return a new image with the given dimensions */
-  /* returned image buffer must be freed by simage_free_image() */
+  /*! Since OpenGL textures must have width and height equal to 2^n,
+    this is often needed. A pointer to the new image data is returned.
+    imagedata is not freed. Uses the algorithm "Filtered Image
+    Rescaling" by Dale Schumacher, from GGems III.
+
+    Scales the input \a imagedata and return a new image with the
+    given dimensions returned image buffer must be freed by
+    simage_free_image()
+  */
   SIMAGE_DLL_API unsigned char * simage_resize(unsigned char * imagedata,
                                                int width, int height,
                                                int numcomponents,
                                                int newwidth, int newheight);
 
-  /* use the plugin interface described below for extending simage to
-     handle more file formats */
+  /*! Use the plugin interface described below for extending simage
+    to handle more file formats */
 
   struct simage_plugin
   {
@@ -307,10 +250,15 @@ extern "C" {
   /**** NOTE: new methods for simage version 1.1 *******************/
   /*****************************************************************/
 
-  /* check if export is available for a filetype. Returns 1 if supported, 0 otherwise */
+  /*! Checks if export is available for a filetype. Returns 1 if a
+    saver of type \a filenameextension is supported, 0 otherwise. The
+    built-in savers are gif, jpg/jpeg, png, tif/tiff and rgb.
+  */
   SIMAGE_DLL_API int simage_check_save_supported(const char * filenameextension);
 
-  /* save image. use simage_check_write_supported first, please */
+  /*! Saves image in the format specified in \a filenameextension. Use
+    simage_check_write_supported first to verify that the file format
+    is supported. */
   SIMAGE_DLL_API int simage_save_image(const char * filename,
                                        const unsigned char * bytes,
                                        int w, int h, int numcomponents,
@@ -362,12 +310,67 @@ extern "C" {
                                   s_params * params /* | NULL */);
 
   SIMAGE_DLL_API s_movie * s_movie_open(const char * filename);
+
+  /*! Will create a new move file named filename and attempt to
+    locate a suitable encoder based on the parameters (params)
+    supplied.
+
+    Returns a pointer to the opened movie on success, NULL on failure
+
+    Common parameters:
+      - "mime-type" \<string\> : The requested encoder type. There are currently
+        2 encoders available, with mime-types "video/mpeg" and "video/avi".
+      - width \<int\> : Frame width (all input images must have this width)
+      - height \<int\> : Frame height (all input images must have this height)
+
+    Parameters specific for the avi encoder
+      - fps \<int\> : Number of frames per second in output file
+      - parameter file \<int\> : If this parameter is missing (or empty ""),
+        a GUI will pop up each time this functions is run, asking the user
+        to specify compression settings. If a filename is specified and the
+        file doesn't exist, a GUI pops up, and the compression settings are
+        saved in a new file with the specified filename. If the file exists,
+        no GUI pops up, and the compression settings are read from the file.
+        The format of the file is unspecified, and copying such a file between
+        different computers probably won't work.
+      - width and height must be divisible by 4
+  */
   SIMAGE_DLL_API s_movie * s_movie_create(const char * filename, s_params * params /* | NULL */);
+
   SIMAGE_DLL_API s_image * s_movie_get_image(s_movie * movie, s_image * prealloc /* | NULL */,
                                              s_params * params /* | NULL */);
+
+  /*! Adds (encodes) the image as one frame to the movie. params is
+    currently used only for optimizing avi encoding: - "allow image
+    modification" \<int\> : Set to "1" to allow the encoder to modify
+    the image buffer. If this parameter is not set, the encoder will
+    make a local copy of the image before it is encoded.
+
+    Example code:
+
+    \code
+    s_params *imgparams = s_params_create();
+    s_params_set(imgparams,
+                 "allow image modification", S_INTEGER_PARAM_TYPE, 1,
+                 NULL);
+    for(;;) {
+      s_image_set(image, width, height, 1, <get image from somewhere>);
+      for (int i=0; i<repeatCount;i++)
+        s_movie_put_image(movie, image, imgparams);
+    }
+    s_params_destroy(imgparams);
+   \endcode
+
+   Returns 1 on success, 0 on failure
+  */
+
   SIMAGE_DLL_API int s_movie_put_image(s_movie * movie, s_image * image,
                                        s_params * params /* | NULL */);
+
+  /*! Closes the newly created movie file. */
   SIMAGE_DLL_API void s_movie_close(s_movie * movie);
+
+  /*! Cleans up all resources allocated by "<s_movie_create>"(...) */
   SIMAGE_DLL_API void s_movie_destroy(s_movie * movie);
 
   SIMAGE_DLL_API void s_movie_importer_add(s_movie_open_func * open,
@@ -399,7 +402,7 @@ extern "C" {
   /**** NOTE: new methods for simage version 1.3 *******************/
   /*****************************************************************/
 
-  /* returned image buffer must be freed by simage_free_image() */
+  /*! Returned image buffer must be freed by simage_free_image() */
   SIMAGE_DLL_API unsigned char * simage_resize3d(unsigned char * imagedata,
                                                  int width, int height,
                                                  int numcomponents,
