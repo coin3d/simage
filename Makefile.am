@@ -1,12 +1,24 @@
 # **************************************************************************
 
+if BUILD_HTMLPAGES
+HTMLDIR = html
+else
+HTMLDIR =
+endif
+
 if SIMAGE_MPEG2ENC_SUPPORT
 MPEG2ENCDIR = mpeg2enc
 else
 MPEG2ENCDIR =
 endif
 
-SUBDIRS = $(MPEG2ENCDIR) src guile
+if BUILD_LIBRARY
+SRCDIRS = $(MPEG2ENCDIR) src guile
+else
+SRCDIRS =
+endif
+
+SUBDIRS = $(HTMLDIR) $(SRCDIRS)
 
 dist_bin_SCRIPTS = simage-config
 
@@ -27,6 +39,7 @@ EXTRA_DIST = \
 	cfg/wrapmsvc.exe \
 	cfg/gendsp.sh \
 	cfg/errors.txt \
+	cfg/doxy4win.pl \
 	build/simage.spec.in \
 	build/README \
 	build/msvc6/config-debug.h \
@@ -69,13 +82,19 @@ EXTRA_DIST = \
 	build/misc/uninstall-sdk.bat \
 	docs/announcement-1_6_0.txt \
 	docs/announcement-1_6_1.txt \
+        docs/simage.doxygen.in \
+	docs/doxygen/header.html \
+	docs/doxygen/footer.html \
+	docs/doxygen/stylesheet.css \
+	docs/doxygen/Coin_logo.png
 	src/simage_jpeg_reader.icc \
 	src/simage_jpeg_writer.icc \
 	README.WIN32
 
 DISTCLEANFILES = \
 	libtool \
-	simage-@CONFIG@.cfg
+	simage-@CONFIG@.cfg \
+	docs/simage.doxygen
 
 simage-@CONFIG@.cfg: config.status $(srcdir)/simage.cfg.in
 	@$(SHELL) config.status --file=$@:simage.cfg.in
@@ -88,6 +107,25 @@ install-exec-local: $(srcdir)/cfg/wrapmsvc.exe
 	  echo " $(INSTALL_PROGRAM) $(srcdir)/cfg/$$p $(DESTDIR)$(bindir)/$$p"; \
 	  $(INSTALL_PROGRAM) $(srcdir)/cfg/$$p $(DESTDIR)$(bindir)/$$p; \
 	fi
+
+# **************************************************************************
+
+docs/simage.doxygen: $(srcdir)/docs/simage.doxygen.in config.status
+	@if test -d docs; then :; else mkdir docs; fi
+	@./config.status --file=$@:$@.in
+	@$(srcdir)/cfg/doxy4win.pl docs/simage.doxygen
+
+doxygen-doc: built-sources
+	if test x"@SIMAGE_DOC_HTML@" = x"YES"; then \
+	  mkdir -p "@simage_html_dir@"; \
+	else :; fi
+	@sim_ac_doxygen_exe@ $(top_builddir)/docs/simage.doxygen
+
+doxygen-docs: built-sources
+	if test x"@SIMAGE_DOC_HTML@" = x"YES"; then \
+	  mkdir -p "@simage_html_dir@"; \
+	else :; fi
+	@sim_ac_doxygen_exe@ $(top_builddir)/docs/simage.doxygen
 
 # **************************************************************************
 
