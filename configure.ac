@@ -220,6 +220,7 @@ AC_SUBST([SIMAGE_EXTRA_CFLAGS], [])
 AC_SUBST([SIMAGE_EXTRA_LDFLAGS], [$LDFLAGS])
 AC_SUBST([SIMAGE_EXTRA_LIBS], [$LIBS])
 
+test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
 # *******************************************************************
 # disable build if you just want to generate doc.
