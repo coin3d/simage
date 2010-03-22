@@ -42,10 +42,10 @@ DIST_COMMON = README $(am__configure_deps) $(dist_bin_SCRIPTS) \
 	$(dist_m4data_DATA) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(srcdir)/simage.pc.in $(top_srcdir)/build/simage.spec.in \
-	$(top_srcdir)/configure $(top_srcdir)/include/simage.h.in \
-	AUTHORS COPYING ChangeLog INSTALL NEWS cfg/README \
-	cfg/config.guess cfg/config.sub cfg/depcomp cfg/install-sh \
-	cfg/ltconfig cfg/ltmain.sh cfg/missing cfg/mkinstalldirs
+	$(top_srcdir)/configure AUTHORS COPYING ChangeLog INSTALL NEWS \
+	cfg/README cfg/config.guess cfg/config.sub cfg/depcomp \
+	cfg/install-sh cfg/ltconfig cfg/ltmain.sh cfg/missing \
+	cfg/mkinstalldirs
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps =  \
@@ -86,7 +86,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno configure.status.lineno
 mkinstalldirs = $(SHELL) $(top_srcdir)/cfg/mkinstalldirs
-CONFIG_HEADER = config.h $(top_builddir)/include/simage.h
+CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = simage.pc build/simage.spec
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(cfgdatadir)" "$(DESTDIR)$(m4datadir)" "$(DESTDIR)$(pkgconfigdir)"
 dist_binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
@@ -420,18 +420,8 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	rm -f stamp-h1
 	touch $@
 
-include/simage.h: include/stamp-h2
-	@if test ! -f $@; then \
-	  rm -f include/stamp-h2; \
-	  $(MAKE) include/stamp-h2; \
-	else :; fi
-
-include/stamp-h2: $(top_srcdir)/include/simage.h.in $(top_builddir)/config.status
-	@rm -f include/stamp-h2
-	cd $(top_builddir) && $(SHELL) ./config.status include/simage.h
-
 distclean-hdr:
-	-rm -f config.h stamp-h1 include/simage.h include/stamp-h2
+	-rm -f config.h stamp-h1
 simage.pc: $(top_builddir)/config.status $(srcdir)/simage.pc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 build/simage.spec: $(top_builddir)/config.status $(top_srcdir)/build/simage.spec.in
@@ -640,7 +630,7 @@ distclean-tags:
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkdir_p) $(distdir)/. $(distdir)/../simacros/bin/../cfg/m4 $(distdir)/build $(distdir)/build/misc $(distdir)/build/msvc6 $(distdir)/build/msvc6/include $(distdir)/build/msvc7 $(distdir)/build/msvc7/include $(distdir)/build/msvc8 $(distdir)/build/msvc8/include $(distdir)/build/msvc9 $(distdir)/build/msvc9/include $(distdir)/cfg $(distdir)/docs $(distdir)/docs/doxygen $(distdir)/include
+	$(mkdir_p) $(distdir)/. $(distdir)/../simacros/bin/../cfg/m4 $(distdir)/build $(distdir)/build/misc $(distdir)/build/msvc6 $(distdir)/build/msvc6/include $(distdir)/build/msvc7 $(distdir)/build/msvc7/include $(distdir)/build/msvc8 $(distdir)/build/msvc8/include $(distdir)/build/msvc9 $(distdir)/build/msvc9/include $(distdir)/cfg $(distdir)/docs $(distdir)/docs/doxygen
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

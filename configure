@@ -25966,7 +25966,7 @@ fi
 
 # **************************************************************************
 
-ac_config_headers="$ac_config_headers config.h include/simage.h"
+ac_config_headers="$ac_config_headers config.h"
 
 
 ac_config_files="$ac_config_files simage.pc Makefile src/Makefile guile/Makefile mpeg2enc/Makefile html/Makefile build/simage.spec"
@@ -26731,7 +26731,6 @@ do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
-    "include/simage.h") CONFIG_HEADERS="$CONFIG_HEADERS include/simage.h" ;;
     "simage.pc") CONFIG_FILES="$CONFIG_FILES simage.pc" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;

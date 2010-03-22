@@ -79,8 +79,7 @@ am__aclocal_m4_deps =  \
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/cfg/mkinstalldirs
-CONFIG_HEADER = $(top_builddir)/config.h \
-	$(top_builddir)/include/simage.h
+CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
@@ -107,7 +106,7 @@ am__objects_2 = api.lo conform.lo fdctref.lo idct.lo motion.lo \
 	transfrm.lo writepic.lo
 am_libmpeg2enc_la_OBJECTS = $(am__objects_2)
 libmpeg2enc_la_OBJECTS = $(am_libmpeg2enc_la_OBJECTS)
-DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir) -I$(top_builddir)/include
+DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/cfg/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/api.Plo ./$(DEPDIR)/api.Po \
