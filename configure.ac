@@ -1026,7 +1026,7 @@ SIM_AC_MSVC_DSP_SETUP([SIMAGE], [simage], [simage], [-I$simage_build_dir/include
 
 # **************************************************************************
 
-AM_CONFIG_HEADER([config.h include/simage.h])
+AM_CONFIG_HEADER([config.h])
 
 AC_CONFIG_FILES([
 	simage.pc
