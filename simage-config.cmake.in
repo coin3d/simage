@@ -1,0 +1,27 @@
+set(simage_VERSION "@SIMAGE_MAJOR_VERSION@.@SIMAGE_MINOR_VERSION@.@SIMAGE_MICRO_VERSION@")
+set(simage_VERSION_MAJOR "@SIMAGE_MAJOR_VERSION@")
+set(simage_VERSION_MINOR "@SIMAGE_MINOR_VERSION@")
+set(simage_VERSION_PATCH "@SIMAGE_MICRO_VERSION@")
+
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+include(GNUInstallDirs)
+
+if(@Qt5_FOUND@)
+	find_dependency(Qt5Core)
+elseif(@Qt4_FOUND@)
+	find_dependency(Qt4)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/simage-export.cmake")
+
+if(SIMAGE_BUILD_SHARED_LIBS)
+	set(simage_DEFINITIONS "-DSIMAGE_DLL")
+else()
+	set(simage_DEFINITIONS "-DSIMAGE_NOT_DLL")
+endif()
+
+set(simage_INCLUDE_DIRS "${PACKAGE_PREFIX_DIR}/${CMAKE_INSTALL_INCLUDEDIR}")
+set(simage_LIBRARY_DIRS "${PACKAGE_PREFIX_DIR}/${CMAKE_INSTALL_LIBDIR}")
+set(simage_LIBRARIES "simage::simage")

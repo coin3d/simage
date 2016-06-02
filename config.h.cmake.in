@@ -1,0 +1,145 @@
+/* config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#cmakedefine HAVE_DLFCN_H 1
+
+/* Define to 1 if you have the <gdiplus.h> header file. */
+#cmakedefine HAVE_GDIPLUS_H 1
+
+/* Define if first argument of Gdiplus::Bitmap::LockBits() is a pointer */
+#cmakedefine HAVE_GDIPLUS_LOCKBITS_RECTARG_POINTER 1
+
+/* define to support the giflib library */
+#cmakedefine HAVE_GIFLIB 1
+
+/* Define to 1 if you have the <guile/gh.h> header file. */
+#cmakedefine HAVE_GUILE_GH_H 1
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#cmakedefine HAVE_INTTYPES_H 1
+
+/* define to support the jasper library */
+#cmakedefine HAVE_JASPER 1
+
+/* define to support the jpeg library */
+#cmakedefine HAVE_JPEGLIB 1
+
+/* Define to 1 if you have the <libguile.h> header file. */
+#cmakedefine HAVE_LIBGUILE_H 1
+
+/* Define to 1 if you have the <memory.h> header file. */
+#cmakedefine HAVE_MEMORY_H 1
+
+/* define for libpng support */
+#cmakedefine HAVE_PNGLIB 1
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#cmakedefine HAVE_STDINT_H 1
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#cmakedefine HAVE_STDLIB_H 1
+
+/* Define to 1 if you have the <strings.h> header file. */
+#cmakedefine HAVE_STRINGS_H 1
+
+/* Define to 1 if you have the <string.h> header file. */
+#cmakedefine HAVE_STRING_H 1
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#cmakedefine HAVE_SYS_STAT_H 1
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#cmakedefine HAVE_SYS_TYPES_H 1
+
+/* define to support the tiff library */
+#cmakedefine HAVE_TIFFLIB 1
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#cmakedefine HAVE_UNISTD_H 1
+
+/* Define to use the Video for Windows library */
+#cmakedefine HAVE_VFW 1
+
+/* Define to 1 if you have the <windows.h> header file. */
+#cmakedefine HAVE_WINDOWS_H 1
+
+/* Name of package */
+#define PACKAGE "@PACKAGE@"
+
+/* Define to the address where bug reports for this package should be sent. */
+#define PACKAGE_BUGREPORT "@PACKAGE_BUGREPORT@"
+
+/* Define to the full name of this package. */
+#define PACKAGE_NAME "@PACKAGE_NAME@"
+
+/* Define to the full name and version of this package. */
+#define PACKAGE_STRING "@PACKAGE_STRING@"
+
+/* Define to the one symbol short name of this package. */
+#define PACKAGE_TARNAME "@PACKAGE_TARNAME@"
+
+/* Define to the home page for this package. */
+#define PACKAGE_URL "@PACKAGE_URL@"
+
+/* Define to the version of this package. */
+#define PACKAGE_VERSION "@PACKAGE_VERSION@"
+
+/* define to enable avienc support */
+#cmakedefine SIMAGE_AVIENC_SUPPORT 1
+
+/* define to support CGImage */
+#cmakedefine SIMAGE_CGIMAGE_SUPPORT 1
+
+/* define to enable eps support */
+#cmakedefine SIMAGE_EPS_SUPPORT 1
+
+/* define to support GDI+ */
+#cmakedefine SIMAGE_GDIPLUS_SUPPORT 1
+
+/* libsndfile available */
+#cmakedefine SIMAGE_LIBSNDFILE_SUPPORT 1
+
+/* define this to the simage major version number */
+#define SIMAGE_MAJOR_VERSION @SIMAGE_MAJOR_VERSION@
+
+/* define this to the simage release version number */
+#define SIMAGE_MICRO_VERSION @SIMAGE_MICRO_VERSION@
+
+/* define this to the simage minor version number */
+#define SIMAGE_MINOR_VERSION @SIMAGE_MINOR_VERSION@
+
+/* define to enable mpeg2enc support */
+#cmakedefine SIMAGE_MPEG2ENC_SUPPORT 1
+
+/* Ogg Vorbis extensions available */
+#cmakedefine SIMAGE_OGGVORBIS_SUPPORT 1
+
+/* define to enable pic support */
+#cmakedefine SIMAGE_PIC_SUPPORT 1
+
+/* define to support Qt's QImage */
+#cmakedefine SIMAGE_QIMAGE_SUPPORT 1
+
+/* define to support the QuickTime library */
+#cmakedefine SIMAGE_QUICKTIME_SUPPORT 1
+
+/* Define to enable rgb support */
+#cmakedefine SIMAGE_RGB_SUPPORT 1
+
+/* define to enable targa support */
+#cmakedefine SIMAGE_TGA_SUPPORT 1
+
+/* define this to the simage major.minor.micro version string */
+#define SIMAGE_VERSION "@SIMAGE_VERSION@"
+
+/* define to enable xwd support */
+#cmakedefine SIMAGE_XWD_SUPPORT 1
+
+/* Define to 1 if you have the ANSI C header files. */
+#cmakedefine STDC_HEADERS 1
+
+/* Version number of package */
+#define VERSION "@VERSION@"
+
+/* Define to 1 if the X Window System is missing or not being used. */
+#cmakedefine X_DISPLAY_MISSING 1
