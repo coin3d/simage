@@ -4,6 +4,8 @@ project(simage)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 include(CheckCXXSourceCompiles)
 include(CheckFunctionExists)
 include(CheckIncludeFiles)
