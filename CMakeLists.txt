@@ -305,7 +305,7 @@ target_include_directories(
 )
 
 if(GDIPLUS_FOUND)
-	target_link_libraries(simage gdiplus)
+	target_link_libraries(simage ${GDIPLUS_LIBRARIES})
 endif()
 
 if(GIF_FOUND)
@@ -353,7 +353,7 @@ if(TIFF_FOUND)
 endif()
 
 if(VFW_FOUND)
-	target_link_libraries(simage vfw32)
+	target_link_libraries(simage ${VFW_LIBRARIES})
 endif()
 
 install(FILES include/simage.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT development)
