@@ -19,15 +19,15 @@ option(SIMAGE_BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(USE_QT5 "Prefer Qt5 over Qt4 if available" ON)
 
 if(USE_QT5)
-	find_package(Qt5 COMPONENTS Core QUIET)
+	find_package(Qt5 COMPONENTS Core Gui QUIET)
 endif()
 
 if(Qt5_FOUND)
 	set(QT_FOUND TRUE)
-	set(QT_LIBRARIES ${Qt5Core_LIBRARIES})
+	set(QT_LIBRARIES ${Qt5Core_LIBRARIES}  ${Qt5Gui_LIBRARIES})
 else()
 	set(QT_USE_IMPORTED_TARGETS ON)
-	find_package(Qt4 COMPONENTS QtCore)
+	find_package(Qt4 COMPONENTS QtCore QtGui)
 	include(${QT_USE_FILE})
 endif()
 
