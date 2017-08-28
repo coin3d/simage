@@ -346,7 +346,7 @@ simage_png_save(const char *filename,
   if (setjmp(png_ptr->jmpbuf)) {
 #else
   if (setjmp(png_jmpbuf(png_ptr))) {
-#endif // PNG_LIBPNG_VER < 10628
+#endif /* PNG_LIBPNG_VER < 10400 */
     /* If we get here, we had a problem reading the file */
     fclose(fp);
     png_destroy_write_struct(&png_ptr,  (png_infopp)info_ptr);
