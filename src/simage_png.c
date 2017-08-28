@@ -342,7 +342,11 @@ simage_png_save(const char *filename,
   /* Set error handling.  REQUIRED if you aren't supplying your own
    * error hadnling functions in the png_create_write_struct() call.
    */
+#if PNG_LIBPNG_VER < 10400
   if (setjmp(png_ptr->jmpbuf)) {
+#else
+  if (setjmp(png_jmpbuf(png_ptr))) {
+#endif // PNG_LIBPNG_VER < 10628
     /* If we get here, we had a problem reading the file */
     fclose(fp);
     png_destroy_write_struct(&png_ptr,  (png_infopp)info_ptr);
