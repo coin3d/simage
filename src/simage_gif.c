@@ -31,6 +31,21 @@
 #include <stdio.h>
 #include <gif_lib.h>
 
+#if GIFLIB_MAJOR > 5 || GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1
+#define DGifCloseFile(gif) DGifCloseFile(gif, NULL)
+#define EGifCloseFile(gif) EGifCloseFile(gif, NULL)
+#define DGifOpenFileName(gif) DGifOpenFileName(gif, NULL)
+#define EGifOpenFileName(gif, exist) EGifOpenFileName(gif, exist, NULL)
+//see https://sourceforge.net/p/giflib/mailman/message/29367749/
+#define QuantizeBuffer GifQuantizeBuffer
+#define MakeMapObject GifMakeMapObject
+#define FreeMapObject GifFreeMapObject
+#endif
+
+#ifndef FALSE
+#define FALSE false
+#endif
+
 enum {
   ERR_NO_ERROR,
   ERR_OPEN,
