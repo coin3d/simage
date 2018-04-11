@@ -450,6 +450,14 @@ add_test(
 	${CMAKE_CURRENT_SOURCE_DIR}/tests/img.tif
 )
 
+# ############################################################################
+# New CPACK section, please see the README file inside cpack.d directory.
+add_subdirectory(cpack.d)
+
+# ############################################################################
+# Legacy cmake statements, packagers should refer and populate the cpack.d 
+# drop-in directory
+# ############################################################################
 set(CPACK_COMPONENT_DEVELOPMENT_DEPENDS runtime)
 set(CPACK_DEB_COMPONENT_INSTALL ON)
 set(CPACK_DEBIAN_DEVELOPMENT_PACKAGE_DEPENDS "lib${PACKAGE_TARNAME}")
