@@ -27,5 +27,5 @@ pipelines:
             - cmake .. -DCMAKE_BUILD_TYPE=MinSizeRel
             - make
             - make test
-            - cpack --config cpack.d/fedora.cmake
+            - cpack --config cpack.d/ubuntu.cmake
             - ls *.rpm | sed -e "s/simage/--form files=\@\"simage/g" -e "s/\.deb/\.deb\"/g"|xargs curl -X POST --user "${BB_AUTH_STRING}" "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads"
