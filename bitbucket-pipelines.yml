@@ -4,12 +4,12 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
-image: ggabbiani/fedora-simage:latest
-
 pipelines:
   branches:
     cpack.d:
+      # fedora build
       - step:
+          image: ggabbiani/fedora-simage:latest
           script: # Modify the commands below to build your repository.
             - mkdir target
             - cd target
@@ -18,3 +18,14 @@ pipelines:
             - make test
             - cpack --config cpack.d/fedora.cmake
             - ls *.rpm | sed -e "s/simage/--form files=\@\"simage/g" -e "s/\.rpm/\.rpm\"/g"|xargs curl -X POST --user "${BB_AUTH_STRING}" "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads"
+      # ubuntu build
+      - step:
+          image: ggabbiani/ubuntu-simage:latest
+          script: # Modify the commands below to build your repository.
+            - mkdir target
+            - cd target
+            - cmake .. -DCMAKE_BUILD_TYPE=MinSizeRel
+            - make
+            - make test
+            - cpack --config cpack.d/fedora.cmake
+            - ls *.rpm | sed -e "s/simage/--form files=\@\"simage/g" -e "s/\.deb/\.deb\"/g"|xargs curl -X POST --user "${BB_AUTH_STRING}" "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads"
