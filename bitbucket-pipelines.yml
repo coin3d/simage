@@ -1,5 +1,5 @@
 
-# This is a sample build configuration for C++ â€“ Make.
+# This is a sample build configuration for C++ – Make.
 # Check our guides at https://confluence.atlassian.com/x/5Q4SMw for more examples.
 # Only use spaces to indent your .yml configuration.
 # -----
@@ -19,7 +19,7 @@ pipelines:
             - make
             - make test
             - cpack --config cpack.d/fedora.cmake
-            - for i in $(cat artifacts.list); do cp $i $(echo $i|sed -e 's/[0-9]\+\.fc27/last\.fc27/g'); done
+            - for i in $(cat cpack.d/artifacts.list); do cp $i $(echo $i|sed -e 's/[0-9]\+\.fc27/last\.fc27/g'); done
             - ls *.rpm | sed -e "s/simage/--form files=\@\"simage/g" -e "s/\.rpm/\.rpm\"/g"|xargs curl -X POST --user "${BB_AUTH_STRING}" "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads"
       # ubuntu build
       - step:
@@ -31,5 +31,5 @@ pipelines:
             - make
             - make test
             - cpack --config cpack.d/debian.cmake
-            - for i in $(cat artifacts.list); do cp $i $(echo $i|sed -e 's/[0-9]\+_amd64/last_amd64/g'); done
+            - for i in $(cat cpack.d/artifacts.list); do cp $i $(echo $i|sed -e 's/[0-9]\+_amd64/last_amd64/g'); done
             - ls *.deb | sed -e "s/libsimage/--form files=\@\"libsimage/g" -e "s/\.deb/\.deb\"/g"|xargs curl -X POST --user "${BB_AUTH_STRING}" "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads"
