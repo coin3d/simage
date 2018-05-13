@@ -18,6 +18,7 @@ cmake_policy(SET CMP0012 NEW)
 include("@CMAKE_CURRENT_BINARY_DIR@/commons.cmake")
 config_package(NAME "lib@PROJECT_NAME@" LOWCASE)
 
+# resets the artifact list
 macro(list_reset)
   set(ARTIFACTS "")
   execute_process(
@@ -26,6 +27,7 @@ macro(list_reset)
   )
 endmacro(list_reset)
 
+# adds an ENTRY to the artifact list
 macro(list_add ENTRY)
   list(APPEND ARTIFACTS ${ENTRY})
   execute_process(
@@ -35,6 +37,7 @@ macro(list_add ENTRY)
   )
 endmacro(list_add)
 
+# store the artifact list to file
 macro(list_save)
   execute_process(
     COMMAND echo ${ARTIFACTS}
