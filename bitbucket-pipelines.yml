@@ -50,7 +50,7 @@ pipelines:
           script:
             - pwd
             - cd /build/simage
-            - cmake /import -DCMAKE_BUILD_TYPE=MinSizeRel
+            - cmake $BUILD_DIR -DCMAKE_BUILD_TYPE=MinSizeRel
             - make
             - make test
             # creates package rpms with build number equal to the number of commits on the source branch
