@@ -48,7 +48,6 @@ pipelines:
       - step:
           image: ggabbiani/fedora-simage:latest
           script:
-            - pwd
             - mkdir target
             - cd target
             - cmake .. -DCMAKE_BUILD_TYPE=MinSizeRel
