@@ -49,8 +49,9 @@ pipelines:
           image: ggabbiani/fedora-simage:latest
           script:
             - pwd
-            - cd /build/simage
-            - cmake $BUILD_DIR -DCMAKE_BUILD_TYPE=MinSizeRel
+            - mkdir target
+            - cd target
+            - cmake .. -DCMAKE_BUILD_TYPE=MinSizeRel
             - make
             - make test
             # creates package rpms with build number equal to the number of commits on the source branch
