@@ -10,8 +10,8 @@
 # the project plus mercurial binaries.
 
 pipelines:
-  branches:
-    release:
+  custom: # manual trigger
+    manual-trigger:
       # fedora build
       - step:
           image: ggabbiani/fedora-simage:latest
