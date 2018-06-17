@@ -1,3 +1,0 @@
-simage is a library with image format loaders and front-ends to common import 
-libraries. simage is meant for use with applications which reads image files 
-as textures.
