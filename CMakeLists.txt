@@ -113,6 +113,16 @@ set(SIMAGE_BETA_VERSION "a")
 set(SIMAGE_VERSION "${SIMAGE_MAJOR_VERSION}.${SIMAGE_MINOR_VERSION}.${SIMAGE_MICRO_VERSION}${SIMAGE_BETA_VERSION}")
 set(VERSION "${SIMAGE_VERSION}")
 
+############################################################################
+# these will be removed after upgrading CMake minimum version
+set(PROJECT_VERSION_MAJOR "${SIMAGE_MAJOR_VERSION}")
+set(PROJECT_VERSION_MINOR "${SIMAGE_MINOR_VERSION}")
+set(PROJECT_VERSION_PATCH "${SIMAGE_MICRO_VERSION}")
+set(PROJECT_VERSION       "${SIMAGE_VERSION}")
+set(PROJECT_DESCRIPTION   "Image file format library abstraction layer")
+############################################################################
+
+
 if(SIMAGE_GDIPLUS_SUPPORT)
 	set(CMAKE_REQUIRED_INCLUDES ${GDIPLUS_INCLUDE_DIRS})
 	set(CMAKE_REQUIRED_LIBRARIES ${GDIPLUS_LIBRARIES})
