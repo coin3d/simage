@@ -22,9 +22,10 @@ pipelines:
             - make
             - make test
             # creates package debians with build number equal to the number of commits on the source branch
-            - cpack --config cpack.d/debian.cmake
+            - cd cpack.d
+            - cpack --config debian.cmake
             # pack the artifacts into a single tarball
-            - tar -czf debian-build-$(hg id --num --rev tip).tgz $(cat cpack.d/artifacts.list)
+            - tar -czf debian-build-$(hg id --num --rev tip).tgz $(cat artifacts.list) artifacts.list
             # creates 'last' archive
             - cp debian-build-$(hg id --num --rev tip).tgz debian-build.tgz
             # uploads both resulting tarballs to the download area
@@ -39,9 +40,10 @@ pipelines:
             - make
             - make test
             # creates package rpms with build number equal to the number of commits on the source branch
-            - cpack --config cpack.d/fedora.cmake
+            - cd cpack.d
+            - cpack --config fedora.cmake
             # pack the artifacts into a single tarball
-            - tar -czf fedora-build-$(hg id --num --rev tip).tgz $(cat cpack.d/artifacts.list)
+            - tar -czf fedora-build-$(hg id --num --rev tip).tgz $(cat artifacts.list) artifacts.list
             # creates 'last' archive
             - cp fedora-build-$(hg id --num --rev tip).tgz fedora-build.tgz
             # uploads both resulting tarballs to the download area
@@ -57,9 +59,10 @@ pipelines:
             - make test
             # creates package debians with build number equal to the number of commits on the source branch
             # for ubuntu images just use the debian cpack config
-            - cpack --config cpack.d/debian.cmake
+            - cd cpack.d
+            - cpack --config debian.cmake
             # pack the artifacts into a single tarball
-            - tar -czf ubuntu-build-$(hg id --num --rev tip).tgz $(cat cpack.d/artifacts.list)
+            - tar -czf ubuntu-build-$(hg id --num --rev tip).tgz $(cat artifacts.list) artifacts.list
             # creates 'last' archive
             - cp ubuntu-build-$(hg id --num --rev tip).tgz ubuntu-build.tgz
             # uploads both resulting tarballs to the download area
