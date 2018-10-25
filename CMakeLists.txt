@@ -112,6 +112,7 @@ set(SIMAGE_MICRO_VERSION "1")
 set(SIMAGE_BETA_VERSION "a")
 set(SIMAGE_VERSION "${SIMAGE_MAJOR_VERSION}.${SIMAGE_MINOR_VERSION}.${SIMAGE_MICRO_VERSION}${SIMAGE_BETA_VERSION}")
 set(VERSION "${SIMAGE_VERSION}")
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 
 ############################################################################
 # these will be removed after upgrading CMake minimum version
