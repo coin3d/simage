@@ -19,8 +19,6 @@
 
 #include "avi_encode.h"
 
-#define HAVE_VFW
-
 #ifdef HAVE_VFW
 
 #include <windows.h>
@@ -74,7 +72,7 @@ avi_begin_encode(const char *filename, int width, int height, int fps, const cha
 #ifdef HAVE_VFW
   avi_encode_context *context;
   HRESULT hr;
-  BOOL ret;
+  INT_PTR ret;
   AVISTREAMINFO strhdr;
   BITMAPINFO bi;
   AVICOMPRESSOPTIONS opts;
@@ -139,7 +137,7 @@ avi_begin_encode(const char *filename, int width, int height, int fps, const cha
   prefsReadFromFile = 0;
   if ( (preferences_filename != NULL) && (strlen(preferences_filename)>0) ) {
     FILE *file;
-    int size;
+    size_t size;
     file = fopen(preferences_filename, "rb");
     if (file==NULL) {
       /* file doesn't exist, must pop up GUI to get options */

@@ -195,7 +195,7 @@ simage_qimage_get_savers(void)
   }
   if (first) return NULL;
   const char * asc = str.constData();
-  int len = strlen(asc);
+  int len = (int)strlen(asc);
   char * dst = (char*) malloc(len+1);
   strcpy(dst, asc);
   return dst;

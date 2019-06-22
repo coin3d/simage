@@ -101,7 +101,7 @@ void
 simpeg_encode_rc_init_pict(simpeg_encode_context * context,
                            unsigned char *frame)
 {
-  double Tmin;
+  int Tmin;
 
   switch (context->pict_type)
   {
@@ -189,7 +189,7 @@ static void calc_actj(simpeg_encode_context * context,
 void 
 simpeg_encode_rc_update_pict(simpeg_encode_context * context)
 {
-  double X;
+  int X;
 
   context->S = simpeg_encode_bitcount(context) - context->S; /* total # of bits in picture */
   context->R-= context->S; /* remaining # of bits in GOP */

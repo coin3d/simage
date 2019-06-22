@@ -297,9 +297,9 @@ static void read_ppm(simpeg_encode_context * context,char *fname, unsigned char 
       y = cr*r + cg*g + cb*b;
       u = cu*(b-y);
       v = cv*(r-y);
-      yp[j] = (219.0/256.0)*y + 16.5;  /* nominal range: 16..235 */
-      up[j] = (224.0/256.0)*u + 128.5; /* 16..240 */
-      vp[j] = (224.0/256.0)*v + 128.5; /* 16..240 */
+      yp[j] = (unsigned char)((219.0/256.0)*y + 16.5);  /* nominal range: 16..235 */
+      up[j] = (unsigned char)((224.0/256.0)*u + 128.5); /* 16..240 */
+      vp[j] = (unsigned char)((224.0/256.0)*v + 128.5); /* 16..240 */
     }
   }
   fclose(fd);
@@ -401,9 +401,9 @@ static void SimpegWrite_read_buffer(simpeg_encode_context * context, unsigned ch
       u = cu*(b-y);
       v = cv*(r-y);
 
-      iy = (219.0/256.0)*y + 16.5;  /* nominal range: 16..235 */
-      iu = (224.0/256.0)*u + 128.5; /* 16..240 */
-      iv = (224.0/256.0)*v + 128.5; /* 16..240 */
+      iy = (int)((219.0/256.0)*y + 16.5);  /* nominal range: 16..235 */
+      iu = (int)((224.0/256.0)*u + 128.5); /* 16..240 */
+      iv = (int)((224.0/256.0)*v + 128.5); /* 16..240 */
 #if USE_CLIPTABLE
       yp[j] = context->clp[iy];
       up[j] = context->clp[iu];

@@ -83,8 +83,8 @@ int main(int argc, char ** argv)
       }
       else if (strcmp(argv[i], "-scale") == 0 && i < argc-2) {
         i++;
-        xmul = atof(argv[i++]);
-        ymul = atof(argv[i++]);
+        xmul = (float) atof(argv[i++]);
+        ymul = (float) atof(argv[i++]);
         if (xmul <= 0.0f || ymul <= 0.0f) {
           usage(argv[0]);
           return -1;
@@ -143,7 +143,7 @@ int main(int argc, char ** argv)
     fprintf(stderr,"done\n");
   }
   else {
-    fprintf(stderr,"Unable to read file\n", argv[1]);
+    fprintf(stderr,"Unable to read file %s\n", argv[1]);
     return -1;
   }
 

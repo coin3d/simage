@@ -7,7 +7,7 @@
 #    find_package(@PROJECT_NAME@ REQUIRED)
 #    target_link_libraries(my_target_name @PROJECT_NAME@::@PROJECT_NAME@)
 #
-# Additionally you may one of the following variables (or their corresponding
+# Additionally you may use one of the following variables (or their corresponding
 # upper case version) that are also defined.
 #
 # @PROJECT_NAME@_COMPILE_DEFINITIONS
@@ -26,15 +26,39 @@
 
 include(CMakeFindDependencyMacro)
 
-set(_simage_qimage_support "@SIMAGE_QIMAGE_SUPPORT@")
-set(_have_qt5 "@Qt5_FOUND@")
-set(_have_qt4 "@Qt4_FOUND@")
-if(_simage_qimage_support)
-  if(_have_qt5)
+set(simage_BUILD_SHARED_LIBS @SIMAGE_BUILD_SHARED_LIBS@)
+if(NOT simage_BUILD_SHARED_LIBS)
+  set(_simage_have_qt5 @Qt5_FOUND@)
+  set(_simage_have_qt4 @Qt4_FOUND@)
+  if(_simage_have_qt5)
     find_dependency(Qt5Core REQUIRED)
     find_dependency(Qt5Gui REQUIRED)
-  elseif(_have_qt4)
-    find_dependency(Qt4 REQUIRED)
+  elseif(_simage_have_qt4)
+    find_dependency(Qt4 COMPONENTS QtCore QtGui REQUIRED)
+  endif()
+  set(_simage_quicktime_support @SIMAGE_QUICKTIME_SUPPORT@)
+  if(_simage_quicktime_support)
+    find_dependency(QuickTime)
+  endif()
+  set(_simage_have_giflib @GIF_FOUND@)
+  if(_simage_have_giflib)
+    find_dependency(GIF)
+  endif()
+  set(_simage_have_jasper @JASPER_FOUND@)
+  if(_simage_have_jasper)
+    find_dependency(Jasper)
+  endif()
+  set(_simage_have_jpeglib @JPEG_FOUND@)
+  if(_simage_have_jpeglib)
+    find_dependency(JPEG)
+  endif()
+  set(_simage_have_pnglib @PNG_FOUND@)
+  if(_simage_have_pnglib)
+    find_dependency(PNG)
+  endif()
+  set(_simage_have_tifflib @TIFF_FOUND@)
+  if(_simage_have_tifflib)
+    find_dependency(TIFF)
   endif()
 endif()
 

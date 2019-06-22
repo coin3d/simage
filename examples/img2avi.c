@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
     }
 
     if ( (s_image_width(image) != width) || (s_image_height(image) != height) ) {
-      fprintf(stderr, "\nError: All images must have the same width and height.\n", width, height);
+      fprintf(stderr, "\nError: All images must have the same width (%d) and height (%d).\n", width, height);
       exit(1);
     }
 
