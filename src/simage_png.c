@@ -105,7 +105,7 @@ simage_png_identify(const char * ptr,
 static void
 user_read_cb(png_structp png_ptr, png_bytep data, png_uint_32 length)
 {
-  int readlen = fread(data, 1, length, (FILE *)png_get_io_ptr(png_ptr));
+  int readlen = (int) fread(data, 1, length, (FILE *)png_get_io_ptr(png_ptr));
   if (readlen != length) {
     /* FIXME: then what? png_error()? 20020821 mortene */
   }
@@ -115,7 +115,7 @@ user_read_cb(png_structp png_ptr, png_bytep data, png_uint_32 length)
 static void
 user_write_cb(png_structp png_ptr, png_bytep data, png_uint_32 length)
 {
-  int writelen = fwrite(data, 1, length, (FILE *)png_get_io_ptr(png_ptr));
+  int writelen = (int) fwrite(data, 1, length, (FILE *)png_get_io_ptr(png_ptr));
   if (writelen != length) {
     /* FIXME: then what? png_error()? 20020821 mortene */
   }

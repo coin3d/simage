@@ -290,7 +290,7 @@ simage_gif_save(const char * filename,
 {
   const unsigned char * bytes_ptr = bytes;
   int i, colormapsize = 256;
-  unsigned long bufsize = width * height;
+  int bufsize = width * height;
   ColorMapObject * cmapobj;
   GifByteType * outbuf = NULL, * outbuf_ptr = NULL;
   GifByteType * rgbbuf = NULL, * rgbbuf_ptr = NULL;

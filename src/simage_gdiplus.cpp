@@ -443,13 +443,13 @@ simage_gdiplus_get_savers(void)
   Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
 
   char * formats = NULL;
-  unsigned int formats_size = 0;
-  unsigned int format_len = 0;
+  size_t formats_size = 0;
+  size_t format_len = 0;
 
   for (unsigned int i = 0; i < num; i++) {
     /* convert wide char to C string */
     const wchar_t * w_format = pImageCodecInfo[i].FormatDescription;
-    unsigned int w_format_len = wcslen(w_format);
+    size_t w_format_len = wcslen(w_format);
     char * format = (char *)malloc(w_format_len+10);
     wcstombs(format, w_format, w_format_len);
     format[w_format_len] = '\0';
@@ -557,9 +557,9 @@ simage_gdiplus_save(const char * filename,
       /* FIXME: code for 2 components case has not been tested. comp 1
          should rather be written out as PixelFormat8bppIndexed. comp 2?
          20060420 tamer. */
-      for (unsigned int y = 0; y < height; y++) {
+      for (int y = 0; y < height; y++) {
         src -= width*numcomponents;
-        for (unsigned int x = 0; x < width*numcomponents; x+=numcomponents) {
+        for (int x = 0; x < width*numcomponents; x+=numcomponents) {
           *dst++ = src[x]; *dst++ = src[x]; *dst++ = src[x];
           /* greyscale-alpha buffer */
           if (numcomponents == 2) { *dst++ = src[x+1]; }
@@ -571,9 +571,9 @@ simage_gdiplus_save(const char * filename,
     case 3:
     case 4:
     {
-      for (unsigned int y = 0; y < height; y++) {
+      for (int y = 0; y < height; y++) {
         src -= width*numcomponents;
-        for (unsigned int x = 0; x < width*numcomponents; x+=numcomponents) {
+        for (int x = 0; x < width*numcomponents; x+=numcomponents) {
           *dst++ = src[x+2]; *dst++ = src[x+1]; *dst++ = src[x];
           /* ARGB GDI+ buffer, internally really represented as BGRA */
           if (numcomponents == 4) { *dst++ = src[x+3]; }
@@ -709,7 +709,7 @@ simage_gdiplus_read_line(void * opendata, int y, unsigned char * buf)
     case 3:
     case 4:
     {
-      for (unsigned int x = 0; x < width*numcomponents; x+=numcomponents) {
+      for (int x = 0; x < width*numcomponents; x+=numcomponents) {
         buf[x+2] = *src++; buf[x+1] = *src++; buf[x] = *src++;
         /* ARGB GDI+ buffer, internally represented as BGRA */
         if (numcomponents == 4) { buf[x+3] = *src++; }
@@ -775,7 +775,7 @@ simage_gdiplus_read_region(void * opendata,
   switch (numcomponents) {
     case 1:
     {
-      for (unsigned int i = 0; i < h; i++) {
+      for (int i = 0; i < h; i++) {
         dst -= w;
         memcpy(dst, src, w);
         src += bitmapData.Stride;
@@ -785,9 +785,9 @@ simage_gdiplus_read_region(void * opendata,
     case 3:
     case 4:
     {
-      for (unsigned int i = 0; i < h; i++) {
+      for (int i = 0; i < h; i++) {
         dst -= w*numcomponents;
-        for (unsigned int j = 0; j < w*numcomponents; j+=numcomponents) {
+        for (int j = 0; j < w*numcomponents; j+=numcomponents) {
           dst[j+2] = *src++; dst[j+1] = *src++; dst[j] = *src++;
           /* ARGB GDI+ buffer, internally really represented as BGRA */
           if (numcomponents == 4) { dst[j+3] = *src++; }

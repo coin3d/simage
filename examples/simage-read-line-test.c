@@ -28,14 +28,13 @@
 static void
 usage(const char * argv0)
 {
-  fprintf(stderr, "Usage:\n %s <infile>\n");
+  fprintf(stderr, "Usage:\n %s <infile>\n", argv0);
 }
 
 int main(int argc, char ** argv)
 {
   int i;
   int w, h, nc;
-  char * infile;
   char * addalpha = NULL;
   unsigned char * row = NULL;
   s_image * image = NULL;
