@@ -164,8 +164,8 @@ simage_eps_save(const char *filename,
   dpi = 75.0f;
   inchsize[0] = 8.5f;
   inchsize[1] = 11.0f;
-  pixelsize[0] = inchsize[0]*defaultdpi;
-  pixelsize[1] = inchsize[1]*defaultdpi;
+  pixelsize[0] = (int) (inchsize[0]*defaultdpi);
+  pixelsize[1] = (int) (inchsize[1]*defaultdpi);
 
   chan = nc <= 2 ? 1 : 3;
   scaledsize[0] = (int) ceil(((double)size[0])*defaultdpi/dpi);

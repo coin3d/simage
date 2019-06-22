@@ -86,7 +86,7 @@ write_short(FILE * fp, unsigned short val)
   unsigned char tmp[2];
   tmp[0] = (unsigned char)(val >> 8);
   tmp[1] = (unsigned char)(val & 0xff);
-  return fwrite(&tmp, 2, 1, fp);
+  return (int)fwrite(&tmp, 2, 1, fp);
 }
 
 int
@@ -178,7 +178,7 @@ read_short(FILE * in, short * dst, int n, int swap)
   int i;
   unsigned char * ptr;
   unsigned char tmp;
-  int num = fread(dst, sizeof(short), n, in);
+  int num = (int)fread(dst, sizeof(short), n, in);
   if (num == n && swap) {
     ptr = (unsigned char *) dst;
     for (i = 0; i < n; i++) {
@@ -203,7 +203,7 @@ read_int(FILE * in, int * dst, int n, int swap)
   int i;
   unsigned char tmp;
   unsigned char * ptr;
-  int num = fread(dst, sizeof(int), n, in);
+  int num = (int)fread(dst, sizeof(int), n, in);
   if (num == n && swap) {
     ptr = (unsigned char *) dst;
     for (i = 0; i < n; i++) {

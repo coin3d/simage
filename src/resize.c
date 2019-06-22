@@ -15,9 +15,9 @@
  */
 
 /*
- *		Filtered Image Rescaling
+ *                Filtered Image Rescaling
  *
- *		  by Dale Schumacher
+ *                  by Dale Schumacher
  */
 
 /*
@@ -58,8 +58,8 @@ get_row(unsigned char * row, Image * image, int y)
   assert(y < image->ysize);
 
   memcpy(row,
-	 image->data + (y * image->span),
-	 (image->bpp * image->xsize));
+         image->data + (y * image->span),
+         (image->bpp * image->xsize));
 }
 
 static void
@@ -97,101 +97,101 @@ put_pixel(Image * image, int x, int y, float * data)
   p = image->data + image->span * y + x * bpp;
   for (i = 0; i < bpp; i++) {
     val = data[i];
-    if (val < 0.0) val = 0.0;
-    else if (val > 255.0) val = 255.0;
+    if (val < 0.0f) val = 0.0f;
+    else if (val > 255.0f) val = 255.0f;
     *p++ = (unsigned char) val;
   }
 }
 
 
 /*
- *	filter function definitions
+ *        filter function definitions
  */
 
-#define	filter_support		(1.0)
+#define        filter_support                (1.0f)
 
 static float
 filter(float t)
 {
   /* f(t) = 2|t|^3 - 3|t|^2 + 1, -1 <= t <= 1 */
-  if(t < 0.0) t = -t;
-  if(t < 1.0) return((2.0 * t - 3.0) * t * t + 1.0);
-  return(0.0);
+  if(t < 0.0f) t = -t;
+  if(t < 1.0f) return((2.0f * t - 3.0f) * t * t + 1.0f);
+  return(0.0f);
 }
 
-#define	box_support		(0.5)
+#define        box_support                (0.5f)
 
 static float
 box_filter(float t)
 {
-  if((t > -0.5) && (t <= 0.5)) return(1.0);
-  return(0.0);
+  if((t > -0.5f) && (t <= 0.5f)) return(1.0f);
+  return(0.0f);
 }
 
-#define	triangle_support	(1.0)
+#define        triangle_support        (1.0f)
 
 static float
 triangle_filter(float t)
 {
-  if(t < 0.0) t = -t;
-  if(t < 1.0) return(1.0 - t);
-  return(0.0);
+  if(t < 0.0f) t = -t;
+  if(t < 1.0f) return(1.0f - t);
+  return(0.0f);
 }
 
-#define	bell_support		(1.5)
+#define        bell_support                (1.5f)
 
 static float
-bell_filter(float t)		/* box (*) box (*) box */
+bell_filter(float t)                /* box (*) box (*) box */
 {
-  if(t < 0) t = -t;
-  if(t < .5) return(.75 - (t * t));
-  if(t < 1.5) {
-    t = (t - 1.5);
-    return(.5 * (t * t));
+  if(t < 0.0f) t = -t;
+  if(t < 0.5f) return(0.75f - (t * t));
+  if(t < 1.5f) {
+    t = (t - 1.5f);
+    return(0.5f * (t * t));
   }
-  return(0.0);
+  return(0.0f);
 }
 
-#define	B_spline_support	(2.0)
+#define        B_spline_support        (2.0f)
 
 static float
 B_spline_filter(float t)  /* box (*) box (*) box (*) box */
 {
   float tt;
 
-  if(t < 0) t = -t;
-  if(t < 1) {
+  if(t < 0.0f) t = -t;
+  if(t < 1.0f) {
     tt = t * t;
-    return((.5 * tt * t) - tt + (2.0 / 3.0));
-  } else if(t < 2) {
-    t = 2 - t;
-    return((1.0 / 6.0) * (t * t * t));
+    return((.5f * tt * t) - tt + (2.0f / 3.0f));
+  } else if(t < 2.0f) {
+    t = 2.0f - t;
+    return((1.0f / 6.0f) * (t * t * t));
   }
-  return(0.0);
+  return(0.0f);
 }
 
 static float
 sinc(float x)
 {
-  x *= M_PI;
-  if(x != 0) return(sin(x) / x);
-  return(1.0);
+  x *= (float)M_PI;
+  if(x != 0.0f) return (float)(sin(x) / x);
+  return(1.0f);
 }
 
-#define	Lanczos3_support	(3.0)
+#define        Lanczos3_support        (3.0f)
 
 static float
 Lanczos3_filter(float t)
 {
-  if(t < 0) t = -t;
-  if(t < 3.0) return(sinc(t) * sinc(t/3.0));
-  return(0.0);
+  if(t < 0.0f) t = -t;
+  if(t < 3.0f) return(sinc(t) * sinc(t/3.0f));
+  return(0.0f);
 }
 
-#define	Mitchell_support	(2.0)
+#define        Mitchell_support        (2.0)
 
-#define	B	(1.0 / 3.0)
-#define	C	(1.0 / 3.0)
+#define        B        (1.0f / 3.0f)
+#define        C        (1.0f / 3.0f)
 
 static float
 Mitchell_filter(float t)
@@ -199,25 +199,25 @@ Mitchell_filter(float t)
   float tt;
 
   tt = t * t;
-  if(t < 0.0) t = -t;
-  if(t < 1.0) {
-    t = (((12.0 - 9.0 * B - 6.0 * C) * (t * tt))
-	 + ((-18.0 + 12.0 * B + 6.0 * C) * tt)
-	 + (6.0 - 2.0 * B));
-    return (t / 6.0);
+  if(t < 0.0f) t = -t;
+  if(t < 1.0f) {
+    t = (((12.0f - 9.0f * B - 6.0f * C) * (t * tt))
+         + ((-18.0f + 12.0f * B + 6.0f * C) * tt)
+         + (6.0f - 2.0f * B));
+    return (t / 6.0f);
   }
-  else if (t < 2.0) {
-    t = (((-1.0 * B - 6.0 * C) * (t * tt))
-	 + ((6.0 * B + 30.0 * C) * tt)
-	 + ((-12.0 * B - 48.0 * C) * t)
-	 + (8.0 * B + 24.0 * C));
-    return (t / 6.0);
+  else if (t < 2.0f) {
+    t = (((-1.0f * B - 6.0f * C) * (t * tt))
+         + ((6.0f * B + 30.0f * C) * tt)
+         + ((-12.0f * B - 48.0f * C) * t)
+         + (8.0f * B + 24.0f * C));
+    return (t / 6.0f);
   }
-  return(0.0);
+  return(0.0f);
 }
 
 /*
- *	image rescaling routine
+ *        image rescaling routine
  */
 
 typedef struct {
@@ -226,8 +226,8 @@ typedef struct {
 } CONTRIB;
 
 typedef struct {
-  int	n;		/* number of contributors */
-  CONTRIB * p;		/* pointer to list of contributions */
+  int        n;                /* number of contributors */
+  CONTRIB * p;                /* pointer to list of contributions */
 } CLIST;
 
 static Image *
@@ -251,12 +251,13 @@ zoom(Image * dst,               /* destination image structure */
 {
   CLIST * contrib;
   Image * tmp;                  /* intermediate image */
-  float xscale, yscale;	/* zoom scale factors */
-  int i, j, k, b;			/* loop variables */
-  int n;			/* pixel number */
-  float center, left, right;	/* filter calculation variables */
-  float width, fscale, weight;	/* filter calculation variables */
-  unsigned char * raster;	/* a row or column of pixels */
+  float xscale, yscale;        /* zoom scale factors */
+  int i, j, k, b;                        /* loop variables */
+  int n;                        /* pixel number */
+  int left, right;        /* filter calculation variables */
+  float center;        /* filter calculation variables */
+  float width, fscale, weight;        /* filter calculation variables */
+  unsigned char * raster;        /* a row or column of pixels */
   float pixel[4];              /* one pixel */
   int bpp;
   unsigned char * dstptr;
@@ -273,31 +274,31 @@ zoom(Image * dst,               /* destination image structure */
 
   /* pre-calculate filter contributions for a row */
   contrib = (CLIST *)calloc(dstxsize, sizeof(CLIST));
-  if(xscale < 1.0) {
+  if(xscale < 1.0f) {
     width = fwidth / xscale;
-    fscale = 1.0 / xscale;
+    fscale = 1.0f / xscale;
     for(i = 0; i < dstxsize; i++) {
       contrib[i].n = 0;
       contrib[i].p = (CONTRIB *)calloc((int) (width * 2 + 1),
-				       sizeof(CONTRIB));
+                                       sizeof(CONTRIB));
       center = (float) i / xscale;
-      left = ceil(center - width);
-      right = floor(center + width);
+      left = (int) ceil(center - width);
+      right = (int) floor(center + width);
       for(j = left; j <= right; j++) {
-	weight = center - (float) j;
-	weight = (*filterf)(weight / fscale) / fscale;
-	if(j < 0) {
-	  n = -j;
-	}
-	else if(j >= src->xsize) {
-	  n = (src->xsize - j) + src->xsize - 1;
-	}
-	else {
-	  n = j;
-	}
-	k = contrib[i].n++;
-	contrib[i].p[k].pixel = n*bpp;
-	contrib[i].p[k].weight = weight;
+        weight = center - (float) j;
+        weight = (*filterf)(weight / fscale) / fscale;
+        if(j < 0) {
+          n = -j;
+        }
+        else if(j >= src->xsize) {
+          n = (src->xsize - j) + src->xsize - 1;
+        }
+        else {
+          n = j;
+        }
+        k = contrib[i].n++;
+        contrib[i].p[k].pixel = n*bpp;
+        contrib[i].p[k].weight = weight;
       }
     }
   }
@@ -305,25 +306,25 @@ zoom(Image * dst,               /* destination image structure */
     for(i = 0; i < dstxsize; i++) {
       contrib[i].n = 0;
       contrib[i].p = (CONTRIB *)calloc((int) (fwidth * 2 + 1),
-				       sizeof(CONTRIB));
+                                       sizeof(CONTRIB));
       center = (float) i / xscale;
-      left = ceil(center - fwidth);
-      right = floor(center + fwidth);
+      left = (int) ceil(center - fwidth);
+      right = (int) floor(center + fwidth);
       for(j = left; j <= right; j++) {
-	weight = center - (float) j;
-	weight = (*filterf)(weight);
-	if(j < 0) {
-	  n = -j;
-	}
-	else if(j >= src->xsize) {
-	  n = (src->xsize - j) + src->xsize - 1;
-	}
-	else {
-	  n = j;
-	}
-	k = contrib[i].n++;
-	contrib[i].p[k].pixel = n*bpp;
-	contrib[i].p[k].weight = weight;
+        weight = center - (float) j;
+        weight = (*filterf)(weight);
+        if(j < 0) {
+          n = -j;
+        }
+        else if(j >= src->xsize) {
+          n = (src->xsize - j) + src->xsize - 1;
+        }
+        else {
+          n = j;
+        }
+        k = contrib[i].n++;
+        contrib[i].p[k].pixel = n*bpp;
+        contrib[i].p[k].weight = weight;
       }
     }
   }
@@ -336,21 +337,21 @@ zoom(Image * dst,               /* destination image structure */
   for(k = 0; k < tmp->ysize; k++) {
     get_row(raster, src, k);
     for(i = 0; i < tmp->xsize; i++) {
-      for (b = 0; b < bpp; b++) pixel[b] = 0.0;
+      for (b = 0; b < bpp; b++) pixel[b] = 0.0f;
       for(j = 0; j < contrib[i].n; j++) {
-	for (b = 0; b < bpp; b++) {
-	  pixel[b] += raster[contrib[i].p[j].pixel+b]
-	    * contrib[i].p[j].weight;
-	}
+        for (b = 0; b < bpp; b++) {
+          pixel[b] += raster[contrib[i].p[j].pixel+b]
+            * contrib[i].p[j].weight;
+        }
       }
 #if 1 /* obsoleted 2001-11-18 pederb. Too slow */
       put_pixel(tmp, i, k, pixel);
 #else /* new code */
       for (b = 0; b < bpp; b++) {
-	float val = pixel[b];
-	if (val < 0.0) val = 0.0;
-	else if (val > 255.0) val = 255.0;
-	*dstptr++ = (unsigned char ) val;
+        float val = pixel[b];
+        if (val < 0.0f) val = 0.0f;
+        else if (val > 255.0f) val = 255.0f;
+        *dstptr++ = (unsigned char ) val;
       }
 #endif /* new, faster code */
     }
@@ -365,31 +366,31 @@ zoom(Image * dst,               /* destination image structure */
 
   /* pre-calculate filter contributions for a column */
   contrib = (CLIST *)calloc(dstysize, sizeof(CLIST));
-  if(yscale < 1.0) {
+  if(yscale < 1.0f) {
     width = fwidth / yscale;
-    fscale = 1.0 / yscale;
+    fscale = 1.0f / yscale;
     for(i = 0; i < dstysize; i++) {
       contrib[i].n = 0;
       contrib[i].p = (CONTRIB *)calloc((int) (width * 2 + 1),
-				       sizeof(CONTRIB));
+                                       sizeof(CONTRIB));
       center = (float) i / yscale;
-      left = ceil(center - width);
-      right = floor(center + width);
+      left = (int) ceil(center - width);
+      right = (int) floor(center + width);
       for(j = left; j <= right; j++) {
-	weight = center - (float) j;
-	weight = (*filterf)(weight / fscale) / fscale;
-	if(j < 0) {
-	  n = -j;
-	}
-	else if(j >= tmp->ysize) {
-	  n = (tmp->ysize - j) + tmp->ysize - 1;
-	}
-	else {
-	  n = j;
-	}
-	k = contrib[i].n++;
-	contrib[i].p[k].pixel = n*bpp;
-	contrib[i].p[k].weight = weight;
+        weight = center - (float) j;
+        weight = (*filterf)(weight / fscale) / fscale;
+        if(j < 0) {
+          n = -j;
+        }
+        else if(j >= tmp->ysize) {
+          n = (tmp->ysize - j) + tmp->ysize - 1;
+        }
+        else {
+          n = j;
+        }
+        k = contrib[i].n++;
+        contrib[i].p[k].pixel = n*bpp;
+        contrib[i].p[k].weight = weight;
       }
     }
   }
@@ -397,25 +398,25 @@ zoom(Image * dst,               /* destination image structure */
     for(i = 0; i < dstysize; i++) {
       contrib[i].n = 0;
       contrib[i].p = (CONTRIB *)calloc((int) (fwidth * 2 + 1),
-				       sizeof(CONTRIB));
+                                       sizeof(CONTRIB));
       center = (float) i / yscale;
-      left = ceil(center - fwidth);
-      right = floor(center + fwidth);
+      left = (int) ceil(center - fwidth);
+      right = (int) floor(center + fwidth);
       for(j = left; j <= right; j++) {
-	weight = center - (float) j;
-	weight = (*filterf)(weight);
-	if(j < 0) {
-	  n = -j;
-	}
-	else if(j >= tmp->ysize) {
-	  n = (tmp->ysize - j) + tmp->ysize - 1;
-	}
-	else {
-	  n = j;
-	}
-	k = contrib[i].n++;
-	contrib[i].p[k].pixel = n*bpp;
-	contrib[i].p[k].weight = weight;
+        weight = center - (float) j;
+        weight = (*filterf)(weight);
+        if(j < 0) {
+          n = -j;
+        }
+        else if(j >= tmp->ysize) {
+          n = (tmp->ysize - j) + tmp->ysize - 1;
+        }
+        else {
+          n = j;
+        }
+        k = contrib[i].n++;
+        contrib[i].p[k].pixel = n*bpp;
+        contrib[i].p[k].weight = weight;
       }
     }
   }
@@ -426,21 +427,21 @@ zoom(Image * dst,               /* destination image structure */
     get_column(raster, tmp, k);
     dstptr = dst->data + k * bpp;
     for(i = 0; i < dstysize; i++) {
-      for (b = 0; b < bpp; b++) pixel[b] = 0.0;
+      for (b = 0; b < bpp; b++) pixel[b] = 0.0f;
       for(j = 0; j < contrib[i].n; ++j) {
-	for (b = 0; b < bpp; b++) {
-	  pixel[b] += raster[contrib[i].p[j].pixel+b]
-	    * contrib[i].p[j].weight;
-	}
+        for (b = 0; b < bpp; b++) {
+          pixel[b] += raster[contrib[i].p[j].pixel+b]
+            * contrib[i].p[j].weight;
+        }
       }
 #if 1 /* obsoleted 2001-11-18 pederb. Too slow */
       put_pixel(dst, k, i, pixel);
 #else /* new code */
       for (b = 0; b < bpp; b++) {
-	float val = pixel[b];
-	if (val < 0.0) val = 0.0;
-	else if (val > 255.0) val = 255.0;
-	dstptr[b] = (unsigned char) val;
+        float val = pixel[b];
+        if (val < 0.0f) val = 0.0f;
+        else if (val > 255.0f) val = 255.0f;
+        dstptr[b] = (unsigned char) val;
       }
 #endif /* new, faster code */
       dstptr += bpp * dstxsize;
@@ -463,8 +464,8 @@ zoom(Image * dst,               /* destination image structure */
  */
 static unsigned char *
 simage_resize_fast(unsigned char *src, int width,
-		   int height, int num_comp,
-		   int newwidth, int newheight)
+                   int height, int num_comp,
+                   int newwidth, int newheight)
 {
   float sx, sy, dx, dy;
   int src_bpr, dest_bpr, xstop, ystop, x, y, offset, i;
@@ -509,16 +510,16 @@ simage_resize_fast(unsigned char *src, int width,
 
 unsigned char *
 simage_resize(unsigned char * src, int width,
-	      int height, int num_comp,
-	      int newwidth, int newheight)
+              int height, int num_comp,
+              int newwidth, int newheight)
 {
   unsigned char * dstdata;
   Image * srcimg, * dstimg;
 
 #if 0 /* for comparing speed of resize functions */
   return simage_resize_fast(src, width,
-			    height, num_comp,
-			    newwidth, newheight);
+                            height, num_comp,
+                            newwidth, newheight);
 #endif /* testing only */
   srcimg = new_image(width, height, num_comp, src);
   dstimg = new_image(newwidth, newheight, num_comp, NULL);

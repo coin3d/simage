@@ -132,7 +132,6 @@ simage_jasper_load(const char * filename,
 {
   int width;
   int height;
-  int depth;
   int numcomps;
   int realnumcomp;
   int compno;

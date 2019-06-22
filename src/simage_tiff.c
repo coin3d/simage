@@ -602,7 +602,7 @@ simage_tiff_open(const char * filename,
         }
       }
   }
-  od->rowsize = TIFFScanlineSize(in);
+  od->rowsize = (int) TIFFScanlineSize(in);
   od->inbuf = (unsigned char *) malloc(od->rowsize * 4); /* *4 to support all formats */
 
   *width = od->w;
