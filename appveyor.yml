@@ -5,7 +5,7 @@ branches:
   - default
 
 #shallow clone does not work when subrepos are involved!
-shallow_clone: true
+shallow_clone: false
 
 environment:
   BB_AUTH_STRING:
