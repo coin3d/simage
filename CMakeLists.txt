@@ -474,7 +474,7 @@ endif()
 
 add_test(
   loaders
-  ${CMAKE_CURRENT_BINARY_DIR}/loaders
+  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/loaders
   ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.gif
   ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.jpg
   ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.png
