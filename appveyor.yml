@@ -131,7 +131,7 @@ after_build:
       set BUILD_ARCHIVE=%APPVEYOR_PROJECT_NAME%-1.7.1-%COMPILER_ID%-%CMAKE_PLATFORM%-%CMAKE_CONFIGURATION%.zip
       7z a -tzip %BUILD_ARCHIVE% Coin3D
       appveyor PushArtifact %BUILD_ARCHIVE%
-      cd cpack.d
+      cd build\cpack.d
       cpack --config windows.cmake
   - sh: |
       cd $APPVEYOR_BUILD_FOLDER
