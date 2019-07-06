@@ -48,6 +48,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_MODULE_PATH}")
 # ############################################################################
 
 option(SIMAGE_BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(SIMAGE_BUILD_DOCUMENTATION "Build and install API documentation (requires Doxygen)." OFF)
 if(WIN32)
   option(SIMAGE_USE_AVIENC "Use Video for Windows for AVI encoding" ON)
   option(SIMAGE_USE_GDIPLUS "Use GDI+ on Windows to load/save images" ON)
@@ -80,9 +81,13 @@ if(SIMAGE_USE_QIMAGE)
 endif()
 
 if(WIN32)
+  # On Windows GDI+ supports GIF, JPEG, EXIF, PNG, and TIFF.  
+  # see https://docs.microsoft.com/en-us/windows/desktop/gdiplus/-gdiplus-types-of-bitmaps-about
   find_package(GdiPlus)
   find_package(Vfw)
 elseif(APPLE)
+  # On macOS QuickTime supports BMP, GIF, JPEG, JPEG 2000, PNG, TIFF, and TGA.
+  # see https://en.wikipedia.org/wiki/QuickTime
   find_package(QuickTime)
 endif()
 find_package(Jasper)
@@ -102,13 +107,13 @@ if(APPLE AND SIMAGE_USE_CGIMAGE)
   " CGIMAGE_FOUND)
 endif()
 
-cmake_dependent_option(SIMAGE_AVIENC_SUPPORT "Enable support for avi encoding (Win32 only)" ON "SIMAGE_USE_AVIENC;VFW_FOUND" OFF)
-cmake_dependent_option(SIMAGE_CGIMAGE_SUPPORT "Use CGImage on OS X to load/save images" ON "APPLE;SIMAGE_USE_CGIMAGE;CGIMAGE_FOUND" OFF)
+cmake_dependent_option(SIMAGE_AVIENC_SUPPORT "Enable support for AVI encoding (Win32 only)" ON "SIMAGE_USE_AVIENC;VFW_FOUND" OFF)
+cmake_dependent_option(SIMAGE_CGIMAGE_SUPPORT "Use CGImage on macOS to load/save images" ON "APPLE;SIMAGE_USE_CGIMAGE;CGIMAGE_FOUND" OFF)
 cmake_dependent_option(SIMAGE_GDIPLUS_SUPPORT "Use GDI+ on Windows to load/save images" ON "SIMAGE_USE_GDIPLUS;GDIPLUS_FOUND" OFF)
 cmake_dependent_option(SIMAGE_LIBSNDFILE_SUPPORT "Use libsndfile to load/save sampled sound" ON "SNDFILE_FOUND" OFF)
 cmake_dependent_option(SIMAGE_OGGVORBIS_SUPPORT "Enable support for ogg/vorbis extensions" ON "OGGVORBIS_FOUND" OFF)
 cmake_dependent_option(SIMAGE_QIMAGE_SUPPORT "Use Qt's QImage to load/save images" ON "SIMAGE_USE_QIMAGE;QT_FOUND" OFF)
-cmake_dependent_option(SIMAGE_QUICKTIME_SUPPORT "Use QuickTime to load/save images" ON "SIMAGE_USE_QUICKTIME;QUICKTIME_FOUND" OFF)
+cmake_dependent_option(SIMAGE_QUICKTIME_SUPPORT "Use QuickTime on macOS to load/save images" ON "SIMAGE_USE_QUICKTIME;QUICKTIME_FOUND" OFF)
 
 option(SIMAGE_EPS_SUPPORT "Enable support for encapsulated postscript export" ON)
 option(SIMAGE_MPEG2ENC_SUPPORT "Enable support for mpeg2 encoding" ON)
@@ -172,11 +177,13 @@ if(WIN32)
 endif()
 
 if(NOT SIMAGE_QUICKTIME_SUPPORT AND NOT SIMAGE_CGIMAGE_SUPPORT AND NOT SIMAGE_GDIPLUS_SUPPORT)
+  find_package(ZLIB)
   find_package(GIF)
   find_package(JPEG)
   find_package(PNG)
   find_package(TIFF)
 
+  set(HAVE_ZLIB ${ZLIB_FOUND})
   set(HAVE_GIFLIB ${GIF_FOUND})
   set(HAVE_JPEGLIB ${JPEG_FOUND})
   set(HAVE_PNGLIB ${PNG_FOUND})
@@ -482,6 +489,48 @@ add_test(
   ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.tga
   ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.tif
 )
+
+# Add a target to generate API documentation with Doxygen
+if(SIMAGE_BUILD_DOCUMENTATION)
+  find_package(Doxygen)
+  if(NOT DOXYGEN_FOUND)
+    message(FATAL_ERROR "Doxygen is needed to build the documentation.")
+  endif()
+
+# ############################################################################
+# Setup documentation options
+# ############################################################################
+  set(GENERATE_HTMLHELP NO)
+  set(DOXYGEN_GENERATE_MAN NO)
+  set(GENERATE_QHP NO)
+  set(GENERATE_TREEVIEW YES)
+  set(DOXYGEN_INTERNAL_DOCS NO)
+  set(DOXYGEN_EXTRACT_PRIVATE NO)
+  set(DOXYGEN_WARN_IF_UNDOCUMENTED YES)
+  set(DOXYGEN_EXCLUDE)
+
+  set(DOXYFILE "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile")
+  set(DOXYGEN_OUTPUT "${CMAKE_BINARY_DIR}/html/index.html")
+  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/docs/simage.doxygen.cmake.in" ${DOXYFILE} @ONLY)
+
+# ############################################################################
+# Setup documentation targets
+# ############################################################################
+  add_custom_command(
+    OUTPUT ${DOXYGEN_OUTPUT}
+    COMMAND ${CMAKE_COMMAND} -E echo_append "Generating API documentation with Doxygen "
+    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE}
+    COMMAND ${CMAKE_COMMAND} -E echo "done."
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+    DEPENDS ${DOXYFILE}
+  )
+  add_custom_target(documentation ALL DEPENDS ${DOXYGEN_OUTPUT})
+
+# ############################################################################
+# Install built documentation files
+# ############################################################################
+  install(DIRECTORY "${CMAKE_BINARY_DIR}/html" DESTINATION ${CMAKE_INSTALL_DOCDIR} COMPONENT documentation REGEX ".*\\.(chm|qch)" EXCLUDE)
+endif()
 
 # ############################################################################
 # Install headers
