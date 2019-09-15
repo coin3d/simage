@@ -59,6 +59,20 @@ endif()
 option(SIMAGE_USE_QIMAGE "Use Qt's QImage to load/save images" OFF)
 cmake_dependent_option(SIMAGE_USE_QT5 "Prefer Qt5 over Qt4 if available" ON "SIMAGE_USE_QIMAGE" OFF)
 
+function(report_prepare)
+  set(multiValueArgs IF_APPLE IF_WIN32)
+  cmake_parse_arguments(REPORT "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+  if (REPORT_IF_APPLE AND APPLE) 
+    list(APPEND res ${REPORT_IF_APPLE})
+  endif()
+  if (REPORT_IF_WIN32 AND WIN32) 
+    list(APPEND res ${REPORT_IF_WIN32})
+  endif()
+  list(APPEND res ${REPORT_UNPARSED_ARGUMENTS})
+  list(APPEND PACKAGE_OPTIONS ${res} )
+  set(PACKAGE_OPTIONS "${PACKAGE_OPTIONS}" PARENT_SCOPE)
+endfunction(report_prepare)
+
 # ############################################################################
 # Find all necessary and optional simage dependencies
 # ############################################################################
@@ -123,6 +137,26 @@ if(NOT SIMAGE_QUICKTIME_SUPPORT AND NOT SIMAGE_CGIMAGE_SUPPORT)
   option(SIMAGE_TGA_SUPPORT "Enable support for Targa images" ON)
 endif()
 option(SIMAGE_XWD_SUPPORT "Enable support for XWD images (experimental)" OFF)
+
+report_prepare(
+  SIMAGE_BUILD_SHARED_LIBS
+  SIMAGE_BUILD_DOCUMENTATION
+  SIMAGE_USE_QIMAGE
+  SIMAGE_USE_QT5
+  SIMAGE_LIBSNDFILE_SUPPORT
+  SIMAGE_OGGVORBIS_SUPPORT
+  SIMAGE_QIMAGE_SUPPORT
+  SIMAGE_EPS_SUPPORT
+  SIMAGE_MPEG2ENC_SUPPORT
+  SIMAGE_PIC_SUPPORT
+  SIMAGE_RGB_SUPPORT
+  SIMAGE_TGA_SUPPORT
+  SIMAGE_XWD_SUPPORT
+  IF_WIN32 
+    SIMAGE_USE_AVIENC SIMAGE_USE_GDIPLUS SIMAGE_AVIENC_SUPPORT SIMAGE_GDIPLUS_SUPPORT
+  IF_APPLE 
+    SIMAGE_USE_CGIMAGE SIMAGE_USE_QUICKTIME SIMAGE_CGIMAGE_SUPPORT SIMAGE_QUICKTIME_SUPPORT
+)
 
 # ##########################################################################
 # Setup build environment
