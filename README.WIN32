@@ -1,3 +1,18 @@
+============================================================================
+==                       BUILDING SIMAGE ON WINDOWS                       ==
+============================================================================
+
+Building Simage on Windows is done by using the CMake build configuration.
+Check out the detailed build instructions in the INSTALL file of the Coin
+installation directory.
+
+The Autotools build system is still maintained but at a significantly lower
+priority.
+
+============================================================================
+==            OLD INFORMATION ON BUILDING SIMAGE ON WINDOWS               ==
+============================================================================
+
 NEWSFLASH
 
 You can now build simage the same way you build Coin, by using

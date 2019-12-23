@@ -1,0 +1,864 @@
+2019-11-09 14:21 +0100  Giampiero Gabbiani  <giampiero@gabbiani.org>  (afd8852f40c8 [tip])
+
+	* .hgsubstate:
+	Updated to last cpack.d for centOS and RHEL support
+
+2019-09-22 00:29 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (e89b6e59a403)
+
+	* .hgsubstate:
+	Updated cpack.d release
+
+2019-09-15 17:58 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (9510168cf1ea)
+
+	* .hgsubstate:
+	Updated to last cpack.d changes
+
+2019-09-15 08:16 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (d18e0301e1a4)
+
+	* Merged in ggabbiani/simage-new-fork/cpack.d-update (pull request
+	#25)
+
+	Cpack.d update
+
+2019-09-15 08:16 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (c0500cf46d20 <cpack.d-update>)
+
+	* Close branch cpack.d-update
+
+2019-09-15 09:44 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (7162d5877792 <cpack.d-update>)
+
+	* .hgsubstate:
+	Updated to latest cpack.d
+
+2019-09-15 09:43 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (7b394fd62aee <cpack.d-update>)
+
+	* CMakeLists.txt:
+	Updated for cpack.d options report feature
+
+2019-07-06 12:10 +0200  Volker Enderlein  <volkerenderlein@hotmail.com>  (1f8d15502095)
+
+	* CMakeLists.txt, docs/doxygen/Coin_logo.png,
+	docs/doxygen/footer.html, docs/doxygen/header.html,
+	docs/doxygen/stylesheet.css:
+	Added generation of Doxygen documentation.
+
+2019-07-01 18:55 +0000  Volker Enderlein  <volkerenderlein@hotmail.com>  (2486cc2e8238)
+
+	* appveyor.yml:
+	Setup entire build matrix for debug and release versions.
+
+2019-07-01 18:26 +0000  Volker Enderlein  <volkerenderlein@hotmail.com>  (9dae6f83da6a)
+
+	* appveyor.yml:
+	Fixed cpack.d path.
+
+2019-07-01 18:16 +0000  Volker Enderlein  <volkerenderlein@hotmail.com>  (38c6fb13850e)
+
+	* appveyor.yml:
+	Added CPack call in AppVeyor script.
+
+2019-06-30 16:58 +0000  Volker Enderlein  <volkerenderlein@hotmail.com>  (12a0cf8db0d0)
+
+	* appveyor.yml:
+	Upload to Coin3D download area from AppVeyor CI script.
+
+2019-06-25 00:54 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (687e85e82fbc)
+
+	* .hgsubstate:
+	Update cpack.d
+
+2019-06-24 18:49 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (a0d4decd9efe)
+
+	* CMakeLists.txt:
+	Fixed runtime path for ctest.
+
+2019-06-22 14:30 +0000  Volker Enderlein  <volkerenderlein@hotmail.com>  (54672f1d778e)
+
+	* Merged in VolkerEnderlein/simage/cmakerestruct (pull request #22)
+
+	Cmakerestruct
+
+2019-06-22 14:30 +0000  Volker Enderlein  <volkerenderlein@hotmail.com>  (a45d23680eb5 <cmakerestruct>)
+
+	* Close branch cmakerestruct
+
+2019-06-22 16:26 +0200  Volker Enderlein  <volkerenderlein@hotmail.com>  (bbef572f057f <cmakerestruct>)
+
+	* CMakeLists.txt:
+	Streamlining CMake script with other repos.
+
+2019-06-22 14:09 +0000  Volker Enderlein  <volkerenderlein@hotmail.com>  (a22def2ac28e)
+
+	* appveyor.yml:
+	Disable shallow clone because of subrepos.
+
+2019-06-22 13:19 +0000  Volker Enderlein  <volkerenderlein@hotmail.com>  (b72799a2770c)
+
+	* appveyor.yml: new file.
+	* Merged in VolkerEnderlein/simage/appveyorci (pull request #21)
+
+	Added appveyor.yml script
+
+2019-06-22 13:16 +0000  Volker Enderlein  <volkerenderlein@hotmail.com>  (027a443ea094)
+
+	* Merged in VolkerEnderlein/simage/fixwarnings (pull request #20)
+
+	Fixed indentation errors and conversion warnings
+
+2019-06-22 13:19 +0000  Volker Enderlein  <volkerenderlein@hotmail.com>  (797cf28a00a0 <appveyorci>)
+
+	* Close branch appveyorci
+
+2019-06-22 13:16 +0000  Volker Enderlein  <volkerenderlein@hotmail.com>  (5302ee6b3cf2 <fixwarnings>)
+
+	* Close branch fixwarnings
+
+2019-06-22 15:18 +0200  Volker Enderlein  <volkerenderlein@hotmail.com>  (750ad11ccd08 <appveyorci>)
+
+	* appveyor.yml: new file.
+	* appveyor.yml:
+	Added appveyor.yml script
+
+2019-06-22 15:12 +0200  Volker Enderlein  <volkerenderlein@hotmail.com>  (fbc9b5962b06 <fixwarnings>)
+
+	* examples/img2avi.c, examples/simage-convert.c, examples/simage-read-
+	line-test.c, mpeg2enc/ratectl.c, mpeg2enc/readpic.c, simage-
+	config.cmake.in, simage.pc.cmake.in, src/avi_encode.c, src/resize.c,
+	src/simage_eps.c, src/simage_gdiplus.cpp, src/simage_gif.c,
+	src/simage_jasper.c, src/simage_png.c, src/simage_qimage.cpp,
+	src/simage_rgb.c, src/simage_tiff.c:
+	Fixed indentation errors. Fixed numerous conversion warnings.
+
+2019-06-19 18:02 +0000  Volker Enderlein  <volkerenderlein@hotmail.com>  (5a1272cd78c8)
+
+	* CMakeLists.txt:
+	Fixed access to non existent CMake variable.
+
+2019-06-15 22:47 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (4ec0be69ed55)
+
+	* .hgsubstate:
+	synchronized cpack.d subrepo
+
+2019-02-03 18:09 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (2a7542b6c4b9)
+
+	* Merged in ggabbiani/simage-fork/fix-sub-cpack.d (pull request #18)
+
+	fixed cpack.d sub repo as relative
+
+2019-02-03 18:09 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (33cff67885ae <fix-sub-cpack.d>)
+
+	* Close branch fix-sub-cpack.d
+
+2019-02-03 18:59 +0100  Giampiero Gabbiani  <giampiero@gabbiani.org>  (b9567b4daf0c <fix-sub-cpack.d>)
+
+	* .hgsubstate:
+	updated cpack.d
+
+2019-02-03 14:51 +0100  Giampiero Gabbiani  <giampiero@gabbiani.org>  (35e8622766da <fix-sub-cpack.d>)
+
+	* .hgsub:
+	fixed cpack.d sub repo as relative
+
+2018-10-27 17:21 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (146ceef3b157)
+
+	* Merged in ggabbiani/simage-fork/cpack.d-move (pull request #17)
+
+	cpack.d moved from ggabbiani to coin3d
+
+2018-10-27 17:21 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (65c4d7e38385 <cpack.d-move>)
+
+	* Close branch cpack.d-move
+
+2018-10-27 09:11 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (1b7d7ee024ec <cpack.d-move>)
+
+	* .hgsub, .hgsubstate:
+	cpack.d moved from ggabbiani to coin3d
+
+2018-10-25 23:01 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (718d7a73f966)
+
+	* CMakeLists.txt:
+	Merged in ggabbiani/simage/cpack-update (pull request #15)
+
+	updated for new cpack.d windows support
+
+	Approved-by: Volker Enderlein <volkerenderlein@hotmail.com>
+
+2018-10-25 23:01 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (9170dd4c304d <cpack-update>)
+
+	* Close branch cpack-update
+
+2018-10-21 01:29 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (f0858291e3f1 <cpack-update>)
+
+	* .hgsubstate, CMakeLists.txt:
+	updated for new cpack.d windows support
+
+2018-10-25 22:04 +0000  Volker Enderlein  <volkerenderlein@hotmail.com>  (232180b95779)
+
+	* simage.pc.cmake.in, simage.rc.cmake.in: new file.
+	* Merged in VolkerEnderlein/simage/configpackage (pull request #16)
+
+	Configpackage
+
+2018-10-25 22:04 +0000  Volker Enderlein  <volkerenderlein@hotmail.com>  (b92e294a9c07 <configpackage>)
+
+	* Close branch configpackage
+
+2018-10-25 23:32 +0200  Volker Enderlein  <volkerenderlein@hotmail.com>  (f233c4c6ccbf <configpackage>)
+
+	* CMakeLists.txt:
+	Introduced variable for config package.
+
+2018-10-25 23:31 +0200  Volker Enderlein  <volkerenderlein@hotmail.com>  (3e19e0804cc7 <configpackage>)
+
+	* simage.pc.cmake.in: new file.
+	* simage.pc.cmake.in:
+	Added pkg config file (*.pc).
+
+2018-10-25 23:30 +0200  Volker Enderlein  <volkerenderlein@hotmail.com>  (e003181747dc <configpackage>)
+
+	* simage.rc.cmake.in: new file.
+	* simage.rc.cmake.in:
+	Provided correct web address for Coin3D in rc file.
+
+2018-10-25 23:23 +0200  Volker Enderlein  <volkerenderlein@hotmail.com>  (37cacb273172 <configpackage>)
+
+	* simage-config.cmake.in:
+	Updated config package.
+
+2018-08-21 11:47 +0000  Bastiaan Veelo  <Bastiaan@SARC.nl>  (0d0c31d61201)
+
+	* Merged in ggabbiani/simage/new-pipeline (pull request #14)
+
+	New pipeline
+
+2018-08-07 09:50 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (f1bc8a557077 <new-pipeline>)
+
+	* bitbucket-pipelines.yml:
+	added the artifacts.list inside tarball
+
+2018-08-07 01:17 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (21e839d64029 <new-pipeline>)
+
+	* bitbucket-pipelines.yml:
+	modified pipeline to new docker image format
+
+2018-06-27 07:54 +0000  Bastiaan Veelo  <Bastiaan@SARC.nl>  (194ff9c6293e)
+
+	* Merged in ggabbiani/simage-subcpack/subcpack (pull request #13)
+
+	Subcpack
+
+2018-06-26 22:38 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (3048bd0d4330 <subcpack>)
+
+	* .hgsubstate:
+	fixed .hgsub and updated .hgstate
+
+2018-06-26 22:36 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (57a09da81354 <subcpack>)
+
+	* .hgsub:
+	fixed cpack.d sub repo
+
+2018-06-24 14:02 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (b76ff007f007 <subcpack>)
+
+	* .hgsubstate:
+	updated to last cpack.d version
+
+2018-06-24 12:14 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (d2db04bc5001 <subcpack>)
+
+	* .hgsubstate:
+	cpack.d update
+
+2018-06-24 10:42 +0000  Bastiaan Veelo  <Bastiaan@SARC.nl>  (298cd1313084)
+
+	* Merged in ggabbiani/simage-subcpack/subcpack (pull request #12)
+
+	Subcpack
+
+2018-06-23 09:25 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (cae3c6b4b0b3 <subcpack>)
+
+	* bitbucket-pipelines.yml:
+	remove release specific reference
+
+2018-06-23 00:32 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (730dbfab3358 <subcpack>)
+
+	* .hgsubstate:
+	cpack.d udpate
+
+2018-06-21 21:54 +0000  Bastiaan Veelo  <Bastiaan@SARC.nl>  (12864529cfe5)
+
+	* .hgsub, .hgsubstate, packaging/description-summary.txt: new file.
+	* cpack.d/CMakeLists.txt, cpack.d/README, cpack.d/commons.cmake.in,
+	cpack.d/debian.cmake.in, cpack.d/fedora.cmake.in,
+	cpack.d/fedora_post_uninstall.sh, cpack.d/linux-tools.cmake.in,
+	cpack.d/readme-file.txt: deleted file.
+	* cpack.d/CMakeLists.txt, cpack.d/README, cpack.d/commons.cmake.in,
+	cpack.d/debian.cmake.in, cpack.d/fedora.cmake.in,
+	cpack.d/fedora_post_uninstall.sh, cpack.d/linux-tools.cmake.in,
+	cpack.d/readme-file.txt:
+	Merged in ggabbiani/simage-subcpack/subcpack (pull request #11)
+
+	cpack.d as a mercurial sub repository
+
+2018-06-21 23:22 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (64f4ce784bb3 <subcpack>)
+
+	* .hgsubstate:
+	updated notes
+
+2018-06-19 01:16 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (c8cebd888119 <subcpack>)
+
+	* .hgsubstate:
+	some fixes
+
+2018-06-19 01:10 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (16c0fbdbfe92 <subcpack>)
+
+	* .hgsubstate:
+	some fixes on cpack.d
+
+2018-06-17 15:25 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (e520e82f152a <subcpack>)
+
+	* .hgsubstate:
+	fixed doc
+
+2018-06-17 15:09 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (0c0eca094a84 <subcpack>)
+
+	* CMakeLists.txt:
+	added legacy compatibility statements
+
+2018-06-17 15:06 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (72980fec27ed <subcpack>)
+
+	* packaging/description-summary.txt: new file.
+	* packaging/description-summary.txt:
+	first import
+
+2018-06-17 10:40 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (eb2b2f6de11b <subcpack>)
+
+	* .hgsub, .hgsubstate: new file.
+	* .hgsub, .hgsubstate:
+	second try
+
+2018-06-17 10:36 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (385a58fa8035 <subcpack>)
+
+	* cpack.d/CMakeLists.txt, cpack.d/README, cpack.d/commons.cmake.in,
+	cpack.d/debian.cmake.in, cpack.d/fedora.cmake.in,
+	cpack.d/fedora_post_uninstall.sh, cpack.d/linux-tools.cmake.in,
+	cpack.d/readme-file.txt: deleted file.
+	* cpack.d/CMakeLists.txt, cpack.d/README, cpack.d/commons.cmake.in,
+	cpack.d/debian.cmake.in, cpack.d/fedora.cmake.in,
+	cpack.d/fedora_post_uninstall.sh, cpack.d/linux-tools.cmake.in,
+	cpack.d/readme-file.txt:
+	removed local cpack.d
+
+2018-06-02 13:42 +0000  Bastiaan Veelo  <Bastiaan@SARC.nl>  (fe35f1358e93)
+
+	* Merged in ggabbiani/simage/cpack.d (pull request #10)
+
+	Cpack.d
+
+2018-06-02 08:42 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (16f422e9f798 <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	moved to manual trigger for build time saving
+
+2018-06-02 08:38 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (5ea3cc907b70 <cpack.d>)
+
+	* CMakeLists.txt:
+	added legacy cpack statements for backward compatibility
+
+2018-05-26 09:00 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (8e3e0689a130 <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	removed debug echo(es) and moved package creation into 'release'
+	branch
+
+2018-05-25 09:47 +0000  Coin3D  <coin3d.org@gmail.com>  (e901ac0b4737)
+
+	* Merged in ggabbiani/simage/cpack.d (pull request #9)
+
+	Cpack.d
+
+2018-05-25 00:23 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (843b23705d27 <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	added test echo(s) on default and cpack.d branches for the ubuntu
+	pipeline
+
+2018-05-25 00:14 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (221bd3afb9f0 <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	new test
+
+2018-05-25 00:12 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (c2d388d029d7 <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	test2
+
+2018-05-25 00:10 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (e77f66a745af <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	test
+
+2018-05-24 21:37 +0000  Coin3D  <coin3d.org@gmail.com>  (0683271b8197)
+
+	* Initial Bitbucket Pipelines configuration
+
+2018-05-24 21:35 +0000  Coin3D  <coin3d.org@gmail.com>  (244bcf6ef931)
+
+	* bitbucket-pipelines.yml, cpack.d/CMakeLists.txt, cpack.d/README,
+	cpack.d/commons.cmake.in, cpack.d/debian.cmake.in,
+	cpack.d/fedora.cmake.in, cpack.d/fedora_post_uninstall.sh, cpack.d
+	/linux-tools.cmake.in, cpack.d/readme-file.txt: new file.
+	* Merged in ggabbiani/simage/cpack.d (pull request #8)
+
+	cpack.d with pipelines
+
+2018-05-23 11:37 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (2f2954c62dad <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	inserted ubuntu build on cpack.d branch
+
+2018-05-23 11:27 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (0ba8b29f6f51 <cpack.d>)
+
+	* cpack.d/linux-tools.cmake.in: new file.
+	* cpack.d/debian.cmake.in, cpack.d/fedora.cmake.in, cpack.d/linux-
+	tools.cmake.in:
+	added linux-tools.cmake.in
+
+2018-05-23 11:27 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (65509f7fcb6b <cpack.d>)
+
+	* CMakeLists.txt:
+	removed legacy package generator
+
+2018-05-22 01:58 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (902c9816293c <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	update
+
+2018-05-22 01:57 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (8853de0e9193 <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	update
+
+2018-05-22 01:53 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (530724ee1c87 <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	update
+
+2018-05-22 01:47 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (3c02afec0c9e <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	new pipeline for test branch
+
+2018-05-14 08:04 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (ed3360c333ed <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	used default branch
+
+2018-05-13 10:37 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (f1e10bdadeee <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	fixed artifacts.list cat
+
+2018-05-13 10:14 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (0c89e352a17c <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	pipeline definition for default branch
+
+2018-05-13 10:13 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (9653d93bfbf5 <cpack.d>)
+
+	* cpack.d/debian.cmake.in, cpack.d/fedora.cmake.in:
+	some comments to macro
+
+2018-05-07 07:33 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (2aca1b89b4af <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	fixed artifacts.list cat
+
+2018-05-07 07:56 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (adcf8ef6fdab <cpack.d>)
+
+	* bitbucket-pipelines.yml, cpack.d/debian.cmake.in,
+	cpack.d/fedora.cmake.in:
+	generation of artifacts.list and upload of last artifacts
+
+2018-05-06 08:48 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (78766247f7d6 <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	update
+
+2018-05-05 06:43 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (cb98a99f19fb <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	bitbucket-pipelines.yml edited online with Bitbucket
+
+2018-05-05 06:39 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (d63658055f3b <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	bitbucket-pipelines.yml edited online with Bitbucket
+
+2018-05-05 06:32 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (ecafcc01cdd8 <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	bitbucket-pipelines.yml edited online with Bitbucket
+
+2018-05-05 06:30 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (e5a01a414b42 <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	bitbucket-pipelines.yml edited online with Bitbucket
+
+2018-05-05 06:25 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (023e87f4a9ae <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	bitbucket-pipelines.yml edited online with Bitbucket
+
+2018-05-04 16:54 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (4defd9e20595 <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	bitbucket-pipelines.yml edited online with Bitbucket
+
+2018-05-04 15:23 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (5e7cea2f7cae <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	bitbucket-pipelines.yml edited online with Bitbucket
+
+2018-05-04 15:15 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (8180211f078b <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	bitbucket-pipelines.yml edited online with Bitbucket
+
+2018-05-04 14:29 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (15c3ff82fe39 <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	bitbucket-pipelines.yml edited online with Bitbucket
+
+2018-05-04 14:22 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (ee7c16342007 <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	bitbucket-pipelines.yml edited online with Bitbucket
+
+2018-05-04 13:42 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (80fcd844d0ca <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	bitbucket-pipelines.yml edited online with Bitbucket
+
+2018-05-04 13:36 +0000  Giampiero Gabbiani  <giampiero@gabbiani.org>  (2937962cb36c <cpack.d>)
+
+	* bitbucket-pipelines.yml:
+	bitbucket-pipelines.yml edited online with Bitbucket
+
+2018-05-04 15:19 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (5ec5e53e13e7 <cpack.d>)
+
+	* bitbucket-pipelines.yaml: deleted file.
+	* bitbucket-pipelines.yaml:
+	update
+
+2018-05-04 15:19 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (3d5701ff3252 <cpack.d>)
+
+	* bitbucket-pipelines.yml: new file.
+	* bitbucket-pipelines.yml:
+	update
+
+2018-05-04 15:17 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (b65e2538ba83 <cpack.d>)
+
+	* bitbucket-pipelines.yaml: new file.
+	* bitbucket-pipelines.yaml:
+	test
+
+2018-04-19 08:14 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (59273265020b <cpack.d>)
+
+	* cpack.d/debian.cmake.in:
+	fixed missing architecture in the generated package names
+
+2018-04-12 01:27 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (d20f7fe19113 <cpack.d>)
+
+	* cpack.d/CMakeLists.txt, cpack.d/README, cpack.d/commons.cmake.in,
+	cpack.d/debian.cmake.in, cpack.d/fedora.cmake.in,
+	cpack.d/fedora_post_uninstall.sh, cpack.d/readme-file.txt: new file.
+	* cpack.d/CMakeLists.txt, cpack.d/README, cpack.d/commons.cmake.in,
+	cpack.d/debian.cmake.in, cpack.d/fedora.cmake.in,
+	cpack.d/fedora_post_uninstall.sh, cpack.d/readme-file.txt:
+	added cpack.d
+
+2018-04-12 01:25 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (b9d7c0074c57 <cpack.d>)
+
+	* CMakeLists.txt:
+	included cpack.d
+
+2018-03-12 18:57 +0000  Bastiaan Veelo  <Bastiaan@SARC.nl>  (3bd369da8f08)
+
+	* Merged in raphael_grimm/simage/fix_new_giflib (pull request #7)
+
+	Fix new giflib
+
+2018-03-01 08:19 +0100  Raphael Grimm  <raphael.grimm@kit.edu>  (3a3cc48dd02a <fix_new_giflib>)
+
+	* src/simage_gif.c:
+	Fix compile issues for new giflib versions
+
+2018-03-01 07:13 +0000  barcode  <raphael.grimm@kit.edu>  (686f9094a11a <fix_new_giflib>)
+
+	* Created new branch fix_new_giflib
+
+2018-03-12 18:54 +0000  Bastiaan Veelo  <Bastiaan@SARC.nl>  (d2a9ab528285)
+
+	* Merged in ggabbiani/simage/cpack-fix (pull request #6)
+
+	fixed cpack generation and increased minimum cmake level
+
+2018-02-16 20:06 +0100  Giampiero Gabbiani  <giampiero@gabbiani.org>  (73eca114228b <cpack-fix>)
+
+	* CMakeLists.txt:
+	fixed cpack generation and increased minimum cmake level
+
+2017-09-28 07:27 +0000  Bastiaan Veelo  <Bastiaan@SARC.nl>  (cf953eacd849)
+
+	* Merged in ggabbiani/simage/libpng1.6 (pull request #5)
+
+	libpng1.6 support
+
+2017-08-29 01:36 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (1954820555a8 <libpng1.6>)
+
+	* src/simage_png.c:
+	fixed comment
+
+2017-08-29 01:28 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (a877e69c0387 <libpng1.6>)
+
+	* src/simage_png.c:
+	Starting from libpng v1.4.0beta93 direct access to the contents of
+	the struct png_struct are deprecated, and from 1.5.0beta01 the
+	declaration of the same struct has been moved into private header
+	file. In order to call setjmp you must use the new png_jmpbuf()
+	macro.
+
+2017-08-29 01:25 +0200  Giampiero Gabbiani  <giampiero@gabbiani.org>  (b03b66ac8f90 <libpng1.6>)
+
+	* update for libpng v1.6 support
+
+2017-07-09 17:49 +0200  Mario Koerner  <Mario.Koerner@gmx.de>  (1307f6e9bd94)
+
+	* CMakeLists.txt:
+	Add postfix for static and debug build only on Windows.
+
+2017-06-25 18:22 +0200  Mario Koerner  <Mario.Koerner@gmx.de>  (79310d929add)
+
+	* CMakeLists.txt, simage-config.cmake.in:
+	Add dependency on gdiplus only when SIMAGE_GDIPLUS_SUPPORT is
+	defined. Added Qt5Gui to cmake package configuration.
+
+2017-06-25 16:24 +0200  Mario Koerner  <Mario.Koerner@gmx.de>  (5bc7547342e6)
+
+	* CMakeLists.txt:
+	Added (Qt)Gui components of QT (required to find qimage.h for
+	SIMAGE_QIMAGE_SUPPORT)
+
+2017-06-23 21:11 +0200  Mario Koerner  <Mario.Koerner@gmx.de>  (e7de130278b3)
+
+	* simage-config.cmake.in:
+	Make sure that set(simage_DEFINITIONS "-DSIMAGE_DLL") is set
+	correctly in projects using simage.
+
+2017-06-23 09:38 +0200  Mario Koerner  <mario.koerner@gmx.de>  (7f60d5fbf8bc)
+
+	* CMakeLists.txt, simage-config.cmake.in:
+	Adapted simage target name according to convention for Coin.dll;
+	link Qt only if Qimage support is selected.
+
+2017-05-14 22:10 +0200  Markus Rickert  <rickert@fortiss.org>  (23d45788383c)
+
+	* FindGdiPlus.cmake, FindVfw.cmake:
+	Minor fix
+
+2017-05-14 16:42 +0200  Markus Rickert  <rickert@fortiss.org>  (4728fb648b86)
+
+	* CMakeLists.txt, FindGdiPlus.cmake, FindVfw.cmake:
+	Find GdiPlus and Vfw outside of developer command prompt using
+	registry keys
+
+2017-05-05 20:58 +0200  Markus Rickert  <rickert@fortiss.org>  (6756055dc007)
+
+	* CMakeLists.txt:
+	Fix CPACK_PACKAGE_VERSION_*
+
+2016-06-14 23:39 +0200  Markus Rickert  <rickert@fortiss.org>  (feb657f8621f)
+
+	* CMakeLists.txt:
+	Use position-independent code (PIC) for static library
+
+2016-06-02 02:02 +0200  Markus Rickert  <rickert@fortiss.org>  (d24b77f8658f)
+
+	* CMakeLists.txt, FindGdiPlus.cmake, FindOggVorbis.cmake,
+	FindSndfile.cmake, FindVfw.cmake, config.h.cmake.in, simage-
+	config.cmake.in: new file.
+	* CMakeLists.txt, FindGdiPlus.cmake, FindOggVorbis.cmake,
+	FindSndfile.cmake, FindVfw.cmake, config.h.cmake.in, simage-
+	config.cmake.in:
+	Add CMake build files
+
+2010-03-22 21:00 +0100  Tamer Fahmy  <tamer@sim.no>  (2c958a61ea8b)
+
+	* docs/simage.doxygen.in:
+	remove SIMAGE_DLL_API from output.
+
+2010-03-22 20:52 +0100  Tamer Fahmy  <tamer@sim.no>  (96f0c1f89510)
+
+	* Makefile.in, configure, guile/Makefile.in, html/Makefile.in,
+	mpeg2enc/Makefile.in, src/Makefile.in:
+	bootstrap.
+
+2010-03-22 20:52 +0100  Tamer Fahmy  <tamer@sim.no>  (5ef326accdd4)
+
+	* include/simage.h:
+	doxygenify existing documentation.
+
+2010-03-22 20:51 +0100  Tamer Fahmy  <tamer@sim.no>  (f30994d4604c)
+
+	* docs/simage.doxygen.in:
+	various tweaks for suiting simage documentation.
+
+2010-03-22 20:49 +0100  Tamer Fahmy  <tamer@sim.no>  (65ef1e68d322)
+
+	* configure.ac:
+	do not treat simage.h as autoconf header.
+
+2010-03-22 18:40 +0100  Tamer Fahmy  <tamer@sim.no>  (d1c4571322ea)
+
+	* include/simage.h: new file.
+	* include/simage.h.in: deleted file.
+	* include/simage.h, include/simage.h.in:
+	simage.h doesn't contain any acsubstable entries.
+
+2010-03-22 18:33 +0100  Tamer Fahmy  <tamer@sim.no>  (297f3fccf9cf)
+
+	* docs/simage.doxygen.in:
+	fix cut and paste error.
+
+2010-03-22 18:12 +0100  Tamer Fahmy  <tamer@sim.no>  (954fd111aa58)
+
+	* configure, configure.ac:
+	expand prefix.
+
+2010-03-22 18:06 +0100  Tamer Fahmy  <tamer@sim.no>  (c6c0b62b37c7)
+
+	* html/Makefile.in: new file.
+	* html/Makefile.in:
+	add missing autoconf file.
+
+2010-03-22 18:06 +0100  Tamer Fahmy  <tamer@sim.no>  (24daffc63d71)
+
+	* docs/simage.doxygen.in: new file.
+	* docs/simage.doxygen.in:
+	added simage doxygen config file.
+
+2010-03-22 17:49 +0100  Tamer Fahmy  <tamer@sim.no>  (b1661cd67897)
+
+	* Makefile.in, aclocal.m4, configure, guile/Makefile.in,
+	mpeg2enc/Makefile.in, src/Makefile.in:
+	bootstrap.
+
+2010-03-22 17:49 +0100  Tamer Fahmy  <tamer@sim.no>  (aea325103a81)
+
+	* html/Makefile.am:
+	remove MAC_FRAMEWORK setup.
+
+2010-03-22 17:48 +0100  Tamer Fahmy  <tamer@sim.no>  (e0d1be2652c3)
+
+	* cfg/doxy4win.pl, docs/doxygen/Coin_logo.png,
+	docs/doxygen/footer.html, docs/doxygen/header.html,
+	docs/doxygen/stylesheet.css, html/Makefile.am: new file.
+	* Makefile.am, cfg/doxy4win.pl, configure.ac,
+	docs/doxygen/Coin_logo.png, docs/doxygen/footer.html,
+	docs/doxygen/header.html, docs/doxygen/stylesheet.css,
+	html/Makefile.am:
+	add doxygen setup.
+
+2010-03-06 22:37 +0100  Tamer Fahmy  <tamer@sim.no>  (227df82d1b64)
+
+	* mpeg2enc/api.c:
+	suncc compile fixes.
+
+2010-03-05 22:14 +0100  Tamer Fahmy  <tamer@sim.no>  (4b1c916d210d)
+
+	* examples/simage-convert.c, examples/simage-read-line-test.c,
+	guile/guilesimage.c, guile/guilesimage.h, guile/simage-convert.scm,
+	guile/simage.scm, packaging/windows/heading.nsi.in:
+	copyright updates.
+
+2010-03-05 21:51 +0100  Tamer Fahmy  <tamer@sim.no>  (23efb2256cca)
+
+	* build/simage.iwz.in:
+	SIM -> KOGT.
+
+2010-03-05 21:45 +0100  Tamer Fahmy  <tamer@sim.no>  (ebbb248df74e)
+
+	* LICENSE, LICENSE.mpeg2enc: new file.
+	* include/stamp-h2.in, stamp-h.in, stamp-h1.in: deleted file.
+	* include/stamp-h2.in, stamp-h.in, stamp-h1.in:
+	Automated merge with https://hg.sim.no/simage/default
+
+2010-03-05 21:45 +0100  Tamer Fahmy  <tamer@sim.no>  (9faa74a548a3)
+
+	* LICENSE, LICENSE.mpeg2enc: new file.
+	* include/stamp-h2.in, stamp-h.in, stamp-h1.in: deleted file.
+	* AUTHORS, COPYING, LICENSE, LICENSE.mpeg2enc, Makefile.am,
+	Makefile.in, README.WIN32, build/simage.spec.in,
+	examples/audio2raw.c, examples/img2avi.c, examples/mpeg2enc.cpp,
+	examples/simage-convert.c, examples/simage-read-line-test.c,
+	include/avi_encode.h, include/simage.h.in, include/simage_avi.h,
+	include/simage_cgimage.h, include/simage_eps.h,
+	include/simage_gdiplus.h, include/simage_gif.h,
+	include/simage_jasper.h, include/simage_jpeg.h,
+	include/simage_libsndfile.h, include/simage_oggvorbis.h,
+	include/simage_pic.h, include/simage_png.h,
+	include/simage_private.h, include/simage_qimage.h,
+	include/simage_quicktime.h, include/simage_rgb.h,
+	include/simage_tga.h, include/simage_tiff.h, include/simage_xwd.h,
+	include/stamp-h2.in, packaging/debian/copyright.in, simage-config,
+	src/Makefile.am, src/Makefile.in, src/avi_encode.c, src/movie.c,
+	src/params.c, src/resize.c, src/simage.c, src/simage12.c,
+	src/simage13.c, src/simage_avi.c, src/simage_cgimage.c,
+	src/simage_eps.c, src/simage_gdiplus.cpp, src/simage_gif.c,
+	src/simage_jasper.c, src/simage_jpeg.c, src/simage_jpeg_reader.icc,
+	src/simage_jpeg_writer.icc, src/simage_libsndfile.c,
+	src/simage_oggvorbis_reader.c, src/simage_pic.c, src/simage_png.c,
+	src/simage_qimage.cpp, src/simage_quicktime.c, src/simage_rgb.c,
+	src/simage_tga.c, src/simage_tiff.c, src/simage_write.c,
+	src/simage_xwd.c, src/stream.c, stamp-h.in, stamp-h1.in,
+	tests/loaders.c:
+	License change from a public domain license to a BSD license.
+
+	Various cleanup and consistency operations on header and source
+	files.
+
+2010-03-03 18:50 +0100  Tamer Fahmy  <tamer@sim.no>  (e5d019857f64)
+
+	* NEWS:
+	prep NEWS file.
+
+2010-02-28 13:04 +0100  Tamer Fahmy  <tamer@sim.no>  (8fd4d0293dfb)
+
+	* Makefile.in, aclocal.m4, cfg/config.guess, cfg/config.sub,
+	cfg/ltmain.sh, config.h.in, configure, guile/Makefile.in,
+	mpeg2enc/Makefile.in, src/Makefile.in:
+	bootstrap with updated compatible autotools versions.
+
+2010-02-28 13:03 +0100  Tamer Fahmy  <tamer@sim.no>  (f1ba4facd49f)
+
+	* configure.ac:
+	allow for disabling of compiler optimizations.
+
+2010-02-28 10:05 +0100  Tamer Fahmy  <tamer@sim.no>  (bb74b59e39a3)
+
+	* Makefile.am, build/simage.spec.in, simage.pc.in:
+	change autoconf datadir to datarootdir.
+
+2010-02-26 17:53 +0100  Tamer Fahmy  <tamer@sim.no>  (190f51771bac)
+
+	* ChangeLog, configure, configure.ac:
+	bump version information and reinstate ChangeLog placeholder.
+
+2010-02-26 16:47 +0100  Tamer Fahmy  <tamer@sim.no>  (73d77eda235c)
+
+	* .hgtags:
+	Added tag Simage-1.7.0 for changeset 3ca2078ee3e5
+
+2010-02-26 16:47 +0100  Tamer Fahmy  <tamer@sim.no>  (3ca2078ee3e5 [Simage-1.7.0])
+
+	* ChangeLog:
+	correct ChangeLog file.
+

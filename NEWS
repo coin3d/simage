@@ -1,4 +1,15 @@
-New in v1.7.1a (so far):
+New in v1.8.0 (2019-12-23):
+* new:
+  - Kongsberg Oil & Gas Technologies AS ended SoWin as a commercial product
+    and re-licensed it under the BSD 3-clause license as a service to the
+    user community.
+  - The build system has been migrated from GNU Autotools to CMake
+  - Support for BitBucket and AppVeyor as continuous integration service providers
+
+* bugfixes:
+  - Fixed compile issues for newer libpng versions (> v1.4)
+  - Fixed compile issues for newer giflib versions
+  - Fixed numerous conversion warnings detected by static code analysis
 
 New in v1.7.0 (2010-02-26):
 * Added CGImage based backend on OS X.
