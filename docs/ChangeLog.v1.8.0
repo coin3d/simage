@@ -1,4 +1,11 @@
-2019-11-09 14:21 +0100  Giampiero Gabbiani  <giampiero@gabbiani.org>  (afd8852f40c8 [tip])
+2019-12-23 23:34 +0100  Volker Enderlein  <volkerenderlein@hotmail.com>  (8628729b2cdb [tip])
+
+	* docs/ChangeLog.v1.8.0: new file.
+	* CMakeLists.txt, FindSndfile.cmake, NEWS, README.WIN32, configure,
+	configure.ac, docs/ChangeLog.v1.8.0:
+	[skip ci] Update version number for release. Bootstrap.
+
+2019-11-09 14:21 +0100  Giampiero Gabbiani  <giampiero@gabbiani.org>  (afd8852f40c8)
 
 	* .hgsubstate:
 	Updated to last cpack.d for centOS and RHEL support
