@@ -58,6 +58,7 @@ elseif(APPLE)
 endif()
 option(SIMAGE_USE_QIMAGE "Use Qt's QImage to load/save images" OFF)
 cmake_dependent_option(SIMAGE_USE_QT5 "Prefer Qt5 over Qt4 if available" ON "SIMAGE_USE_QIMAGE" OFF)
+option(SIMAGE_USE_CPACK "If enabled the cpack subrepo is mandatory" OFF)
 
 function(report_prepare)
   set(multiValueArgs IF_APPLE IF_WIN32)
@@ -627,4 +628,6 @@ install(EXPORT ${PROJECT_NAME}
 
 # ############################################################################
 # New CPACK section, please see the README file inside cpack.d directory.
-add_subdirectory(cpack.d)
+if (SIMAGE_USE_CPACK)
+  add_subdirectory(cpack.d)
+endif()
