@@ -398,7 +398,7 @@ simage_png_save(const char *filename,
   text_ptr[0].text = (char*)filename;
   text_ptr[0].compression = PNG_TEXT_COMPRESSION_NONE;
   text_ptr[1].key = "Author";
-  text_ptr[1].text = "simage (http://www.coin3d.org)";
+  text_ptr[1].text = "simage (https://coin3d.github.io)";
   text_ptr[1].compression = PNG_TEXT_COMPRESSION_NONE;
   text_ptr[2].key = "Description";
   text_ptr[2].text = "Image saved using simage.";

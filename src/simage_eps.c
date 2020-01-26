@@ -178,7 +178,7 @@ simage_eps_save(const char *filename,
           pixelsize[1]-scaledsize[1],
           scaledsize[0],
           pixelsize[1]);
-  fprintf(fp, "%%%%Creator: simage <http://www.coin3d.org>\n");
+  fprintf(fp, "%%%%Creator: simage <https://coin3d.github.io>\n");
   fprintf(fp, "%%%%EndComments\n");
 
   fprintf(fp, "\n");
