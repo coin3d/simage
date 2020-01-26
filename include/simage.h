@@ -21,7 +21,7 @@
   \mainpage
 
   %Simage is a library capable of loading, manipulating and saving
-  images, creating and saving movies (AVI and mpeg), and loading
+  images, creating and saving movies (AVI and MPEG), and loading
   audio. The simage library relies heavily on 3rd party libraries to
   perform these tasks.
 
@@ -56,7 +56,7 @@
 
 /***************************************************************************/
 
-/*! A unique identifier to recognize in sourcecode whether or not this
+/*! A unique identifier to recognize in source code whether or not this
  * file is included.
  */
 #define __SIMAGE__
@@ -112,7 +112,7 @@
 /*! \file simage.h
   \brief Windows specific information.
 
-  On MSWindows platforms, one of these defines must always be set when
+  On Microsoft Windows platforms, one of these defines must always be set when
   building application programs:
 
   - "SIMAGE_DLL", when the application programmer is using the
@@ -122,8 +122,8 @@
   library in the form of a static object library (LIB)
 
   Note that either SIMAGE_DLL or SIMAGE_NOT_DLL _must_ be defined by
-  the application programmer on MSWindows platforms, or else the
-  \#error statement will hit. Set up one or the other of these two
+  the application programmer on Microsoft Windows platforms, or else the
+  \#error statement will be hit. Set up one or the other of these two
   defines in your compiler environment according to how the library
   was built -- as a DLL (use "SIMAGE_DLL") or as a LIB (use
   "SIMAGE_NOT_DLL").
@@ -133,7 +133,7 @@
   (for command-line build processes), or by adding the define to the
   list of preprocessor symbols in your IDE GUI (in the MSVC IDE, this
   is done from the "Project"->"Settings" menu, choose the "C/C++" tab,
-  then "Preprocessor" from the dropdown box and add the appropriate
+  then "Preprocessor" from the drop-down box and add the appropriate
   define)).
 
   It is extremely important that the application programmer uses the
@@ -156,7 +156,7 @@
 # endif /* !SIMAGE_INTERNAL */
 #endif /* Microsoft Windows */
 
-/* Empty define to avoid errors when _not_ compiling an MSWindows DLL. */
+/* Empty define to avoid errors when _not_ compiling an Microsoft Windows DLL. */
 #ifndef SIMAGE_DLL_API
 # define SIMAGE_DLL_API
 #endif /* !SIMAGE_DLL_API */
@@ -167,15 +167,15 @@
 extern "C" {
 #endif
 
-  /*! Note specifically for MSWindows that by leaving out the APIENTRY
+  /*! Note specifically for Microsoft Windows that by leaving out the APIENTRY
     keyword for the function definitions, we default to the __cdecl
     calling convention. This is important to take into consideration
-    when explicitly linking to the library at run-time: when using the
+    when explicitly linking to the library at runtime: when using the
     wrong calling convention, obscure errors due to stack corruption
     can occur under certain (possibly rare) conditions.
   */
 
-  /*! Returns run-time version for simage. */
+  /*! Returns runtime version for simage. */
   SIMAGE_DLL_API void simage_version(int * major, int * minor, int * micro);
 
   /*! Checks if image file format is supported. Returns 1 if \a
@@ -250,7 +250,7 @@ extern "C" {
   /**** NOTE: new methods for simage version 1.1 *******************/
   /*****************************************************************/
 
-  /*! Checks if export is available for a filetype. Returns 1 if a
+  /*! Checks if export is available for a file type. Returns 1 if a
     saver of type \a filenameextension is supported, 0 otherwise. The
     built-in savers are gif, jpg/jpeg, png, tif/tiff and rgb.
   */
@@ -312,7 +312,7 @@ extern "C" {
   SIMAGE_DLL_API s_movie * s_movie_open(const char * filename);
 
   /*! Will create a new move file named filename and attempt to
-    locate a suitable encoder based on the parameters (params)
+    locate a suitable encoder based on the parameters ( \a params )
     supplied.
 
     Returns a pointer to the opened movie on success, NULL on failure
@@ -323,7 +323,7 @@ extern "C" {
       - width \<int\> : Frame width (all input images must have this width)
       - height \<int\> : Frame height (all input images must have this height)
 
-    Parameters specific for the avi encoder
+    Parameters specific for the AVI encoder
       - fps \<int\> : Number of frames per second in output file
       - parameter file \<int\> : If this parameter is missing (or empty ""),
         a GUI will pop up each time this functions is run, asking the user
@@ -340,8 +340,8 @@ extern "C" {
   SIMAGE_DLL_API s_image * s_movie_get_image(s_movie * movie, s_image * prealloc /* | NULL */,
                                              s_params * params /* | NULL */);
 
-  /*! Adds (encodes) the image as one frame to the movie. params is
-    currently used only for optimizing avi encoding: - "allow image
+  /*! Adds (encodes) the image as one frame to the movie. \a params is
+    currently used only for optimizing AVI encoding: - "allow image
     modification" \<int\> : Set to "1" to allow the encoder to modify
     the image buffer. If this parameter is not set, the encoder will
     make a local copy of the image before it is encoded.

@@ -120,7 +120,7 @@ simage_rgb_save(const char * filename,
 
   memset(buf, 0, 500);
   buf[7] = 255; /* set maximum pixel value to 255 */
-  strcpy((char *)buf+8, "http://www.coin3d.org");
+  strcpy((char *)buf+8, "https://coin3d.github.io");
   fwrite(buf, 1, 500, fp);
 
   tmpbuf = (unsigned char *) malloc(width);

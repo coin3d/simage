@@ -665,7 +665,7 @@ readparmfile(simpeg_encode_context * context,
     fclose(fd);
   }
   else  if (mpeg1) { /* fill in some default values for mpeg1 */
-    strcpy(context->id_string, "MPEG-1 sequence, created using simage (www.coin3d.org)");
+    strcpy(context->id_string, "MPEG-1 sequence, created using simage (https://coin3d.github.io)");
     strcpy(context->tplorg, "orgimage%d");
     strcpy(context->tplref, "-");
     strcpy(context->iqname, "-");
@@ -787,7 +787,7 @@ readparmfile(simpeg_encode_context * context,
     context->motion_data[2].syb = 3;
   }
   else { /* fill in some default values for mpeg2 */
-    strcpy(context->id_string, "MPEG-2 sequence, created using simage (www.coin3d.org)");
+    strcpy(context->id_string, "MPEG-2 sequence, created using simage (https://coin3d.github.io)");
     strcpy(context->tplorg, "orgimage%d");
     strcpy(context->tplref, "-");
     strcpy(context->iqname, "-");

@@ -13,7 +13,7 @@ m4_define([SIMAGE_ABI_REVISION], [SIMAGE_MICRO])
 m4_define([SIMAGE_ABI_AGE], [SIMAGE_MINOR])
 
 # **************************************************************************
-AC_INIT([simage], [SIMAGE_VERSION_STRING], [coin-bugs@coin3d.org])
+AC_INIT([simage], [SIMAGE_VERSION_STRING], [coin-support@coin3d.org])
 
 AC_CONFIG_AUX_DIR([cfg])
 AC_CONFIG_SRCDIR([src/simage.c])
