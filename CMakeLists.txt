@@ -364,6 +364,10 @@ if(NOT SIMAGE_QUICKTIME_SUPPORT AND NOT SIMAGE_CGIMAGE_SUPPORT AND NOT SIMAGE_GD
     src/simage_png.c
     src/simage_tiff.c
   )
+  if(GIF_FOUND AND NOT GIF_VERSION VERSION_LESS 5.1.9)
+    list(APPEND HDRS giflib/quantize.h)
+    list(APPEND SRCS giflib/quantize.c)
+  endif()
 endif()
 
 if(WIN32)
@@ -432,7 +436,7 @@ if(SIMAGE_GDIPLUS_SUPPORT)
 endif()
 
 if(GIF_FOUND)
-  target_include_directories(simage PRIVATE ${GIF_INCLUDE_DIR})
+  target_include_directories(simage PRIVATE ${GIF_INCLUDE_DIR} giflib)
   target_link_libraries(simage PRIVATE ${GIF_LIBRARIES})
 endif()
 
