@@ -110,6 +110,9 @@ find_package(OggVorbis)
 find_package(Sndfile)
 
 if(APPLE AND SIMAGE_USE_CGIMAGE)
+  find_library(APPLICATION_SERVICES ApplicationServices)
+  find_library(CORE_FOUNDATION CoreFoundation)
+  set(CMAKE_REQUIRED_LIBRARIES ${APPLICATION_SERVICES} ${CORE_GRAPHICS})
   check_cxx_source_compiles("
     #include <CoreFoundation/CoreFoundation.h>
     #include <ApplicationServices/ApplicationServices.h>
@@ -120,6 +123,7 @@ if(APPLE AND SIMAGE_USE_CGIMAGE)
       return 0;
     }
   " CGIMAGE_FOUND)
+  unset(CMAKE_REQUIRED_LIBRARIES)
 endif()
 
 cmake_dependent_option(SIMAGE_AVIENC_SUPPORT "Enable support for AVI encoding (Win32 only)" ON "SIMAGE_USE_AVIENC;VFW_FOUND" OFF)
@@ -424,7 +428,7 @@ target_include_directories(${PROJECT_NAME}
 )
 
 if(SIMAGE_CGIMAGE_SUPPORT)
-  target_link_libraries(simage PRIVATE "-framework CoreFoundation")
+  target_link_libraries(simage PRIVATE ${APPLICATION_SERVICES} ${CORE_FOUNDATION})
 endif()
 
 if(SIMAGE_GDIPLUS_SUPPORT)
