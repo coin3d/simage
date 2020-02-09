@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
   int first;
   int width;
   int height;
-  s_movie * movie;
+  s_movie * movie = NULL;
   s_params * params;
   s_image *image;
   char formatbuf[20];
