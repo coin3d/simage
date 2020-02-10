@@ -103,7 +103,7 @@ void
 simpeg_encode_putAC(simpeg_encode_context * context,int run, int signed_level, int vlcformat)
 {
   int level, len;
-  VLCtable *ptab;
+  VLCtable *ptab = NULL;
 
   level = (signed_level<0) ? -signed_level : signed_level; /* abs(signed_level) */
 
