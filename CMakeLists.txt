@@ -48,6 +48,8 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_MODULE_PATH}")
 # ############################################################################
 
 option(SIMAGE_BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(SIMAGE_BUILD_EXAMPLES "Build examples" ON)
+option(SIMAGE_BUILD_TESTS "Build tests" ON)
 option(SIMAGE_BUILD_DOCUMENTATION "Build and install API documentation (requires Doxygen)." OFF)
 if(WIN32)
   option(SIMAGE_USE_AVIENC "Use Video for Windows for AVI encoding" ON)
@@ -494,47 +496,51 @@ endif()
 # Build examples
 # ############################################################################
 
-set(SIMAGE_EXAMPLE_SOURCE
-  ${CMAKE_CURRENT_SOURCE_DIR}/examples/audio2raw.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/examples/img2avi.c
-#  ${CMAKE_CURRENT_SOURCE_DIR}/examples/mpeg2enc.cpp # requires Coin to build
-  ${CMAKE_CURRENT_SOURCE_DIR}/examples/simage-convert.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/examples/simage-read-line-test.c
-)
+if(SIMAGE_BUILD_EXAMPLES)
+  set(SIMAGE_EXAMPLE_SOURCE
+    ${CMAKE_CURRENT_SOURCE_DIR}/examples/audio2raw.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/examples/img2avi.c
+#    ${CMAKE_CURRENT_SOURCE_DIR}/examples/mpeg2enc.cpp # requires Coin to build
+    ${CMAKE_CURRENT_SOURCE_DIR}/examples/simage-convert.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/examples/simage-read-line-test.c
+  )
 
-foreach(_source ${SIMAGE_EXAMPLE_SOURCE})
-  get_filename_component(_example ${_source} NAME_WE)
-  add_executable(${_example} ${_source})
-  target_compile_definitions(${_example} PRIVATE _CRT_NONSTDC_NO_DEPRECATE _CRT_SECURE_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS _USE_MATH_DEFINES)
-  target_link_libraries(${_example} simage)
-  if(UNIX)
-    target_link_libraries(${_example} m)
-  endif()
-endforeach()
+  foreach(_source ${SIMAGE_EXAMPLE_SOURCE})
+    get_filename_component(_example ${_source} NAME_WE)
+    add_executable(${_example} ${_source})
+    target_compile_definitions(${_example} PRIVATE _CRT_NONSTDC_NO_DEPRECATE _CRT_SECURE_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS _USE_MATH_DEFINES)
+    target_link_libraries(${_example} simage)
+    if(UNIX)
+      target_link_libraries(${_example} m)
+    endif()
+  endforeach()
+endif()
 
 # ############################################################################
 # Build tests
 # ############################################################################
 
-enable_testing()
+if(SIMAGE_BUILD_TESTS)
+  enable_testing()
 
-add_executable(loaders tests/loaders.c)
-target_link_libraries(loaders simage)
-target_compile_definitions(loaders PRIVATE _CRT_NONSTDC_NO_DEPRECATE _CRT_SECURE_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS _USE_MATH_DEFINES)
-if(UNIX)
-  target_link_libraries(loaders m)
+  add_executable(loaders tests/loaders.c)
+  target_link_libraries(loaders simage)
+  target_compile_definitions(loaders PRIVATE _CRT_NONSTDC_NO_DEPRECATE _CRT_SECURE_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS _USE_MATH_DEFINES)
+  if(UNIX)
+    target_link_libraries(loaders m)
+  endif()
+
+  add_test(
+    loaders
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/loaders
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.gif
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.jpg
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.rgb
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.tga
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.tif
+  )
 endif()
-
-add_test(
-  loaders
-  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/loaders
-  ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.gif
-  ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.jpg
-  ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.png
-  ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.rgb
-  ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.tga
-  ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.tif
-)
 
 # Add a target to generate API documentation with Doxygen
 if(SIMAGE_BUILD_DOCUMENTATION)
