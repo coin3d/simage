@@ -48,6 +48,8 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_MODULE_PATH}")
 # ############################################################################
 
 option(SIMAGE_BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(SIMAGE_BUILD_EXAMPLES "Build examples" ON)
+option(SIMAGE_BUILD_TESTS "Build tests" ON)
 option(SIMAGE_BUILD_DOCUMENTATION "Build and install API documentation (requires Doxygen)." OFF)
 if(WIN32)
   option(SIMAGE_USE_AVIENC "Use Video for Windows for AVI encoding" ON)
@@ -110,6 +112,9 @@ find_package(OggVorbis)
 find_package(Sndfile)
 
 if(APPLE AND SIMAGE_USE_CGIMAGE)
+  find_library(APPLICATION_SERVICES ApplicationServices)
+  find_library(CORE_FOUNDATION CoreFoundation)
+  set(CMAKE_REQUIRED_LIBRARIES ${APPLICATION_SERVICES} ${CORE_GRAPHICS})
   check_cxx_source_compiles("
     #include <CoreFoundation/CoreFoundation.h>
     #include <ApplicationServices/ApplicationServices.h>
@@ -120,6 +125,7 @@ if(APPLE AND SIMAGE_USE_CGIMAGE)
       return 0;
     }
   " CGIMAGE_FOUND)
+  unset(CMAKE_REQUIRED_LIBRARIES)
 endif()
 
 cmake_dependent_option(SIMAGE_AVIENC_SUPPORT "Enable support for AVI encoding (Win32 only)" ON "SIMAGE_USE_AVIENC;VFW_FOUND" OFF)
@@ -364,6 +370,10 @@ if(NOT SIMAGE_QUICKTIME_SUPPORT AND NOT SIMAGE_CGIMAGE_SUPPORT AND NOT SIMAGE_GD
     src/simage_png.c
     src/simage_tiff.c
   )
+  if(GIF_FOUND AND NOT GIF_VERSION VERSION_LESS 5.1.9)
+    list(APPEND HDRS giflib/quantize.h)
+    list(APPEND SRCS giflib/quantize.c)
+  endif()
 endif()
 
 if(WIN32)
@@ -424,7 +434,7 @@ target_include_directories(${PROJECT_NAME}
 )
 
 if(SIMAGE_CGIMAGE_SUPPORT)
-  target_link_libraries(simage PRIVATE "-framework CoreFoundation")
+  target_link_libraries(simage PRIVATE ${APPLICATION_SERVICES} ${CORE_FOUNDATION})
 endif()
 
 if(SIMAGE_GDIPLUS_SUPPORT)
@@ -432,7 +442,7 @@ if(SIMAGE_GDIPLUS_SUPPORT)
 endif()
 
 if(GIF_FOUND)
-  target_include_directories(simage PRIVATE ${GIF_INCLUDE_DIR})
+  target_include_directories(simage PRIVATE ${GIF_INCLUDE_DIR} giflib)
   target_link_libraries(simage PRIVATE ${GIF_LIBRARIES})
 endif()
 
@@ -454,6 +464,9 @@ endif()
 if(PNG_FOUND)
   target_include_directories(simage PRIVATE ${PNG_INCLUDE_DIR})
   target_link_libraries(simage PRIVATE ${PNG_LIBRARIES})
+  if(UNIX)
+    target_link_libraries(simage PRIVATE m)
+  endif()
 endif()
 
 if(SIMAGE_QIMAGE_SUPPORT)
@@ -483,47 +496,51 @@ endif()
 # Build examples
 # ############################################################################
 
-set(SIMAGE_EXAMPLE_SOURCE
-  ${CMAKE_CURRENT_SOURCE_DIR}/examples/audio2raw.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/examples/img2avi.c
-#  ${CMAKE_CURRENT_SOURCE_DIR}/examples/mpeg2enc.cpp # requires Coin to build
-  ${CMAKE_CURRENT_SOURCE_DIR}/examples/simage-convert.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/examples/simage-read-line-test.c
-)
+if(SIMAGE_BUILD_EXAMPLES)
+  set(SIMAGE_EXAMPLE_SOURCE
+    ${CMAKE_CURRENT_SOURCE_DIR}/examples/audio2raw.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/examples/img2avi.c
+#    ${CMAKE_CURRENT_SOURCE_DIR}/examples/mpeg2enc.cpp # requires Coin to build
+    ${CMAKE_CURRENT_SOURCE_DIR}/examples/simage-convert.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/examples/simage-read-line-test.c
+  )
 
-foreach(_source ${SIMAGE_EXAMPLE_SOURCE})
-  get_filename_component(_example ${_source} NAME_WE)
-  add_executable(${_example} ${_source})
-  target_compile_definitions(${_example} PRIVATE _CRT_NONSTDC_NO_DEPRECATE _CRT_SECURE_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS _USE_MATH_DEFINES)
-  target_link_libraries(${_example} simage)
-  if(UNIX)
-    target_link_libraries(${_example} m)
-  endif()
-endforeach()
+  foreach(_source ${SIMAGE_EXAMPLE_SOURCE})
+    get_filename_component(_example ${_source} NAME_WE)
+    add_executable(${_example} ${_source})
+    target_compile_definitions(${_example} PRIVATE _CRT_NONSTDC_NO_DEPRECATE _CRT_SECURE_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS _USE_MATH_DEFINES)
+    target_link_libraries(${_example} simage)
+    if(UNIX)
+      target_link_libraries(${_example} m)
+    endif()
+  endforeach()
+endif()
 
 # ############################################################################
 # Build tests
 # ############################################################################
 
-enable_testing()
+if(SIMAGE_BUILD_TESTS)
+  enable_testing()
 
-add_executable(loaders tests/loaders.c)
-target_link_libraries(loaders simage)
-target_compile_definitions(loaders PRIVATE _CRT_NONSTDC_NO_DEPRECATE _CRT_SECURE_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS _USE_MATH_DEFINES)
-if(UNIX)
-  target_link_libraries(loaders m)
+  add_executable(loaders tests/loaders.c)
+  target_link_libraries(loaders simage)
+  target_compile_definitions(loaders PRIVATE _CRT_NONSTDC_NO_DEPRECATE _CRT_SECURE_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS _USE_MATH_DEFINES)
+  if(UNIX)
+    target_link_libraries(loaders m)
+  endif()
+
+  add_test(
+    loaders
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/loaders
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.gif
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.jpg
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.rgb
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.tga
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.tif
+  )
 endif()
-
-add_test(
-  loaders
-  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/loaders
-  ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.gif
-  ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.jpg
-  ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.png
-  ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.rgb
-  ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.tga
-  ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.tif
-)
 
 # Add a target to generate API documentation with Doxygen
 if(SIMAGE_BUILD_DOCUMENTATION)
