@@ -15,21 +15,17 @@ jobs:
       - name: Checkout submodules
         run: git submodule update --init --recursive
       - name: Create build directory and run CMake
-        run: |
-          cmake -S . -B cmake_build_dir -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
+        run: cmake -S . -B cmake_build_dir -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
       - name: Build project
-        run: |
-          cmake --build cmake_build_dir --target install --config Release -- -j4
-          tar czf simage-latest-Ubuntu-gcc7-x64.tar.gz cmake_install_dir/*
+        run: cmake --build cmake_build_dir --target install --config Release -- -j4
       # - name: Run tests
-      #   run: |
-      #     cd cmake_build_dir
-      #     ctest -C Release -VV
+      #   working-directory: Run cmake_build_dir
+      #   run: ctest -C Release -VV
       - name: Create Artifacts
         uses: actions/upload-artifact@v1
         with:
           name: Ubuntu-Artifacts
-          path: simage-latest-Ubuntu-gcc7-x64.tar.gz
+          path: cmake_install_dir/
         if: always()
 
   windows-build:
@@ -40,22 +36,18 @@ jobs:
       - name: Checkout submodules
         run: git submodule update --init --recursive
       - name: Create build directory and run CMake
-        run: |
-          cmake -S . -B cmake_build_dir -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
+        run: cmake -S . -B cmake_build_dir -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
       - name: Build project
         shell: cmd
-        run: |
-          cmake --build cmake_build_dir --target INSTALL --config Release -- /nologo /verbosity:minimal /maxcpucount:2 /property:MultiProcessorCompilation=true
-          7z a -tzip simage-latest-msvc16-x64.zip cmake_install_dir
+        run: cmake --build cmake_build_dir --target INSTALL --config Release -- /nologo /verbosity:minimal /maxcpucount:2 /property:MultiProcessorCompilation=true
       # - name: Run tests
-      #   run: |
-      #     cd cmake_build_dir
-      #     ctest -C Release -VV
+      #   working-directory: Run cmake_build_dir
+      #   run: ctest -C Release -VV
       - name: Create Artifacts
         uses: actions/upload-artifact@v1
         with:
           name: Windows-Artifacts
-          path: simage-latest-msvc16-x64.zip
+          path: cmake_install_dir/
         if: always()
 
   macos-build:
@@ -66,19 +58,15 @@ jobs:
       - name: Checkout submodules
         run: git submodule update --init --recursive
       - name: Create build directory and run CMake
-        run: |
-          cmake -S . -B cmake_build_dir -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
+        run: cmake -S . -B cmake_build_dir -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
       - name: Build project
-        run: |
-          cmake --build cmake_build_dir --target install --config Release -- -j4
-          tar czf simage-latest-macos-clang11-x64.tar.gz cmake_install_dir/*
+        run: cmake --build cmake_build_dir --target install --config Release -- -j4
       # - name: Run tests
-      #   run: |
-      #     cd cmake_build_dir
-      #     ctest -C Release -VV
+      #   working-directory: Run cmake_build_dir
+      #   run: ctest -C Release -VV
       - name: Create Artifacts
         uses: actions/upload-artifact@v1
         with:
           name: MacOS-Artifacts
-          path: simage-latest-macos-clang11-x64.tar.gz
+          path: cmake_install_dir/
         if: always()

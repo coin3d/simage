@@ -13,9 +13,10 @@ htmldir=${docdir}/html
 Name: @PROJECT_NAME@
 Description: A library with image format loaders and front-ends to common import libraries
 Version: @PROJECT_VERSION@
-Requires:
+Requires: @SIMAGE_PKG_DEPS@
+Requires.private: @SIMAGE_PKG_DEPS_PRIVATE@
 Conflicts:
-Libs: -L${libdir} -lsimage @SIMAGE_EXTRA_LDFLAGS@ @SIMAGE_EXTRA_LIBS@
-Cflags: -I${includedir} @SIMAGE_EXTRA_CFLAGS@ @SIMAGE_EXTRA_CPPFLAGS@
+Libs: -L${libdir} @SIMAGE_PKG_LIBS@
+Cflags: -I${includedir} @SIMAGE_PKG_FLAGS@
 
 frameworkdir=@frameworkdir@
