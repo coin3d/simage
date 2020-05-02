@@ -122,7 +122,7 @@ endif()
 if(APPLE AND SIMAGE_USE_CGIMAGE)
   find_library(APPLICATION_SERVICES ApplicationServices)
   find_library(CORE_FOUNDATION CoreFoundation)
-  set(CMAKE_REQUIRED_LIBRARIES ${APPLICATION_SERVICES} ${CORE_GRAPHICS})
+  set(CMAKE_REQUIRED_LIBRARIES ${APPLICATION_SERVICES} ${CORE_FOUNDATION})
   check_cxx_source_compiles("
     #include <CoreFoundation/CoreFoundation.h>
     #include <ApplicationServices/ApplicationServices.h>
