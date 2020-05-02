@@ -1,0 +1,29 @@
+include(FindPackageHandleStandardArgs)
+
+find_path(FLAC_INCLUDE_DIR FLAC/all.h)
+
+mark_as_advanced(FLAC_INCLUDE_DIR)
+
+set(FLAC_INCLUDE_DIRS ${FLAC_INCLUDE_DIR})
+
+find_library(FLAC_LIBRARY NAMES FLAC)
+
+mark_as_advanced(
+	FLAC_INCLUDE_DIR
+	FLAC_LIBRARY
+)
+
+set(FLAC_LIBRARIES ${FLAC_LIBRARY})
+
+find_package_handle_standard_args(
+	FLAC
+	DEFAULT_MSG
+	FLAC_INCLUDE_DIRS
+	FLAC_LIBRARIES
+)
+
+if(FLAC_FOUND AND NOT TARGET FLAC::FLAC)
+	add_library(FLAC::FLAC UNKNOWN IMPORTED)
+	set_target_properties(FLAC::FLAC PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${FLAC_INCLUDE_DIR}")
+	set_property(TARGET FLAC::FLAC APPEND PROPERTY IMPORTED_LOCATION "${FLAC_LIBRARY}")
+endif()
