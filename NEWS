@@ -1,6 +1,27 @@
+New in v1.8.1 (so far):
+* new:
+  - Version control system has been changed from Mercurial to Git
+  - Home of Coin3d organization has been changed from https://bitbucket.org/Coin3D
+    to https://github.com/coin3d due to Bitbucket ending Mercurial support
+
+* bugfixes:
+  - cpack.d was made optional and disabled by default (add -DSIMAGE_USE_CPACK=ON
+    to the cmake commandline to enable it)
+  - Miscellaneous documentation fixes
+  - Add missing doxygen file for CMake
+  - Include copy of GifQuantizeBuffer function from giflib
+  - Fix CMake test and link libraries for CGImage
+  - Fix potentially uninitialized local pointer variable
+  - Add missing math library when linking against static libpng
+  - Added missing welcome file
+  - Add options to disable building of examples and tests
+  - Link FLAC when static linking with libsndfile
+  - Fix Ogg and Vorbis static link order and use separate find packages
+  - Fix CoreFoundation typo in CGImage test
+
 New in v1.8.0 (2019-12-23):
 * new:
-  - Kongsberg Oil & Gas Technologies AS ended SoWin as a commercial product
+  - Kongsberg Oil & Gas Technologies AS ended simage as a commercial product
     and re-licensed it under the BSD 3-clause license as a service to the
     user community.
   - The build system has been migrated from GNU Autotools to CMake

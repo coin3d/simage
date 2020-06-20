@@ -1,0 +1,208 @@
+2020-06-18 19:36:39 +0200  Volker Enderlein  <volkerenderlein@hotmail.com> (60e4780)
+
+	Bump version to 1.8.1.
+
+M	CMakeLists.txt
+M	appveyor.yml
+M	configure
+M	configure.ac
+
+2020-05-02 21:31:32 +0200  Markus Rickert  <rickert@fortiss.org> (e2d621f)
+
+	Fix CoreFoundation typo in CGImage test
+
+M	CMakeLists.txt
+
+2020-05-02 17:29:40 +0200  Markus Rickert  <rickert@fortiss.org> (931b870)
+
+	Fix Ogg and Vorbis static link order and use separate find packages
+
+M	CMakeLists.txt
+A	FindOgg.cmake
+D	FindOggVorbis.cmake
+A	FindVorbis.cmake
+
+2020-05-02 17:34:04 +0200  Markus Rickert  <rickert@fortiss.org> (082b526)
+
+	Link FLAC when static linking with libsndfile
+
+M	CMakeLists.txt
+A	FindFLAC.cmake
+
+2020-04-29 22:40:24 +0200  Volker Enderlein  <volkerenderlein@hotmail.com> (55d053a)
+
+	Fixed pkg-config generation.
+
+M	.github/workflows/continuous-integration-workflow.yml
+M	CMakeLists.txt
+M	simage.pc.cmake.in
+
+2020-04-18 23:00:07 +0200  Volker Enderlein  <volkerenderlein@hotmail.com> (9d41b2d)
+
+	Added Github Actions workflow (up to now for pull requests only). [skip ci]
+
+A	.github/workflows/continuous-integration-workflow.yml
+
+2020-04-13 22:42:24 +0200  Volker Enderlein  <volkerenderlein@hotmail.com> (d99dfd0)
+
+	AppVeyor CI: Re-added compiler id.
+
+M	appveyor.yml
+
+2020-04-13 22:16:27 +0200  Volker Enderlein  <volkerenderlein@hotmail.com> (789a21f)
+
+	AppVeyor CI: Version control information from src package excluded. Enable to build tagged versions.
+
+M	appveyor.yml
+
+2020-04-11 17:34:25 +0200  Volker Enderlein  <volkerenderlein@hotmail.com> (8c428c3)
+
+	Added .gitattributes to display correct repo language. [skip ci]
+
+A	.gitattributes
+
+2020-03-21 19:25:05 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (01a5df5)
+
+	Updated CI script.
+
+M	appveyor.yml
+
+2020-02-12 13:18:22 +0100  Markus Rickert  <rickert@fortiss.org> (4085196)
+
+	Add options to disable building of examples and tests
+
+M	CMakeLists.txt
+
+2020-02-12 07:47:16 +0100  Giampiero Gabbiani  <giampiero@gabbiani.org> (93e73c4)
+
+	Added missing welcome file
+
+A	packaging/macosx/Welcome.rtf
+
+2020-02-12 07:45:55 +0100  Giampiero Gabbiani  <giampiero@gabbiani.org> (be87289)
+
+	Updated cpack.d
+
+M	cpack.d
+
+2020-02-09 22:10:44 +0100  Markus Rickert  <rickert@fortiss.org> (553bcb9)
+
+	Add missing math library when linking against static libpng
+
+M	CMakeLists.txt
+
+2020-02-09 21:57:14 +0100  Markus Rickert  <rickert@fortiss.org> (6dffd3e)
+
+	Fix potentially uninitialized local pointer variable
+
+M	examples/img2avi.c
+M	mpeg2enc/putvlc.c
+
+2020-02-09 21:30:58 +0100  Markus Rickert  <rickert@fortiss.org> (f3bba64)
+
+	Fix CMake test and link libraries for CGImage
+
+M	CMakeLists.txt
+
+2020-02-09 20:56:24 +0100  Markus Rickert  <rickert@fortiss.org> (a4bb1bd)
+
+	Include copy of GifQuantizeBuffer function from giflib
+
+M	CMakeLists.txt
+A	giflib/COPYING
+A	giflib/quantize.c
+A	giflib/quantize.h
+M	src/simage_gif.c
+
+2020-01-26 21:57:04 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (331df0f)
+
+	Add missing doxygen file for CMake.
+
+A	docs/simage.doxygen.cmake.in
+
+2020-01-26 19:09:53 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (bdc55e5)
+
+	Updated submodules.
+
+M	cpack.d
+
+2020-01-26 19:09:39 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (1e5402a)
+
+	Fixed dozens of typos and incorrect wording in documentation.
+
+M	COPYING
+M	build/msvc6/config-debug.h
+M	build/msvc6/config-release.h
+M	build/msvc7/config-debug.h
+M	build/msvc7/config-release.h
+M	build/msvc8/config-debug.h
+M	build/msvc8/config-release.h
+M	build/msvc9/config-debug.h
+M	build/msvc9/config-release.h
+M	configure
+M	configure.ac
+M	docs/doxygen/header.html
+M	docs/simage.doxygen.in
+M	include/simage.h
+M	mpeg2enc/api.c
+M	src/simage_eps.c
+M	src/simage_png.c
+M	src/simage_rgb.c
+
+2020-01-26 19:09:34 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (a4778f3)
+
+	Delete obsolete Mercurial files.
+
+D	.hgsub
+D	.hgsubstate
+
+2020-01-14 13:12:14 +0100  lorenz  <looooo@users.noreply.github.com> (b38c0ce)
+
+	make cpack optional and disabled by default
+
+M	CMakeLists.txt
+
+2020-01-12 21:58:15 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (fe98f90)
+
+	Replaced references to BitBucket with GitHub.
+
+M	CMakeLists.txt
+M	docs/doxygen/header.html
+M	simage.rc.cmake.in
+
+2020-01-05 23:18:15 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (d546e85)
+
+	Updated source tarball creation in AppVeyor scripts.
+
+M	appveyor.yml
+
+2020-01-05 22:02:09 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (f069d01)
+
+	Updated source tarball creation in AppVeyor scripts.
+
+M	appveyor.yml
+
+2020-01-05 22:00:31 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (041b563)
+
+	Bootstrap.
+
+M	configure
+
+2020-01-05 15:37:44 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (07a2f08)
+
+	Updated AppVeyor scripts to github.
+
+M	appveyor.yml
+
+2020-01-02 22:50:56 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (6f2888c)
+
+	Updated AppVeyor scripts to github.
+
+M	appveyor.yml
+
+2019-12-25 17:35:08 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (439e3c0)
+
+	Added submodules to git repo.
+
+A	.gitmodules
+A	cpack.d
