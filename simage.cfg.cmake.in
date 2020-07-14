@@ -1,0 +1,10 @@
+# prefix is determined in simage-config script, making the package "movable"
+# prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+version="@PROJECT_VERSION@"
+cppflags="@PKG_CONFIG_CPPFLAGS@"
+cflags="@PKG_CONFIG_CFLAGS@"
+ldflags="@PKG_CONFIG_LDFLAGS@"
+libs="@PKG_CONFIG_LIBS@"
+compiler="@PKG_CONFIG_COMPILER@"
+compiler_is_gcc=@PKG_CONFIG_COMPILER_IS_GCC@
