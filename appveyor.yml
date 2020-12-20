@@ -76,15 +76,15 @@ environment:
       CMAKE_PLATFORM: x64
       COMPILER_ID: msvc16
 
-#    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-#      CMAKE_GENERATOR: 'MSYS Makefiles'
-#      CMAKE_PLATFORM: i686
-#      COMPILER_ID: mingw32
-#
-#    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-#      CMAKE_GENERATOR: 'MSYS Makefiles'
-#      CMAKE_PLATFORM: x86_64
-#      COMPILER_ID: mingw64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      CMAKE_GENERATOR: 'MSYS Makefiles'
+      CMAKE_PLATFORM: i686
+      COMPILER_ID: mingw32
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      CMAKE_GENERATOR: 'MSYS Makefiles'
+      CMAKE_PLATFORM: x86_64
+      COMPILER_ID: mingw64
 
 install:
   - sh: |
@@ -95,6 +95,8 @@ install:
       cd %APPVEYOR_BUILD_FOLDER%
       set PATH=%APPVEYOR_BUILD_FOLDER%\downloads\doxygen-1.8.14;%PATH%
       if "%CMAKE_GENERATOR%" == "MSYS Makefiles" set PATH=C:\msys64\%COMPILER_ID%\bin;C:\msys64\usr\bin\;%PATH%
+      if "%CMAKE_GENERATOR%" == "MSYS Makefiles" pacman --noconfirm -Syu
+      if "%CMAKE_GENERATOR%" == "MSYS Makefiles" pacman --noconfirm -S mingw-w64-%CMAKE_PLATFORM%-zlib mingw-w64-%CMAKE_PLATFORM%-giflib mingw-w64-%CMAKE_PLATFORM%-libjpeg-turbo mingw-w64-%CMAKE_PLATFORM%-jasper mingw-w64-%CMAKE_PLATFORM%-libtiff mingw-w64-%CMAKE_PLATFORM%-libogg mingw-w64-%CMAKE_PLATFORM%-libvorbis mingw-w64-%CMAKE_PLATFORM%-libsndfile
   - git submodule update --init --recursive
 
 # Assumes that we use the vx.y.z tagging scheme (e.g. v1.3.0)
