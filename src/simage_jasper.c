@@ -26,6 +26,7 @@
 #ifdef HAVE_JASPER
 
 #include <simage_jasper.h>
+#include <stdlib.h>
 
 /* needed since Japser includes its own config file */
 #undef PACKAGE

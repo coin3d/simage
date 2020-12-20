@@ -15,7 +15,10 @@ jobs:
       - name: Checkout submodules
         run: git submodule update --init --recursive
       - name: Create build directory and run CMake
-        run: cmake -S . -B cmake_build_dir -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
+        run: |
+          sudo apt-get -y update
+          sudo apt-get -y install libpng-dev libjpeg-dev libgif-dev libtiff-dev libogg-dev libvorbis-dev libsndfile-dev zlib1g-dev
+          cmake -S . -B cmake_build_dir -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
       - name: Build project
         run: cmake --build cmake_build_dir --target install --config Release -- -j4
       # - name: Run tests
@@ -36,7 +39,8 @@ jobs:
       - name: Checkout submodules
         run: git submodule update --init --recursive
       - name: Create build directory and run CMake
-        run: cmake -S . -B cmake_build_dir -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
+        run: |
+          cmake -S . -B cmake_build_dir -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
       - name: Build project
         shell: cmd
         run: cmake --build cmake_build_dir --target INSTALL --config Release -- /nologo /verbosity:minimal /maxcpucount:2 /property:MultiProcessorCompilation=true
@@ -58,7 +62,9 @@ jobs:
       - name: Checkout submodules
         run: git submodule update --init --recursive
       - name: Create build directory and run CMake
-        run: cmake -S . -B cmake_build_dir -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
+        run: |
+          brew install jpeg giflib libtiff libogg libvorbis libsndfile zlib
+          cmake -S . -B cmake_build_dir -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
       - name: Build project
         run: cmake --build cmake_build_dir --target install --config Release -- -j4
       # - name: Run tests

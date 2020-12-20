@@ -76,15 +76,15 @@ environment:
       CMAKE_PLATFORM: x64
       COMPILER_ID: msvc16
 
-#    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-#      CMAKE_GENERATOR: 'MSYS Makefiles'
-#      CMAKE_PLATFORM: i686
-#      COMPILER_ID: mingw32
-#
-#    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-#      CMAKE_GENERATOR: 'MSYS Makefiles'
-#      CMAKE_PLATFORM: x86_64
-#      COMPILER_ID: mingw64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      CMAKE_GENERATOR: 'MSYS Makefiles'
+      CMAKE_PLATFORM: i686
+      COMPILER_ID: mingw32
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      CMAKE_GENERATOR: 'MSYS Makefiles'
+      CMAKE_PLATFORM: x86_64
+      COMPILER_ID: mingw64
 
 install:
   - sh: |
@@ -95,6 +95,8 @@ install:
       cd %APPVEYOR_BUILD_FOLDER%
       set PATH=%APPVEYOR_BUILD_FOLDER%\downloads\doxygen-1.8.14;%PATH%
       if "%CMAKE_GENERATOR%" == "MSYS Makefiles" set PATH=C:\msys64\%COMPILER_ID%\bin;C:\msys64\usr\bin\;%PATH%
+      if "%CMAKE_GENERATOR%" == "MSYS Makefiles" pacman --noconfirm -Syu
+      if "%CMAKE_GENERATOR%" == "MSYS Makefiles" pacman --noconfirm -S mingw-w64-%CMAKE_PLATFORM%-zlib mingw-w64-%CMAKE_PLATFORM%-giflib mingw-w64-%CMAKE_PLATFORM%-libjpeg-turbo mingw-w64-%CMAKE_PLATFORM%-jasper mingw-w64-%CMAKE_PLATFORM%-libtiff mingw-w64-%CMAKE_PLATFORM%-libogg mingw-w64-%CMAKE_PLATFORM%-libvorbis mingw-w64-%CMAKE_PLATFORM%-libsndfile
   - git submodule update --init --recursive
 
 # Assumes that we use the vx.y.z tagging scheme (e.g. v1.3.0)
@@ -108,8 +110,8 @@ before_build:
       appveyor DownloadFile https://sourceforge.net/projects/doxygen/files/rel-1.8.14/%DOWNLOAD_FILE_DOXYGEN% -FileName %DOWNLOAD_FILE_DOXYGEN%
       7z x %DOWNLOAD_FILE_DOXYGEN% -o%APPVEYOR_BUILD_FOLDER%\downloads\doxygen-1.8.14
       doxygen --version
-      if "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake -H. -Bbuild_debug   -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=Debug   -DCMAKE_POSITION_INDEPENDENT_CODE=true -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/Coin3D
-      if "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake -H. -Bbuild_release -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=true -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/Coin3D
+      if "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake -H. -Bbuild_debug   -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=Debug   -DSIMAGE_USE_STATIC_LIBS=ON -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/Coin3D
+      if "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake -H. -Bbuild_release -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=Release -DSIMAGE_USE_STATIC_LIBS=ON -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/Coin3D
       if not "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake -H. -Bbuild -G "%CMAKE_GENERATOR%" -A %CMAKE_ARCHITECTURE% -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%\Coin3D
   - sh: |
       if [ -n "${APPVEYOR_REPO_TAG_NAME}" ]; then export CI_REPO_VERSION=${APPVEYOR_REPO_TAG_NAME:1}; else export CI_REPO_VERSION=latest; fi
@@ -121,8 +123,8 @@ before_build:
       cd $APPVEYOR_BUILD_FOLDER
       export CFLAGS=$CMAKE_ARCH_FLAGS
       export CXXFLAGS=$CMAKE_ARCH_FLAGS
-      cmake -H. -Bbuild_debug   -G "$CMAKE_GENERATOR" -DCMAKE_BUILD_TYPE=Debug   -DCMAKE_POSITION_INDEPENDENT_CODE=true -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/Coin3D
-      cmake -H. -Bbuild_release -G "$CMAKE_GENERATOR" -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=true -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/Coin3D
+      cmake -H. -Bbuild_debug   -G "$CMAKE_GENERATOR" -DCMAKE_BUILD_TYPE=Debug   -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/Coin3D
+      cmake -H. -Bbuild_release -G "$CMAKE_GENERATOR" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/Coin3D
 
 build_script:
   - cmd: |

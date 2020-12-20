@@ -40,13 +40,15 @@ endif()
 # Include necessary submodules
 # ############################################################################
 
+# Add path for Coin specific utility scripts
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+
 include(CheckCXXSourceCompiles)
 include(CheckIncludeFiles)
 include(CMakePackageConfigHelpers)
 include(CMakeDependentOption)
 include(GNUInstallDirs)
-
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_MODULE_PATH}")
+include(CoinCMakeUtilities)
 
 # ############################################################################
 # Provide options to customise the build
@@ -66,20 +68,8 @@ endif()
 option(SIMAGE_USE_QIMAGE "Use Qt's QImage to load/save images" OFF)
 cmake_dependent_option(SIMAGE_USE_QT5 "Prefer Qt5 over Qt4 if available" ON "SIMAGE_USE_QIMAGE" OFF)
 option(SIMAGE_USE_CPACK "If enabled the cpack subrepo is mandatory" OFF)
-
-function(report_prepare)
-  set(multiValueArgs IF_APPLE IF_WIN32)
-  cmake_parse_arguments(REPORT "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
-  if (REPORT_IF_APPLE AND APPLE) 
-    list(APPEND res ${REPORT_IF_APPLE})
-  endif()
-  if (REPORT_IF_WIN32 AND WIN32) 
-    list(APPEND res ${REPORT_IF_WIN32})
-  endif()
-  list(APPEND res ${REPORT_UNPARSED_ARGUMENTS})
-  list(APPEND PACKAGE_OPTIONS ${res} )
-  set(PACKAGE_OPTIONS "${PACKAGE_OPTIONS}" PARENT_SCOPE)
-endfunction(report_prepare)
+option(SIMAGE_USE_STATIC_LIBS "Linking prefers static libs over CMake defaults" OFF)
+cmake_dependent_option(SIMAGE_USE_MSVC_STATIC_RUNTIME "Build against static Microsoft Visual C runtime library." OFF "WIN32" OFF)
 
 # ############################################################################
 # Find all necessary and optional simage dependencies
@@ -91,7 +81,7 @@ if(SIMAGE_USE_QIMAGE)
   if(SIMAGE_USE_QT5)
     find_package(Qt5 COMPONENTS Core Gui QUIET)
   endif()
-  
+
   if(Qt5_FOUND)
     set(QT_FOUND TRUE)
     set(SIMAGE_QT_TARGETS Qt5::Core Qt5::Gui)
@@ -105,8 +95,19 @@ if(SIMAGE_USE_QIMAGE)
   endif()
 endif()
 
+# Prefer linking of static libs over CMake default rules by adjusting CMAKE_FIND_LIBRARY_SUFFIXES
+if(SIMAGE_USE_STATIC_LIBS)
+  add_definitions(-DJAS_DLL=0)
+  set(_simage_ORIG_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
+  if(WIN32)
+    set(CMAKE_FIND_LIBRARY_SUFFIXES .lib .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
+  else()
+    set(CMAKE_FIND_LIBRARY_SUFFIXES .a )
+  endif()
+endif()
+
 if(WIN32)
-  # On Windows GDI+ supports GIF, JPEG, EXIF, PNG, and TIFF.  
+  # On Windows GDI+ supports GIF, JPEG, EXIF, PNG, and TIFF.
   # see https://docs.microsoft.com/en-us/windows/desktop/gdiplus/-gdiplus-types-of-bitmaps-about
   find_package(GdiPlus)
   find_package(Vfw)
@@ -115,11 +116,15 @@ elseif(APPLE)
   # see https://en.wikipedia.org/wiki/QuickTime
   find_package(QuickTime)
 endif()
+
 find_package(Jasper)
 find_package(Ogg)
 find_package(Sndfile)
 find_package(Vorbis)
 
+if(OGG_FOUND)
+  find_package(Opus)
+endif()
 if(SNDFILE_FOUND)
   find_package(FLAC)
 endif()
@@ -172,10 +177,16 @@ report_prepare(
   SIMAGE_RGB_SUPPORT
   SIMAGE_TGA_SUPPORT
   SIMAGE_XWD_SUPPORT
-  IF_WIN32 
-    SIMAGE_USE_AVIENC SIMAGE_USE_GDIPLUS SIMAGE_AVIENC_SUPPORT SIMAGE_GDIPLUS_SUPPORT
-  IF_APPLE 
-    SIMAGE_USE_CGIMAGE SIMAGE_USE_QUICKTIME SIMAGE_CGIMAGE_SUPPORT SIMAGE_QUICKTIME_SUPPORT
+  IF_WIN32
+    SIMAGE_USE_AVIENC
+    SIMAGE_USE_GDIPLUS
+    SIMAGE_AVIENC_SUPPORT
+    SIMAGE_GDIPLUS_SUPPORT
+  IF_APPLE
+    SIMAGE_USE_CGIMAGE
+    SIMAGE_USE_QUICKTIME
+    SIMAGE_CGIMAGE_SUPPORT
+    SIMAGE_QUICKTIME_SUPPORT
 )
 
 # ##########################################################################
@@ -392,37 +403,20 @@ if(NOT SIMAGE_QUICKTIME_SUPPORT AND NOT SIMAGE_CGIMAGE_SUPPORT AND NOT SIMAGE_GD
   endif()
 endif()
 
-if(MSVC)
-  if (MSVC_VERSION GREATER 1500 OR MSVC_VERSION EQUAL 1500)
-    option(SIMAGE_BUILD_MSVC_MP "Enable build with multiple processes in Visual Studio" ON)
-  else()
-    set(SIMAGE_BUILD_MSVC_MP OFF CACHE BOOL "Compiler option /MP requires at least Visual Studio 2008 (VS9) or newer" FORCE)
+if(WIN32)
+  if(MSVC)
+    if (MSVC_VERSION GREATER 1500 OR MSVC_VERSION EQUAL 1500)
+      option(SIMAGE_BUILD_MSVC_MP "Enable build with multiple processes in Visual Studio" ON)
+    else()
+      set(SIMAGE_BUILD_MSVC_MP OFF CACHE BOOL "Compiler option /MP requires at least Visual Studio 2008 (VS9) or newer" FORCE)
+    endif()
+    if(SIMAGE_BUILD_MSVC_MP)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+    endif ()
   endif()
-  if(SIMAGE_BUILD_MSVC_MP)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-  endif ()
-  option(SIMAGE_BUILD_MSVC_STATIC_RUNTIME "Build against static Microsoft Visual C runtime library." OFF)
-  # will be later refactored to common function/macro
-  #coin_msvc_link_type_crt(${SO${GUI}_BUILD_MSVC_STATIC_RUNTIME})
-  set(_vars         CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
-  set(_vars ${_vars} CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-  if(${SIMAGE_BUILD_MSVC_STATIC_RUNTIME})
-    message(STATUS "Build against static Microsoft Visual C runtime library")
-    foreach(_flags ${_vars})
-      if(${_flags} MATCHES "/MD")
-        string(REGEX REPLACE "/MD" "/MT" ${_flags} "${${_flags}}")
-      endif()
-    endforeach()
-    set(PKG_CONFIG_MSVC_LIBC "multithread-static")
-  else()
-    message(STATUS "Build against dynamic Microsoft Visual C runtime library")
-    foreach(_flags ${_vars})
-      if(${_flags} MATCHES "/MT")
-        string(REGEX REPLACE "/MT" "/MD" ${_flags} "${${_flags}}")
-      endif()
-    endforeach()
-    set(PKG_CONFIG_MSVC_LIBC "multithread-dynamic")
-  endif()
+
+  # Can also be set for MSYS and MinGW
+  coin_msvc_link_static_crt(${SIMAGE_USE_MSVC_STATIC_RUNTIME})
 endif()
 
 if(WIN32)
@@ -512,12 +506,6 @@ if(JPEG_FOUND)
   list(APPEND PKG_CONFIG_REQUIRES_PRIVATE "libjpeg")
 endif()
 
-if(SIMAGE_OGGVORBIS_SUPPORT)
-  target_include_directories(simage PRIVATE ${VORBIS_INCLUDE_DIRS} ${OGG_INCLUDE_DIRS})
-  target_link_libraries(simage PRIVATE ${VORBIS_LIBRARIES} ${OGG_LIBRARIES})
-  list(APPEND PKG_CONFIG_REQUIRES_PRIVATE "vorbis" "ogg")
-endif()
-
 if(PNG_FOUND)
   target_include_directories(simage PRIVATE ${PNG_INCLUDE_DIR})
   target_link_libraries(simage PRIVATE ${PNG_LIBRARIES})
@@ -548,6 +536,16 @@ if(SNDFILE_FOUND)
   endif()
 endif()
 
+if(SIMAGE_OGGVORBIS_SUPPORT)
+  target_include_directories(simage PRIVATE ${VORBIS_INCLUDE_DIRS} ${OGG_INCLUDE_DIRS})
+  target_link_libraries(simage PRIVATE ${VORBIS_LIBRARIES} ${OGG_LIBRARIES})
+  list(APPEND PKG_CONFIG_REQUIRES_PRIVATE "vorbis" "ogg")
+  if(OPUS_FOUND)
+    target_link_libraries(simage PRIVATE ${OPUS_LIBRARIES})
+    list(APPEND PKG_CONFIG_REQUIRES_PRIVATE "opus")
+  endif()
+endif()
+
 if(TIFF_FOUND)
   target_include_directories(simage PRIVATE ${TIFF_INCLUDE_DIR})
   target_link_libraries(simage PRIVATE ${TIFF_LIBRARY})
@@ -556,6 +554,22 @@ endif()
 
 if(VFW_FOUND)
   target_link_libraries(simage PRIVATE ${VFW_LIBRARIES})
+endif()
+
+# Restore the original find library suffixes
+if(SIMAGE_USE_STATIC_LIBS)
+  set(CMAKE_FIND_LIBRARY_SUFFIXES ${_simage_ORIG_CMAKE_FIND_LIBRARY_SUFFIXES})
+endif()
+
+if(WIN32 AND MINGW AND SIMAGE_BUILD_SHARED_LIBS)
+  # This has to be the last step for successful static linking the MinGW libraries.
+  # Otherwise wrong resources are linked to simage.dll, the ones from libwinpthread.
+  # The following linker error is thrown but it is expected as the resulting lib/dll is correct:
+  # C:/msys64/mingw64/x86_64-w64-mingw32/bin/ld.exe: .rsrc merge failure: duplicate leaf: type: 10 (VERSION) name: 1 lang: 409
+  # see: https://stackoverflow.com/questions/63013037/mingw-winpthreads-overrides-rc-resource-file-information for further details.
+  # Be sure to handle this error in your scripts or in the CI.
+  # add "-v" to see the full link command
+  target_link_libraries(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++ -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive)
 endif()
 
 # ############################################################################
@@ -749,6 +763,15 @@ if(UNIX OR MINGW)
   set(htmldir "\${docdir}/html")
   #set(frameworkdir "${COIN_PKGCFG_FRAMEWORK_DIR}")
 
+  # Fix variable for MinGW
+  if(MINGW AND NOT CMAKE_CXX_LIBRARY_ARCHITECTURE)
+    if("${CMAKE_CXX_COMPILER}" MATCHES ".*/mingw64/.*$")
+      set(CMAKE_CXX_LIBRARY_ARCHITECTURE "x86_64-w64-mingw32")
+    elseif("${CMAKE_CXX_COMPILER}" MATCHES ".*/mingw32/.*$")
+      set(CMAKE_CXX_LIBRARY_ARCHITECTURE "i686-w64-mingw32")
+    endif()
+  endif()
+
   set(PKG_CONFIG_URL "https://www.github.com/coin3d/simage")
   set(PKG_CONFIG_HOST "${CMAKE_CXX_LIBRARY_ARCHITECTURE}")
   set(PKG_CONFIG_COMPILER "${CMAKE_C_COMPILER}")
@@ -800,6 +823,6 @@ install(EXPORT ${PROJECT_NAME}
 
 # ############################################################################
 # New CPACK section, please see the README file inside cpack.d directory.
-if (SIMAGE_USE_CPACK)
+if(SIMAGE_USE_CPACK)
   add_subdirectory(cpack.d)
 endif()
