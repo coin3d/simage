@@ -1,3 +1,58 @@
+2020-12-20 19:17:23 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (e6fb3ed)
+
+	Add macos build commands to AppVeyor CI (#45)
+
+M	appveyor.yml
+
+2020-12-20 17:03:42 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (31cddf2)
+
+	Mingw fixes (#44)
+
+M	.github/workflows/continuous-integration-workflow.yml
+M	CMakeLists.txt
+D	FindFLAC.cmake
+D	FindGdiPlus.cmake
+D	FindOgg.cmake
+D	FindVfw.cmake
+D	FindVorbis.cmake
+M	appveyor.yml
+A	cmake/CoinCMakeUtilities.cmake
+A	cmake/FindFLAC.cmake
+A	cmake/FindGdiPlus.cmake
+A	cmake/FindOgg.cmake
+A	cmake/FindOpus.cmake
+R100	FindSndfile.cmake	cmake/FindSndfile.cmake
+A	cmake/FindVfw.cmake
+A	cmake/FindVorbis.cmake
+M	src/simage_jasper.c
+
+2020-12-05 19:42:10 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (10b263f)
+
+	Fix for CMake 3.19.1 regression (#43)
+
+M	CMakeLists.txt
+
+2020-07-14 20:55:00 +0200  Volker Enderlein  <volkerenderlein@hotmail.com> (29d34ed)
+
+	Fix for pkg-config file generation.
+
+M	CMakeLists.txt
+A	simage.cfg.cmake.in
+M	simage.pc.cmake.in
+
+2020-07-14 20:51:59 +0200  Volker Enderlein  <volkerenderlein@hotmail.com> (ea358e7)
+
+	Add support for MSVC static/dynamic runtime libraries.
+
+M	CMakeLists.txt
+
+2020-06-20 12:32:08 +0200  Volker Enderlein  <volkerenderlein@hotmail.com> (6b154a3)
+
+	Add ChangeLog file for version 1.8.1.
+
+M	NEWS
+A	docs/ChangeLog.v1.8.1
+
 2020-06-18 19:36:39 +0200  Volker Enderlein  <volkerenderlein@hotmail.com> (60e4780)
 
 	Bump version to 1.8.1.

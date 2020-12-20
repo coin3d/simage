@@ -18,6 +18,13 @@ New in v1.8.1 (so far):
   - Link FLAC when static linking with libsndfile
   - Fix Ogg and Vorbis static link order and use separate find packages
   - Fix CoreFoundation typo in CGImage test
+  - Add support for MSVC static/dynamic runtime libraries (add -DSIMAGE_USE_MSVC_STATIC_RUNTIME=ON
+    to enable it)
+  - Fix for pkg-config file generation
+  - Fix for CMake 3.19.1 regression
+  - Fix for MinGW build
+  - Add option to prefer static libs for MinGW build (add -DSIMAGE_USE_STATIC_LIBS=ON
+    to enable it)
 
 New in v1.8.0 (2019-12-23):
 * new:
