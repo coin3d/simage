@@ -116,10 +116,10 @@ before_build:
       set BUILD_SOURCE_ARCHIVE=%APPVEYOR_PROJECT_NAME%-%CI_REPO_VERSION%-src.zip
       7z a -xr!*\.git/ -tzip %BUILD_SOURCE_ARCHIVE% %APPVEYOR_BUILD_FOLDER%
       mkdir %APPVEYOR_BUILD_FOLDER%\downloads
-      set DOWNLOAD_FILE_DOXYGEN=doxygen-1.8.14.windows.x64.bin.zip
-      appveyor DownloadFile https://sourceforge.net/projects/doxygen/files/rel-1.8.14/%DOWNLOAD_FILE_DOXYGEN% -FileName %DOWNLOAD_FILE_DOXYGEN%
-      7z x %DOWNLOAD_FILE_DOXYGEN% -o%APPVEYOR_BUILD_FOLDER%\downloads\doxygen-1.8.14
-      doxygen --version
+      rem set DOWNLOAD_FILE_DOXYGEN=doxygen-1.8.14.windows.x64.bin.zip
+      rem appveyor DownloadFile https://sourceforge.net/projects/doxygen/files/rel-1.8.14/%DOWNLOAD_FILE_DOXYGEN% -FileName %DOWNLOAD_FILE_DOXYGEN%
+      rem 7z x %DOWNLOAD_FILE_DOXYGEN% -o%APPVEYOR_BUILD_FOLDER%\downloads\doxygen-1.8.14
+      rem doxygen --version
       if "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake -H. -Bbuild_debug   -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=Debug   -DSIMAGE_USE_STATIC_LIBS=ON -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/Coin3D
       if "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake -H. -Bbuild_release -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=Release -DSIMAGE_USE_STATIC_LIBS=ON -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/Coin3D
       if not "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake -H. -Bbuild -G "%CMAKE_GENERATOR%" -A %CMAKE_ARCHITECTURE% -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%\Coin3D
