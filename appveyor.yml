@@ -16,6 +16,16 @@ matrix:
 
 environment:
   matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: macos-mojave
+      CMAKE_GENERATOR: 'Unix Makefiles'
+      CMAKE_PLATFORM: x64
+      COMPILER_ID: clang
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: macos
+      CMAKE_GENERATOR: 'Unix Makefiles'
+      CMAKE_PLATFORM: x64
+      COMPILER_ID: clang
+
     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
       CMAKE_GENERATOR: 'Unix Makefiles'
       CMAKE_PLATFORM: x86
@@ -88,9 +98,9 @@ environment:
 
 install:
   - sh: |
-      sudo apt-get -y update
       cd $APPVEYOR_BUILD_FOLDER
-      sudo apt-get -y install gcc-multilib g++-multilib
+      if [ "$COMPILER_ID" != "clang" ]; then sudo apt-get update && sudo apt-get -y install gcc-multilib g++-multilib libpng-dev libjpeg-dev libgif-dev libtiff-dev libogg-dev libvorbis-dev libsndfile-dev zlib1g-dev; fi
+      if [ "$COMPILER_ID" = "clang" ]; then brew install jpeg giflib libtiff libogg libvorbis libsndfile zlib; fi
   - cmd: |
       cd %APPVEYOR_BUILD_FOLDER%
       set PATH=%APPVEYOR_BUILD_FOLDER%\downloads\doxygen-1.8.14;%PATH%
@@ -149,7 +159,8 @@ after_build:
       appveyor DownloadFile https://ci.appveyor.com/api/buildjobs/%APPVEYOR_JOB_ID%/log -FileName %APPVEYOR_PROJECT_NAME%-%CI_REPO_VERSION%-%COMPILER_ID%-%CMAKE_PLATFORM%.log
   - sh: |
       cd $APPVEYOR_BUILD_FOLDER
-      export COMPILER_ID=$APPVEYOR_BUILD_WORKER_IMAGE-$COMPILER_ID`$COMPILER_ID -dumpversion | tr '.' '\n'`
+      if [ "$COMPILER_ID" != "clang" ]; then export COMPILER_ID=$APPVEYOR_BUILD_WORKER_IMAGE-$COMPILER_ID`$COMPILER_ID -dumpversion | tr '.' '\n'`; fi
+      if [ "$COMPILER_ID" = "clang" ]; then export COMPILER_ID=$APPVEYOR_BUILD_WORKER_IMAGE-$COMPILER_ID`$COMPILER_ID -v 2>&1 | grep version | sed 's/^.*version \([0-9]*\)\.[0-9]*\.[0-9]*.*$/\1/g'`; fi
       if [ -n "${APPVEYOR_REPO_TAG_NAME}" ]; then export CI_REPO_VERSION=${APPVEYOR_REPO_TAG_NAME:1}; else export CI_REPO_VERSION=latest; fi
       BUILD_ARCHIVE=$APPVEYOR_PROJECT_NAME-$CI_REPO_VERSION-$COMPILER_ID-$CMAKE_PLATFORM.tar.gz
       tar czf $BUILD_ARCHIVE Coin3D/*
