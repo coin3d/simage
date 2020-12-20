@@ -68,7 +68,7 @@ endif()
 option(SIMAGE_USE_QIMAGE "Use Qt's QImage to load/save images" OFF)
 cmake_dependent_option(SIMAGE_USE_QT5 "Prefer Qt5 over Qt4 if available" ON "SIMAGE_USE_QIMAGE" OFF)
 option(SIMAGE_USE_CPACK "If enabled the cpack subrepo is mandatory" OFF)
-option(SIMAGE_USE_STATIC_LIBS "Linking prefers static libs over CMake defaults" ON)
+option(SIMAGE_USE_STATIC_LIBS "Linking prefers static libs over CMake defaults" OFF)
 cmake_dependent_option(SIMAGE_USE_MSVC_STATIC_RUNTIME "Build against static Microsoft Visual C runtime library." OFF "WIN32" OFF)
 
 # ############################################################################
@@ -404,16 +404,6 @@ if(NOT SIMAGE_QUICKTIME_SUPPORT AND NOT SIMAGE_CGIMAGE_SUPPORT AND NOT SIMAGE_GD
 endif()
 
 if(WIN32)
-  if(MINGW AND NOT CMAKE_CXX_LIBRARY_ARCHITECTURE)
-    if("${CMAKE_CXX_COMPILER}" MATCHES ".*/mingw64/.*$")
-      set(CMAKE_CXX_LIBRARY_ARCHITECTURE "x86_64-w64-mingw32")
-    elseif("${CMAKE_CXX_COMPILER}" MATCHES ".*/mingw32/.*$")
-      set(CMAKE_CXX_LIBRARY_ARCHITECTURE "i686-w64-mingw32")
-    endif()
-  endif()
-endif()
-
-if(WIN32)
   if(MSVC)
     if (MSVC_VERSION GREATER 1500 OR MSVC_VERSION EQUAL 1500)
       option(SIMAGE_BUILD_MSVC_MP "Enable build with multiple processes in Visual Studio" ON)
@@ -425,7 +415,7 @@ if(WIN32)
     endif ()
   endif()
 
-  # is also needed for MSYS and MinGW
+  # Can also be set for MSYS and MinGW
   coin_msvc_link_static_crt(${SIMAGE_USE_MSVC_STATIC_RUNTIME})
 endif()
 
@@ -772,6 +762,15 @@ if(UNIX OR MINGW)
   #string(REGEX REPLACE "^${CMAKE_INSTALL_FULL_DOCDIR}" "\${docdir}" htmldir "${CMAKE_INSTALL_FULL_HTMLDIR}")
   set(htmldir "\${docdir}/html")
   #set(frameworkdir "${COIN_PKGCFG_FRAMEWORK_DIR}")
+
+  # Fix variable for MinGW
+  if(MINGW AND NOT CMAKE_CXX_LIBRARY_ARCHITECTURE)
+    if("${CMAKE_CXX_COMPILER}" MATCHES ".*/mingw64/.*$")
+      set(CMAKE_CXX_LIBRARY_ARCHITECTURE "x86_64-w64-mingw32")
+    elseif("${CMAKE_CXX_COMPILER}" MATCHES ".*/mingw32/.*$")
+      set(CMAKE_CXX_LIBRARY_ARCHITECTURE "i686-w64-mingw32")
+    endif()
+  endif()
 
   set(PKG_CONFIG_URL "https://www.github.com/coin3d/simage")
   set(PKG_CONFIG_HOST "${CMAKE_CXX_LIBRARY_ARCHITECTURE}")
