@@ -25,6 +25,8 @@ New in v1.8.1 (so far):
   - Fix for MinGW build
   - Add option to prefer static libs for MinGW build (add -DSIMAGE_USE_STATIC_LIBS=ON
     to enable it)
+  - Fix for interface changes in newer giflib
+  - Link LZMA and ZSTD when static linking with libtiff
 
 New in v1.8.0 (2019-12-23):
 * new:
