@@ -45,7 +45,7 @@ endfunction()
 # Checks all specified types for existence and sets variable and sets a variable HAVE_<type_name>
 # if so. Additionally a variable named <type_name> is set to the size of the type.
 # Moreover, ${TYPE_VARIABLE} will be set to the first type matching the specified ${TYPE_SIZE}.
-macro(find_int_type_with_size TYPE_VARIABLE TYPE_SIZE)
+macro(coin_find_int_type_with_size TYPE_VARIABLE TYPE_SIZE)
   set(${TYPE_VARIABLE} "")
   foreach(TYPE ${ARGN})
     string(TOUPPER ${TYPE} TYPE_VAR)
@@ -86,6 +86,98 @@ macro(coin_msvc_link_static_crt _enable_static_crt)
     set(PKG_CONFIG_MSVC_LIBC "multithread-dynamic")
   endif()
 endmacro()
+
+
+# Adds all library dependencies in _input list (with absolute or relative paths)
+# to _output list for pkg-config .pc file.
+# Handles absolute Unix and Windows paths.
+# A list element prefixed with '-' is transferred as is.
+function(coin_add_pkg_config_lib_dependencies _output _input)
+  foreach(_lib ${_input})
+    if((_lib MATCHES "^/") OR (_lib MATCHES "^[a-zA-Z]:"))
+      get_filename_component(_lib ${_lib} NAME_WE)
+      string(REGEX REPLACE "^lib" "" _lib ${_lib})
+    endif()
+    if(_lib MATCHES "^-")
+      set(${_output} "${${_output}} ${_lib}")
+    else()
+      set(${_output} "${${_output}} -l${_lib}")
+    endif()
+  endforeach()
+  set(${_output} ${${_output}} PARENT_SCOPE)
+endfunction()
+
+
+# Add target settings like lib name, include directories, compile options, and
+# compile definitions, from _targets to pkg-config settings
+macro(coin_get_pkg_config_target_properties _targets)
+  foreach(_tgt ${_targets})
+    if(TARGET ${_tgt})
+      get_target_property(_tgt_type ${_tgt} TYPE)
+      if (NOT ${_tgt_type} STREQUAL "INTERFACE_LIBRARY")
+        get_property(_has_prop TARGET ${_tgt} PROPERTY IMPORTED_LOCATION SET)
+        if(_has_prop)
+          get_target_property(_imp_loc ${_tgt} IMPORTED_LOCATION)
+          coin_add_pkg_config_lib_dependencies(LIB_DEPENDENCIES_PRIVATE ${_imp_loc})
+        else()
+          get_property(_has_prop TARGET ${_tgt} PROPERTY IMPORTED_LOCATION_RELEASE SET)
+          if(_has_prop)
+            get_target_property(_imp_loc ${_tgt} IMPORTED_LOCATION_RELEASE)
+            coin_add_pkg_config_lib_dependencies(LIB_DEPENDENCIES_PRIVATE ${_imp_loc})
+          endif()
+        endif()
+      else()
+        get_property(_has_prop TARGET ${_tgt} PROPERTY IMPORTED_LIBNAME SET)
+        if(_has_prop)
+          get_target_property(_imp_lib ${_tgt} IMPORTED_LIBNAME)
+          coin_add_pkg_config_lib_dependencies(LIB_DEPENDENCIES_PRIVATE ${_imp_lib})
+        else()
+          get_property(_has_prop TARGET ${_tgt} PROPERTY IMPORTED_LIBNAME_RELEASE SET)
+          if(_has_prop)
+            get_target_property(_imp_lib ${_tgt} IMPORTED_LIBNAME_RELEASE)
+            coin_add_pkg_config_lib_dependencies(LIB_DEPENDENCIES_PRIVATE ${_imp_lib})
+          endif()
+        endif()
+      endif()
+      get_property(_has_prop TARGET ${_tgt} PROPERTY INTERFACE_INCLUDE_DIRECTORIES SET)
+      if(_has_prop)
+        get_target_property(_inc_dirs ${_tgt} INTERFACE_INCLUDE_DIRECTORIES)
+        list(APPEND INCLUDE_DEPENDENCIES ${_inc_dirs})
+      endif()
+      get_property(_has_prop TARGET ${_tgt} PROPERTY INTERFACE_COMPILE_DEFINITIONS SET)
+      if(_has_prop)
+        get_target_property(_compile_defs ${_tgt} INTERFACE_COMPILE_DEFINITIONS)
+        foreach(_def ${_compile_defs})
+          set(PKG_CONFIG_CPPFLAGS "${PKG_CONFIG_CPPFLAGS} -D${_def}")
+        endforeach()
+      endif()
+      get_property(_has_prop TARGET ${_tgt} PROPERTY INTERFACE_COMPILE_OPTIONS SET)
+      if(_has_prop)
+        get_target_property(_compile_opts ${_tgt} INTERFACE_COMPILE_OPTIONS)
+        foreach(_opt ${_compile_opts})
+          set(PKG_CONFIG_CPPFLAGS "${PKG_CONFIG_CPPFLAGS} ${_opt}")
+        endforeach()
+      endif()
+    endif()
+  endforeach()
+endmacro()
+
+
+# Set MACOSX_PACKAGE_LOCATION property on files
+# Determine which subdirectory this file (header, resource) should be installed into.
+# As the PUBLIC_HEADER and RESOURCE options of install target do not support
+# directory structure creation when building a framework we set the MACOSX_PACKAGE_LOCATION
+# property on the source files and add them to the target. This does however not work
+# for the generated documentation files.
+function(coin_set_macosx_properties _removable_prefixes _install_prefix _source_files)
+  foreach(_file ${_source_files})
+    get_filename_component(_loc "${_file}" DIRECTORY)
+    foreach(_prefix ${_removable_prefixes})
+      string(REPLACE "${_prefix}" "" _loc "${_loc}")
+    endforeach()
+    set_source_files_properties(${_file} PROPERTIES MACOSX_PACKAGE_LOCATION ${_install_prefix}${_loc})
+  endforeach()
+endfunction()
 
 
 function(report_prepare)
