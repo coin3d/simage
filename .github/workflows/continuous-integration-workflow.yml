@@ -40,7 +40,7 @@ jobs:
         run: git submodule update --init --recursive
       - name: Create build directory and run CMake
         run: |
-          cmake -S . -B cmake_build_dir -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
+          cmake -S . -B cmake_build_dir -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir -DSIMAGE_LIBSNDFILE_SUPPORT=OFF -DSIMAGE_OGGVORBIS_SUPPORT=OFF
       - name: Build project
         shell: cmd
         run: cmake --build cmake_build_dir --target INSTALL --config Release -- /nologo /verbosity:minimal /maxcpucount:2 /property:MultiProcessorCompilation=true
