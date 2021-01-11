@@ -1,8 +1,9 @@
-New in v1.8.1 (so far):
+New in v1.8.1 (2021-01-11):
 * new:
   - Version control system has been changed from Mercurial to Git
   - Home of Coin3d organization has been changed from https://bitbucket.org/Coin3D
     to https://github.com/coin3d due to Bitbucket ending Mercurial support
+  - Add Qt6 support
 
 * bugfixes:
   - cpack.d was made optional and disabled by default (add -DSIMAGE_USE_CPACK=ON
@@ -27,6 +28,7 @@ New in v1.8.1 (so far):
     to enable it)
   - Fix for interface changes in newer giflib
   - Link LZMA and ZSTD when static linking with libtiff
+  - Fix for broken ABI version on .so link
 
 New in v1.8.0 (2019-12-23):
 * new:
