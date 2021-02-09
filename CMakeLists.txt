@@ -117,16 +117,16 @@ endif()
 # On Windows GDI+ supports GIF, JPEG, EXIF, PNG, and TIFF.
 # see https://docs.microsoft.com/en-us/windows/desktop/gdiplus/-gdiplus-types-of-bitmaps-about
 if(SIMAGE_USE_GDIPLUS)
-  find_package(GdiPlus)
+  find_package(GdiPlus REQUIRED)
 endif()
 if(SIMAGE_USE_AVIENC)
-  find_package(Vfw)
+  find_package(Vfw REQUIRED)
 endif()
 
 # On macOS QuickTime supports BMP, GIF, JPEG, JPEG 2000, PNG, TIFF, and TGA.
 # see https://en.wikipedia.org/wiki/QuickTime
 if(SIMAGE_USE_QUICKTIME)
-  find_package(QuickTime)
+  find_package(QuickTime REQUIRED)
 endif()
 
 if(SIMAGE_USE_CGIMAGE)
