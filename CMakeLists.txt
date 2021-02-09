@@ -76,7 +76,7 @@ cmake_dependent_option(SIMAGE_USE_MSVC_STATIC_RUNTIME "Build against static Micr
 # Fail early if one of the required packages cannot be found
 
 if(SIMAGE_USE_QIMAGE)
-  if(SIMAGE_USE_QT5)
+  if(SIMAGE_USE_QT6)
     find_package(Qt6 COMPONENTS Core Gui QUIET)
   endif()
 
