@@ -278,8 +278,8 @@ simage_tga_load(const char *filename,
   if (header[1] == 1) { /* there is a colormap */
     int len = getInt16(&header[5]);
     indexsize = header[7]>>3;
-    colormap = (unsigned char *)malloc(len*indexsize);
-    fread(colormap, 1, len*indexsize, fp);
+    colormap = (unsigned char *)malloc((size_t)len*indexsize);
+    fread(colormap, 1, (size_t)len*indexsize, fp);
   }
 
   if (depth == 2) { /* 16 bits */
@@ -294,10 +294,10 @@ simage_tga_load(const char *filename,
   rleIsCompressed = 0;
   rleRemaining = 0;
   rleEntrySize = depth;
-  buffer = (unsigned char*)malloc(width*height*format);
+  buffer = (unsigned char*)malloc((size_t)width*height*format);
   dest = buffer;
   bpr = format * width;
-  linebuf = (unsigned char *)malloc(width*depth);
+  linebuf = (unsigned char *)malloc((size_t)width*depth);
   
   switch(type) {
     case 1: /* colormap, uncompressed */
@@ -313,7 +313,7 @@ simage_tga_load(const char *filename,
     {
       int x, y;
       for (y = 0; y < height; y++) {
-        if (fread(linebuf, 1, width*depth, fp) != (unsigned int)width*depth) {
+        if (fread(linebuf, 1, (size_t)width*depth, fp) != (size_t)width*depth) {
           tgaerror = ERR_READ;
           break;
         }

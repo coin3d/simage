@@ -259,7 +259,7 @@ simage_png_load(const char *filename,
   bytes_per_row = png_get_rowbytes(png_ptr, info_ptr);
 
 
-  buffer = (unsigned char*) malloc(bytes_per_row*height);
+  buffer = (unsigned char*) malloc((size_t)bytes_per_row*height);
 
   format = channels;
 

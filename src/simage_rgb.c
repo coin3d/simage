@@ -64,7 +64,7 @@ simage_rgb_load(const char * filename,
   if (od) {
     int i;
     int bpr = *width * *numcomponents;
-    unsigned char * buf = (unsigned char *) malloc(bpr * *height);
+    unsigned char * buf = (unsigned char *) malloc((size_t)bpr * *height);
 
     for (i = 0; i < *height; i++) {
       if (simage_rgb_read_line(od, i, buf+bpr*i) == 0) {

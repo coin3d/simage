@@ -235,7 +235,7 @@ simage_jpeg_load(const char *filename,
   width = cinfo.output_width;
   height = cinfo.output_height;
   buffer = currPtr = (unsigned char*) 
-    malloc(width*height*cinfo.output_components);
+    malloc((size_t)width*height*cinfo.output_components);
   
   /* Step 6: while (scan lines remain to be read) */
   /*           jpeg_read_scanlines(...); */

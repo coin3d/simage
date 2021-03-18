@@ -121,7 +121,7 @@ remap_row(unsigned char *ptr, unsigned char *data, int n,
 static void
 copy_row(unsigned char *ptr, unsigned char *data, int n, int numcomponents)
 {
-  memcpy(ptr, data, n*numcomponents);
+  memcpy(ptr, data, (size_t)n*numcomponents);
 }
 
 static void
@@ -146,7 +146,7 @@ tiff_try_read_rgba(TIFF *in, int w, int h, int format,
 {
   unsigned char * newbuffer = NULL;
   if (format != 4) {
-    newbuffer = (unsigned char*) malloc(w*h*4);
+    newbuffer = (unsigned char*) malloc((size_t)w*h*4);
   }
   else {
     newbuffer = buffer;
@@ -297,7 +297,7 @@ simage_tiff_load(const char *filename,
     if (photometric == PHOTOMETRIC_PALETTE) format = 3;
     else format = samplesperpixel;
   }
-  buffer = (unsigned char*)malloc(w*h*format);
+  buffer = (unsigned char*)malloc((size_t)w*h*format);
 
   if (!buffer) {
     tifferror = ERR_MEM;
