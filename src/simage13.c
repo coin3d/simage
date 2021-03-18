@@ -36,7 +36,7 @@ unsigned char * simage_resize3d(unsigned char *src,
   int src_bpr, dest_bpr, src_bpl, dest_bpl, xstop, ystop, zstop;
   int x, y, z, offset, i;
   unsigned char *dest =
-    (unsigned char*) malloc(newwidth*newheight*nc*newlayers);
+    (unsigned char*) malloc((size_t)newwidth*newheight*nc*newlayers);
 
   dx = ((float)width)/((float)newwidth);
   dy = ((float)height)/((float)newheight);

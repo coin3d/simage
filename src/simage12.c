@@ -39,7 +39,7 @@ s_image_create(int w, int h, int components,
   image->data = prealloc;
   if (image->data == NULL) {
     image->didalloc = 1;
-    image->data = (unsigned char *) malloc(w*h*components);
+    image->data = (unsigned char *) malloc((size_t)w*h*components);
   }
 
   /* needed for simage 1.6 */
@@ -110,7 +110,7 @@ s_image_data(s_image * image)
   if (image) {
     if (image->opendata && image->data == NULL) {
       int i;
-      image->data = (unsigned char *) malloc(image->width*image->height*image->components);
+      image->data = (unsigned char *) malloc((size_t)image->width*image->height*image->components);
       image->didalloc = 1;
       for (i = 0; i < image->height; i++) {
         (void) s_image_read_line(image, i,
@@ -130,10 +130,10 @@ s_image_set(s_image * image, int w, int h, int components,
     if (copydata) {
       if (!image->didalloc) {
         /* we shouldn't overwrite preallocated data */
-        image->data = (unsigned char*) malloc(w*h*components);
+        image->data = (unsigned char*) malloc((size_t)w*h*components);
         image->didalloc = 1;
       }
-      memcpy(image->data, data, w*h*components);
+      memcpy(image->data, data, (size_t)w*h*components);
     }
     else {
       if (image->didalloc) free((void*) image->data);
@@ -147,9 +147,9 @@ s_image_set(s_image * image, int w, int h, int components,
     image->height = h;
     image->components = components;
     if (copydata) {
-      image->data = (unsigned char *) malloc(w*h*components);
+      image->data = (unsigned char *) malloc((size_t)w*h*components);
       image->didalloc = 1;
-      memcpy(image->data, data, w*h*components);
+      memcpy(image->data, data, (size_t)w*h*components);
     }
     else {
       image->data = data;
@@ -176,7 +176,7 @@ s_image_load(const char * filename, s_image * prealloc /* | NULL */)
   }
   else {
     /* copy into preallocated buffer */
-    memcpy(prealloc->data, data, w*h*nc);
+    memcpy(prealloc->data, data, (size_t)w*h*nc);
 
     /* we don't need this copy any more */
     simage_free_image(data);

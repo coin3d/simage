@@ -126,7 +126,7 @@ simage_pic_load(const char *filename,
   }
 
   tmpbuf = (unsigned char *)malloc(width);
-  buffer = (unsigned char*) malloc(3*width*height);
+  buffer = (unsigned char*) malloc((size_t)width*height*3);
   if (tmpbuf == NULL || buffer == NULL) {
     picerror = ERROR_MEMORY;
     if (tmpbuf) free(tmpbuf);

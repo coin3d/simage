@@ -239,7 +239,7 @@ new_image(int xsize, int ysize, int bpp, unsigned char * data)
   img->bpp = bpp;
   img->span = xsize * bpp;
   img->data = data;
-  if (data == NULL) img->data = (unsigned char*) malloc(img->span*img->ysize);
+  if (data == NULL) img->data = (unsigned char*) malloc((size_t)img->span*img->ysize);
   return img;
 }
 
@@ -470,7 +470,7 @@ simage_resize_fast(unsigned char *src, int width,
   float sx, sy, dx, dy;
   int src_bpr, dest_bpr, xstop, ystop, x, y, offset, i;
   unsigned char *dest =
-    (unsigned char*) malloc(newwidth*newheight*num_comp);
+    (unsigned char*) malloc((size_t)newwidth*newheight*num_comp);
 
   dx = ((float)width)/((float)newwidth);
   dy = ((float)height)/((float)newheight);
