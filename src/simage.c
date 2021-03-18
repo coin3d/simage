@@ -490,8 +490,8 @@ static s_dlsym_func *dlsym = NULL;
 static s_dlclose_func *dlclose = NULL;
 
 void
-s_set_dynamic_loader_interface(s_dlopen_func *dlopen,
-                               s_dlsym_func *dlsym,
-                               s_dlclose_func *dlclose)
+s_set_dynamic_loader_interface(s_dlopen_func *dlopen_func,
+                               s_dlsym_func *dlsym_func,
+                               s_dlclose_func *dlclose_func)
 {
 }
