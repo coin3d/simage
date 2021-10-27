@@ -179,7 +179,7 @@ int main(int argc, char ** argv)
         unsigned char * dstbuf = buf;
         if (nc == 1 || nc == 3) {
           fprintf(stderr,"adding alpha channel\n");
-          dstbuf = (unsigned char*) malloc(w*h*(nc+1));
+          dstbuf = (unsigned char*) malloc((size_t)w*h*(nc+1));
           for (y = 0; y < h; y++) {
             for (x = 0; x < w; x++) {
               for (c = 0; c < nc; c++) {
@@ -275,14 +275,14 @@ int main(int argc, char ** argv)
     fprintf(stderr,"undef'ed %d pixels\n", cnt);
   }
   if (mirrory) {
-    unsigned char * tmp = (unsigned char*) malloc(w*nc);
+    unsigned char * tmp = (unsigned char*) malloc((size_t)w*nc);
     int y;
     for (y = 0; y < h/2; y++) {
       unsigned char * src1 = buf + w*nc*y;
       unsigned char * src2 = buf + w*nc*(h-1-y);
-      memcpy(tmp, src1, w*nc);
-      memcpy(src1, src2, w*nc);
-      memcpy(src2, tmp, w*nc);
+      memcpy(tmp, src1, (size_t)w*nc);
+      memcpy(src1, src2, (size_t)w*nc);
+      memcpy(src2, tmp, (size_t)w*nc);
     }
     free(tmp);
   }

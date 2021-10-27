@@ -319,9 +319,9 @@ SimpegWrite_encode_bitmap(void * handle, const unsigned char *rgb_buffer)
   }
   else {
     context->bufbuf[(context->SimpegWrite_current_input_frame)%context->M] =
-      (unsigned char *) malloc(context->vertical_size * context->horizontal_size * 3);
+      (unsigned char *) malloc((size_t)context->vertical_size * context->horizontal_size * 3);
     memcpy(context->bufbuf[(context->SimpegWrite_current_input_frame)%context->M],
-           rgb_buffer, context->vertical_size * context->horizontal_size * 3);
+           rgb_buffer, (size_t)context->vertical_size * context->horizontal_size * 3);
   }
 
   context->SimpegWrite_current_input_frame++;
@@ -506,13 +506,13 @@ init(simpeg_encode_context * context)
       simpeg_encode_error(context, "malloc failed\n");
   }
 
-  context->mbinfo = (struct mbinfo *)malloc(context->mb_width*context->mb_height2*sizeof(struct mbinfo));
+  context->mbinfo = (struct mbinfo *)malloc((size_t)context->mb_width*context->mb_height2*sizeof(struct mbinfo));
 
   if (!context->mbinfo)
     simpeg_encode_error(context,"malloc failed\n");
 
   context->blocks =
-    (short (*)[64])malloc(context->mb_width*context->mb_height2*context->block_count*sizeof(short [64]));
+    (short (*)[64])malloc((size_t)context->mb_width*context->mb_height2*context->block_count*sizeof(short [64]));
 
   if (!context->blocks)
     simpeg_encode_error(context, "malloc failed\n");

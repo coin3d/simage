@@ -57,7 +57,7 @@ int main(int argc, char ** argv)
 
   fprintf(stderr,"testing file: %s, %d %d %d\n", argv[1], w, h, nc);
 
-  row = (unsigned char*) malloc(w*nc);
+  row = (unsigned char*) malloc((size_t)w*nc);
 
   fprintf(stderr,"testing step: %s, %d %d %d\n", argv[1], w, h, nc);
   for (i = 0; i < h; i += 146) {

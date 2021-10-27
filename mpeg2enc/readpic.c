@@ -258,15 +258,15 @@ static void read_ppm(simpeg_encode_context * context,char *fname, unsigned char 
   {
     if (!context->read_ppm_u444)
     {
-      if (!(context->read_ppm_u444 = (unsigned char *)malloc(width*height)))
+      if (!(context->read_ppm_u444 = (unsigned char *)malloc((size_t)width*height)))
         simpeg_encode_error(context,"malloc failed");
-      if (!(context->read_ppm_v444 = (unsigned char *)malloc(width*height)))
+      if (!(context->read_ppm_v444 = (unsigned char *)malloc((size_t)width*height)))
         simpeg_encode_error(context,"malloc failed");
       if (chroma_format==CHROMA420)
       {
-        if (!(context->read_ppm_u422 = (unsigned char *)malloc((width>>1)*height)))
+        if (!(context->read_ppm_u422 = (unsigned char *)malloc((size_t)(width>>1)*height)))
           simpeg_encode_error(context,"malloc failed");
-        if (!(context->read_ppm_v422 = (unsigned char *)malloc((width>>1)*height)))
+        if (!(context->read_ppm_v422 = (unsigned char *)malloc((size_t)(width>>1)*height)))
           simpeg_encode_error(context,"malloc failed");
       }
     }
@@ -368,15 +368,15 @@ static void SimpegWrite_read_buffer(simpeg_encode_context * context, unsigned ch
   {
     if (!context->read_ppm_u444)
     {
-      if (!(context->read_ppm_u444 = (unsigned char *)malloc(width*height)))
+      if (!(context->read_ppm_u444 = (unsigned char *)malloc((size_t)width*height)))
         simpeg_encode_error(context,"malloc failed");
-      if (!(context->read_ppm_v444 = (unsigned char *)malloc(width*height)))
+      if (!(context->read_ppm_v444 = (unsigned char *)malloc((size_t)width*height)))
         simpeg_encode_error(context,"malloc failed");
       if (chroma_format==CHROMA420)
       {
-        if (!(context->read_ppm_u422 = (unsigned char *)malloc((width>>1)*height)))
+        if (!(context->read_ppm_u422 = (unsigned char *)malloc((size_t)(width>>1)*height)))
           simpeg_encode_error(context,"malloc failed");
-        if (!(context->read_ppm_v422 = (unsigned char *)malloc((width>>1)*height)))
+        if (!(context->read_ppm_v422 = (unsigned char *)malloc((size_t)(width>>1)*height)))
           simpeg_encode_error(context,"malloc failed");
       }
     }
