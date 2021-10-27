@@ -55,7 +55,7 @@ simpeg_encode_writeframe(simpeg_encode_context * context,
     sprintf(context->errortext,"Couldn't create %s\n",name);
     simpeg_encode_error(context,context->errortext);
   }
-  fwrite(frame[0],1,context->horizontal_size*context->vertical_size,fd);
+  fwrite(frame[0],1,(size_t)context->horizontal_size*context->vertical_size,fd);
   fclose(fd);
 
   /* Cb */
@@ -65,7 +65,7 @@ simpeg_encode_writeframe(simpeg_encode_context * context,
     sprintf(context->errortext,"Couldn't create %s\n",name);
     simpeg_encode_error(context,context->errortext);
   }
-  fwrite(frame[1],1,chrom_hsize*chrom_vsize,fd);
+  fwrite(frame[1],1,(size_t)chrom_hsize*chrom_vsize,fd);
   fclose(fd);
 
   /* Cr */
@@ -75,6 +75,6 @@ simpeg_encode_writeframe(simpeg_encode_context * context,
     sprintf(context->errortext,"Couldn't create %s\n",name);
     simpeg_encode_error(context,context->errortext);
   }
-  fwrite(frame[2],1,chrom_hsize*chrom_vsize,fd);
+  fwrite(frame[2],1,(size_t)chrom_hsize*chrom_vsize,fd);
   fclose(fd);
 }
