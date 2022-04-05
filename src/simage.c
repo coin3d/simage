@@ -150,14 +150,16 @@ static loader_data *
 find_loader(const char *filename)
 {
   loader_data *loader;
-  int readlen;
+  size_t readlen;
+  int err;
   unsigned char buf[256] = {0};
   FILE *fp = fopen(filename, "rb");
   if (!fp) return NULL;
 
   readlen = fread(buf, 1, 256, fp);
+  err = feof(fp) || ferror(fp);
   fclose(fp);
-  if (readlen <= 0) return NULL;
+  if (err) return NULL;
 
   loader = first_loader;
   while (loader) {
