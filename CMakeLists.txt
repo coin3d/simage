@@ -117,10 +117,31 @@ endif()
 # On Windows GDI+ supports GIF, JPEG, EXIF, PNG, and TIFF.
 # see https://docs.microsoft.com/en-us/windows/desktop/gdiplus/-gdiplus-types-of-bitmaps-about
 if(SIMAGE_USE_GDIPLUS)
-  find_package(GdiPlus REQUIRED)
+  set(CMAKE_REQUIRED_LIBRARIES gdiplus)
+  check_cxx_source_compiles("
+    #include <windows.h>
+    #include <gdiplus.h>
+    int main() {
+      Gdiplus::Bitmap * bitmap = NULL;
+      Gdiplus::BitmapData bitmapData;
+      Gdiplus::Rect rect(0, 0, 100, 100);
+      return 0;
+    }
+  " GDIPLUS_FOUND)
+  unset(CMAKE_REQUIRED_LIBRARIES)
 endif()
 if(SIMAGE_USE_AVIENC)
-  find_package(Vfw REQUIRED)
+  set(CMAKE_REQUIRED_LIBRARIES vfw32)
+  check_cxx_source_compiles("
+    #include <windows.h>
+    #include <vfw.h>
+    int main() {
+      AVIFileInit();
+      AVIFileExit();
+      return 0;
+    }
+  " VFW_FOUND)
+  unset(CMAKE_REQUIRED_LIBRARIES)
 endif()
 
 # On macOS QuickTime supports BMP, GIF, JPEG, JPEG 2000, PNG, TIFF, and TGA.
@@ -221,8 +242,7 @@ foreach (_config ${CMAKE_CONFIGURATION_TYPES})
 endforeach()
 
 if(SIMAGE_GDIPLUS_SUPPORT)
-  set(CMAKE_REQUIRED_INCLUDES ${GDIPLUS_INCLUDE_DIRS})
-  set(CMAKE_REQUIRED_LIBRARIES ${GDIPLUS_LIBRARIES})
+  set(CMAKE_REQUIRED_LIBRARIES gdiplus)
   check_cxx_source_compiles("
     #include <windows.h>
     #if defined(_MSC_VER) && (_MSC_VER == 1200) && !defined(ULONG_PTR)
@@ -245,7 +265,6 @@ if(SIMAGE_GDIPLUS_SUPPORT)
       return 0;
     }
   " HAVE_GDIPLUS_LOCKBITS_RECTARG_POINTER)
-  unset(CMAKE_REQUIRED_INCLUDES)
   unset(CMAKE_REQUIRED_LIBRARIES)
 endif()
 
@@ -533,10 +552,8 @@ if(SIMAGE_CGIMAGE_SUPPORT)
 endif()
 
 if(SIMAGE_GDIPLUS_SUPPORT)
-  target_include_directories(${PROJECT_NAME} PRIVATE ${GDIPLUS_INCLUDE_DIRS})
-  target_link_libraries(${PROJECT_NAME} PRIVATE ${GDIPLUS_LIBRARIES})
-  list(APPEND INCLUDE_DEPENDENCIES ${GDIPLUS_INCLUDE_DIRS})
-  list(APPEND LIB_DEPENDENCIES_PRIVATE ${GDIPLUS_LIBRARIES})
+  target_link_libraries(${PROJECT_NAME} PRIVATE gdiplus)
+  list(APPEND LIB_DEPENDENCIES_PRIVATE gdiplus)
 endif()
 
 if(SIMAGE_GIF_SUPPORT)
@@ -613,10 +630,8 @@ if(SIMAGE_TIFF_SUPPORT)
 endif()
 
 if(SIMAGE_AVIENC_SUPPORT)
-  target_include_directories(${PROJECT_NAME} PRIVATE ${VFW_INCLUDE_DIRS})
-  target_link_libraries(${PROJECT_NAME} PRIVATE ${VFW_LIBRARIES})
-  list(APPEND INCLUDE_DEPENDENCIES ${VFW_INCLUDE_DIRS})
-  list(APPEND LIB_DEPENDENCIES_PRIVATE ${VFW_LIBRARIES})
+  target_link_libraries(${PROJECT_NAME} PRIVATE vfw32)
+  list(APPEND LIB_DEPENDENCIES_PRIVATE vfw32)
 endif()
 
 if(SIMAGE_ZLIB_SUPPORT)
