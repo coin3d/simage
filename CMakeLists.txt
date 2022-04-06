@@ -40,6 +40,9 @@ endif()
 # Include necessary submodules
 # ############################################################################
 
+# Add path for Coin specific utility scripts
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+
 include(CheckCXXSourceCompiles)
 include(CheckIncludeFiles)
 include(CMakePackageConfigHelpers)
@@ -65,9 +68,6 @@ cmake_dependent_option(SIMAGE_USE_QT5 "Prefer Qt5 over Qt4 if available" ON "SIM
 option(SIMAGE_USE_CPACK "If enabled the cpack subrepo is mandatory" OFF)
 option(SIMAGE_USE_STATIC_LIBS "Linking prefers static libs over CMake default" OFF)
 cmake_dependent_option(SIMAGE_USE_MSVC_STATIC_RUNTIME "Build against static Microsoft Visual C runtime library." OFF "WIN32" OFF)
-
-
-message(STATUS "SDK version : ${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}")
 
 # ############################################################################
 # Find all necessary and optional simage dependencies
