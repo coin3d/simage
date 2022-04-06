@@ -40,9 +40,6 @@ endif()
 # Include necessary submodules
 # ############################################################################
 
-# Add path for Coin specific utility scripts
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-
 include(CheckCXXSourceCompiles)
 include(CheckIncludeFiles)
 include(CMakePackageConfigHelpers)
