@@ -69,6 +69,9 @@ option(SIMAGE_USE_CPACK "If enabled the cpack subrepo is mandatory" OFF)
 option(SIMAGE_USE_STATIC_LIBS "Linking prefers static libs over CMake default" OFF)
 cmake_dependent_option(SIMAGE_USE_MSVC_STATIC_RUNTIME "Build against static Microsoft Visual C runtime library." OFF "WIN32" OFF)
 
+
+message(STATUS "SDK version : ${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}")
+
 # ############################################################################
 # Find all necessary and optional simage dependencies
 # ############################################################################
@@ -117,10 +120,10 @@ endif()
 # On Windows GDI+ supports GIF, JPEG, EXIF, PNG, and TIFF.
 # see https://docs.microsoft.com/en-us/windows/desktop/gdiplus/-gdiplus-types-of-bitmaps-about
 if(SIMAGE_USE_GDIPLUS)
-  find_package(GdiPlus REQUIRED)
+  include(TestGdiPlus)
 endif()
 if(SIMAGE_USE_AVIENC)
-  find_package(Vfw REQUIRED)
+  include(TestVideoForWindows)
 endif()
 
 # On macOS QuickTime supports BMP, GIF, JPEG, JPEG 2000, PNG, TIFF, and TGA.
@@ -219,35 +222,6 @@ foreach (_config ${CMAKE_CONFIGURATION_TYPES})
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${_config} "${CMAKE_BINARY_DIR}/lib")
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${_config} "${CMAKE_BINARY_DIR}/bin")
 endforeach()
-
-if(SIMAGE_GDIPLUS_SUPPORT)
-  set(CMAKE_REQUIRED_INCLUDES ${GDIPLUS_INCLUDE_DIRS})
-  set(CMAKE_REQUIRED_LIBRARIES ${GDIPLUS_LIBRARIES})
-  check_cxx_source_compiles("
-    #include <windows.h>
-    #if defined(_MSC_VER) && (_MSC_VER == 1200) && !defined(ULONG_PTR)
-    #define ULONG_PTR ULONG
-    #endif
-    #include <gdiplus.h>
-    int main() { return 0; }
-  " HAVE_GDIPLUS_H)
-  check_cxx_source_compiles("
-    #include <windows.h>
-    #if defined(_MSC_VER) && (_MSC_VER == 1200) && !defined(ULONG_PTR)
-    #define ULONG_PTR ULONG
-    #endif
-    #include <gdiplus.h>
-    int main() {
-      Gdiplus::Bitmap * bitmap = NULL;
-      Gdiplus::BitmapData bitmapData;
-      Gdiplus::Rect rect(0, 0, 100, 100);
-      Gdiplus::Status result = bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bitmapData);
-      return 0;
-    }
-  " HAVE_GDIPLUS_LOCKBITS_RECTARG_POINTER)
-  unset(CMAKE_REQUIRED_INCLUDES)
-  unset(CMAKE_REQUIRED_LIBRARIES)
-endif()
 
 if(SIMAGE_LIBJASPER_SUPPORT)
   find_package(Jasper REQUIRED)
@@ -533,9 +507,7 @@ if(SIMAGE_CGIMAGE_SUPPORT)
 endif()
 
 if(SIMAGE_GDIPLUS_SUPPORT)
-  target_include_directories(${PROJECT_NAME} PRIVATE ${GDIPLUS_INCLUDE_DIRS})
   target_link_libraries(${PROJECT_NAME} PRIVATE ${GDIPLUS_LIBRARIES})
-  list(APPEND INCLUDE_DEPENDENCIES ${GDIPLUS_INCLUDE_DIRS})
   list(APPEND LIB_DEPENDENCIES_PRIVATE ${GDIPLUS_LIBRARIES})
 endif()
 
@@ -613,9 +585,7 @@ if(SIMAGE_TIFF_SUPPORT)
 endif()
 
 if(SIMAGE_AVIENC_SUPPORT)
-  target_include_directories(${PROJECT_NAME} PRIVATE ${VFW_INCLUDE_DIRS})
   target_link_libraries(${PROJECT_NAME} PRIVATE ${VFW_LIBRARIES})
-  list(APPEND INCLUDE_DEPENDENCIES ${VFW_INCLUDE_DIRS})
   list(APPEND LIB_DEPENDENCIES_PRIVATE ${VFW_LIBRARIES})
 endif()
 
