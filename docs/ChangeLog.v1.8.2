@@ -1,0 +1,120 @@
+2022-04-08 23:43:47 +0200  Volker Enderlein  <volkerenderlein@hotmail.com> (0f6e23f)
+
+	Delete obsolete CMake find modules
+
+D	cmake/FindGdiPlus.cmake
+D	cmake/FindVfw.cmake
+
+2022-04-06 00:06:08 +0200  Volker Enderlein  <volkerenderlein@hotmail.com> (3680e14)
+
+	Fix for detection of VFW and GdiPlus issue #55
+
+M	CMakeLists.txt
+
+2022-04-05 23:55:27 +0200  Volker Enderlein  <volkerenderlein@hotmail.com> (51706d3)
+
+	Fix warning
+
+M	src/simage.c
+
+2022-03-22 22:41:34 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (658a5b8)
+
+	Add checksum calculation
+
+M	appveyor.yml
+
+2022-03-22 22:39:57 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (ca7355c)
+
+	Update github actions [skip ci]
+
+M	.github/workflows/continuous-integration-workflow.yml
+
+2022-03-16 23:55:41 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (4ec5b4a)
+
+	Add current images to appveyor CI
+
+M	appveyor.yml
+
+2021-10-27 22:24:36 +0200  Volker Enderlein  <volkerenderlein@hotmail.com> (cbd6f5e)
+
+	Fix more static analysis issues
+
+M	examples/simage-convert.c
+M	examples/simage-read-line-test.c
+M	mpeg2enc/api.c
+M	mpeg2enc/readpic.c
+M	mpeg2enc/writepic.c
+
+2021-10-14 20:14:54 +0200  Volker Enderlein  <volkerenderlein@hotmail.com> (34b5a77)
+
+	Temporarily deactivate MinGW builds.
+
+M	appveyor.yml
+
+2021-10-13 23:51:11 +0200  Volker Enderlein  <volkerenderlein@hotmail.com> (453ac8e)
+
+	Check existence of list variables before manipulation.
+
+M	CMakeLists.txt
+
+2021-03-18 22:05:19 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (7574b28)
+
+	Fix Multiplication result converted to larger type
+
+M	src/resize.c
+M	src/simage12.c
+M	src/simage13.c
+M	src/simage_jpeg.c
+M	src/simage_pic.c
+M	src/simage_png.c
+M	src/simage_rgb.c
+M	src/simage_tga.c
+M	src/simage_tiff.c
+
+2021-03-18 21:50:51 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (79b304a)
+
+	Fix Local variable hides global variable
+
+M	src/simage.c
+
+2021-03-16 22:24:28 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (4a2db10)
+
+	Add LGTM static analysis configuration file
+
+A	lgtm.yml
+
+2021-02-09 21:14:47 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (b15c68a)
+
+	Add missing REQUIRED keyword
+
+M	CMakeLists.txt
+
+2021-02-09 21:12:01 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (ee28bdf)
+
+	Fix for Qt6 handling
+
+M	CMakeLists.txt
+
+2021-01-16 14:15:30 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (e96e409)
+
+	Add checksum generation to CI script
+
+M	appveyor.yml
+
+2021-01-15 22:34:14 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (ce4224f)
+
+	Add Qt6 dependencies to package config file
+
+M	simage-config.cmake.in
+
+2021-01-15 21:52:37 +0100  Markus Rickert  <rickert@fortiss.org> (be44660)
+
+	Fix find_dependency calls in config file
+
+M	simage-config.cmake.in
+
+2021-01-13 22:31:50 +0100  Volker Enderlein  <volkerenderlein@hotmail.com> (cd282bd)
+
+	Use PROJECT_ variables
+
+M	CMakeLists.txt
