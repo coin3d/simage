@@ -1,3 +1,15 @@
+New in v1.8.2 (2022-04-09):
+* bugfixes:
+  - Fix for detection of VFW and GdiPlus issue
+  - Fix more static analysis issues
+  - Fix warning multiplication result converted to larger type
+  - Fix warning local variable hides global variable
+  - Add missing REQUIRED keyword in CMake build script
+  - Fix for Qt6 handling in CMake build script
+  - Add Qt6 dependencies to CMake package config file
+  - Fix find_dependency calls in CMake package config file
+  - Use PROJECT_ variables in CMake build script
+
 New in v1.8.1 (2021-01-11):
 * new:
   - Version control system has been changed from Mercurial to Git
