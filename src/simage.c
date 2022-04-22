@@ -157,7 +157,7 @@ find_loader(const char *filename)
   if (!fp) return NULL;
 
   readlen = fread(buf, 1, 256, fp);
-  err = feof(fp) || ferror(fp);
+  err = ferror(fp);
   fclose(fp);
   if (err) return NULL;
 
