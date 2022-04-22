@@ -160,7 +160,7 @@ before_build:
       sha256sum -b $BUILD_SOURCE_ARCHIVE > $BUILD_SOURCE_ARCHIVE.sha256
       export CFLAGS=$CMAKE_ARCH_FLAGS
       export CXXFLAGS=$CMAKE_ARCH_FLAGS
-      cmake -H. -Bbuild_debug   -G "$CMAKE_GENERATOR" -DCMAKE_BUILD_TYPE=Debug   -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/Coin3D
+      #cmake -H. -Bbuild_debug   -G "$CMAKE_GENERATOR" -DCMAKE_BUILD_TYPE=Debug   -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/Coin3D
       cmake -H. -Bbuild_release -G "$CMAKE_GENERATOR" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$APPVEYOR_BUILD_FOLDER/Coin3D
 
 build_script:
@@ -172,7 +172,7 @@ build_script:
       if not "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake --build build --target INSTALL --config Release -- %BUILD_TOOL_OPTIONS%
   - sh: |
       BUILD_TOOL_OPTIONS=-j4
-      cmake --build build_debug   --target install --config Debug   -- $BUILD_TOOL_OPTIONS
+      #cmake --build build_debug   --target install --config Debug   -- $BUILD_TOOL_OPTIONS
       cmake --build build_release --target install --config Release -- $BUILD_TOOL_OPTIONS
 
 after_build:
