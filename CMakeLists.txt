@@ -706,6 +706,8 @@ if(SIMAGE_BUILD_TESTS)
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.rgb
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.tga
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/img.tif
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/small_img.gif
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/small_img.png
   )
 endif()
 
