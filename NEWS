@@ -1,3 +1,7 @@
+New in v1.8.3 (2022-04-22):
+* bugfixes:
+  - Fix regression issue when loading small images (<256 byte)
+
 New in v1.8.2 (2022-04-09):
 * bugfixes:
   - Fix for detection of VFW and GdiPlus issue
