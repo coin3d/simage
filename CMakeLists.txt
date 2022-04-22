@@ -729,7 +729,7 @@ if(SIMAGE_BUILD_DOCUMENTATION)
   set(DOXYGEN_EXCLUDE)
 
   set(DOXYFILE "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile")
-  set(DOXYGEN_OUTPUT "${CMAKE_BINARY_DIR}/html/index.html")
+  set(DOXYGEN_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/html/index.html")
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/docs/simage.doxygen.cmake.in" ${DOXYFILE} @ONLY)
 
 # ############################################################################
@@ -740,7 +740,7 @@ if(SIMAGE_BUILD_DOCUMENTATION)
     COMMAND ${CMAKE_COMMAND} -E echo_append "Generating API documentation with Doxygen "
     COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE}
     COMMAND ${CMAKE_COMMAND} -E echo "done."
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     DEPENDS ${DOXYFILE}
   )
   add_custom_target(documentation ALL DEPENDS ${DOXYGEN_OUTPUT})
@@ -748,7 +748,7 @@ if(SIMAGE_BUILD_DOCUMENTATION)
 # ############################################################################
 # Install built documentation files
 # ############################################################################
-  install(DIRECTORY "${CMAKE_BINARY_DIR}/html" DESTINATION ${CMAKE_INSTALL_DOCDIR} COMPONENT documentation REGEX ".*\\.(chm|qch)" EXCLUDE)
+  install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html" DESTINATION ${CMAKE_INSTALL_DOCDIR} COMPONENT documentation REGEX ".*\\.(chm|qch)" EXCLUDE)
 endif()
 
 # ############################################################################
