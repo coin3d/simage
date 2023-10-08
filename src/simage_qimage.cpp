@@ -145,38 +145,43 @@ qimage_set_save_format(const char * ext, char * buf)
   buf[MAX_EXT_LEN] = 0;
 
   int i = 0;
-  // convert to upper case
+  // convert to lower case
   while (buf[i] != 0) {
-    buf[i] = toupper(buf[i]);
+    buf[i] = tolower(buf[i]);
     i++;
   }
 
-  // Qt specifies the jpg extension as JPEG
-  if (strcmp(buf, "JPG") == 0) strcpy(buf, "JPEG");
+  // Qt specifies the jpg extension as jpeg
+  if (strcmp(buf, "jpg") == 0) strcpy(buf, "jpeg");
 
 #if QT4
 
   QList <QByteArray> list = QImageWriter::supportedImageFormats();
   const int n = list.size();
   for (int i = 0; i < n; i++) {
-    if (strcmp(buf, list[i].constData()) == 0) return 1;
+    if (strcmp(buf, list[i].toLower().constData()) == 0) {
+      strncpy(buf, list[i].constData(), MAX_EXT_LEN);
+      return 1;
+    }
   }
-  buf[0] = 0;
-  return 0;
 
 #else // QT4
 
   QStrList olist = QImage::outputFormats();
   const char * qtext = olist.getFirst();
   while (qtext) {
-    if (strcmp(buf, qtext) == 0) return 1;
+    if (strcmp(buf, QString(qtext).lower().ascii()) == 0) {
+      strncpy(buf, QString(qtext).ascii(), MAX_EXT_LEN);
+      return 1;
+    }
     qtext = olist.next();
   }
+
+#endif // !QT4
+
   // clear save format
   buf[0] = 0;
   return 0;
-
-#endif // !QT4
 }
 
 char *
