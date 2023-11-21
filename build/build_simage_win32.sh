@@ -8,7 +8,7 @@
 
 # ToDo:
 #
-# - Copy all license-related docs for all dependant libs 
+# - Copy all license-related docs for all dependent libs 
 #   to the installation dir
 #
 
@@ -51,7 +51,7 @@ if test "X$SIMAGE_PARAMS_OK" = "Xno"; then
   echo "       any error."
   echo ""
   echo "       After the script has completed, the \"install\" directory will"
-  echo "       contain a binary release of simage, including all dependant"
+  echo "       contain a binary release of simage, including all dependent"
   echo "       libraries. This release consists of 8 different configurations"
   echo "       using four different CRTs (MT MTD MD MDD), with and without"
   echo "       sound support."

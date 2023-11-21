@@ -267,10 +267,10 @@ TYPEDEF_HIDES_STRUCT   = NO
 # For small to medium size projects (<1000 input files) the default value is 
 # probably good enough. For larger projects a too small cache size can cause 
 # doxygen to be busy swapping symbols to and from disk most of the time 
-# causing a significant performance penality. 
+# causing a significant performance penalty. 
 # If the system has enough physical memory increasing the cache will improve the 
 # performance by keeping more symbols in memory. Note that the value works on 
-# a logarithmic scale so increasing the size by one will rougly double the 
+# a logarithmic scale so increasing the size by one will roughly double the 
 # memory usage. The cache size is given by this formula: 
 # 2^(16+SYMBOL_CACHE_SIZE). The valid range is 0..9, the default is 0, 
 # corresponding to a cache size of 2^16 = 65536 symbols
@@ -694,7 +694,7 @@ REFERENCES_RELATION    = YES
 # If the REFERENCES_LINK_SOURCE tag is set to YES (the default)
 # and SOURCE_BROWSER tag is set to YES, then the hyperlinks from
 # functions in REFERENCES_RELATION and REFERENCED_BY_RELATION lists will
-# link to the source code.  Otherwise they will link to the documentstion.
+# link to the source code.  Otherwise they will link to the documentation.
 
 REFERENCES_LINK_SOURCE = YES
 

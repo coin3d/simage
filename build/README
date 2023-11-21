@@ -40,7 +40,7 @@ simage.iwz.in
 build_simage_win32.sh
 
         Builds simage for the Win32 platform in different
-        configurations. All dependant libraries will be downloaded
+        configurations. All dependent libraries will be downloaded
         using wget.
 
         * Requires cygwin, wget and VisualC++ V6 

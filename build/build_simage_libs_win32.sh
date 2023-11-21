@@ -12,7 +12,7 @@
 #
 # ToDo:
 #
-# - Copy all license-related docs for all dependant libs 
+# - Copy all license-related docs for all dependent libs 
 #   to the installation dir
 #
 #

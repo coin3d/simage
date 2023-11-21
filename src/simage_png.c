@@ -340,7 +340,7 @@ simage_png_save(const char *filename,
   }
 
   /* Set error handling.  REQUIRED if you aren't supplying your own
-   * error hadnling functions in the png_create_write_struct() call.
+   * error handling functions in the png_create_write_struct() call.
    */
 #if PNG_LIBPNG_VER < 10400
   if (setjmp(png_ptr->jmpbuf)) {
@@ -420,7 +420,7 @@ simage_png_save(const char *filename,
   /* set up the transformations you want.  Note that these are
    * all optional.  Only call them if you want them. */
 
-  /* invert monocrome pixels */
+  /* invert monochrome pixels */
   /* png_set_invert(png_ptr); */
 
   /* Shift the pixels up to a legal bit depth and fill in

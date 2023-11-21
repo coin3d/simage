@@ -19,7 +19,7 @@
  *   bmp, gif, jpeg, exif, png, tiff, icon, wmf, emf
  * Only the raster images are used through usage of the Bitmap class.
  *
- * It amazes me everytime anew, whenever I get exposed to them, how
+ * It amazes me every time anew, whenever I get exposed to them, how
  * much a Microsoft API manages to suck stronger than the biggest
  * black hole known to mankind... 20060415 tamer.
  */
@@ -124,7 +124,7 @@ getReadFormat(Gdiplus::Bitmap & bitmap, bool & grayscale)
 }
 
 /*
- * Crate a buffer and copy image data into the buffer.
+ * Create a buffer and copy image data into the buffer.
  *
  * Only use this function for RGB or RGBA images, that is
  * (numcomponents == 3) || (numcomponents == 4).
@@ -190,7 +190,7 @@ copyImageBuffer(unsigned char * src, unsigned int width,
 
 
 /*
- * Crate a buffer and copy image data into the buffer.
+ * Create a buffer and copy image data into the buffer.
  *
  * Only use this function for images that GDI+ represent as ARGB,
  * but simage can store as 0xGGAA.
@@ -232,7 +232,7 @@ copy32bppGrayScaleBuffer(unsigned char * src, unsigned int width,
 }
 
 /*
- * Crate a buffer and copy image data into the buffer.
+ * Create a buffer and copy image data into the buffer.
  *
  * Only use this function for images that GDI+ represent as 16-bits
  * gray scale. Simage stores these as 8-bits grayscale.

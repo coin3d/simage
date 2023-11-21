@@ -306,7 +306,7 @@ static void frame_ME(simpeg_encode_context * context,
       /* decisions */
 
       /* select between forward/backward/interpolated prediction:
-       * use the one with smallest mean sqaured prediction error
+       * use the one with smallest mean squared prediction error
        */
       if (vmcf<=vmcr && vmcf<=vmci)
       {

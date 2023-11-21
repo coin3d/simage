@@ -26,7 +26,7 @@
  * TODO:
  * - do proper type checking, range checking, and throw proper errors for
  *   each hook
- * - ensure the componet order in the pixel is correct.
+ * - ensure the component order in the pixel is correct.
  * - implement simage-pixel functions
  */
 

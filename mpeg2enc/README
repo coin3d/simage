@@ -83,7 +83,7 @@ improvement in coding efficiency.... even for progressive video sequences.
 Other key features of MPEG-2 are the scalable extensions which permit
 the division of a continuous video signal into two or more coded bitstreams 
 representing the video at different resolutions (spatial scalability), 
-picture quality (SNR scalability and data partioning), or frame 
+picture quality (SNR scalability and data partitioning), or frame 
 rates (temporal scalability).
 
 The MPEG Software Simulation Group is currently developing MPEG

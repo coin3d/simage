@@ -36,7 +36,7 @@
  * GLOBAL is defined in exactly one file (mpeg2enc.c)
  */
 
-/* SimpegWrite spesifics */
+/* SimpegWrite specifics */
 
 #include "api.h"
 #include <stdio.h>

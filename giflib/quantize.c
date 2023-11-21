@@ -242,7 +242,7 @@ SubdivColorMap(NewColorMapType * NewColorSubdiv,
 	 * details of how qsort() is implemented.
 	 *
 	 * We mitigate this problem by sorting on all three axes rather
-	 * than only the one specied by SortRGBAxis; that way the instability
+	 * than only the one specified by SortRGBAxis; that way the instability
 	 * can only become an issue if there are multiple color indices
 	 * referring to identical RGB tuples.  Older versions of this 
 	 * sorted on only the one axis.

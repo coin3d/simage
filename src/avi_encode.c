@@ -102,7 +102,7 @@ avi_begin_encode(const char *filename, int width, int height, int fps, const cha
   }
 
   /*
-    fixme 20020304 thammer: Investigate what happens if the file allready exists.
+    fixme 20020304 thammer: Investigate what happens if the file already exists.
     Preliminary tests indicate that the new stream is just added to the existing
     file (increasing the file size), instead of truncating the file first, as the
     documentation for AVIFileOpen states.

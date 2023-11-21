@@ -239,7 +239,7 @@ open_exporter(const char * fext, GraphicsExportComponent * ge)
 
 
 /* Convert the OSType t to a C string and append it to str.
-   An OSType is really an unsigned long, intepreted as a four-character
+   An OSType is really an unsigned long, interpreted as a four-character
    constant.
 */
 static void
