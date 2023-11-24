@@ -21,10 +21,10 @@ environment:
 #      CMAKE_PLATFORM: x64
 #      COMPILER_ID: clang
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: macos-bigsur
-      CMAKE_GENERATOR: 'Unix Makefiles'
-      CMAKE_PLATFORM: x64
-      COMPILER_ID: clang
+#    - APPVEYOR_BUILD_WORKER_IMAGE: macos-bigsur
+#      CMAKE_GENERATOR: 'Unix Makefiles'
+#      CMAKE_PLATFORM: x64
+#      COMPILER_ID: clang
 
     - APPVEYOR_BUILD_WORKER_IMAGE: macos-monterey
       CMAKE_GENERATOR: 'Unix Makefiles'
