@@ -128,7 +128,7 @@ environment:
 install:
   - sh: |
       cd $APPVEYOR_BUILD_FOLDER
-      if [ "$COMPILER_ID" != "clang" ]; then sudo apt-get -y update && sudo apt-get -y install gcc-multilib g++-multilib libpng-dev libjpeg-dev libgif-dev libtiff-dev libogg-dev libvorbis-dev libsndfile1 libsndfile1-dev zlib1g zlib1g-dev; fi
+      if [ "$COMPILER_ID" != "clang" ]; then sudo apt-get -y update && sudo apt-get -y install gcc-multilib g++-multilib libpng-dev libjpeg-dev libgif-dev libtiff-dev libogg-dev libvorbis-dev libsndfile-dev zlib1g-dev; fi
       if [ "$COMPILER_ID" = "clang" ]; then brew install jpeg giflib libtiff libogg libvorbis libsndfile zlib; fi
   - cmd: |
       cd %APPVEYOR_BUILD_FOLDER%
