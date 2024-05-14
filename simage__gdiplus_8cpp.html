@@ -1,0 +1,740 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.10.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<!-- BEGIN opengraph metadata -->
+<meta property="og:title" content="Doxygen Awesome" />
+<meta property="og:image" content="https://repository-images.githubusercontent.com/348492097/4f16df80-88fb-11eb-9d31-4015ff22c452" />
+<meta property="og:description" content="Custom CSS theme for doxygen html-documentation with lots of customization parameters." />
+<meta property="og:url" content="https://jothepro.github.io/doxygen-awesome-css/" />
+<!-- END opengraph metadata -->
+<!-- BEGIN twitter metadata -->
+<meta name="twitter:image:src" content="https://repository-images.githubusercontent.com/348492097/4f16df80-88fb-11eb-9d31-4015ff22c452" />
+<meta name="twitter:title" content="Doxygen Awesome" />
+<meta name="twitter:description" content="Custom CSS theme for doxygen html-documentation with lots of customization parameters." />
+<!-- END twitter metadata -->
+<title>simage: simage_gdiplus.cpp File Reference</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link rel="icon" type="image/svg+xml" href="logo.drawio.svg"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-fragment-copy-button.js"></script>
+<script type="text/javascript" src="doxygen-awesome-paragraph-link.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript" src="doxygen-awesome-tabs.js"></script>
+<script type="text/javascript" src="toggle-alternative-theme.js"></script>
+<script type="text/javascript">
+    DoxygenAwesomeFragmentCopyButton.init()
+    DoxygenAwesomeDarkModeToggle.init()
+    DoxygenAwesomeParagraphLink.init()
+    DoxygenAwesomeInteractiveToc.init()
+    DoxygenAwesomeTabs.init()
+</script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="custom.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
+<link href="custom-alternative.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- https://tholman.com/github-corners/ -->
+<a href="https://github.com/coin3d/simage" class="github-corner" title="View source on GitHub" target="_blank" rel="noopener noreferrer">
+    <svg viewBox="0 0 250 250" width="40" height="40" style="position: absolute; top: 0; border: 0; right: 0; z-index: 99;" aria-hidden="true">
+    <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectlogo"><img alt="Logo" src="Coin_logo.png"/></td>
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">simage
+   &#160;<span id="projectnumber">1.8.3</span>
+   </div>
+   <div id="projectbrief">A library with image format loaders and front-ends to common import libraries</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.10.0 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(function() { init_search(); });
+});
+/* @license-end */
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function(){initNavTree('simage__gdiplus_8cpp.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#define-members">Macros</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
+  <div class="headertitle"><div class="title">simage_gdiplus.cpp File Reference</div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><code>#include &lt;config.h&gt;</code><br />
+<code>#include &lt;<a class="el" href="simage__gdiplus_8h_source.html">simage_gdiplus.h</a>&gt;</code><br />
+<code>#include &lt;windows.h&gt;</code><br />
+<code>#include &lt;gdiplus.h&gt;</code><br />
+<code>#include &lt;stdio.h&gt;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
+<code>#include &lt;ctype.h&gt;</code><br />
+<code>#include &lt;stdlib.h&gt;</code><br />
+<code>#include &lt;assert.h&gt;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:acad7b6fbd2fd9190c89726154a736a0f" id="r_acad7b6fbd2fd9190c89726154a736a0f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acad7b6fbd2fd9190c89726154a736a0f">LOCKBITS_RECT_CAST</a>(arg)&#160;&#160;&#160;arg</td></tr>
+<tr class="separator:acad7b6fbd2fd9190c89726154a736a0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a99fb83031ce9923c84392b4e92f956b5" id="r_a99fb83031ce9923c84392b4e92f956b5"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <br />
+&#160;&#160;<a class="el" href="#a99fb83031ce9923c84392b4e92f956b5a94c4ca8995ad36230ba79a109323a927">ERR_NO_ERROR</a>
+, <a class="el" href="#a99fb83031ce9923c84392b4e92f956b5a7235954be32cd0166432c3f7a5d61bb5">ERR_OPEN</a>
+, <a class="el" href="#a99fb83031ce9923c84392b4e92f956b5a65270b9d4567b81d393face0166d32d2">ERR_READ</a>
+, <a class="el" href="#a99fb83031ce9923c84392b4e92f956b5aaaeafdbf3aecc46864daa3cd829c7e05">ERR_MEM</a>
+, <br />
+&#160;&#160;<a class="el" href="#a99fb83031ce9923c84392b4e92f956b5a6f86f11a0684bb3bfa0539a5c10aa66d">ERR_OPEN_WRITE</a>
+, <a class="el" href="#a99fb83031ce9923c84392b4e92f956b5a7b2c2fd2edcf9479181e72ee6ef6fffc">ERR_WRITE</a>
+, <a class="el" href="#a99fb83031ce9923c84392b4e92f956b5a5bed3f42a08e195b307cf8622e913327">ERR_NOT_IMPLEMENTED</a>
+, <a class="el" href="#a99fb83031ce9923c84392b4e92f956b5ad64d9c982833860d10f54b846f9c5e46">ERR_INIT</a>
+<br />
+ }</td></tr>
+<tr class="separator:a99fb83031ce9923c84392b4e92f956b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a5700aab0a51f2ad3d0a884be7697996f" id="r_a5700aab0a51f2ad3d0a884be7697996f"><td class="memItemLeft" align="right" valign="top">static unsigned char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5700aab0a51f2ad3d0a884be7697996f">copy16bppGrayScaleBuffer</a> (unsigned char *src, unsigned int width, unsigned int height, unsigned int stride)</td></tr>
+<tr class="separator:a5700aab0a51f2ad3d0a884be7697996f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09d683b4d10f244dfc3446f38580935e" id="r_a09d683b4d10f244dfc3446f38580935e"><td class="memItemLeft" align="right" valign="top">static unsigned char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a09d683b4d10f244dfc3446f38580935e">copy32bppGrayScaleBuffer</a> (unsigned char *src, unsigned int width, unsigned int height, unsigned int stride)</td></tr>
+<tr class="separator:a09d683b4d10f244dfc3446f38580935e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f53fcc0ba28f8b6228217f8900658a0" id="r_a8f53fcc0ba28f8b6228217f8900658a0"><td class="memItemLeft" align="right" valign="top">static unsigned char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f53fcc0ba28f8b6228217f8900658a0">copyImageBuffer</a> (unsigned char *src, unsigned int width, unsigned int height, unsigned int numcomponents, unsigned int stride)</td></tr>
+<tr class="separator:a8f53fcc0ba28f8b6228217f8900658a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6a2d179cd7a444524ef96002c49e71c" id="r_af6a2d179cd7a444524ef96002c49e71c"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af6a2d179cd7a444524ef96002c49e71c">gdiplus_init</a> (void)</td></tr>
+<tr class="separator:af6a2d179cd7a444524ef96002c49e71c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbc06edcf037f0092e7dfee74b7dd7ce" id="r_abbc06edcf037f0092e7dfee74b7dd7ce"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abbc06edcf037f0092e7dfee74b7dd7ce">GetEncoderClsid</a> (const char *format, CLSID *pClsid)</td></tr>
+<tr class="separator:abbc06edcf037f0092e7dfee74b7dd7ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2997e708b037b1dc4a6a43b901ac4a4a" id="r_a2997e708b037b1dc4a6a43b901ac4a4a"><td class="memItemLeft" align="right" valign="top">static Gdiplus::PixelFormat&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2997e708b037b1dc4a6a43b901ac4a4a">getReadFormat</a> (Gdiplus::Bitmap &amp;bitmap, bool &amp;grayscale)</td></tr>
+<tr class="separator:a2997e708b037b1dc4a6a43b901ac4a4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e9dbe1db5873f60967bf113c6dad688" id="r_a4e9dbe1db5873f60967bf113c6dad688"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e9dbe1db5873f60967bf113c6dad688">simage_gdiplus_close</a> (void *opendata)</td></tr>
+<tr class="separator:a4e9dbe1db5873f60967bf113c6dad688"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8bd7a4cb3ef86fecd9438f8fa93bfd1b" id="r_a8bd7a4cb3ef86fecd9438f8fa93bfd1b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8bd7a4cb3ef86fecd9438f8fa93bfd1b">simage_gdiplus_error</a> (char *buffer, int buflen)</td></tr>
+<tr class="separator:a8bd7a4cb3ef86fecd9438f8fa93bfd1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14c0f43318365719213f6e33223977eb" id="r_a14c0f43318365719213f6e33223977eb"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14c0f43318365719213f6e33223977eb">simage_gdiplus_get_savers</a> (void)</td></tr>
+<tr class="separator:a14c0f43318365719213f6e33223977eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a165355f7493116257e098c8853250001" id="r_a165355f7493116257e098c8853250001"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a165355f7493116257e098c8853250001">simage_gdiplus_identify</a> (const char *ptr, const unsigned char *header, int headerlen)</td></tr>
+<tr class="separator:a165355f7493116257e098c8853250001"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0798468a9d3d5dc442a55c12a23145d3" id="r_a0798468a9d3d5dc442a55c12a23145d3"><td class="memItemLeft" align="right" valign="top">unsigned char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0798468a9d3d5dc442a55c12a23145d3">simage_gdiplus_load</a> (const char *filename, int *width, int *height, int *numcomponents)</td></tr>
+<tr class="separator:a0798468a9d3d5dc442a55c12a23145d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a199d6aceb14115bb275e4b9d618c29ba" id="r_a199d6aceb14115bb275e4b9d618c29ba"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a199d6aceb14115bb275e4b9d618c29ba">simage_gdiplus_open</a> (const char *filename, int *width, int *height, int *numcomponents)</td></tr>
+<tr class="separator:a199d6aceb14115bb275e4b9d618c29ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4ec99d531c4a0d22e9dfecad4f31675" id="r_ab4ec99d531c4a0d22e9dfecad4f31675"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4ec99d531c4a0d22e9dfecad4f31675">simage_gdiplus_read_line</a> (void *opendata, int y, unsigned char *buf)</td></tr>
+<tr class="separator:ab4ec99d531c4a0d22e9dfecad4f31675"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d54d8ef89afcc75930617ce46cb3f0b" id="r_a3d54d8ef89afcc75930617ce46cb3f0b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3d54d8ef89afcc75930617ce46cb3f0b">simage_gdiplus_read_region</a> (void *opendata, int x, int y, int w, int h, unsigned char *buf)</td></tr>
+<tr class="separator:a3d54d8ef89afcc75930617ce46cb3f0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85b6859c0f9e4a6123a2e7dc1332ccb6" id="r_a85b6859c0f9e4a6123a2e7dc1332ccb6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85b6859c0f9e4a6123a2e7dc1332ccb6">simage_gdiplus_save</a> (const char *filename, const unsigned char *bytes, int width, int height, int numcomponents, const char *filetypeext)</td></tr>
+<tr class="separator:a85b6859c0f9e4a6123a2e7dc1332ccb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a3035e3695ef313f0e9914a02f2e894e2" id="r_a3035e3695ef313f0e9914a02f2e894e2"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3035e3695ef313f0e9914a02f2e894e2">gdipluserror</a> = <a class="el" href="simage__eps_8c.html#a2220e71b976471f28149fd35f0d411e0">ERR_NO_ERROR</a></td></tr>
+<tr class="separator:a3035e3695ef313f0e9914a02f2e894e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="acad7b6fbd2fd9190c89726154a736a0f" name="acad7b6fbd2fd9190c89726154a736a0f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acad7b6fbd2fd9190c89726154a736a0f">&#9670;&#160;</a></span>LOCKBITS_RECT_CAST</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOCKBITS_RECT_CAST</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">arg</span></td><td>)</td>
+          <td>&#160;&#160;&#160;arg</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a99fb83031ce9923c84392b4e92f956b5" name="a99fb83031ce9923c84392b4e92f956b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99fb83031ce9923c84392b4e92f956b5">&#9670;&#160;</a></span>anonymous enum</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">anonymous enum</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a99fb83031ce9923c84392b4e92f956b5a94c4ca8995ad36230ba79a109323a927" name="a99fb83031ce9923c84392b4e92f956b5a94c4ca8995ad36230ba79a109323a927"></a>ERR_NO_ERROR&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a99fb83031ce9923c84392b4e92f956b5a7235954be32cd0166432c3f7a5d61bb5" name="a99fb83031ce9923c84392b4e92f956b5a7235954be32cd0166432c3f7a5d61bb5"></a>ERR_OPEN&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a99fb83031ce9923c84392b4e92f956b5a65270b9d4567b81d393face0166d32d2" name="a99fb83031ce9923c84392b4e92f956b5a65270b9d4567b81d393face0166d32d2"></a>ERR_READ&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a99fb83031ce9923c84392b4e92f956b5aaaeafdbf3aecc46864daa3cd829c7e05" name="a99fb83031ce9923c84392b4e92f956b5aaaeafdbf3aecc46864daa3cd829c7e05"></a>ERR_MEM&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a99fb83031ce9923c84392b4e92f956b5a6f86f11a0684bb3bfa0539a5c10aa66d" name="a99fb83031ce9923c84392b4e92f956b5a6f86f11a0684bb3bfa0539a5c10aa66d"></a>ERR_OPEN_WRITE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a99fb83031ce9923c84392b4e92f956b5a7b2c2fd2edcf9479181e72ee6ef6fffc" name="a99fb83031ce9923c84392b4e92f956b5a7b2c2fd2edcf9479181e72ee6ef6fffc"></a>ERR_WRITE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a99fb83031ce9923c84392b4e92f956b5a5bed3f42a08e195b307cf8622e913327" name="a99fb83031ce9923c84392b4e92f956b5a5bed3f42a08e195b307cf8622e913327"></a>ERR_NOT_IMPLEMENTED&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a99fb83031ce9923c84392b4e92f956b5ad64d9c982833860d10f54b846f9c5e46" name="a99fb83031ce9923c84392b4e92f956b5ad64d9c982833860d10f54b846f9c5e46"></a>ERR_INIT&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a5700aab0a51f2ad3d0a884be7697996f" name="a5700aab0a51f2ad3d0a884be7697996f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5700aab0a51f2ad3d0a884be7697996f">&#9670;&#160;</a></span>copy16bppGrayScaleBuffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static unsigned char * copy16bppGrayScaleBuffer </td>
+          <td>(</td>
+          <td class="paramtype">unsigned char *</td>          <td class="paramname"><span class="paramname"><em>src</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>width</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>height</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>stride</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a09d683b4d10f244dfc3446f38580935e" name="a09d683b4d10f244dfc3446f38580935e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09d683b4d10f244dfc3446f38580935e">&#9670;&#160;</a></span>copy32bppGrayScaleBuffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static unsigned char * copy32bppGrayScaleBuffer </td>
+          <td>(</td>
+          <td class="paramtype">unsigned char *</td>          <td class="paramname"><span class="paramname"><em>src</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>width</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>height</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>stride</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8f53fcc0ba28f8b6228217f8900658a0" name="a8f53fcc0ba28f8b6228217f8900658a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f53fcc0ba28f8b6228217f8900658a0">&#9670;&#160;</a></span>copyImageBuffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static unsigned char * copyImageBuffer </td>
+          <td>(</td>
+          <td class="paramtype">unsigned char *</td>          <td class="paramname"><span class="paramname"><em>src</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>width</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>height</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>numcomponents</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>stride</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af6a2d179cd7a444524ef96002c49e71c" name="af6a2d179cd7a444524ef96002c49e71c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af6a2d179cd7a444524ef96002c49e71c">&#9670;&#160;</a></span>gdiplus_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int gdiplus_init </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abbc06edcf037f0092e7dfee74b7dd7ce" name="abbc06edcf037f0092e7dfee74b7dd7ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abbc06edcf037f0092e7dfee74b7dd7ce">&#9670;&#160;</a></span>GetEncoderClsid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int GetEncoderClsid </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>format</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CLSID *</td>          <td class="paramname"><span class="paramname"><em>pClsid</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2997e708b037b1dc4a6a43b901ac4a4a" name="a2997e708b037b1dc4a6a43b901ac4a4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2997e708b037b1dc4a6a43b901ac4a4a">&#9670;&#160;</a></span>getReadFormat()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static Gdiplus::PixelFormat getReadFormat </td>
+          <td>(</td>
+          <td class="paramtype">Gdiplus::Bitmap &amp;</td>          <td class="paramname"><span class="paramname"><em>bitmap</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool &amp;</td>          <td class="paramname"><span class="paramname"><em>grayscale</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4e9dbe1db5873f60967bf113c6dad688" name="a4e9dbe1db5873f60967bf113c6dad688"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e9dbe1db5873f60967bf113c6dad688">&#9670;&#160;</a></span>simage_gdiplus_close()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void simage_gdiplus_close </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>opendata</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8bd7a4cb3ef86fecd9438f8fa93bfd1b" name="a8bd7a4cb3ef86fecd9438f8fa93bfd1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8bd7a4cb3ef86fecd9438f8fa93bfd1b">&#9670;&#160;</a></span>simage_gdiplus_error()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int simage_gdiplus_error </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>buffer</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>buflen</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a14c0f43318365719213f6e33223977eb" name="a14c0f43318365719213f6e33223977eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14c0f43318365719213f6e33223977eb">&#9670;&#160;</a></span>simage_gdiplus_get_savers()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char * simage_gdiplus_get_savers </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a165355f7493116257e098c8853250001" name="a165355f7493116257e098c8853250001"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a165355f7493116257e098c8853250001">&#9670;&#160;</a></span>simage_gdiplus_identify()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int simage_gdiplus_identify </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>ptr</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned char *</td>          <td class="paramname"><span class="paramname"><em>header</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>headerlen</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0798468a9d3d5dc442a55c12a23145d3" name="a0798468a9d3d5dc442a55c12a23145d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0798468a9d3d5dc442a55c12a23145d3">&#9670;&#160;</a></span>simage_gdiplus_load()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned char * simage_gdiplus_load </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>filename</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>width</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>height</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>numcomponents</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a199d6aceb14115bb275e4b9d618c29ba" name="a199d6aceb14115bb275e4b9d618c29ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a199d6aceb14115bb275e4b9d618c29ba">&#9670;&#160;</a></span>simage_gdiplus_open()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void * simage_gdiplus_open </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>filename</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>width</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>height</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>numcomponents</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab4ec99d531c4a0d22e9dfecad4f31675" name="ab4ec99d531c4a0d22e9dfecad4f31675"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4ec99d531c4a0d22e9dfecad4f31675">&#9670;&#160;</a></span>simage_gdiplus_read_line()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int simage_gdiplus_read_line </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>opendata</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>y</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned char *</td>          <td class="paramname"><span class="paramname"><em>buf</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3d54d8ef89afcc75930617ce46cb3f0b" name="a3d54d8ef89afcc75930617ce46cb3f0b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d54d8ef89afcc75930617ce46cb3f0b">&#9670;&#160;</a></span>simage_gdiplus_read_region()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int simage_gdiplus_read_region </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>opendata</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>x</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>y</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>w</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned char *</td>          <td class="paramname"><span class="paramname"><em>buf</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a85b6859c0f9e4a6123a2e7dc1332ccb6" name="a85b6859c0f9e4a6123a2e7dc1332ccb6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85b6859c0f9e4a6123a2e7dc1332ccb6">&#9670;&#160;</a></span>simage_gdiplus_save()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int simage_gdiplus_save </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>filename</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned char *</td>          <td class="paramname"><span class="paramname"><em>bytes</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>width</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>height</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>numcomponents</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>filetypeext</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="a3035e3695ef313f0e9914a02f2e894e2" name="a3035e3695ef313f0e9914a02f2e894e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3035e3695ef313f0e9914a02f2e894e2">&#9670;&#160;</a></span>gdipluserror</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int gdipluserror = <a class="el" href="simage__eps_8c.html#a2220e71b976471f28149fd35f0d411e0">ERR_NO_ERROR</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="simage__gdiplus_8cpp.html">simage_gdiplus.cpp</a></li>
+    <li class="footer">Generated on Tue May 14 2024 20:29:09 for simage by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
+  </ul>
+</div>
+</body>
+</html>

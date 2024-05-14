@@ -1,0 +1,609 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.10.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<!-- BEGIN opengraph metadata -->
+<meta property="og:title" content="Doxygen Awesome" />
+<meta property="og:image" content="https://repository-images.githubusercontent.com/348492097/4f16df80-88fb-11eb-9d31-4015ff22c452" />
+<meta property="og:description" content="Custom CSS theme for doxygen html-documentation with lots of customization parameters." />
+<meta property="og:url" content="https://jothepro.github.io/doxygen-awesome-css/" />
+<!-- END opengraph metadata -->
+<!-- BEGIN twitter metadata -->
+<meta name="twitter:image:src" content="https://repository-images.githubusercontent.com/348492097/4f16df80-88fb-11eb-9d31-4015ff22c452" />
+<meta name="twitter:title" content="Doxygen Awesome" />
+<meta name="twitter:description" content="Custom CSS theme for doxygen html-documentation with lots of customization parameters." />
+<!-- END twitter metadata -->
+<title>simage: simage_png.c File Reference</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link rel="icon" type="image/svg+xml" href="logo.drawio.svg"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-fragment-copy-button.js"></script>
+<script type="text/javascript" src="doxygen-awesome-paragraph-link.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript" src="doxygen-awesome-tabs.js"></script>
+<script type="text/javascript" src="toggle-alternative-theme.js"></script>
+<script type="text/javascript">
+    DoxygenAwesomeFragmentCopyButton.init()
+    DoxygenAwesomeDarkModeToggle.init()
+    DoxygenAwesomeParagraphLink.init()
+    DoxygenAwesomeInteractiveToc.init()
+    DoxygenAwesomeTabs.init()
+</script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="custom.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
+<link href="custom-alternative.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- https://tholman.com/github-corners/ -->
+<a href="https://github.com/coin3d/simage" class="github-corner" title="View source on GitHub" target="_blank" rel="noopener noreferrer">
+    <svg viewBox="0 0 250 250" width="40" height="40" style="position: absolute; top: 0; border: 0; right: 0; z-index: 99;" aria-hidden="true">
+    <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectlogo"><img alt="Logo" src="Coin_logo.png"/></td>
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">simage
+   &#160;<span id="projectnumber">1.8.3</span>
+   </div>
+   <div id="projectbrief">A library with image format loaders and front-ends to common import libraries</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.10.0 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(function() { init_search(); });
+});
+/* @license-end */
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function(){initNavTree('simage__png_8c.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#define-members">Macros</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
+  <div class="headertitle"><div class="title">simage_png.c File Reference</div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><code>#include &lt;config.h&gt;</code><br />
+<code>#include &lt;<a class="el" href="simage__png_8h_source.html">simage_png.h</a>&gt;</code><br />
+<code>#include &lt;stdio.h&gt;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
+<code>#include &lt;stdlib.h&gt;</code><br />
+<code>#include &lt;png.h&gt;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a6ab63185cc5dff3c50c61d99bdf98369" id="r_a6ab63185cc5dff3c50c61d99bdf98369"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ab63185cc5dff3c50c61d99bdf98369">ERR_MEM</a>&#160;&#160;&#160;2</td></tr>
+<tr class="separator:a6ab63185cc5dff3c50c61d99bdf98369"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a638ef8373690f4a1dee1c1d5f045ed95" id="r_a638ef8373690f4a1dee1c1d5f045ed95"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a638ef8373690f4a1dee1c1d5f045ed95">ERR_MEM_WRITE</a>&#160;&#160;&#160;6</td></tr>
+<tr class="separator:a638ef8373690f4a1dee1c1d5f045ed95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2220e71b976471f28149fd35f0d411e0" id="r_a2220e71b976471f28149fd35f0d411e0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2220e71b976471f28149fd35f0d411e0">ERR_NO_ERROR</a>&#160;&#160;&#160;0</td></tr>
+<tr class="separator:a2220e71b976471f28149fd35f0d411e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11304debf1119c31f466e0b96ac65510" id="r_a11304debf1119c31f466e0b96ac65510"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11304debf1119c31f466e0b96ac65510">ERR_OPEN</a>&#160;&#160;&#160;1</td></tr>
+<tr class="separator:a11304debf1119c31f466e0b96ac65510"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae162e35f35c095230d397bd9954bacd1" id="r_ae162e35f35c095230d397bd9954bacd1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae162e35f35c095230d397bd9954bacd1">ERR_OPEN_WRITE</a>&#160;&#160;&#160;4</td></tr>
+<tr class="separator:ae162e35f35c095230d397bd9954bacd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8604893957c7318bd4f28c16d3f8dc43" id="r_a8604893957c7318bd4f28c16d3f8dc43"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8604893957c7318bd4f28c16d3f8dc43">ERR_PNGLIB</a>&#160;&#160;&#160;3</td></tr>
+<tr class="separator:a8604893957c7318bd4f28c16d3f8dc43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb0436047999605110f8f5025ab0bde7" id="r_afb0436047999605110f8f5025ab0bde7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb0436047999605110f8f5025ab0bde7">ERR_PNGLIB_WRITE</a>&#160;&#160;&#160;5</td></tr>
+<tr class="separator:afb0436047999605110f8f5025ab0bde7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a28e7cb0f2e67c115f0a1ea2872ca9674" id="r_a28e7cb0f2e67c115f0a1ea2872ca9674"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a28e7cb0f2e67c115f0a1ea2872ca9674">err_callback</a> (png_structp ps, png_const_charp pc)</td></tr>
+<tr class="separator:a28e7cb0f2e67c115f0a1ea2872ca9674"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeeb0725895c68c7e90376d1329bb6f0a" id="r_aeeb0725895c68c7e90376d1329bb6f0a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeeb0725895c68c7e90376d1329bb6f0a">simage_png_error</a> (char *buffer, int buflen)</td></tr>
+<tr class="separator:aeeb0725895c68c7e90376d1329bb6f0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af895ae9846a8aa6cdc2b4607814fb682" id="r_af895ae9846a8aa6cdc2b4607814fb682"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af895ae9846a8aa6cdc2b4607814fb682">simage_png_identify</a> (const char *ptr, const unsigned char *header, int headerlen)</td></tr>
+<tr class="separator:af895ae9846a8aa6cdc2b4607814fb682"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0cc4008de5157493b520bb4bf4890f9f" id="r_a0cc4008de5157493b520bb4bf4890f9f"><td class="memItemLeft" align="right" valign="top">unsigned char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0cc4008de5157493b520bb4bf4890f9f">simage_png_load</a> (const char *filename, int *width_ret, int *height_ret, int *numComponents_ret)</td></tr>
+<tr class="separator:a0cc4008de5157493b520bb4bf4890f9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22195cd399db35a0aed4f879ae2c88c4" id="r_a22195cd399db35a0aed4f879ae2c88c4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a22195cd399db35a0aed4f879ae2c88c4">simage_png_save</a> (const char *filename, const unsigned char *bytes, int width, int height, int numcomponents)</td></tr>
+<tr class="separator:a22195cd399db35a0aed4f879ae2c88c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9751cda6f16deea94203026181b12ed" id="r_ab9751cda6f16deea94203026181b12ed"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab9751cda6f16deea94203026181b12ed">user_flush_cb</a> (png_structp png_ptr)</td></tr>
+<tr class="separator:ab9751cda6f16deea94203026181b12ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f9b01ac027e323807cf18739cc4473e" id="r_a6f9b01ac027e323807cf18739cc4473e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f9b01ac027e323807cf18739cc4473e">user_read_cb</a> (png_structp png_ptr, png_bytep data, png_uint_32 length)</td></tr>
+<tr class="separator:a6f9b01ac027e323807cf18739cc4473e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a854bc2639f38be8d49c19fe0cc7743" id="r_a9a854bc2639f38be8d49c19fe0cc7743"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9a854bc2639f38be8d49c19fe0cc7743">user_write_cb</a> (png_structp png_ptr, png_bytep data, png_uint_32 length)</td></tr>
+<tr class="separator:a9a854bc2639f38be8d49c19fe0cc7743"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f0d66b7587fc36d00fa5664dbc9e404" id="r_a2f0d66b7587fc36d00fa5664dbc9e404"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f0d66b7587fc36d00fa5664dbc9e404">warn_callback</a> (png_structp ps, png_const_charp pc)</td></tr>
+<tr class="separator:a2f0d66b7587fc36d00fa5664dbc9e404"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a99bf68e7f129cc7a38cc75bdad2a3578" id="r_a99bf68e7f129cc7a38cc75bdad2a3578"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a99bf68e7f129cc7a38cc75bdad2a3578">pngerror</a> = 0</td></tr>
+<tr class="separator:a99bf68e7f129cc7a38cc75bdad2a3578"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5be06c604b7002679fcf9aee7d417072" id="r_a5be06c604b7002679fcf9aee7d417072"><td class="memItemLeft" align="right" valign="top">static jmp_buf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5be06c604b7002679fcf9aee7d417072">setjmp_buffer</a></td></tr>
+<tr class="separator:a5be06c604b7002679fcf9aee7d417072"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a6ab63185cc5dff3c50c61d99bdf98369" name="a6ab63185cc5dff3c50c61d99bdf98369"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ab63185cc5dff3c50c61d99bdf98369">&#9670;&#160;</a></span>ERR_MEM</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ERR_MEM&#160;&#160;&#160;2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a638ef8373690f4a1dee1c1d5f045ed95" name="a638ef8373690f4a1dee1c1d5f045ed95"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a638ef8373690f4a1dee1c1d5f045ed95">&#9670;&#160;</a></span>ERR_MEM_WRITE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ERR_MEM_WRITE&#160;&#160;&#160;6</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2220e71b976471f28149fd35f0d411e0" name="a2220e71b976471f28149fd35f0d411e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2220e71b976471f28149fd35f0d411e0">&#9670;&#160;</a></span>ERR_NO_ERROR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ERR_NO_ERROR&#160;&#160;&#160;0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a11304debf1119c31f466e0b96ac65510" name="a11304debf1119c31f466e0b96ac65510"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11304debf1119c31f466e0b96ac65510">&#9670;&#160;</a></span>ERR_OPEN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ERR_OPEN&#160;&#160;&#160;1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae162e35f35c095230d397bd9954bacd1" name="ae162e35f35c095230d397bd9954bacd1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae162e35f35c095230d397bd9954bacd1">&#9670;&#160;</a></span>ERR_OPEN_WRITE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ERR_OPEN_WRITE&#160;&#160;&#160;4</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8604893957c7318bd4f28c16d3f8dc43" name="a8604893957c7318bd4f28c16d3f8dc43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8604893957c7318bd4f28c16d3f8dc43">&#9670;&#160;</a></span>ERR_PNGLIB</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ERR_PNGLIB&#160;&#160;&#160;3</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afb0436047999605110f8f5025ab0bde7" name="afb0436047999605110f8f5025ab0bde7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb0436047999605110f8f5025ab0bde7">&#9670;&#160;</a></span>ERR_PNGLIB_WRITE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ERR_PNGLIB_WRITE&#160;&#160;&#160;5</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a28e7cb0f2e67c115f0a1ea2872ca9674" name="a28e7cb0f2e67c115f0a1ea2872ca9674"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28e7cb0f2e67c115f0a1ea2872ca9674">&#9670;&#160;</a></span>err_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void err_callback </td>
+          <td>(</td>
+          <td class="paramtype">png_structp</td>          <td class="paramname"><span class="paramname"><em>ps</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">png_const_charp</td>          <td class="paramname"><span class="paramname"><em>pc</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aeeb0725895c68c7e90376d1329bb6f0a" name="aeeb0725895c68c7e90376d1329bb6f0a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeeb0725895c68c7e90376d1329bb6f0a">&#9670;&#160;</a></span>simage_png_error()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int simage_png_error </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>buffer</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>buflen</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af895ae9846a8aa6cdc2b4607814fb682" name="af895ae9846a8aa6cdc2b4607814fb682"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af895ae9846a8aa6cdc2b4607814fb682">&#9670;&#160;</a></span>simage_png_identify()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int simage_png_identify </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>ptr</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned char *</td>          <td class="paramname"><span class="paramname"><em>header</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>headerlen</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0cc4008de5157493b520bb4bf4890f9f" name="a0cc4008de5157493b520bb4bf4890f9f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0cc4008de5157493b520bb4bf4890f9f">&#9670;&#160;</a></span>simage_png_load()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned char * simage_png_load </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>filename</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>width_ret</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>height_ret</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>numComponents_ret</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a22195cd399db35a0aed4f879ae2c88c4" name="a22195cd399db35a0aed4f879ae2c88c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22195cd399db35a0aed4f879ae2c88c4">&#9670;&#160;</a></span>simage_png_save()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int simage_png_save </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>filename</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned char *</td>          <td class="paramname"><span class="paramname"><em>bytes</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>width</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>height</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>numcomponents</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab9751cda6f16deea94203026181b12ed" name="ab9751cda6f16deea94203026181b12ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9751cda6f16deea94203026181b12ed">&#9670;&#160;</a></span>user_flush_cb()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void user_flush_cb </td>
+          <td>(</td>
+          <td class="paramtype">png_structp</td>          <td class="paramname"><span class="paramname"><em>png_ptr</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6f9b01ac027e323807cf18739cc4473e" name="a6f9b01ac027e323807cf18739cc4473e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f9b01ac027e323807cf18739cc4473e">&#9670;&#160;</a></span>user_read_cb()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void user_read_cb </td>
+          <td>(</td>
+          <td class="paramtype">png_structp</td>          <td class="paramname"><span class="paramname"><em>png_ptr</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">png_bytep</td>          <td class="paramname"><span class="paramname"><em>data</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">png_uint_32</td>          <td class="paramname"><span class="paramname"><em>length</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9a854bc2639f38be8d49c19fe0cc7743" name="a9a854bc2639f38be8d49c19fe0cc7743"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a854bc2639f38be8d49c19fe0cc7743">&#9670;&#160;</a></span>user_write_cb()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void user_write_cb </td>
+          <td>(</td>
+          <td class="paramtype">png_structp</td>          <td class="paramname"><span class="paramname"><em>png_ptr</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">png_bytep</td>          <td class="paramname"><span class="paramname"><em>data</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">png_uint_32</td>          <td class="paramname"><span class="paramname"><em>length</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2f0d66b7587fc36d00fa5664dbc9e404" name="a2f0d66b7587fc36d00fa5664dbc9e404"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f0d66b7587fc36d00fa5664dbc9e404">&#9670;&#160;</a></span>warn_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void warn_callback </td>
+          <td>(</td>
+          <td class="paramtype">png_structp</td>          <td class="paramname"><span class="paramname"><em>ps</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">png_const_charp</td>          <td class="paramname"><span class="paramname"><em>pc</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="a99bf68e7f129cc7a38cc75bdad2a3578" name="a99bf68e7f129cc7a38cc75bdad2a3578"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99bf68e7f129cc7a38cc75bdad2a3578">&#9670;&#160;</a></span>pngerror</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int pngerror = 0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5be06c604b7002679fcf9aee7d417072" name="a5be06c604b7002679fcf9aee7d417072"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5be06c604b7002679fcf9aee7d417072">&#9670;&#160;</a></span>setjmp_buffer</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">jmp_buf setjmp_buffer</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="simage__png_8c.html">simage_png.c</a></li>
+    <li class="footer">Generated on Tue May 14 2024 20:29:09 for simage by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
+  </ul>
+</div>
+</body>
+</html>
