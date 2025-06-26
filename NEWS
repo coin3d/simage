@@ -1,3 +1,10 @@
+New in v1.8.4 (2025-06-26):
+* bugfixes:
+  - Updated cmake_minimum_required command to support CMake >= 3.30
+  - Added support for building modern styled documentation
+  - Fixed typos found with codespell
+  - Case insensitive comparison of supported format specifiers
+
 New in v1.8.3 (2022-04-22):
 * bugfixes:
   - Fix regression issue when loading small images (<256 byte)
