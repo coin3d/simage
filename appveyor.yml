@@ -148,6 +148,9 @@ install:
   - cmd: |
       set PATH=%APPVEYOR_BUILD_FOLDER%\downloads\doxygen-1.8.14;%PATH%
       if "%CMAKE_GENERATOR%" == "MSYS Makefiles" set PATH=C:\msys64\%COMPILER_ID%\bin;C:\msys64\usr\bin\;%PATH%
+      rem the first line is for msys2 core update, the second for other packages
+      rem we need this update, as we need to ensure every dependent package uses the same compiler and environment
+      if "%CMAKE_GENERATOR%" == "MSYS Makefiles" pacman --noconfirm -Syu
       if "%CMAKE_GENERATOR%" == "MSYS Makefiles" pacman --noconfirm -Syu
       if "%CMAKE_GENERATOR%" == "MSYS Makefiles" pacman --noconfirm -S mingw-w64-%CMAKE_PLATFORM%-zlib mingw-w64-%CMAKE_PLATFORM%-giflib mingw-w64-%CMAKE_PLATFORM%-libjpeg-turbo mingw-w64-%CMAKE_PLATFORM%-jasper mingw-w64-%CMAKE_PLATFORM%-libtiff mingw-w64-%CMAKE_PLATFORM%-libogg mingw-w64-%CMAKE_PLATFORM%-libvorbis mingw-w64-%CMAKE_PLATFORM%-libsndfile
       cd %APPVEYOR_BUILD_FOLDER%
