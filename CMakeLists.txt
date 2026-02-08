@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0...3.29)
+cmake_minimum_required(VERSION 3.5...3.29)
 
 set(SIMAGE_MAJOR_VERSION 1)
 set(SIMAGE_MINOR_VERSION 8)
