@@ -15,8 +15,8 @@ SPDX-License-Identifier: MIT
  Color table quantization
 ******************************************************************************/
 int GifQuantizeBuffer(unsigned int Width, unsigned int Height,
-                   int *ColorMapSize, GifByteType * RedInput,
-                   GifByteType * GreenInput, GifByteType * BlueInput,
+                   int *ColorMapSize, const GifByteType * RedInput,
+                   const GifByteType * GreenInput, const GifByteType * BlueInput,
                    GifByteType * OutputBuffer,
                    GifColorType * OutputColorMap);
 
