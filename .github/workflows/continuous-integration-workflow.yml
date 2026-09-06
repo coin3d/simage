@@ -12,21 +12,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
       - name: Create build directory and run CMake
         run: |
           sudo apt-get -y update
           sudo apt-get -y install libpng-dev libjpeg-dev libgif-dev libtiff-dev libogg-dev libvorbis-dev libsndfile-dev zlib1g-dev
-          cmake -S . -B cmake_build_dir -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
+          cmake -S . -B cmake_build_dir -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
       - name: Build project
-        run: cmake --build cmake_build_dir --target install --config Release -- -j4
+        run: cmake --build cmake_build_dir --target install --config Release --parallel
       #- name: Run tests
       #  run:  ctest -C Release -VV
       #  working-directory: cmake_build_dir
       - name: Create Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Ubuntu-Artifacts
           path: cmake_install_dir/
@@ -34,10 +34,10 @@ jobs:
 
   windows-build:
     name: Windows Build
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
       - name: Create build directory and run CMake
@@ -45,12 +45,12 @@ jobs:
           cmake -S . -B cmake_build_dir -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir -DSIMAGE_LIBSNDFILE_SUPPORT=OFF -DSIMAGE_OGGVORBIS_SUPPORT=OFF
       - name: Build project
         shell: cmd
-        run: cmake --build cmake_build_dir --target INSTALL --config Release -- /nologo /verbosity:minimal /maxcpucount:2 /property:MultiProcessorCompilation=true
+        run: cmake --build cmake_build_dir --target INSTALL --config Release --parallel
       #- name: Run tests
       #  run:  ctest -C Release -VV
       #  working-directory: cmake_build_dir
       - name: Create Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Windows-Artifacts
           path: cmake_install_dir/
@@ -61,20 +61,20 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
       - name: Create build directory and run CMake
         run: |
-          brew install jpeg giflib libtiff libogg libvorbis libsndfile zlib
-          cmake -S . -B cmake_build_dir -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
+          HOMEBREW_NO_AUTO_UPDATE=1 brew install jpeg giflib libtiff libogg libvorbis libsndfile zlib
+          cmake -S . -B cmake_build_dir -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
       - name: Build project
-        run: cmake --build cmake_build_dir --target install --config Release -- -j4
+        run: cmake --build cmake_build_dir --target install --config Release --parallel
       #- name: Run tests
       #  run:  ctest -C Release -VV
       #  working-directory: cmake_build_dir
       - name: Create Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: MacOS-Artifacts
           path: cmake_install_dir/

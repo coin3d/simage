@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
       - name: Create build directory and run CMake
@@ -26,7 +26,7 @@ jobs:
         run: |
           export PATH=${{ github.workspace }}/doxygen-1.10.0/bin:$PATH
           doxygen --version
-          cmake --build cmake_build_dir --target documentation_awesome --config Release -- -j4
+          cmake --build cmake_build_dir --target documentation_awesome --config Release --parallel
       - name: Deploy Awesome Documentation to Github Pages
         uses: peaceiris/actions-gh-pages@v4
         with:

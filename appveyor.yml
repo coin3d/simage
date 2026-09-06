@@ -65,6 +65,12 @@ environment:
       CMAKE_ARCH_FLAGS: -m64
       COMPILER_ID: gcc
 
+    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2404
+      CMAKE_GENERATOR: 'Unix Makefiles'
+      CMAKE_PLATFORM: x64
+      CMAKE_ARCH_FLAGS: -m64
+      COMPILER_ID: gcc
+
 #    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
 #      CMAKE_GENERATOR: 'Visual Studio 10 2010'
 #      CMAKE_ARCHITECTURE: Win32
@@ -124,6 +130,18 @@ environment:
       CMAKE_ARCHITECTURE: x64
       CMAKE_PLATFORM: x64
       COMPILER_ID: msvc17
+#
+#    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2026
+#      CMAKE_GENERATOR: 'Visual Studio 18 2026'
+#      CMAKE_ARCHITECTURE: Win32
+#      CMAKE_PLATFORM: x86
+#      COMPILER_ID: msvc18
+#
+#    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2026
+#      CMAKE_GENERATOR: 'Visual Studio 18 2026'
+#      CMAKE_ARCHITECTURE: x64
+#      CMAKE_PLATFORM: x64
+#      COMPILER_ID: msvc18
 
 #    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
 #      CMAKE_GENERATOR: 'MSYS Makefiles'
@@ -139,7 +157,7 @@ install:
   - sh: |
       if [ "$COMPILER_ID" = "clang" ]
       then
-        brew install jpeg giflib libtiff libogg libvorbis libsndfile zlib
+        HOMEBREW_NO_AUTO_UPDATE=1 brew install jpeg giflib libtiff libogg libvorbis libsndfile zlib
       else
         sudo apt-get -y update
         sudo apt-get -y install libpng-dev libjpeg-dev libgif-dev libtiff-dev libogg-dev libvorbis-dev libsndfile-dev zlib1g-dev
@@ -189,15 +207,13 @@ before_build:
 
 build_script:
   - cmd: |
-      set BUILD_TOOL_OPTIONS=/nologo /verbosity:minimal /maxcpucount /property:MultiProcessorCompilation=true;CL_MPCount=3
-      if "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake --build build_debug   --target install --config Debug   -- -j4
-      if "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake --build build_release --target install --config Release -- -j4
-      if not "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake --build build --target INSTALL --config Debug   -- %BUILD_TOOL_OPTIONS%
-      if not "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake --build build --target INSTALL --config Release -- %BUILD_TOOL_OPTIONS%
+      if "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake --build build_debug   --target install --config Debug   --parallel
+      if "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake --build build_release --target install --config Release --parallel
+      if not "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake --build build --target INSTALL --config Debug   --parallel
+      if not "%CMAKE_GENERATOR%" == "MSYS Makefiles" cmake --build build --target INSTALL --config Release --parallel
   - sh: |
-      BUILD_TOOL_OPTIONS=-j4
-      #cmake --build build_debug   --target install --config Debug   -- $BUILD_TOOL_OPTIONS
-      cmake --build build_release --target install --config Release -- $BUILD_TOOL_OPTIONS
+      #cmake --build build_debug   --target install --config Debug   --parallel
+      cmake --build build_release --target install --config Release --parallel
 
 after_build:
   - cmd: |
