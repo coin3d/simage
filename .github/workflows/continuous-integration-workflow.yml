@@ -42,7 +42,7 @@ jobs:
           submodules: recursive
       - name: Create build directory and run CMake
         run: |
-          cmake -S . -B cmake_build_dir -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir -DSIMAGE_LIBSNDFILE_SUPPORT=OFF -DSIMAGE_OGGVORBIS_SUPPORT=OFF
+          cmake -S . -B cmake_build_dir -G "Visual Studio 18 2026" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir -DSIMAGE_LIBSNDFILE_SUPPORT=OFF -DSIMAGE_OGGVORBIS_SUPPORT=OFF
       - name: Build project
         shell: cmd
         run: cmake --build cmake_build_dir --target INSTALL --config Release --parallel
