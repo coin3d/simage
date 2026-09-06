@@ -1,5 +1,6 @@
 var NAVTREEINDEX3 =
 {
+"structsimage__plugin.html":[0,0,16],
 "structsimage__plugin.html#a16b93336d2f944e7365d8496b94fe520":[0,0,16,2],
 "structsimage__plugin.html#a75167cf32e01b7c275e4b4817205918d":[0,0,16,1],
 "structsimage__plugin.html#af1df57d0528d65739e4fa591844ff777":[0,0,16,0],

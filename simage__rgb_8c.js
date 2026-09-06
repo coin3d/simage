@@ -7,6 +7,7 @@ var simage__rgb_8c =
     [ "ERR_OPEN_WRITE", "simage__rgb_8c.html#ae162e35f35c095230d397bd9954bacd1", null ],
     [ "ERR_READ", "simage__rgb_8c.html#a6b84d62f127a9e48e8a98f7c4f50f3ff", null ],
     [ "ERR_SIZEZ", "simage__rgb_8c.html#a4a65ea63afd20a0b44f237d4fb4b74b8", null ],
+    [ "SIMAGE_RGB_MAX_COMPONENTS", "simage__rgb_8c.html#a8243a2002fc8e45b5ee92cf200e986b9", null ],
     [ "read_int", "simage__rgb_8c.html#a295ccde1f86879f48275bbf1ba37b410", null ],
     [ "read_rgb_row_component", "simage__rgb_8c.html#a748471217877115403972cf34b95ca6b", null ],
     [ "read_short", "simage__rgb_8c.html#a8c26ff1ea70b1c52dd84abf2fd95b6fd", null ],

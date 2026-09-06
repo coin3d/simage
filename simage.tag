@@ -3354,6 +3354,13 @@
       <anchor>a4a65ea63afd20a0b44f237d4fb4b74b8</anchor>
       <arglist></arglist>
     </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SIMAGE_RGB_MAX_COMPONENTS</name>
+      <anchorfile>simage__rgb_8c.html</anchorfile>
+      <anchor>a8243a2002fc8e45b5ee92cf200e986b9</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="function" static="yes">
       <type>static int</type>
       <name>read_int</name>
