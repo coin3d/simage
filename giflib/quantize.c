@@ -16,6 +16,7 @@ SPDX-License-Identifier: MIT
 #include <stdlib.h>
 #include <stdio.h>
 #include <gif_lib.h>
+#include <quantize.h>
 //#include "gif_lib_private.h"
 
 #define ABS(x)    ((x) > 0 ? (x) : (-(x)))
@@ -61,9 +62,9 @@ int
 GifQuantizeBuffer(unsigned int Width,
                unsigned int Height,
                int *ColorMapSize,
-               const GifByteType * RedInput,
-               const GifByteType * GreenInput,
-               const GifByteType * BlueInput,
+               SIMAGE_GIF_QUANTIZE_CONST GifByteType * RedInput,
+               SIMAGE_GIF_QUANTIZE_CONST GifByteType * GreenInput,
+               SIMAGE_GIF_QUANTIZE_CONST GifByteType * BlueInput,
                GifByteType * OutputBuffer,
                GifColorType * OutputColorMap) {
 
